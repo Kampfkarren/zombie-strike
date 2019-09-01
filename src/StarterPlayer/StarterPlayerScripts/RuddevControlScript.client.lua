@@ -24,11 +24,6 @@ local GAMEPAD_DEAD = 0.15
 
 local JUMP_POWER = 50
 
-local MOVE_SPEED = 20
-local CROUCH_FACTOR = 0.6
-local SPRINT_FACTOR = 1.4
-local DOWN_FACTOR = 0.6
-
 -- variables
 
 local character, humanoid, rootPart, equipped, down, stance, flightForce
@@ -66,15 +61,6 @@ local function HandleCharacter(newCharacter)
 		lShoulderC0 = lShoulder.C0
 
 		humanoid.AutoRotate = false
-
-		humanoid.StateChanged:connect(function(_, state)
-			if state == Enum.HumanoidStateType.Landed then
-				local info = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-				local tween = TweenService:Create(humanoid, info, {JumpPower = JUMP_POWER})
-
-				tween:Play()
-			end
-		end)
 
 		character = newCharacter
 	end
@@ -126,13 +112,6 @@ RunService:BindToRenderStep("Control", 3, function(deltaTime)
 		if not rootPart:FindFirstChild("SpaceshipWeld") then
 			rootPart.CFrame = CFrame.new(rootPart.Position) * rotation
 		end
-
-		-- movement
-		-- if down.Value then
-		-- 	humanoid.WalkSpeed = MOVE_SPEED * DOWN_FACTOR
-		-- else
-		-- 	humanoid.WalkSpeed = MOVE_SPEED * (sprinting and SPRINT_FACTOR or 1) * (crouching and CROUCH_FACTOR or 1)
-		-- end
 
 		humanoid:Move(input, true)
 

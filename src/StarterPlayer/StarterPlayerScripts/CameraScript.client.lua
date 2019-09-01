@@ -17,6 +17,13 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 local SPRING = require(MODULES:WaitForChild("Spring"))
 local INPUT = require(MODULES:WaitForChild("Input"))
 
+local DynamicThumbstick = require(
+	PLAYER.PlayerScripts
+	:WaitForChild("ControlScript")
+	:WaitForChild("MasterControl")
+	:WaitForChild("DynamicThumbstick")
+)
+
 local MIN_Y, MAX_Y = -1.4, 1.4
 local MOUSE_SENSITIVITY = Vector2.new(1/250, 1/250)
 local TOUCH_SENSITIVITY = Vector2.new(1/100, 1/100)
@@ -297,8 +304,10 @@ UserInputService.InputChanged:connect(function(inputObject, processed)
 
 			-- EVENTS.Sway:Fire(Vector3.new(-inputObject.Delta.X, -inputObject.Delta.Y, 0))
 		elseif inputObject.UserInputType == Enum.UserInputType.Touch then
-			x = (x - inputObject.Delta.X * TOUCH_SENSITIVITY.X * ZoomSensitivity()) % (math.pi * 2)
-			y = math.clamp(y - inputObject.Delta.Y * TOUCH_SENSITIVITY.Y * ZoomSensitivity(), MIN_Y, MAX_Y)
+			if DynamicThumbstick:GetInputObject() == touchObject then
+				x = (x - inputObject.Delta.X * TOUCH_SENSITIVITY.X * ZoomSensitivity()) % (math.pi * 2)
+				y = math.clamp(y - inputObject.Delta.Y * TOUCH_SENSITIVITY.Y * ZoomSensitivity(), MIN_Y, MAX_Y)
+			end
 		end
 	end
 end)
