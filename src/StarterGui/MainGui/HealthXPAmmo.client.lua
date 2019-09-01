@@ -1,6 +1,9 @@
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+
+local XP = require(ReplicatedStorage.Libraries.XP)
 
 local HealthXP = script.Parent.Main.HealthXP
 local LocalPlayer = Players.LocalPlayer
@@ -61,6 +64,25 @@ local function characterAdded(character)
 	ammo.Changed:connect(updateAmmo)
 	updateAmmo(ammo.Value)
 end
+
+local playerData = LocalPlayer:WaitForChild("PlayerData")
+
+local level = playerData:WaitForChild("Level")
+local xp = playerData:WaitForChild("XP")
+
+local function updateXP()
+	local maxXp = XP.XPNeededForNextLevel(level.Value)
+
+	HealthXP.XP.TextLabel.Text = ("%d / %d"):format(
+		xp.Value,
+		maxXp
+	)
+
+	HealthXP.XP.Inner.Size = UDim2.new(xp.Value / maxXp, 0, 1, 0)
+end
+
+coroutine.wrap(updateXP)()
+xp.Changed:connect(updateXP)
 
 if LocalPlayer.Character then
 	characterAdded(LocalPlayer.Character)

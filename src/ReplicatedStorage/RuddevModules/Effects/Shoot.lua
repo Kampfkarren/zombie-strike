@@ -100,10 +100,6 @@ return function(item, position, directions, ammo, forceEnd)
 		else
 			muzzle.FlashEmitter:Emit(1)
 		end
-
-		if muzzle:FindFirstChild("TailSound") then
-			muzzle.TailSound:Play()
-		end
 	end
 
 	sound:Play()

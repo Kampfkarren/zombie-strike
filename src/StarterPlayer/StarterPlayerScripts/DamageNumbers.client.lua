@@ -19,9 +19,9 @@ end
 
 local function updateColor(label, health, maxHealth)
 	if health == 0 then
-		label.TextColor3 = Color3.fromHSV(359, 1, 0.71)
+		label.TextColor3 = Color3.fromHSV(1, 1, 0.71)
 	else
-		label.TextColor3 = Color3.fromHSV(359 / 360, lerp(0.5, 0, health / maxHealth), 0.95)
+		label.TextColor3 = Color3.fromHSV(1, lerp(0.5, 0, health / maxHealth), 0.95)
 	end
 end
 
