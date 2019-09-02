@@ -32,8 +32,9 @@ local function createRoom(room, parent, connectTo)
 		local back = assert(room:FindFirstChild("Back", true))
 
 		room:SetPrimaryPartCFrame(
-			front.WorldCFrame
-			+ (back.WorldPosition - room.PrimaryPart.Position)
+			-- front.WorldCFrame
+			-- + (back.WorldPosition - room.PrimaryPart.Position)
+			CFrame.new(front.WorldPosition - back.Position)
 		)
 	end
 
