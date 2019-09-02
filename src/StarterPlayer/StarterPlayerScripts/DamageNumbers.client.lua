@@ -1,3 +1,4 @@
+local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
@@ -25,12 +26,19 @@ local function updateColor(label, health, maxHealth)
 	end
 end
 
-ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, damage)
+ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, damage, crit)
+	if crit then
+		local critEffect = ReplicatedStorage.CritEffect:Clone()
+		critEffect.Parent = humanoid.Parent.UpperTorso
+		critEffect:Emit(15)
+		Debris:AddItem(critEffect)
+	end
+
 	if damageOffsets[humanoid] then
 		local offset = damageOffsets[humanoid]
 		offset.damage = offset.damage + damage
 		offset.stray = math.random(-100, 100) / 100
-		offset.text.Text = offset.damage
+		offset.text.Text = math.floor(offset.damage)
 		offset.timeSinceLast = 0
 		updateColor(offset.text, humanoid.Health, humanoid.MaxHealth)
 		return
@@ -38,7 +46,7 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 
 	local damageNumber = DamageNumber:Clone()
 	local damageText = damageNumber.TextLabel
-	damageText.Text = damage
+	damageText.Text = math.floor(damage)
 	damageNumber.Parent = humanoid.Parent.HumanoidRootPart
 	updateColor(damageText, humanoid.Health, humanoid.MaxHealth)
 

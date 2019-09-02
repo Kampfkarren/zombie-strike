@@ -12,6 +12,10 @@ local REMOTES = ReplicatedStorage:WaitForChild("RuddevRemotes")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES:WaitForChild("Config"))
 
+local Data = require(ReplicatedStorage.Libraries.Data)
+
+local CRIT_MULTIPLIER = 1.5
+
 -- functions
 
 -- module
@@ -72,9 +76,20 @@ function DAMAGE.Damage(self, humanoid, damage, player)
 	end
 
 	if humanoid.Health > 0 then
+		local gun = Data.GetPlayerData(player, "Weapon")
+		local crit
+
+		if gun then
+			local critChance = gun.CritChance
+			if math.random() <= critChance then
+				damage = damage * CRIT_MULTIPLIER
+				crit = true
+			end
+		end
+
 		humanoid:TakeDamage(damage)
 		EVENTS.Damaged:Fire(humanoid, damage)
-		ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
+		ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage, crit)
 	end
 end
 
