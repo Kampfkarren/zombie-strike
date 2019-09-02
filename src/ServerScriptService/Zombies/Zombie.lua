@@ -5,6 +5,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
 local Maid = require(ReplicatedStorage.Libraries.Maid)
+local XP = require(ReplicatedStorage.Libraries.XP)
 
 local Zombie = {}
 Zombie.__index = Zombie
@@ -154,7 +155,38 @@ function Zombie:Die()
 	self.alive = false
 	self.diedEvent:Fire()
 	self.aliveMaid:DoCleaning()
+	ReplicatedStorage.Remotes.KillEnemy:FireAllClients(self.instance)
+	self:GiveXP()
 end
+
+-- START XP
+function Zombie:GiveXP()
+	local xpGain = self:GetXP()
+	if xpGain > 0 then
+		ReplicatedStorage.Remotes.XPGain:FireAllClients(self.instance.PrimaryPart.Position, xpGain)
+		for _, player in pairs(Players:GetPlayers()) do
+			local playerData = player:FindFirstChild("PlayerData")
+			if playerData then
+				local level = playerData.Level
+				local xp = playerData.XP
+
+				local xpNeeded = XP.XPNeededForNextLevel(level.Value)
+				if xp.Value + xpGain >= xpNeeded then
+					level.Value = level.Value + 1
+					xp.Value = 0
+					ReplicatedStorage.Remotes.LevelUp:FireAllClients(player)
+				else
+					xp.Value = xp.Value + xpGain
+				end
+			end
+		end
+	end
+end
+
+function Zombie:GetXP()
+	return 100
+end
+-- END XP
 
 function Zombie:UpdateNametag()
 	local nametag = self.nametag
