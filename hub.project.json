@@ -4,7 +4,7 @@
     "$className": "DataModel",
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "$path": "mission/ReplicatedStorage",
+      "$path": "hub/ReplicatedStorage",
       "Core": {
         "$path": "shared/ReplicatedStorage/Core"
       },
@@ -17,12 +17,15 @@
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "$path": "mission/ServerScriptService",
+      "$path": "hub/ServerScriptService",
       "Shared": {
         "$path": "shared/ServerScriptService"
       },
       "Vendor": {
         "$className": "Folder",
+        "DataStore2": {
+          "$path": "vendor/DataStore2/DataStore2"
+        },
         "Cmdr": {
           "$path": "vendor/Cmdr/Cmdr"
         }
@@ -30,17 +33,17 @@
     },
     "StarterGui": {
       "$className": "StarterGui",
-      "$path": "mission/StarterGui"
+      "$path": "hub/StarterGui"
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
-        "$path": "mission/StarterPlayer/StarterCharacterScripts"
+        "$path": "hub/StarterPlayer/StarterCharacterScripts"
       },
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
-        "$path": "mission/StarterPlayer/StarterPlayerScripts",
+        "$path": "hub/StarterPlayer/StarterPlayerScripts",
         "Shared": {
           "$path": "shared/StarterPlayer/StarterPlayerScripts"
         }

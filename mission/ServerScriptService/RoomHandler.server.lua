@@ -9,7 +9,7 @@ local Zombies = ServerScriptService.Zombies
 
 local Data = require(ReplicatedStorage.Libraries.Data)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
-local Loot = require(ReplicatedStorage.Libraries.Loot)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local Zombie = require(Zombies.Zombie)
 
 local Rooms = ServerStorage.Rooms

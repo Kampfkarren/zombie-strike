@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local AdminsDictionary = require(ReplicatedStorage.Libraries.AdminsDictionary)
+local AdminsDictionary = require(ReplicatedStorage.Core.AdminsDictionary)
 local Cmdr = require(ReplicatedStorage:WaitForChild("CmdrClient"))
 
 if AdminsDictionary[Players.LocalPlayer.UserId] then

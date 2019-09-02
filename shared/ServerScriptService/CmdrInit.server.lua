@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local AdminsDictionary = require(ReplicatedStorage.Libraries.AdminsDictionary)
+local AdminsDictionary = require(ReplicatedStorage.Core.AdminsDictionary)
 local Cmdr = require(ServerScriptService.Vendor.Cmdr)
 
 Cmdr.Registry:AddHook("BeforeRun", function(context)
