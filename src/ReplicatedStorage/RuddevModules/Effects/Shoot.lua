@@ -111,7 +111,7 @@ return function(item, position, directions, ammo, forceEnd)
 		if forceEnd then
 			hit, pos, normal, humanoid = unpack(forceEnd)
 		else
-			hit, pos, normal, humanoid	= Raycast(position, dir * config.Range, {item, item.Parent.Parent})
+			hit, pos, normal, humanoid = Raycast(position, dir * config.Range, {item, item.Parent})
 		end
 
 		local distance	= (position - pos).Magnitude
@@ -120,6 +120,7 @@ return function(item, position, directions, ammo, forceEnd)
 			if humanoid then
 				DAMAGE(humanoid, pos, normal)
 			else
+				print(hit and hit:GetFullName(), hit and hit.Anchored)
 				if hit.Anchored then
 					local hole	= script.BulletHole:Clone()
 						hole.CFrame	= CFrame.new(pos, pos + normal) * CFrame.Angles(0, 0, math.rad(math.random(0, 360)))
