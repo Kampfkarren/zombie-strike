@@ -260,11 +260,11 @@ script.Flying.Event:connect(function(f)
 	flying = f
 end)
 
--- EVENTS.Modal.Event:connect(Modal)
+EVENTS.Modal.Event:connect(Modal)
 
--- EVENTS.Zoom.Event:connect(function(target)
--- 	targetZoom = target and target or 10
--- end)
+EVENTS.Zoom.Event:connect(function(target)
+	targetZoom = target and target or 10
+end)
 
 EVENTS.Recoil.Event:connect(function(r)
 	recoil:Shove(r)

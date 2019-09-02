@@ -184,7 +184,7 @@ function Zombie:GiveXP()
 end
 
 function Zombie:GetXP()
-	return 100
+	return 400
 end
 -- END XP
 

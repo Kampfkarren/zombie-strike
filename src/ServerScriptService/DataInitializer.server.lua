@@ -1,8 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 
-local Data = require(ServerScriptService.Libraries.Data)
+local Data = require(ReplicatedStorage.Libraries.Data)
 local XP = require(ReplicatedStorage.Libraries.XP)
 
 Players.PlayerAdded:connect(function(player)

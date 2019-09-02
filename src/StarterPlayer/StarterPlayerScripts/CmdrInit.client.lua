@@ -1,5 +1,11 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local AdminsDictionary = require(ReplicatedStorage.Libraries.AdminsDictionary)
 local Cmdr = require(ReplicatedStorage:WaitForChild("CmdrClient"))
 
-Cmdr:SetActivationKeys({ Enum.KeyCode.Semicolon })
+if AdminsDictionary[Players.LocalPlayer.UserId] then
+	Cmdr:SetActivationKeys({ Enum.KeyCode.Semicolon })
+else
+	Cmdr:SetActivationKeys({})
+end

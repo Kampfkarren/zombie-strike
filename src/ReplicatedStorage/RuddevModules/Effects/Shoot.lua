@@ -31,7 +31,11 @@ local function Raycast(position, direction, ignore)
 		if h then
 			humanoid	= h.Parent:FindFirstChildOfClass("Humanoid")
 			if humanoid then
-				success	= true
+				if humanoid.Health <= 0 then
+					table.insert(ignore, h)
+				else
+					success	= true
+				end
 			else
 				if h.CanCollide and h.Transparency < 1 then
 					success	= true

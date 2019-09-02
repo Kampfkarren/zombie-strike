@@ -2,7 +2,6 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 
@@ -11,7 +10,7 @@ local Players = game:GetService("Players")
 local ITEMS = ReplicatedStorage.Items
 local REMOTES = ReplicatedStorage.RuddevRemotes
 
-local Data = require(ServerScriptService.Libraries.Data)
+local Data = require(ReplicatedStorage.Libraries.Data)
 
 -- Variables
 
@@ -91,20 +90,20 @@ end
 game.Players.PlayerAdded:connect(function(player)
 	local data = Data.GetPlayerData(player, "Weapon")
 
-	local gun = data.Model:Clone()
+	local gun = Data.GetModel(data)
 	gun.Name = "Gun"
 
 	local weaponData = Instance.new("Folder")
 	weaponData.Name = "WeaponData"
 
-	for statName, stat in pairs(data.Stats) do
+	for statName, stat in pairs(data) do
 		local statValue = Instance.new((type(stat) == "number" and "Number" or "String") .. "Value")
 		statValue.Name = statName
 		statValue.Value = stat
 		statValue.Parent = weaponData
 	end
 
-	gun.Ammo.Value = data.Stats.Magazine
+	gun.Ammo.Value = data.Magazine
 	weaponData.Parent = gun
 
 	player.CharacterAdded:connect(function(character)

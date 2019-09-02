@@ -1,0 +1,3 @@
+return {
+	Campaign = 1,
+}

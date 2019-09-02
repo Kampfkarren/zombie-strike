@@ -1,3 +1,6 @@
 [submodule "vendor/Cmdr"]
 	path = vendor/Cmdr
 	url = git://github.com/evaera/Cmdr.git
+[submodule "t"]
+	path = vendor/t
+	url = git://github.com/osyrisrblx/t.git

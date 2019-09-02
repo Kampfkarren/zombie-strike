@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
@@ -6,6 +7,9 @@ local Workspace = game:GetService("Workspace")
 
 local Zombies = ServerScriptService.Zombies
 
+local Data = require(ReplicatedStorage.Libraries.Data)
+local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
+local Loot = require(ReplicatedStorage.Libraries.Loot)
 local Zombie = require(Zombies.Zombie)
 
 local Rooms = ServerStorage.Rooms
@@ -74,19 +78,97 @@ local function spawnZombie(zombieType, position)
 	return zombie
 end
 
+local function generateLoot(player)
+	local rng = Random.new()
+
+	local currentLevel = player.PlayerData.Level.Value
+	local level = currentLevel
+	if level > 5 then
+		level = level - rng:NextInteger(0, 2)
+	end
+
+	local type = GunScaling.RandomType()
+
+	local lootTable = {}
+
+	local rarityRng = rng:NextNumber() * 100
+	local rarity
+
+	-- Numbers are cumulative sums
+	if rarityRng <= 0.1 then
+		rarity = 5
+	elseif rarityRng <= 5 then
+		rarity = 4
+	elseif rarityRng <= 20 then
+		rarity = 3
+	elseif rarityRng <= 40 then
+		rarity = 2
+	else
+		rarity = 1
+	end
+
+	local stats = GunScaling.BaseStats(type, level, rarity)
+
+	local funny = rng:NextInteger(0, 35)
+	stats.Damage = math.floor(stats.Damage * (1 + funny / 35))
+
+	local quality
+	if funny <= 4 then
+		quality = "Average"
+	elseif funny <= 9 then
+		quality = "Superior"
+	elseif funny <= 14 then
+		quality = "Choice"
+	elseif funny <= 19 then
+		quality = "Valuable"
+	elseif funny <= 24 then
+		quality = "Great"
+	elseif funny <= 29 then
+		quality = "Ace"
+	elseif funny <= 34 then
+		quality = "Extraordinary"
+	else
+		quality = "Perfect"
+	end
+
+	local loot = {
+		Type = type,
+		CritChance = stats.CritChance,
+		Damage = stats.Damage,
+		FireRate = stats.FireRate,
+		Level = level,
+		Magazine = stats.Magazine,
+		Model = GunScaling.Model(type, rarity),
+		Name = quality .. " Poopoo",
+		Rarity = rarity,
+	}
+
+	table.insert(lootTable, loot)
+
+	return Loot.SerializeTable(lootTable)
+end
+
+local function endMission()
+	for _, player in pairs(Players:GetPlayers()) do
+		local loot = generateLoot(player)
+		ReplicatedStorage.Remotes.MissionOver:FireClient(player, loot, 999, 999)
+	end
+
+	for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
+		if zombie:IsDescendantOf(Workspace) then
+			zombie.Humanoid.Health = 0
+		end
+	end
+end
+
 local function spawnBoss(position)
 	local bossZombie = Zombie.new("Boss", ServerStorage.Zombies.TestBossZombie, "Common")
 	bossZombie:Spawn(position)
-	bossZombie.Died:connect(function()
-		ReplicatedStorage.Remotes.MissionOver:FireAllClients()
-		for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
-			if zombie:IsDescendantOf(Workspace) then
-				zombie.Humanoid.Health = 0
-			end
-		end
-	end)
+	bossZombie.Died:connect(endMission)
 	return bossZombie
 end
+
+ServerStorage.Events.EndDungeon.Event:connect(endMission)
 
 local function openNextGate()
 	local room = table.remove(rooms, 1)

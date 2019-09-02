@@ -111,7 +111,7 @@ UserInputService.TouchTap:connect(function(touchPositions, processed)
 		MOUSE.ScreenPosition = screenPos
 		MOUSE.WorldPosition = pos
 
-		itemModule:Activate()
+		coroutine.wrap(itemModule.Activate)()
 		itemModule:Deactivate()
 
 		MOUSE.ScreenPosition = lastScreen
