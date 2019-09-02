@@ -17,30 +17,6 @@ local Data = require(ServerScriptService.Libraries.Data)
 
 -- Functions
 
-local function GetPosition(item)
-	local config = require(item.Config)
-
-	if config.AttachPosition then
-		return config.AttachPosition
-	end
-
-	if config.Type == "Melee" then
-		return config.Size == "Small" and "Lower" or "Upper"
-	elseif config.Type == "Booster" or config.Type == "Throwable" then
-		return "Lower"
-	elseif config.Type == "Gun" then
-		if config.Size == "Light" then
-			return "Lower"
-		else
-			return "Upper"
-		end
-	elseif config.Type == "Build" then
-		return "Build"
-	end
-
-	return "Upper"
-end
-
 local function PrepareItem(item) -- weld, unanchor, and remove mass from an item
 	local handle = item.PrimaryPart
 	handle.Name = "Handle"
@@ -128,6 +104,7 @@ game.Players.PlayerAdded:connect(function(player)
 		statValue.Parent = weaponData
 	end
 
+	gun.Ammo.Value = data.Stats.Magazine
 	weaponData.Parent = gun
 
 	player.CharacterAdded:connect(function(character)

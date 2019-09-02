@@ -8,7 +8,13 @@
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "$path": "src/ServerScriptService"
+      "$path": "src/ServerScriptService",
+      "Vendor": {
+        "$className": "Folder",
+        "Cmdr": {
+          "$path": "vendor/Cmdr/Cmdr"
+        }
+      }
     },
     "StarterGui": {
       "$className": "StarterGui",

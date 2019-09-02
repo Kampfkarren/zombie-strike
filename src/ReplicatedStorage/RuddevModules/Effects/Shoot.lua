@@ -120,7 +120,6 @@ return function(item, position, directions, ammo, forceEnd)
 			if humanoid then
 				DAMAGE(humanoid, pos, normal)
 			else
-				print(hit and hit:GetFullName(), hit and hit.Anchored)
 				if hit.Anchored then
 					local hole	= script.BulletHole:Clone()
 						hole.CFrame	= CFrame.new(pos, pos + normal) * CFrame.Angles(0, 0, math.rad(math.random(0, 360)))

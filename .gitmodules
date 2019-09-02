@@ -1,0 +1,3 @@
+[submodule "vendor/Cmdr"]
+	path = vendor/Cmdr
+	url = git://github.com/evaera/Cmdr.git
