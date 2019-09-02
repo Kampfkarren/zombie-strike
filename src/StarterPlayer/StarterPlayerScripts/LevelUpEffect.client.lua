@@ -1,6 +1,7 @@
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local StarterGui = game:GetService("StarterGui")
 
 local LIFETIME = 3
@@ -25,6 +26,12 @@ ReplicatedStorage.Remotes.LevelUp.OnClientEvent:connect(function(player)
 
 	local character = player.Character
 	if not character then return end
+
+	local sound = SoundService.LevelUp:Clone()
+	sound.Parent = character.PrimaryPart
+	sound:Play()
+
+	Debris:AddItem(sound)
 
 	local attachment = Instance.new("Attachment")
 	moveAttachment(attachment, 0)
