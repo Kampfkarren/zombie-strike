@@ -1,10 +1,10 @@
 {
-  "name": "dungeon",
+  "name": "mission",
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "$path": "src/ReplicatedStorage",
+      "$path": "mission/ReplicatedStorage",
       "Vendor": {
         "$className": "Folder",
         "t": {
@@ -14,7 +14,7 @@
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "$path": "src/ServerScriptService",
+      "$path": "mission/ServerScriptService",
       "Vendor": {
         "$className": "Folder",
         "Cmdr": {
@@ -24,17 +24,17 @@
     },
     "StarterGui": {
       "$className": "StarterGui",
-      "$path": "src/StarterGui"
+      "$path": "mission/StarterGui"
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
-        "$path": "src/StarterPlayer/StarterCharacterScripts"
+        "$path": "mission/StarterPlayer/StarterCharacterScripts"
       },
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
-        "$path": "src/StarterPlayer/StarterPlayerScripts"
+        "$path": "mission/StarterPlayer/StarterPlayerScripts"
       }
     }
   }
