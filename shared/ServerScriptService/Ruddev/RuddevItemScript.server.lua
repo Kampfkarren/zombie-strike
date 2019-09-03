@@ -10,7 +10,7 @@ local Players = game:GetService("Players")
 local ITEMS = ReplicatedStorage.Items
 local REMOTES = ReplicatedStorage.RuddevRemotes
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 
 -- Variables
 
@@ -84,7 +84,9 @@ end
 -- Initiate
 
 for _, item in pairs(ITEMS:GetChildren()) do
-	PrepareItem(item)
+	if not item:IsA("PackageLink") then
+		PrepareItem(item)
+	end
 end
 
 game.Players.PlayerAdded:connect(function(player)

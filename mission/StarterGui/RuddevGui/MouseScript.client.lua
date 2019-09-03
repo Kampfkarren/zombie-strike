@@ -23,6 +23,8 @@ local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 local GUI		= script.Parent
 local MOUSE_GUI	= GUI:WaitForChild("Mouse")
 
+local hubWorld = ReplicatedStorage.HubWorld.Value
+
 -- variables
 
 local reticleSize		= 0.1
@@ -82,6 +84,22 @@ end
 
 -- initiate
 
+local lastScreenPos
+
+if hubWorld then
+	local mouse = PLAYER:GetMouse()
+	lastScreenPos = Vector2.new(mouse.X, mouse.Y)
+
+	MOUSE_GUI.AnchorPoint = Vector2.new(0, 0)
+
+	UserInputService.InputChanged:connect(function(inputObject)
+		if inputObject.UserInputType == Enum.UserInputType.MouseMovement then
+			lastScreenPos = Vector2.new(inputObject.Position.X, inputObject.Position.Y)
+			MOUSE_GUI.Position = UDim2.new(0, inputObject.Position.X - 12, 0, inputObject.Position.Y - 12)
+		end
+	end)
+end
+
 RunService:BindToRenderStep("Mouse", 5, function(deltaTime)
 	if MOUSE.Reticle ~= currentReticle then
 		currentReticle	= MOUSE.Reticle
@@ -96,7 +114,12 @@ RunService:BindToRenderStep("Mouse", 5, function(deltaTime)
 	end
 
 	local h, pos
-	local screenPos	= MOUSE_GUI.AbsolutePosition + MOUSE_GUI.AbsoluteSize / 2
+	local screenPos
+	if hubWorld then
+		screenPos = lastScreenPos
+	else
+		screenPos = MOUSE_GUI.AbsolutePosition + MOUSE_GUI.AbsoluteSize / 2
+	end
 	local ray		= CAMERA:ScreenPointToRay(screenPos.X, screenPos.Y, 0)
 	local mouseRay	= Ray.new(CAMERA.CFrame.p, ray.Direction * 1000)
 

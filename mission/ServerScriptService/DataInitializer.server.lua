@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
-local XP = require(ReplicatedStorage.Libraries.XP)
+local Data = require(ReplicatedStorage.Core.Data)
+local XP = require(ReplicatedStorage.Core.XP)
 
 Players.PlayerAdded:connect(function(player)
 	-- TODO: This won't work with levels changing in game

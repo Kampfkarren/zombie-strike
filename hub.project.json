@@ -8,6 +8,12 @@
       "Core": {
         "$path": "shared/ReplicatedStorage/Core"
       },
+      "ItemModules": {
+        "$path": "shared/ReplicatedStorage/ItemModules"
+      },
+      "RuddevModules": {
+        "$path": "shared/ReplicatedStorage/RuddevModules"
+      },
       "Vendor": {
         "$className": "Folder",
         "t": {
@@ -23,11 +29,11 @@
       },
       "Vendor": {
         "$className": "Folder",
-        "DataStore2": {
-          "$path": "vendor/DataStore2/DataStore2"
-        },
         "Cmdr": {
           "$path": "vendor/Cmdr/Cmdr"
+        },
+        "DataStore2": {
+          "$path": "vendor/DataStore2/DataStore2"
         }
       }
     },
@@ -39,7 +45,10 @@
       "$className": "StarterPlayer",
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
-        "$path": "hub/StarterPlayer/StarterCharacterScripts"
+        "$path": "hub/StarterPlayer/StarterCharacterScripts",
+        "Shared": {
+          "$path": "shared/StarterPlayer/StarterCharacterScripts"
+        }
       },
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",

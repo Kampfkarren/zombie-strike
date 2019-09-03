@@ -19,34 +19,6 @@ local transparencyTickTween = {
 	{ BackgroundTransparency = 0.2, BackgroundColor3 = Color3.new(0.8, 0.8, 0.8) }
 }
 
-local function updateHealth(humanoid)
-	local health, maxHealth = humanoid.Health, humanoid.MaxHealth
-
-	if lastHealth > health then
-		local diff = health - lastHealth
-
-		local hitTick = HitTick:Clone()
-		hitTick.Position = UDim2.new(lastHealth / maxHealth, 0, 0.5, 0)
-		hitTick.Size = UDim2.new(diff / maxHealth, 0, 0, 0)
-		hitTick.Parent = HealthXP.Health
-
-		TweenService:Create(
-			hitTick,
-			hitTickInfo,
-			{
-				Size = UDim2.new(diff / maxHealth, 0, 1.2, 0)
-			}
-		):Play()
-
-		TweenService:Create(hitTick, unpack(transparencyTickTween)):Play()
-		Debris:AddItem(hitTick)
-	end
-
-	HealthXP.Health.Inner.Size = UDim2.new(health / maxHealth, 0, 1, 0)
-	HealthXP.Health.TextLabel.Text = health .. "/" .. maxHealth
-	lastHealth = health
-end
-
 local function updateAmmo(ammo)
 	HealthXP.Ammo.Text = ammo
 end

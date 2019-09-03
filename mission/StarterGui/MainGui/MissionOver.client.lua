@@ -5,7 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 
 local Blur = Lighting.Blur

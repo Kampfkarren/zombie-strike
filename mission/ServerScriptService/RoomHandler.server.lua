@@ -7,7 +7,7 @@ local Workspace = game:GetService("Workspace")
 
 local Zombies = ServerScriptService.Zombies
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Zombie = require(Zombies.Zombie)

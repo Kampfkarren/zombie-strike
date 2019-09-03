@@ -8,6 +8,9 @@
       "Core": {
         "$path": "shared/ReplicatedStorage/Core"
       },
+      "RuddevModules": {
+        "$path": "shared/ReplicatedStorage/RuddevModules"
+      },
       "Vendor": {
         "$className": "Folder",
         "t": {
@@ -36,7 +39,10 @@
       "$className": "StarterPlayer",
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
-        "$path": "mission/StarterPlayer/StarterCharacterScripts"
+        "$path": "mission/StarterPlayer/StarterCharacterScripts",
+        "Shared": {
+          "$path": "shared/StarterPlayer/StarterCharacterScripts"
+        }
       },
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",

@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 
-local MockData = ReplicatedStorage.MockData
+local MockData = ReplicatedStorage.Core.MockData
 
 local MockDungeon = require(MockData.MockDungeon)
 local MockPlayer = require(MockData.MockPlayer)

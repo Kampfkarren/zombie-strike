@@ -15,6 +15,7 @@ local MODULES		= ReplicatedStorage:WaitForChild("RuddevModules")
 	local INPUT			= require(MODULES:WaitForChild("Input"))
 	local MOUSE = require(MODULES.Mouse)
 
+local hubWorld = ReplicatedStorage.HubWorld.Value
 local itemModule
 
 -- functions
@@ -50,7 +51,7 @@ HandleCharacter(PLAYER.Character)
 INPUT.ActionBegan:connect(function(action, processed)
 	if not processed then
 		if action == "Primary" then
-			if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then
+			if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter or hubWorld then
 				local character	= PLAYER.Character
 				if character then
 					itemModule:Activate()

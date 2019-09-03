@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local Loot = {}
