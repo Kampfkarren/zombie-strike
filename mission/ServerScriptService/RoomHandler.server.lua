@@ -71,7 +71,7 @@ local function generateDungeon(numRooms)
 	return rooms
 end
 
-local rooms = generateDungeon(1)
+local rooms = generateDungeon(15)
 
 local function spawnZombie(zombieType, position)
 	local zombie = Zombie.new(zombieType)

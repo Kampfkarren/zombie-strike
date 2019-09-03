@@ -62,15 +62,15 @@ Players.PlayerAdded:connect(function(player)
 
 	playerData.Parent = player
 
-	local armor = Data.GetPlayerData(player, "Armor")
-	local armorHealth = ArmorScaling.ArmorHealth(armor.Level, armor.Rarity)
-	local armorModel = Data.GetModel(armor)
-
-	local helmet = Data.GetPlayerData(player, "Helmet")
-	local helmetHealth = ArmorScaling.HelmetHealth(helmet.Level, helmet.Rarity)
-	local helmetModel = Data.GetModel(helmet)
-
 	local function characterAdded(character)
+		local armor = Data.GetPlayerData(player, "Armor")
+		local armorHealth = ArmorScaling.ArmorHealth(armor.Level, armor.Rarity)
+		local armorModel = Data.GetModel(armor)
+
+		local helmet = Data.GetPlayerData(player, "Helmet")
+		local helmetHealth = ArmorScaling.HelmetHealth(helmet.Level, helmet.Rarity)
+		local helmetModel = Data.GetModel(helmet)
+
 		local health = XP.HealthForLevel(level) + armorHealth + helmetHealth
 		character.Humanoid.MaxHealth = health
 		character.Humanoid.Health = health
@@ -94,13 +94,19 @@ Players.PlayerAdded:connect(function(player)
 	inventoryStore:OnUpdate(updateInventory)
 	updateInventory(inventoryStore:Get())
 
-	local function updateEquipment()
+	local function updateEquipment(anUpdate)
 		UpdateEquipment:FireClient(
 			player,
 			Data.GetPlayerData(player, "EquippedArmor"),
 			Data.GetPlayerData(player, "EquippedHelmet"),
 			Data.GetPlayerData(player, "EquippedWeapon")
 		)
+
+		if anUpdate then
+			local cframe = player.Character.PrimaryPart.CFrame
+			player:LoadCharacter()
+			player.Character:SetPrimaryPartCFrame(cframe)
+		end
 	end
 
 	updateEquipment()

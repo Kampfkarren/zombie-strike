@@ -1,5 +1,7 @@
+local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
 local Data = require(ReplicatedStorage.Libraries.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
@@ -38,13 +40,18 @@ end
 
 local function toggle(open)
 	inventoryToggled = open
+	resetSelectable()
+
 	if open then
 		inventoryTweenIn:Play()
+		GuiService.SelectedObject = cards[#cards]
 	else
+		local selected = GuiService.SelectedObject
+		if not selected.Selectable then
+			GuiService.SelectedObject = nil
+		end
 		inventoryTweenOut:Play()
 	end
-
-	resetSelectable()
 end
 
 local function updateEquip(gui, data)
@@ -117,7 +124,9 @@ UpdateInventory.OnClientEvent:connect(function(inventory)
 		end)
 
 		card.MouseButton1Click:connect(function()
-			UpdateEquipment:FireServer(id)
+			if not equipped[id] then
+				UpdateEquipment:FireServer(id)
+			end
 		end)
 
 		card.ImageColor3 = color
@@ -148,4 +157,12 @@ local contentsGrid = Inventory.Contents.UIGridLayout
 contentsGrid:GetPropertyChangedSignal("AbsoluteContentSize"):connect(function()
 	local size = contentsGrid.AbsoluteContentSize
 	Inventory.Contents.CanvasSize = UDim2.new(0, size.X, 0, size.Y)
+end)
+
+UserInputService.InputBegan:connect(function(inputObject, processed)
+	if not processed then
+		if inputObject.KeyCode == Enum.KeyCode.ButtonB then
+			toggle(false)
+		end
+	end
 end)

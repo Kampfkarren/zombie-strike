@@ -43,13 +43,6 @@ MockPlayer.Inventory = {
 	MockPlayer.Weapon,
 	MockPlayer.Armor,
 	MockPlayer.Helmet,
-	{
-		Type = "Helmet",
-		Level = 10,
-		Rarity = 5,
-		Name = "Helmet",
-		Model = 5,
-	}
 }
 
 return MockPlayer
