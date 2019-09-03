@@ -10,8 +10,6 @@ local LocalPlayer = Players.LocalPlayer
 
 local HitTick = HealthXP.Health.HitTick
 
-local lastHealth
-
 local hitTickSpeed = 0.3
 local hitTickInfo = TweenInfo.new(hitTickSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 local transparencyTickTween = {
@@ -19,13 +17,17 @@ local transparencyTickTween = {
 	{ BackgroundTransparency = 0.2, BackgroundColor3 = Color3.new(0.8, 0.8, 0.8) }
 }
 
+local function updateHealth(humanoid)
+	local health, maxHealth = humanoid.Health, humanoid.MaxHealth
+	HealthXP.Health.TextLabel.Text = health .. "/" .. maxHealth
+end
+
 local function updateAmmo(ammo)
 	HealthXP.Ammo.Text = ammo
 end
 
 local function characterAdded(character)
 	local humanoid = character:WaitForChild("Humanoid")
-	lastHealth = humanoid.MaxHealth
 	updateHealth(humanoid)
 
 	humanoid.HealthChanged:connect(function()

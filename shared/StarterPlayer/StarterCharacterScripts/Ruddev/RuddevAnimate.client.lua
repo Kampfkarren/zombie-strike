@@ -203,10 +203,10 @@ RunService:BindToRenderStep("Animate", 5, function(deltaTime)
 			local speed	= ROOT_PART.Velocity.Magnitude
 
 			if speed > 200 then
-				SetStance("Flinging")
-				if not animations.Movement.Fling.IsPlaying then
-					animations.Movement.Fling:Play(0.1, 1, 3)
-				end
+				-- SetStance("Flinging")
+				-- if not animations.Movement.Fling.IsPlaying then
+				-- 	animations.Movement.Fling:Play(0.1, 1, 3)
+				-- end
 			else
 				SetStance("Falling")
 				if not animations.Movement.Fall.IsPlaying then

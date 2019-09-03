@@ -2,12 +2,15 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 
+local CoreData = require(ReplicatedStorage.Core.CoreData)
 local MockData = ReplicatedStorage.Core.MockData
 
 local MockDungeon = require(MockData.MockDungeon)
 local MockPlayer = require(MockData.MockPlayer)
 
 local Data = {}
+
+Data.GetModel = CoreData.GetModel
 
 local function placeIdApproved(placeId)
 	-- TODO: Check if place ID was approved
@@ -45,10 +48,6 @@ end
 function Data.GetLocalPlayerData(key)
 	assert(RunService:IsClient())
 	return getPlayerData(TeleportService:GetLocalPlayerTeleportData() or {}, key)
-end
-
-function Data.GetModel(data)
-	return ReplicatedStorage.Items[data.Type .. data.Model]:Clone()
 end
 
 return Data

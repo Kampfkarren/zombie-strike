@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
-local Maid = require(ReplicatedStorage.Libraries.Maid)
+local Maid = require(ReplicatedStorage.Core.Maid)
 local XP = require(ReplicatedStorage.Core.XP)
 
 local Zombie = {}

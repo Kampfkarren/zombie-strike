@@ -1,15 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Data = require(ReplicatedStorage.Core.Data)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local Loot = {}
 
-local map = {
+local gunMap = {
+	"Type",
 	"Level",
 	"Name",
 	"Rarity",
-	"Type",
 	"Damage",
 	"FireRate",
 	"CritChance",
@@ -17,15 +16,23 @@ local map = {
 	"Model",
 }
 
+local armorMap = {
+	"Type",
+	"Level",
+	"Name",
+	"Rarity",
+	"Model",
+}
+
 Loot.Rarities = {
 	{
 		Name = "Common",
-		-- Color = Color3.new(1, 1, 1),
+		Color = Color3.new(1, 1, 1),
 	},
 
 	{
 		Name = "Uncommon",
-		Color = Color3.fromRGB(186, 220, 88),
+		Color = Color3.fromRGB(0, 189, 50),
 	},
 
 	{
@@ -44,22 +51,47 @@ Loot.Rarities = {
 	},
 }
 
-local serializeStruct = t.interface({
-	Level = t.number,
-	Name = t.string,
-	Rarity = t.numberConstrained(1, #Loot.Rarities),
-	Type = t.string,
+local serializeStruct = t.union(
+	t.interface({
+		Level = t.number,
+		Name = t.string,
+		Rarity = t.numberConstrained(1, #Loot.Rarities),
+		Type = t.union(
+			t.literal("Pistol"),
+			t.literal("Rifle"),
+			t.literal("SMG"),
+			t.literal("Shotgun"),
+			t.literal("Sniper")
+		),
 
-	Damage = t.number,
-	FireRate = t.number,
-	CritChance = t.number,
-	Magazine = t.number,
+		Damage = t.number,
+		FireRate = t.number,
+		CritChance = t.number,
+		Magazine = t.number,
 
-	Model = t.number,
-})
+		Model = t.number,
+	}),
+
+	t.interface({
+		Level = t.number,
+		Name = t.string,
+		Rarity = t.numberConstrained(1, #Loot.Rarities),
+		Type = t.union(
+			t.literal("Armor"),
+			t.literal("Helmet")
+		),
+
+		Model = t.number,
+	})
+)
 
 function Loot.Deserialize(data)
 	local loot = {}
+	local map = gunMap
+
+	if data[1] == "Armor" or data[1] == "Helmet" then
+		map = armorMap
+	end
 
 	for index, key in pairs(map) do
 		loot[key] = data[index]
@@ -81,6 +113,11 @@ function Loot.Serialize(data)
 	assert(serializeStruct(data))
 
 	local loot = {}
+	local map = gunMap
+
+	if data.Type == "Armor" or data.Type == "Helmet" then
+		map = armorMap
+	end
 
 	for index, key in pairs(map) do
 		loot[index] = data[key]

@@ -7,7 +7,8 @@ local Workspace = game:GetService("Workspace")
 
 local Zombies = ServerScriptService.Zombies
 
-local Data = require(ReplicatedStorage.Core.Data)
+local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
+local Data = require(ReplicatedStorage.Libraries.Data)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Zombie = require(Zombies.Zombie)
@@ -19,6 +20,8 @@ local roomTypes = {
 	enemy = {},
 	obby = {},
 }
+
+local WEAPON_DROP_RATE = 0.67
 
 for _, room in pairs(Rooms:GetChildren()) do
 	local obbyType = room:FindFirstChild("ObbyType")
@@ -87,10 +90,6 @@ local function generateLoot(player)
 		level = level - rng:NextInteger(0, 2)
 	end
 
-	local type = GunScaling.RandomType()
-
-	local lootTable = {}
-
 	local rarityRng = rng:NextNumber() * 100
 	local rarity
 
@@ -107,43 +106,69 @@ local function generateLoot(player)
 		rarity = 1
 	end
 
-	local stats = GunScaling.BaseStats(type, level, rarity)
+	local lootTable = {}
 
-	local funny = rng:NextInteger(0, 35)
-	stats.Damage = math.floor(stats.Damage * (1 + funny / 35))
+	if rng:NextNumber() <= WEAPON_DROP_RATE then
+		local type = GunScaling.RandomType()
 
-	local quality
-	if funny <= 4 then
-		quality = "Average"
-	elseif funny <= 9 then
-		quality = "Superior"
-	elseif funny <= 14 then
-		quality = "Choice"
-	elseif funny <= 19 then
-		quality = "Valuable"
-	elseif funny <= 24 then
-		quality = "Great"
-	elseif funny <= 29 then
-		quality = "Ace"
-	elseif funny <= 34 then
-		quality = "Extraordinary"
+		local stats = GunScaling.BaseStats(type, level, rarity)
+
+		local funny = rng:NextInteger(0, 35)
+		stats.Damage = math.floor(stats.Damage * (1 + funny / 35))
+
+		local quality
+		if funny <= 4 then
+			quality = "Average"
+		elseif funny <= 9 then
+			quality = "Superior"
+		elseif funny <= 14 then
+			quality = "Choice"
+		elseif funny <= 19 then
+			quality = "Valuable"
+		elseif funny <= 24 then
+			quality = "Great"
+		elseif funny <= 29 then
+			quality = "Ace"
+		elseif funny <= 34 then
+			quality = "Extraordinary"
+		else
+			quality = "Perfect"
+		end
+
+		local loot = {
+			Type = type,
+			CritChance = stats.CritChance,
+			Damage = stats.Damage,
+			FireRate = stats.FireRate,
+			Level = level,
+			Magazine = stats.Magazine,
+			Model = GunScaling.Model(type, rarity),
+			Name = quality .. " Poopoo",
+			Rarity = rarity,
+		}
+
+		table.insert(lootTable, loot)
 	else
-		quality = "Perfect"
+		local type, model
+
+		if rng:NextNumber() >= 0.5 then
+			-- type = "Armor"
+			type = "Helmet"
+		else
+			type = "Helmet"
+		end
+
+		model = ArmorScaling.Model(type, rarity)
+
+		table.insert(lootTable, {
+			Level = level,
+			Name = "Poopy",
+			Rarity = rarity,
+			Type = type,
+
+			Model = model,
+		})
 	end
-
-	local loot = {
-		Type = type,
-		CritChance = stats.CritChance,
-		Damage = stats.Damage,
-		FireRate = stats.FireRate,
-		Level = level,
-		Magazine = stats.Magazine,
-		Model = GunScaling.Model(type, rarity),
-		Name = quality .. " Poopoo",
-		Rarity = rarity,
-	}
-
-	table.insert(lootTable, loot)
 
 	return Loot.SerializeTable(lootTable)
 end

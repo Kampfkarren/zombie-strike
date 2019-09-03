@@ -1,7 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Data = require(ReplicatedStorage.Core.Data)
+local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
+local Data = require(ReplicatedStorage.Libraries.Data)
 local XP = require(ReplicatedStorage.Core.XP)
 
 Players.PlayerAdded:connect(function(player)
@@ -23,9 +24,28 @@ Players.PlayerAdded:connect(function(player)
 
 	playerData.Parent = player
 
-	player.CharacterAdded:connect(function(character)
-		local health = XP.HealthForLevel(level)
+	local armor = Data.GetPlayerData(player, "Armor")
+	local armorHealth = ArmorScaling.ArmorHealth(armor.Level, armor.Rarity)
+	local armorModel = Data.GetModel(armor)
+
+	local helmet = Data.GetPlayerData(player, "Helmet")
+	local helmetHealth = ArmorScaling.HelmetHealth(helmet.Level, helmet.Rarity)
+	local helmetModel = Data.GetModel(helmet)
+
+	local function characterAdded(character)
+		local health = XP.HealthForLevel(level) + armorHealth + helmetHealth
 		character.Humanoid.MaxHealth = health
 		character.Humanoid.Health = health
-	end)
+
+		armorModel.Shirt:Clone().Parent = character
+		armorModel.Pants:Clone().Parent = character
+
+		helmetModel.Hat:Clone().Parent = character
+	end
+
+	if player.Character then
+		characterAdded(player.Character)
+	end
+
+	player.CharacterAdded:connect(characterAdded)
 end)

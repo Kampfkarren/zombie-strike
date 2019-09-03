@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Data = require(ReplicatedStorage.Core.Data)
+local Data = require(ReplicatedStorage.Libraries.Data)
 
 local GunScaling = {}
 
@@ -50,24 +50,6 @@ local Types = {
 			Damage = 1.12,
 			FireRate = 1.01,
 			Magazine = 1.011,
-		},
-	},
-
-	Rifle = {
-		Base = {
-			CritChance = 0.01,
-			Damage = 12,
-			FireRate = 10,
-			Magazine = 24,
-			PelletCount = 5,
-		},
-
-		Scale = {
-			CritChance = 1.01,
-			Damage = 1.12,
-			FireRate = 1.01,
-			Magazine = 1.011,
-			PelletCount = 1.01,
 		},
 	},
 

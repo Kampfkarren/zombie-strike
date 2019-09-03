@@ -10,7 +10,7 @@ local Players = game:GetService("Players")
 local ITEMS = ReplicatedStorage.Items
 local REMOTES = ReplicatedStorage.RuddevRemotes
 
-local Data = require(ReplicatedStorage.Core.Data)
+local Data = require(ReplicatedStorage.Libraries.Data)
 
 -- Variables
 
@@ -84,7 +84,7 @@ end
 -- Initiate
 
 for _, item in pairs(ITEMS:GetChildren()) do
-	if not item:IsA("PackageLink") then
+	if item.ItemType.Value == "Gun" then
 		PrepareItem(item)
 	end
 end
@@ -108,9 +108,14 @@ game.Players.PlayerAdded:connect(function(player)
 	gun.Ammo.Value = data.Magazine
 	weaponData.Parent = gun
 
-	player.CharacterAdded:connect(function(character)
+	local function characterAdded(character)
 		local gun = gun:Clone()
 		gun.Parent = character
 		Equip(gun)
-	end)
+	end
+
+	if player.Character then
+		characterAdded(player.Character)
+	end
+	player.CharacterAdded:connect(characterAdded)
 end)
