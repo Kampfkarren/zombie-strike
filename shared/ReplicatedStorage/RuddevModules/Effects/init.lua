@@ -6,7 +6,7 @@ local effects	= {}
 
 local EFFECTS	= {}
 
-function EFFECTS.Effect(self, effect, ...)
+function EFFECTS.Effect(_, effect, ...)
 	if not effects[effect] then
 		if script:FindFirstChild(effect) then
 			effects[effect]	= require(script[effect])

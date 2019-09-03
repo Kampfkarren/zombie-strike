@@ -6,7 +6,6 @@ local TweenService		= game:GetService("TweenService")
 local RunService		= game:GetService("RunService")
 local Workspace			= game:GetService("Workspace")
 local Players			= game:GetService("Players")
-local Lighting			= game:GetService("Lighting")
 local Debris			= game:GetService("Debris")
 
 -- constants
@@ -18,7 +17,6 @@ local EVENTS	= ReplicatedStorage:WaitForChild("RuddevEvents")
 local REMOTES	= ReplicatedStorage:WaitForChild("RuddevRemotes")
 local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 	local MOUSE		= require(MODULES:WaitForChild("Mouse"))
-	local SPRING	= require(MODULES:WaitForChild("Spring"))
 
 local GUI		= script.Parent
 local MOUSE_GUI	= GUI:WaitForChild("Mouse")
@@ -27,16 +25,11 @@ local hubWorld = ReplicatedStorage.HubWorld.Value
 
 -- variables
 
-local reticleSize		= 0.1
 local currentReticle	= ""
-
-local aiming	= false
 
 MOUSE_GUI.Visible = true
 
 -- functions
-
-local function Lerp(a, b, d) return a + (b - a) * d end
 
 local function UpdateReticle()
 	for _, reticle in pairs(MOUSE_GUI:GetChildren()) do
@@ -74,9 +67,6 @@ local function Hitmarker(headshot, position)
 
 	script.HitmarkerSound:Play()
 
-	if armor then
-		script.ArmorSound:Play()
-	end
 	if headshot then
 		script.HeadshotSound:Play()
 	end
@@ -102,7 +92,7 @@ if hubWorld then
 	end)
 end
 
-RunService:BindToRenderStep("Mouse", 5, function(deltaTime)
+RunService:BindToRenderStep("Mouse", 5, function()
 	if MOUSE.Reticle ~= currentReticle then
 		currentReticle	= MOUSE.Reticle
 		UpdateReticle()
@@ -157,10 +147,6 @@ REMOTES.Finished.OnClientEvent:connect(function()
 	MOUSE_GUI.Visible	= false
 
 	script.Disabled	= true
-end)
-
-EVENTS.Aim.Event:connect(function(a)
-	aiming	= a
 end)
 
 EVENTS.Hitmarker.Event:connect(Hitmarker)

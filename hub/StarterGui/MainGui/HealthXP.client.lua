@@ -1,21 +1,10 @@
-local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
 
 local XP = require(ReplicatedStorage.Core.XP)
 
 local HealthXP = script.Parent.Main.HealthXP
 local LocalPlayer = Players.LocalPlayer
-
-local HitTick = HealthXP.Health.HitTick
-
-local hitTickSpeed = 0.3
-local hitTickInfo = TweenInfo.new(hitTickSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
-local transparencyTickTween = {
-	TweenInfo.new(hitTickSpeed / 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, true),
-	{ BackgroundTransparency = 0.2, BackgroundColor3 = Color3.new(0.8, 0.8, 0.8) }
-}
 
 local function updateHealth(humanoid)
 	local health, maxHealth = humanoid.Health, humanoid.MaxHealth

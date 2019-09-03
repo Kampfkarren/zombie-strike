@@ -1,5 +1,4 @@
 local CollectionService = game:GetService("CollectionService")
-local ServerStorage = game:GetService("ServerStorage")
 
 local Zombie = require(script.Parent.Zombie)
 

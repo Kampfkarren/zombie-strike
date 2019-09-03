@@ -1,14 +1,10 @@
 -- Services
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
-local Players = game:GetService("Players")
 
 -- Constants
 
 local ITEMS = ReplicatedStorage.Items
-local REMOTES = ReplicatedStorage.RuddevRemotes
 
 local Data = require(ReplicatedStorage.Libraries.Data)
 

@@ -8,7 +8,7 @@ local SPRING	= {}
 
 -- Functions
 
-function SPRING.Create(self, mass, force, damping, speed)
+function SPRING.Create(_, mass, force, damping, speed)
 	local spring	= {
 		Target		= Vector3.new();
 		Position	= Vector3.new();
@@ -37,7 +37,7 @@ function SPRING.Create(self, mass, force, damping, speed)
 	function spring.Update(self, dt)
 		local scaledDeltaTime	= math.min(dt * self.Speed, 0.1) / ITERATIONS
 
-		for i = 1, ITERATIONS do
+		for _ = 1, ITERATIONS do
 			local force			= self.Target - self.Position
 			local acceleration	= (force * self.Force) / self.Mass
 

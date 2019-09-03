@@ -1,14 +1,11 @@
 -- services
 
-local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local Debris = game:GetService("Debris")
 
 -- constants
 
 local EVENTS = ReplicatedStorage:WaitForChild("RuddevEvents")
-local REMOTES = ReplicatedStorage:WaitForChild("RuddevRemotes")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES:WaitForChild("Config"))
 
@@ -19,22 +16,9 @@ if not ReplicatedStorage.HubWorld.Value then
 
 	local CRIT_MULTIPLIER = 2
 
-	-- functions
-
-	-- module
-
-
-	-- variables
-
-	local damageEnabled = true
-
 	-- todo: implement damage functions etc
 
-	function DAMAGE.SetEnabled(self, enabled)
-		damageEnabled = enabled
-	end
-
-	function DAMAGE.Calculate(self, item, hit, origin)
+	function DAMAGE.Calculate(_, item, hit, origin)
 		local config = CONFIG:GetConfig(item)
 		local damage = config.Damage
 
@@ -58,13 +42,11 @@ if not ReplicatedStorage.HubWorld.Value then
 		return math.ceil(damage)
 	end
 
-	function DAMAGE.PlayerCanDamage(self, player, humanoid)
+	function DAMAGE.PlayerCanDamage(_, _, humanoid)
 		return Players:GetPlayerFromCharacter(humanoid.Parent) == nil
 	end
 
-	function DAMAGE.Damage(self, humanoid, damage, player)
-		local armor = humanoid:FindFirstChild("Armor")
-
+	function DAMAGE.Damage(_, humanoid, damage, player)
 		if player then
 			local killTag = humanoid:FindFirstChild("KillTag")
 
@@ -95,7 +77,7 @@ if not ReplicatedStorage.HubWorld.Value then
 		end
 	end
 else
-	function DAMAGE:PlayerCanDamage()
+	function DAMAGE.PlayerCanDamage()
 		return false
 	end
 end

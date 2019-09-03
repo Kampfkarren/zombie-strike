@@ -1,6 +1,6 @@
 local ServerStorage = game:GetService("ServerStorage")
 
-return function(context)
+return function()
 	ServerStorage.Events.EndDungeon:Fire()
 	return "Mission ended."
 end

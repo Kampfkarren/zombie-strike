@@ -5,7 +5,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
-local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Libraries.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)

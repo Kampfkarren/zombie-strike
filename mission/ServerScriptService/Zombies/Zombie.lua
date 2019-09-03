@@ -21,7 +21,7 @@ function Zombie:Spawn(position)
 	self.instance:SetPrimaryPartCFrame(CFrame.new(position))
 	self.instance.Parent = Workspace
 
-	self.aliveMaid:GiveTask(ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(humanoid, damage)
+	self.aliveMaid:GiveTask(ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(humanoid)
 		if humanoid == self.instance.Humanoid then
 			self:UpdateNametag()
 		end
@@ -60,8 +60,6 @@ end
 function Zombie:Wander()
 	local humanoid = self.instance.Humanoid
 	humanoid.WalkSpeed = self.WanderSpeed
-
-	local currentTick = self.stateUpdateTick
 
 	local noiseX = math.random()
 	local noiseY = math.random()

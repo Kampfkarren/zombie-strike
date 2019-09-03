@@ -5,7 +5,6 @@ local ReplicatedStorage	= game:GetService("ReplicatedStorage")
 local RunService		= game:GetService("RunService")
 local Workspace			= game:GetService("Workspace")
 local Players			= game:GetService("Players")
-local GuiService = game:GetService("GuiService")
 
 -- constants
 
@@ -21,8 +20,6 @@ local itemModule
 -- functions
 
 local function HandleItem(item)
-	local config	= require(item:WaitForChild("Config"))
-
 	itemModule = GUN_MODULE:Create(item)
 	itemModule:Connect()
 end

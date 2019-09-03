@@ -1,15 +1,11 @@
 -- services
 
-local ReplicatedStorage	= game:GetService("ReplicatedStorage")
 local RunService		= game:GetService("RunService")
 local Players			= game:GetService("Players")
 
 -- constants
 
 local PLAYER		= Players.LocalPlayer
-
-local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
-	local INPUT		= require(MODULES:WaitForChild("Input"))
 
 local CHARACTER		= PLAYER.Character
 local HUMANOID		= CHARACTER:WaitForChild("Humanoid")
@@ -19,7 +15,6 @@ STANCE.Name = "Stance"
 STANCE.Value = "Walk"
 STANCE.Parent = HUMANOID
 
-local STANCE		= HUMANOID:WaitForChild("Stance")
 local ROOT_PART		= CHARACTER:WaitForChild("HumanoidRootPart")
 local ANIMATIONS	= script:WaitForChild("Animations")
 
@@ -39,7 +34,6 @@ local animations	= {
 }
 
 local stance	= ""
-local grounded	= false
 local grinding	= false
 local flying	= false
 
@@ -183,11 +177,9 @@ end
 
 SetStance(STANCE.Value)
 
-RunService:BindToRenderStep("Animate", 5, function(deltaTime)
-	local grounded		= HUMANOID.FloorMaterial ~= Enum.Material.Air
+RunService:BindToRenderStep("Animate", 5, function()
 	local velocity		= Vector3.new(ROOT_PART.Velocity.X, 0, ROOT_PART.Velocity.Z)
 	local localVelocity	= ROOT_PART.CFrame:vectorToObjectSpace(velocity)
-	local speed			= velocity.Magnitude
 
 	if flying then
 		SetStance("Fly")
@@ -202,12 +194,7 @@ RunService:BindToRenderStep("Animate", 5, function(deltaTime)
 		if HUMANOID.FloorMaterial == Enum.Material.Air then
 			local speed	= ROOT_PART.Velocity.Magnitude
 
-			if speed > 200 then
-				-- SetStance("Flinging")
-				-- if not animations.Movement.Fling.IsPlaying then
-				-- 	animations.Movement.Fling:Play(0.1, 1, 3)
-				-- end
-			else
+			if speed <= 200 then
 				SetStance("Falling")
 				if not animations.Movement.Fall.IsPlaying then
 					animations.Movement.Fall:Play()

@@ -53,9 +53,6 @@ local shaker = SPRING:Create(1, 100, 4, 3)
 local mode = "Default"
 local flying = false
 
-local currentSquad, spectateChar
-local killerChar
-
 local modalStack = 0
 
 local flyShake = 0
@@ -66,25 +63,6 @@ local function Lerp(a, b, d) return a + (b - a) * d end
 
 local function ZoomSensitivity()
 	return (CAMERA.FieldOfView / 70)^2
-end
-
-local function CenterFromSubject(subject)
-	if subject then
-		if subject:IsA("Humanoid") then
-			local rootPart = subject.Parent:FindFirstChild("HumanoidRootPart")
-
-			if rootPart then
-				return rootPart.Position
-			end
-		elseif subject:IsA("BasePart") then
-			return subject.Position
-		elseif subject:IsA("Model") then
-			if subject.PrimaryPart then
-				return subject.PrimaryPart.Position
-			end
-		end
-	end
-	return Vector3.new()
 end
 
 local function HandleCharacter(newCharacter)
@@ -304,7 +282,7 @@ UserInputService.InputChanged:connect(function(inputObject, processed)
 
 			-- EVENTS.Sway:Fire(Vector3.new(-inputObject.Delta.X, -inputObject.Delta.Y, 0))
 		elseif inputObject.UserInputType == Enum.UserInputType.Touch then
-			if DynamicThumbstick:GetInputObject() == touchObject then
+			if DynamicThumbstick:GetInputObject() == inputObject then
 				x = (x - inputObject.Delta.X * TOUCH_SENSITIVITY.X * ZoomSensitivity()) % (math.pi * 2)
 				y = math.clamp(y - inputObject.Delta.Y * TOUCH_SENSITIVITY.Y * ZoomSensitivity(), MIN_Y, MAX_Y)
 			end

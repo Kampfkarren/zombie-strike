@@ -1,7 +1,6 @@
 -- TODO: Prevent shooters from being moved, or don't run the animation
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local Raycast = require(ReplicatedStorage.Libraries.Raycast)

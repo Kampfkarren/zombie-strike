@@ -3,18 +3,12 @@
 local UserInputService =  game:GetService("UserInputService")
 local ReplicatedStorage =  game:GetService("ReplicatedStorage")
 local RunService =  game:GetService("RunService")
-local Players =  game:GetService("Players")
 
 -- constants
 
-local PLAYER =  Players.LocalPlayer
-
 -- variables
 
-local initialized =  false
-
 local actions =  {}
-local defaults =  {}
 
 local actionBegan, actionEnded
 
@@ -79,7 +73,7 @@ end)
 
 local INPUT =  {}
 
-function INPUT.GetActionInput(self, action)
+function INPUT.GetActionInput(_, action)
 	local input =  "nil"
 
 	local replacements =  {
@@ -120,82 +114,78 @@ function INPUT.GetActionInput(self, action)
 	return string.upper(input)
 end
 
-if not initialized then
-	local keybindChanged =  Instance.new("BindableEvent")
-	INPUT.KeybindChanged =  keybindChanged.Event
+local keybindChanged =  Instance.new("BindableEvent")
+INPUT.KeybindChanged =  keybindChanged.Event
 
-	actionBegan =  Instance.new("BindableEvent")
-	actionEnded =  Instance.new("BindableEvent")
+actionBegan =  Instance.new("BindableEvent")
+actionEnded =  Instance.new("BindableEvent")
 
-	INPUT.ActionBegan =  actionBegan.Event
-	INPUT.ActionEnded =  actionEnded.Event
+INPUT.ActionBegan =  actionBegan.Event
+INPUT.ActionEnded =  actionEnded.Event
 
-	-- register actions
+-- register actions
 
-	local keybinds =  ReplicatedStorage.Keybinds
+local keybinds =  ReplicatedStorage.Keybinds
 
-	local function Register(action, bindP, bindS)
-		local primary, secondary
-		if bindP then
-			local A, B =  string.match(bindP, "(.-)%.(.+)")
+local function Register(action, bindP, bindS)
+	local primary, secondary
+	if bindP then
+		local A, B =  string.match(bindP, "(.-)%.(.+)")
 
-			if A and B then
-				primary =  Enum[A][B]
-			end
+		if A and B then
+			primary =  Enum[A][B]
 		end
-		if bindS then
-			local A, B =  string.match(bindS, "(.-)%.(.+)")
-
-			if A and B then
-				secondary =  Enum[A][B]
-			end
-		end
-
-		RegisterAction(action, primary, secondary)
-		keybindChanged:Fire(action)
 	end
+	if bindS then
+		local A, B =  string.match(bindS, "(.-)%.(.+)")
 
-	local function Handle(keybind)
-		local action =  keybind.Name
-		local bind =  keybind.Value
-
-		if string.match(bind, ";") then
-			local bindP, bindS =  string.match(bind, "(.-);(.+)")
-
-			if bindP and bindS then
-				Register(action, bindP, bindS)
-			elseif bindP then
-				Register(action, bindP)
-			elseif bindS then
-				Register(action, nil, bindS)
-			end
-		else
-			Register(action, bind)
+		if A and B then
+			secondary =  Enum[A][B]
 		end
 	end
 
-	keybinds.ChildAdded:connect(function(keybind)
-		keybind.Changed:connect(function()
-			Handle(keybind)
-		end)
+	RegisterAction(action, primary, secondary)
+	keybindChanged:Fire(action)
+end
 
-		RunService.Stepped:wait()
+local function Handle(keybind)
+	local action =  keybind.Name
+	local bind =  keybind.Value
+
+	if string.match(bind, ";") then
+		local bindP, bindS =  string.match(bind, "(.-);(.+)")
+
+		if bindP and bindS then
+			Register(action, bindP, bindS)
+		elseif bindP then
+			Register(action, bindP)
+		elseif bindS then
+			Register(action, nil, bindS)
+		end
+	else
+		Register(action, bind)
+	end
+end
+
+keybinds.ChildAdded:connect(function(keybind)
+	keybind.Changed:connect(function()
 		Handle(keybind)
 	end)
 
-	repeat
-		RunService.Stepped:wait()
-	until #keybinds:GetChildren() > 0
+	RunService.Stepped:wait()
+	Handle(keybind)
+end)
 
-	for _, keybind in pairs(keybinds:GetChildren()) do
-		keybind.Changed:connect(function()
-			Handle(keybind)
-		end)
+repeat
+	RunService.Stepped:wait()
+until #keybinds:GetChildren() > 0
 
+for _, keybind in pairs(keybinds:GetChildren()) do
+	keybind.Changed:connect(function()
 		Handle(keybind)
-	end
+	end)
 
-	initialized =  true
+	Handle(keybind)
 end
 
 return INPUT

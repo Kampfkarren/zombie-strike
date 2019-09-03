@@ -1,7 +1,6 @@
 -- services
 
 local ContextActionService = game:GetService("ContextActionService")
-local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
@@ -32,7 +31,7 @@ end
 
 local function Raycast(position, direction, ignore)
 	local ray = Ray.new(position, direction)
-	local success = false
+	local success
 	local h, p, n, humanoid
 
 	table.insert(ignore, Workspace.Effects)
@@ -67,7 +66,7 @@ end
 
 local module = {}
 
-function module.Create(self, item)
+function module.Create(_, item)
 	local itemModule = {
 		Item = item;
 		Equipped = false;
@@ -110,7 +109,7 @@ function module.Create(self, item)
 			animations.Reload:Play(0.1, 1, 1/config.ReloadTime)
 
 			local start = tick()
-			local elapsed = 0
+			local elapsed
 			repeat
 				elapsed = tick() - start
 				RunService.Stepped:wait()
@@ -149,11 +148,11 @@ function module.Create(self, item)
 			local direction = cframe.lookVector
 			table.insert(directions, direction)
 
-			local hit, pos, normal, humanoid = Raycast(position, direction * config.Range, {character})
+			local hit, pos, _, humanoid = Raycast(position, direction * config.Range, {character})
 
 			if hit and humanoid then
 				if DAMAGE:PlayerCanDamage(PLAYER, humanoid) then
-					local damage = DAMAGE:Calculate(item, hit, position)
+					-- local damage = DAMAGE:Calculate(item, hit, position)
 					EVENTS.Hitmarker:Fire(hit.Name == "Head", pos)
 					REMOTES.Hit:FireServer(hit, i)
 				end
@@ -269,7 +268,7 @@ function module.Create(self, item)
 		self.Equipped = false
 	end
 
-	function itemModule.Activate(self)
+	function itemModule.Activate(_)
 		clicking = true
 
 		if tick() - equipTime >= EQUIP_COOLDOWN then
@@ -292,7 +291,7 @@ function module.Create(self, item)
 			elseif config.FireMode == "Burst" then
 				while clicking and CanShoot() do
 					canShoot = false
-					for i = 1, config.BurstAmount do
+					for _ = 1, config.BurstAmount do
 						if clicking and ammo > 0 then
 							rCancelled = true
 							Shoot()
@@ -311,7 +310,7 @@ function module.Create(self, item)
 		end
 	end
 
-	function itemModule.Deactivate(self)
+	function itemModule.Deactivate(_)
 		clicking = false
 	end
 

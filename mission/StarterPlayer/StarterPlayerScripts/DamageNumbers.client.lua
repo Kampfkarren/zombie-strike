@@ -6,10 +6,8 @@ local Spring = require(ReplicatedStorage.RuddevModules.Spring)
 
 local DamageNumber = ReplicatedStorage.DamageNumber
 
-local DROP_SCALE = 2
 local HEIGHT_SCALE = 1
 local LIFETIME = 0.8
-local MAX_HEIGHT = 2
 local STRAY_SCALE = 5
 
 local damageOffsets = {}

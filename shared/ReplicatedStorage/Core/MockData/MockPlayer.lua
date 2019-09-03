@@ -1,5 +1,3 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
 local MockPlayer = {}
 
 MockPlayer.Level = 1

@@ -26,7 +26,7 @@ function ArmorScaling.HelmetHealth(level, rarity)
 	return math.floor((HELMET_BASE * HELMET_SCALE ^ (level - 1)) * MULTIPLIERS[rarity])
 end
 
-function ArmorScaling.Model(type, rarity)
+function ArmorScaling.Model(_, rarity)
 	-- Technical debt if this guarantee is no longer true
 	return ((Data.GetDungeonData("Campaign") - 1) * 5) + rarity
 end

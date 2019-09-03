@@ -2,7 +2,7 @@ local Workspace = game:GetService("Workspace")
 
 local function Raycast(position, direction, ignore)
 	local ray = Ray.new(position, direction)
-	local success = false
+	local success
 	local h, p, n, humanoid
 
 	table.insert(ignore, Workspace.Effects)

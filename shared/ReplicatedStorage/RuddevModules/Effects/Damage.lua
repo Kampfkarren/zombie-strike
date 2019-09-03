@@ -1,8 +1,5 @@
 -- services
 
-local ReplicatedStorage	= game:GetService("ReplicatedStorage")
-local TweenService		= game:GetService("TweenService")
-local RunService		= game:GetService("RunService")
 local Workspace			= game:GetService("Workspace")
 local Debris			= game:GetService("Debris")
 

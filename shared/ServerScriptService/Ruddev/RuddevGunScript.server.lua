@@ -1,9 +1,7 @@
 -- services
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 
 -- constants
@@ -20,36 +18,6 @@ local shots = {}
 local cancels = {}
 
 -- functions
-
-local function Raycast(position, direction, ignore)
-	local ray = Ray.new(position, direction)
-	local success = false
-	local h, p, n, humanoid
-
-	table.insert(ignore, Workspace.Effects)
-	table.insert(ignore, Workspace.Drops)
-
-	repeat
-		h, p, n = Workspace:FindPartOnRayWithIgnoreList(ray, ignore)
-
-		if h then
-			local humanoid = h.Parent:FindFirstChildOfClass("Humanoid")
-			if humanoid then
-				table.insert(ignore, humanoid.Parent)
-				success = false
-			elseif h.CanCollide and h.Transparency < 1 then
-				success = true
-			else
-				table.insert(ignore, h)
-				success = false
-			end
-		else
-			success = true
-		end
-	until success
-
-	return h, p, n
-end
 
 -- events
 
@@ -74,7 +42,7 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 
 		local needed = magazine - itemAmmo.Value
 		local start = tick()
-		local elapsed = 0
+		local elapsed
 
 		repeat
 			elapsed = tick() - start
@@ -96,8 +64,6 @@ REMOTES.Hit.OnServerEvent:connect(function(player, hit, index)
 		local shot = shots[player]
 
 		if shot then
-			local character = player.Character
-
 			local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
 			if humanoid then
 				if DAMAGE:PlayerCanDamage(player, humanoid) then
@@ -166,7 +132,6 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions)
 
 	local character = player.Character
 	local rootPart = character.HumanoidRootPart
-	local humanoid = character.Humanoid
 
 	local item = character:WaitForChild("Gun")
 

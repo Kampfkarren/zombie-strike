@@ -2,13 +2,10 @@
 
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SoundService = game:GetService("SoundService")
-local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
-local Lighting = game:GetService("Lighting")
 
 -- constants
 
@@ -17,27 +14,18 @@ local PLAYER = Players.LocalPlayer
 
 local REMOTES = ReplicatedStorage:WaitForChild("RuddevRemotes")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
-	local EFFECTS = require(MODULES:WaitForChild("Effects"))
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
 local GAMEPAD_DEAD = 0.15
 
-local JUMP_POWER = 50
-
 -- variables
 
-local character, humanoid, rootPart, equipped, down, stance, flightForce
+local character, humanoid, rootPart, stance
 local waist, waistC0, neck, neckC0
 local rShoulder, rShoulderC0
 local lShoulder, lShoulderC0
 
 local rotation = CFrame.new()
-
-local crouching = false
-local sprinting = false
-
-local deployCooldown = 0
-
 local lastLookUpdate = 0
 
 -- functions
@@ -160,19 +148,13 @@ INPUT.ActionBegan:connect(function(action, processed)
 					humanoid.Jump = true
 				end
 			end
-		elseif action == "Sprint" then
-			sprinting = true
-		elseif action == "Crouch" then
-			crouching = not crouching
 		end
 	end
 end)
 
 INPUT.ActionEnded:connect(function(action, processed)
 	if not processed then
-		if action == "Sprint" then
-			sprinting = false
-		elseif action == "Jump" then
+		if action == "Jump" then
 			jumping = false
 		end
 	end

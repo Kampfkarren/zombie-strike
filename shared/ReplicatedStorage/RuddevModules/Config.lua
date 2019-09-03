@@ -72,7 +72,7 @@ Bases.Sniper = {
 	Dropoff = 5,
 }
 
-function Config:GetConfig(item)
+function Config.GetConfig(_, item)
 	local config = {}
 	local weaponData = item:WaitForChild("WeaponData")
 

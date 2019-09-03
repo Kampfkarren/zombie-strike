@@ -8,7 +8,6 @@ local Workspace = game:GetService("Workspace")
 local Zombies = ServerScriptService.Zombies
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
-local Data = require(ReplicatedStorage.Libraries.Data)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Zombie = require(Zombies.Zombie)
@@ -54,11 +53,10 @@ local function generateDungeon(numRooms)
 
 	local base = createRoom(Rooms.StartSection, obbyParent)
 	local nextRoom = base
-	local connectorAngle = 0
 
 	local rooms = {}
 
-	for roomIndex = 1, numRooms do
+	for _ = 1, numRooms do
 		-- local obbies = roomTypes.obby
 		-- nextRoom = createRoom(obbies[math.random(#obbies)], obbyParent, nextRoom)
 		local zombies = roomTypes.enemy
@@ -70,10 +68,10 @@ local function generateDungeon(numRooms)
 	table.insert(rooms, bossRoom)
 
 	obbyParent.Parent = Workspace
-	return obbyParent, rooms
+	return rooms
 end
 
-local folder, rooms = generateDungeon(1)
+local rooms = generateDungeon(1)
 
 local function spawnZombie(zombieType, position)
 	local zombie = Zombie.new(zombieType)
