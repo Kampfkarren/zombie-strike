@@ -44,10 +44,12 @@ local function toggle(open)
 
 	if open then
 		inventoryTweenIn:Play()
-		GuiService.SelectedObject = cards[#cards]
+		if UserInputService.GamepadEnabled then
+			GuiService.SelectedObject = LootContents:FindFirstChild("Template")
+		end
 	else
 		local selected = GuiService.SelectedObject
-		if not selected.Selectable then
+		if selected and selected.Selectable then
 			GuiService.SelectedObject = nil
 		end
 		inventoryTweenOut:Play()

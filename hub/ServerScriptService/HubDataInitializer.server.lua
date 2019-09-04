@@ -44,7 +44,6 @@ UpdateEquipment.OnServerEvent:connect(function(player, equip)
 end)
 
 Players.PlayerAdded:connect(function(player)
-	-- TODO: This won't work with levels changing in game
 	local playerData = Instance.new("Folder")
 	playerData.Name = "PlayerData"
 
@@ -92,7 +91,7 @@ Players.PlayerAdded:connect(function(player)
 		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
 	end
 	inventoryStore:OnUpdate(updateInventory)
-	updateInventory(inventoryStore:Get())
+	updateInventory(Data.GetPlayerData(player, "Inventory"))
 
 	local function updateEquipment(anUpdate)
 		UpdateEquipment:FireClient(

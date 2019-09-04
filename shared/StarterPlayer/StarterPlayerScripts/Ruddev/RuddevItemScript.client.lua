@@ -62,7 +62,7 @@ INPUT.ActionEnded:connect(function(action, processed)
 	if not processed then
 		if action == "Primary" then
 			local character	= PLAYER.Character
-			if character then
+			if character and itemModule then
 				itemModule:Deactivate()
 			end
 		end
