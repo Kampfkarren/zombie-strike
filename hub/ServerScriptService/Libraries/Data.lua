@@ -24,10 +24,12 @@ function Data.GetPlayerData(player, key)
 		DataStore2.Combine("DATA", key)
 
 		local dataStore = DataStore2(key, player)
-		if key == "Inventory" then
-			dataStore:BeforeInitialGet(Loot.DeserializeTable)
-			dataStore:BeforeSave(Loot.SerializeTable)
-		end
+
+		-- BeforeInitialGet doesn't work well with combined stores
+		-- if key == "Inventory" then
+			-- dataStore:BeforeInitialGet(Loot.DeserializeTable)
+			-- dataStore:BeforeSave(Loot.SerializeTable)
+		-- end
 
 		return dataStore:Get(MockPlayer[key])
 	else

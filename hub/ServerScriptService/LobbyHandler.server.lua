@@ -183,7 +183,7 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 			table.insert(playerPromises, Promise.new(function(resolve, reject)
 				coroutine.wrap(function()
 					local success, result = pcall(function()
-						DataStore2("DATA", player):Save()
+						DataStore2.SaveAll(player)
 					end)
 
 					if not success then

@@ -11,21 +11,16 @@ local XP = require(ReplicatedStorage.Core.XP)
 local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
 local UpdateInventory = ReplicatedStorage.Remotes.UpdateInventory
 
-DataStore2.Combine(
-	"DATA",
-	"Inventory",
-	"EquippedWeapon",
-	"EquippedArmor",
-	"EquippedHelmet"
-)
+-- DataStore2.Combine(
+-- 	"DATA",
+-- 	"Inventory",
+-- 	"EquippedWeapon",
+-- 	"EquippedArmor",
+-- 	"EquippedHelmet"
+-- )
 
 UpdateEquipment.OnServerEvent:connect(function(player, equip)
-	local inventoryStore = DataStore2("Inventory", player)
-	local inventory = inventoryStore:Get(nil, true)
-	if not inventory then
-		warn("no inventory for equipment")
-		return
-	end
+	local inventory = Data.GetPlayerData(player, "Inventory")
 
 	local toEquip = inventory[equip]
 	if not toEquip then

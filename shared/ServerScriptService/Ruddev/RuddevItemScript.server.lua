@@ -87,7 +87,6 @@ end
 
 game.Players.PlayerAdded:connect(function(player)
 	local data = Data.GetPlayerData(player, "Weapon")
-
 	local function characterAdded(character)
 		local gun = Data.GetModel(data)
 		gun.Name = "Gun"
