@@ -5,7 +5,6 @@ local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
-local Data = require(ReplicatedStorage.Libraries.Data)
 local Lobby = require(ReplicatedStorage.Libraries.Lobby)
 local t = require(ReplicatedStorage.Vendor.t)
 local UserThumbnail = require(ReplicatedStorage.Core.UI.UserThumbnail)

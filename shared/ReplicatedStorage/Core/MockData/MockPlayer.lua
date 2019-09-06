@@ -2,6 +2,7 @@ local MockPlayer = {}
 
 MockPlayer.Level = 1
 MockPlayer.XP = 0
+MockPlayer.Gold = 100
 
 MockPlayer.Weapon = {
 	Type = "Pistol",
@@ -15,6 +16,7 @@ MockPlayer.Weapon = {
 	Magazine = 9,
 
 	Model = 1,
+	UUID = 1,
 }
 
 MockPlayer.Armor = {
@@ -24,6 +26,7 @@ MockPlayer.Armor = {
 	Name = "Armor",
 
 	Model = 1,
+	UUID = 2,
 }
 
 MockPlayer.Helmet = {
@@ -33,6 +36,7 @@ MockPlayer.Helmet = {
 	Name = "Helmet",
 
 	Model = 1,
+	UUID = 3,
 }
 
 MockPlayer.EquippedWeapon = 1

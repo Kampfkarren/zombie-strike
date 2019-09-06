@@ -684,7 +684,7 @@ ignore = {
 	"6", -- formatting
 
 	-- shadowing
-	"412", "413", "42", "43",
+	"411", "412", "413", "42", "43",
 }
 
 std = "lua51+roblox"

@@ -2,12 +2,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
-local Loot = require(ReplicatedStorage.Core.Loot)
 local MockPlayer = require(ReplicatedStorage.Core.MockData.MockPlayer)
 
 local Data = {}
 
-local equippable = {
+Data.Equippable = {
 	Armor = true,
 	Helmet = true,
 	Weapon = true,
@@ -15,7 +14,7 @@ local equippable = {
 
 -- TODO: Don't let player in until they load data
 function Data.GetPlayerData(player, key)
-	if equippable[key] then
+	if Data.Equippable[key] then
 		local inventory = Data.GetPlayerData(player, "Inventory")
 		local equipped = Data.GetPlayerData(player, "Equipped" .. key)
 
@@ -31,7 +30,7 @@ function Data.GetPlayerData(player, key)
 			-- dataStore:BeforeSave(Loot.SerializeTable)
 		-- end
 
-		return dataStore:Get(MockPlayer[key])
+		return dataStore:Get(MockPlayer[key]), dataStore
 	else
 		error("unknown data key " .. key)
 	end

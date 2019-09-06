@@ -14,6 +14,7 @@ local gunMap = {
 	"CritChance",
 	"Magazine",
 	"Model",
+	"UUID",
 }
 
 local armorMap = {

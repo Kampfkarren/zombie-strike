@@ -50,7 +50,7 @@ INPUT.ActionBegan:connect(function(action, processed)
 		if action == "Primary" then
 			if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter or hubWorld then
 				local character	= PLAYER.Character
-				if character then
+				if character and itemModule then
 					itemModule:Activate()
 				end
 			end

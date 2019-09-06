@@ -1,5 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Libraries.Data)
@@ -94,49 +93,37 @@ return function(lootButton, LootInfo, loot, callback)
 	local stack = lootInfoStacks[LootInfo]
 
 	if not stack then
-		stack = { value = 0 }
+		stack = {}
 		lootInfoStacks[LootInfo] = stack
 	end
 
-	maid:GiveTask(lootButton.MouseButton1Click:connect(function()
-		if UserInputService.TouchEnabled then
-			if LootInfo.Visible then
-				LootInfo.Visible = false
-				callback(false)
-			else
-				lootInfo()
-				callback(true)
-			end
-		end
-	end))
-
-	maid:GiveTask(lootButton.MouseEnter:connect(function()
-		if UserInputService.MouseEnabled then
-			stack.value = stack.value + 1
-			lootInfo()
-			LootInfo.Visible = true
-			callback(true)
-		end
-	end))
-
-	maid:GiveTask(lootButton.MouseLeave:connect(function()
-		if UserInputService.MouseEnabled then
-			stack.value = stack.value - 1
-			if stack.value == 0 then
-				LootInfo.Visible = false
-			end
-			callback(false)
-		end
-	end))
-
-	maid:GiveTask(lootButton.SelectionGained:connect(function()
+	local function hover()
+		stack[lootButton] = true
 		lootInfo()
+		LootInfo.Visible = true
 		callback(true)
+	end
+
+	local function unhover()
+		stack[lootButton] = nil
+		callback(false)
+		if next(stack) == nil then
+			LootInfo.Visible = false
+		end
+	end
+
+	maid:GiveTask(lootButton.MouseEnter:connect(hover))
+	maid:GiveTask(lootButton.MouseLeave:connect(unhover))
+
+	maid:GiveTask(lootButton:GetPropertyChangedSignal("Visible"):connect(function()
+		if not lootButton.Visible then
+			unhover()
+		end
 	end))
 
-	maid:GiveTask(lootButton.SelectionLost:connect(function()
-		callback(false)
-	end))
+	maid:GiveTask(lootButton.SelectionGained:connect(hover))
+	maid:GiveTask(lootButton.SelectionLost:connect(unhover))
+	maid:GiveTask(unhover)
 
 	return maid
 end

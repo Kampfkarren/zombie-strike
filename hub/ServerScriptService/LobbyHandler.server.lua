@@ -2,7 +2,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local TeleportService = game:GetService("TeleportService")
-local TweenService = game:GetService("TweenService")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Libraries.Data)
@@ -161,7 +160,7 @@ ReplicatedStorage.Remotes.KickFromLobby.OnServerEvent:connect(function(player, k
 end)
 
 ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
-	local lobby, lobbyIndex = getPlayerLobby(player)
+	local lobby = getPlayerLobby(player)
 	if not lobby then
 		warn("PlayLobby without a lobby")
 		return

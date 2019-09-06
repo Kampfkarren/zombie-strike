@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ServerStorage = game:GetService("ServerStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Libraries.Data)
@@ -38,21 +39,27 @@ UpdateEquipment.OnServerEvent:connect(function(player, equip)
 	DataStore2(equipType, player):Set(equip)
 end)
 
+local function initStat(player, name, parent)
+	local value = Data.GetPlayerData(player, name)
+	local stat = Instance.new("NumberValue")
+	stat.Name = name
+	stat.Value = value
+	stat.Parent = parent
+
+	DataStore2(name, player):OnUpdate(function(value)
+		stat.Value = value
+	end)
+
+	return value
+end
+
 Players.PlayerAdded:connect(function(player)
 	local playerData = Instance.new("Folder")
 	playerData.Name = "PlayerData"
 
-	local level = Data.GetPlayerData(player, "Level")
-	local levelStat = Instance.new("NumberValue")
-	levelStat.Name = "Level"
-	levelStat.Value = level
-	levelStat.Parent = playerData
-
-	local xp = Data.GetPlayerData(player, "XP")
-	local xpStat = Instance.new("NumberValue")
-	xpStat.Name = "XP"
-	xpStat.Value = xp
-	xpStat.Parent = playerData
+	local level = initStat(player, "Level", playerData)
+	initStat(player, "XP", playerData)
+	initStat(player, "Gold", playerData)
 
 	playerData.Parent = player
 
@@ -81,12 +88,19 @@ Players.PlayerAdded:connect(function(player)
 
 	player.CharacterAdded:connect(characterAdded)
 
-	local inventoryStore = DataStore2("Inventory", player)
+	local function refreshCharacter()
+		local cframe = player.Character.PrimaryPart.CFrame
+		player:LoadCharacter()
+		player.Character:SetPrimaryPartCFrame(cframe)
+	end
+
+	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
 	local function updateInventory(inventory)
 		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
+		refreshCharacter()
 	end
 	inventoryStore:OnUpdate(updateInventory)
-	updateInventory(Data.GetPlayerData(player, "Inventory"))
+	updateInventory(current)
 
 	local function updateEquipment(anUpdate)
 		UpdateEquipment:FireClient(
@@ -97,9 +111,8 @@ Players.PlayerAdded:connect(function(player)
 		)
 
 		if anUpdate then
-			local cframe = player.Character.PrimaryPart.CFrame
-			player:LoadCharacter()
-			player.Character:SetPrimaryPartCFrame(cframe)
+			ServerStorage.EquipmentUpdated:Fire(player)
+			refreshCharacter()
 		end
 	end
 

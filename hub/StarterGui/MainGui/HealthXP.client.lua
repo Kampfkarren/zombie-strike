@@ -47,6 +47,16 @@ end
 coroutine.wrap(updateXP)()
 xp.Changed:connect(updateXP)
 
+local gold = playerData:WaitForChild("Gold")
+
+local function updateGold(value)
+	HealthXP.Gold.Text = value
+end
+
+HealthXP.Gold.Visible = true
+updateGold(gold.Value)
+gold.Changed:connect(updateGold)
+
 if LocalPlayer.Character then
 	characterAdded(LocalPlayer.Character)
 end

@@ -34,5 +34,5 @@ for _, player in pairs(Players:GetPlayers()) do
 end
 
 return function(player)
-	return userThumbnails[player]
+	return assert(userThumbnails[player])
 end

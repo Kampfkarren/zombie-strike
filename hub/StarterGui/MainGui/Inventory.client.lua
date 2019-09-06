@@ -45,7 +45,7 @@ local function toggle(open)
 	if open then
 		inventoryTweenIn:Play()
 		if UserInputService.GamepadEnabled then
-			GuiService.SelectedObject = LootContents:FindFirstChild("Template")
+			GuiService.SelectedObject = Inventory.Contents:FindFirstChild("Template")
 		end
 	else
 		local selected = GuiService.SelectedObject
