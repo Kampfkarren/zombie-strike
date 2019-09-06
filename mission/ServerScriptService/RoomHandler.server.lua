@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -133,6 +134,8 @@ local function generateLoot(player)
 			quality = "Perfect"
 		end
 
+		local uuid = HttpService:GenerateGUID(false):gsub("-", "")
+
 		local loot = {
 			Type = type,
 			CritChance = stats.CritChance,
@@ -143,6 +146,7 @@ local function generateLoot(player)
 			Model = GunScaling.Model(type, rarity),
 			Name = quality .. " Poopoo",
 			Rarity = rarity,
+			UUID = uuid,
 		}
 
 		table.insert(lootTable, loot)

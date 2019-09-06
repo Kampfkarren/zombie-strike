@@ -1,52 +1,56 @@
-local MockPlayer = {}
+local HttpService = game:GetService("HttpService")
 
-MockPlayer.Level = 1
-MockPlayer.XP = 0
-MockPlayer.Gold = 100
+return function()
+	local MockPlayer = {}
 
-MockPlayer.Weapon = {
-	Type = "Pistol",
-	Level = 1,
-	Rarity = 1,
-	Name = "Average Pistol",
+	MockPlayer.Level = 1
+	MockPlayer.XP = 0
+	MockPlayer.Gold = 100
 
-	Damage = 20,
-	FireRate = 5,
-	CritChance = 0.08,
-	Magazine = 9,
+	MockPlayer.Weapon = {
+		Type = "Pistol",
+		Level = 1,
+		Rarity = 1,
+		Name = "Average Pistol",
 
-	Model = 1,
-	UUID = 1,
-}
+		Damage = 20,
+		FireRate = 5,
+		CritChance = 0.08,
+		Magazine = 9,
 
-MockPlayer.Armor = {
-	Type = "Armor",
-	Level = 1,
-	Rarity = 1,
-	Name = "Armor",
+		Model = 1,
+		UUID = HttpService:GenerateGUID(false):gsub("-", ""),
+	}
 
-	Model = 1,
-	UUID = 2,
-}
+	MockPlayer.Armor = {
+		Type = "Armor",
+		Level = 1,
+		Rarity = 1,
+		Name = "Armor",
 
-MockPlayer.Helmet = {
-	Type = "Helmet",
-	Level = 1,
-	Rarity = 1,
-	Name = "Helmet",
+		Model = 1,
+		UUID = HttpService:GenerateGUID(false):gsub("-", ""),
+	}
 
-	Model = 1,
-	UUID = 3,
-}
+	MockPlayer.Helmet = {
+		Type = "Helmet",
+		Level = 1,
+		Rarity = 1,
+		Name = "Helmet",
 
-MockPlayer.EquippedWeapon = 1
-MockPlayer.EquippedArmor = 2
-MockPlayer.EquippedHelmet = 3
+		Model = 1,
+		UUID = HttpService:GenerateGUID(false):gsub("-", ""),
+	}
 
-MockPlayer.Inventory = {
-	MockPlayer.Weapon,
-	MockPlayer.Armor,
-	MockPlayer.Helmet,
-}
+	MockPlayer.EquippedWeapon = 1
+	MockPlayer.EquippedArmor = 2
+	MockPlayer.EquippedHelmet = 3
 
-return MockPlayer
+	MockPlayer.Inventory = {
+		MockPlayer.Weapon,
+		MockPlayer.Armor,
+		MockPlayer.Helmet,
+	}
+
+	return MockPlayer
+end

@@ -23,7 +23,7 @@ local function getPlayerData(data, key)
 		warn("player data does not exist: " .. key)
 	end
 
-	return MockPlayer[key]
+	return MockPlayer()[key]
 end
 
 function Data.GetDungeonData(key)

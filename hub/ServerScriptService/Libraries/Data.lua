@@ -12,6 +12,8 @@ Data.Equippable = {
 	Weapon = true,
 }
 
+local baseMockPlayer = MockPlayer()
+
 -- TODO: Don't let player in until they load data
 function Data.GetPlayerData(player, key)
 	if Data.Equippable[key] then
@@ -19,7 +21,7 @@ function Data.GetPlayerData(player, key)
 		local equipped = Data.GetPlayerData(player, "Equipped" .. key)
 
 		return inventory[equipped]
-	elseif MockPlayer[key] then
+	elseif baseMockPlayer[key] then
 		DataStore2.Combine("DATA", key)
 
 		local dataStore = DataStore2(key, player)
@@ -30,7 +32,7 @@ function Data.GetPlayerData(player, key)
 			-- dataStore:BeforeSave(Loot.SerializeTable)
 		-- end
 
-		return dataStore:Get(MockPlayer[key]), dataStore
+		return dataStore:Get(MockPlayer()[key]), dataStore
 	else
 		error("unknown data key " .. key)
 	end

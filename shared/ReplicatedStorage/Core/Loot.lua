@@ -23,6 +23,7 @@ local armorMap = {
 	"Name",
 	"Rarity",
 	"Model",
+	"UUID",
 }
 
 Loot.Rarities = {
@@ -53,7 +54,7 @@ Loot.Rarities = {
 }
 
 local serializeStruct = t.union(
-	t.interface({
+	t.strictInterface({
 		Level = t.number,
 		Name = t.string,
 		Rarity = t.numberConstrained(1, #Loot.Rarities),
@@ -71,9 +72,10 @@ local serializeStruct = t.union(
 		Magazine = t.number,
 
 		Model = t.number,
+		UUID = t.string,
 	}),
 
-	t.interface({
+	t.strictInterface({
 		Level = t.number,
 		Name = t.string,
 		Rarity = t.numberConstrained(1, #Loot.Rarities),
@@ -83,6 +85,7 @@ local serializeStruct = t.union(
 		),
 
 		Model = t.number,
+		UUID = t.string,
 	})
 )
 
