@@ -72,7 +72,7 @@ if not ReplicatedStorage.HubWorld.Value then
 			end
 
 			humanoid:TakeDamage(damage)
-			EVENTS.Damaged:Fire(humanoid, damage)
+			EVENTS.Damaged:Fire(humanoid, damage, player)
 			ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage, crit)
 		end
 	end

@@ -10,6 +10,9 @@ local XP = require(ReplicatedStorage.Core.XP)
 local Zombie = {}
 Zombie.__index = Zombie
 
+Zombie.AIAggroCheckTime = 0.35
+Zombie.AIAggroRange = 30
+
 Zombie.AttackCheckInterval = 0.1
 Zombie.AttackCooldown = 3
 Zombie.AttackRange = 5
@@ -40,6 +43,14 @@ function Zombie:Spawn(position)
 		self:Die()
 	end)
 
+	self.aliveMaid:GiveTask(
+		ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(damaged, damage, damagedBy)
+			if damaged == humanoid then
+				self.damagedEvent:Fire(damage, damagedBy)
+			end
+		end)
+	)
+
 	for _, part in pairs(self.instance:GetDescendants()) do
 		if part:IsA("BasePart") then
 			pcall(function()
@@ -57,9 +68,13 @@ end
 
 function Zombie:InitializeAI()
 	self:Wander()
-	delay(2, function()
-		self:Aggro()
-	end)
+
+	self.aliveMaid:GiveTask(self.Damaged:connect(function(_, damagedBy)
+		if self.wandering then
+			self.lastAttacker = damagedBy
+			self:Aggro()
+		end
+	end))
 end
 
 function Zombie:Wander()
@@ -87,14 +102,30 @@ function Zombie:Wander()
 			wait(1)
 		end
 	end)
+
+	spawn(function()
+		wait(math.random(40, 60) / 100)
+		while self.wandering do
+			for _, player in pairs(Players:GetPlayers()) do
+				local character = player.Character
+				if character and character.Humanoid.Health > 0 then
+					if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude <= self.AIAggroRange then
+						self:Aggro(character)
+					end
+				end
+			end
+
+			wait(self.AIAggroCheckTime)
+		end
+	end)
 end
 
 -- AGGRO
-function Zombie:Aggro()
+function Zombie:Aggro(focus)
 	local humanoid = self.instance.Humanoid
 	humanoid.WalkSpeed = self:GetScale("Speed")
 
-	self:AssignAggroFocus()
+	self:AssignAggroFocus(focus)
 	local focus = self.aggroFocus
 	if not focus then return end
 
@@ -143,7 +174,7 @@ function Zombie:Aggro()
 	end)
 end
 
-function Zombie:AssignAggroFocus()
+function Zombie:AssignAggroFocus(force)
 	local players = Players:GetPlayers()
 	if #players == 0 then
 		warn("AssignAggroFocus: All players have left")
@@ -152,16 +183,35 @@ function Zombie:AssignAggroFocus()
 		return
 	end
 
-	while #players > 0 do
-		local player = table.remove(players, math.random(#players))
-		local character = player.Character
-		if character and character.Humanoid.Health > 0 then
-			self.aggroFocus = character
-			self.aliveMaid:GiveTask(character.Humanoid.Died:connect(function()
-				self:AssignAggroFocus()
-			end))
-			return
+	if force then
+		self.aggroFocus = force
+	else
+		self.aggroFocus = nil
+
+		if self.lastAttacker then
+			local character = self.lastAttacker.Character
+			if character then
+				self.aggroFocus = character
+			end
 		end
+
+		if not self.aggroFocus then
+			while #players > 0 do
+				local player = table.remove(players, math.random(#players))
+				local character = player.Character
+				if character and character.Humanoid.Health > 0 then
+					self.aggroFocus = character
+				end
+			end
+		end
+	end
+
+	if self.aggroFocus then
+		self.aliveMaid:GiveTask(self.aggroFocus.Humanoid.Died:connect(function()
+			self:AssignAggroFocus()
+		end))
+
+		return
 	end
 
 	warn("AssignAggroFocus: All players have died")
@@ -258,17 +308,20 @@ function Zombie.new(zombieType, level, ...)
 	maid:GiveTask(instance)
 	maid:GiveTask(aliveMaid)
 
+	local damagedEvent = Instance.new("BindableEvent")
 	local diedEvent = Instance.new("BindableEvent")
 
 	return setmetatable({
 		alive = true,
 		aliveMaid = aliveMaid,
 		aggroTick = 0,
+		damagedEvent = damagedEvent,
 		diedEvent = diedEvent,
 		instance = instance,
 		level = level,
 		maid = maid,
 
+		Damaged = damagedEvent.Event,
 		Died = diedEvent.Event,
 	}, {
 		__index = function(_, key)
