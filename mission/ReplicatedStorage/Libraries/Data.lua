@@ -27,14 +27,12 @@ local function getPlayerData(data, key)
 end
 
 function Data.GetDungeonData(key)
-	-- TODO: How to give the server this information?
-	-- Can be done by giving it to the players in their teleport data
-	-- Or with MessagingService
-	-- POSSIBLY with DataStoreService, although I'm scared of that
+	-- TODO: Put this in teleport data or a data store
 	return MockDungeon[key]
 end
 
 function Data.GetPlayerData(player, key)
+	-- TODO: Fix this, use data stores
 	local joinData = player:GetJoinData()
 
 	if not placeIdApproved(joinData.SourcePlaceId) then
@@ -46,6 +44,7 @@ function Data.GetPlayerData(player, key)
 end
 
 function Data.GetLocalPlayerData(key)
+	-- TODO: Fix this, use data stores
 	assert(RunService:IsClient())
 	return getPlayerData(TeleportService:GetLocalPlayerTeleportData() or {}, key)
 end

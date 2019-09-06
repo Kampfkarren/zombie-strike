@@ -74,8 +74,8 @@ end
 
 local rooms = generateDungeon(15)
 
-local function spawnZombie(zombieType, position)
-	local zombie = Zombie.new(zombieType)
+local function spawnZombie(zombieType, level, position)
+	local zombie = Zombie.new(zombieType, level)
 	zombie:Spawn(position)
 	return zombie
 end
@@ -189,7 +189,7 @@ local function endMission()
 end
 
 local function spawnBoss(position)
-	local bossZombie = Zombie.new("Boss", ServerStorage.Zombies.TestBossZombie, "Common")
+	local bossZombie = Zombie.new("Boss", 1, ServerStorage.Zombies.TestBossZombie, "Common")
 	bossZombie:Spawn(position)
 	bossZombie.Died:connect(endMission)
 	return bossZombie
@@ -208,7 +208,7 @@ local function openNextGate()
 		for _, thing in pairs(room:GetDescendants()) do
 			if CollectionService:HasTag(thing, "ZombieSpawn") then
 				enemiesLeft = enemiesLeft + 1
-				local zombie = spawnZombie("Turret", thing.WorldPosition)
+				local zombie = spawnZombie("Common", 1, thing.WorldPosition)
 				zombie.Died:connect(function()
 					enemiesLeft = enemiesLeft - 1
 					if enemiesLeft == 0 then

@@ -9,8 +9,11 @@ local XP = require(ReplicatedStorage.Core.XP)
 
 local Zombie = {}
 Zombie.__index = Zombie
-Zombie.AggroSpeed = 16
-Zombie.MaxHealth = 100
+
+Zombie.AttackCheckInterval = 0.1
+Zombie.AttackCooldown = 3
+Zombie.AttackRange = 5
+
 Zombie.WanderSpeed = 5
 
 function Zombie:Destroy()
@@ -19,7 +22,7 @@ end
 
 function Zombie:Spawn(position)
 	self.instance:SetPrimaryPartCFrame(CFrame.new(position))
-	self.instance.Parent = Workspace
+	self.instance.Parent = Workspace.Zombies
 
 	self.aliveMaid:GiveTask(ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(humanoid)
 		if humanoid == self.instance.Humanoid then
@@ -28,8 +31,9 @@ function Zombie:Spawn(position)
 	end))
 
 	local humanoid = self.instance.Humanoid
-	humanoid.MaxHealth = self.MaxHealth
-	humanoid.Health = self.MaxHealth
+	local health = self:GetScale("Health")
+	humanoid.MaxHealth = health
+	humanoid.Health = health
 
 	humanoid.Died:connect(function()
 		self:UpdateNametag()
@@ -46,6 +50,7 @@ function Zombie:Spawn(position)
 
 	self:UpdateNametag()
 	self:InitializeAI()
+	self:AfterSpawn()
 
 	return self.instance
 end
@@ -58,6 +63,8 @@ function Zombie:InitializeAI()
 end
 
 function Zombie:Wander()
+	self.aggroTick = self.aggroTick + 1
+
 	local humanoid = self.instance.Humanoid
 	humanoid.WalkSpeed = self.WanderSpeed
 
@@ -85,7 +92,7 @@ end
 -- AGGRO
 function Zombie:Aggro()
 	local humanoid = self.instance.Humanoid
-	humanoid.WalkSpeed = self.AggroSpeed
+	humanoid.WalkSpeed = self:GetScale("Speed")
 
 	self:AssignAggroFocus()
 	local focus = self.aggroFocus
@@ -123,6 +130,17 @@ function Zombie:Aggro()
 			wait(0.15)
 		end
 	end)
+
+	spawn(function()
+		wait(math.random(40, 60) / 100)
+		while self.aggroTick == ourTick do
+			if self:CheckAttack() then
+				wait(self.AttackCooldown)
+			else
+				wait(self.AttackCheckInterval)
+			end
+		end
+	end)
 end
 
 function Zombie:AssignAggroFocus()
@@ -139,15 +157,23 @@ function Zombie:AssignAggroFocus()
 		local character = player.Character
 		if character and character.Humanoid.Health > 0 then
 			self.aggroFocus = character
+			self.aliveMaid:GiveTask(character.Humanoid.Died:connect(function()
+				self:AssignAggroFocus()
+			end))
 			return
 		end
 	end
 
 	warn("AssignAggroFocus: All players have died")
-	wait(1)
-	self:AssignAggroFocus()
+	self:Wander()
 end
 -- END AGGRO
+
+function Zombie:CheckAttack()
+	if (self.instance.HumanoidRootPart.Position - self.aggroFocus.PrimaryPart.Position).Magnitude <= self.AttackRange then
+		return self:Attack()
+	end
+end
 
 function Zombie:Die()
 	self.alive = false
@@ -186,6 +212,11 @@ function Zombie:GetXP()
 end
 -- END XP
 
+function Zombie:GetScale(key)
+	local scale = assert(self.Scaling[key], "no scale for " .. key)
+	return scale.Base * scale.Scale ^ (self.level - 1)
+end
+
 function Zombie:UpdateNametag()
 	local nametag = self.nametag
 
@@ -203,17 +234,21 @@ function Zombie:UpdateNametag()
 	nametag.Health.Fill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 
 	nametag.EnemyName.Text = self.Name
-	nametag.Level.Text = "Level ?"
+	nametag.Level.Text = "LV. " .. self.level
 
 	return nametag
 end
 
-function Zombie.new(zombieType, ...)
+-- START BASIC HOOKS
+function Zombie:AfterSpawn() end
+-- END BASIC HOOKS
+
+function Zombie.new(zombieType, level, ...)
 	assert(zombieType)
 	local originalZombie = require(script.Parent[zombieType])
 	assert(originalZombie)
 
-	local zombie = originalZombie.new(...)
+	local zombie = originalZombie.new(level, ...)
 
 	local instance = zombie.Model:Clone()
 
@@ -231,6 +266,7 @@ function Zombie.new(zombieType, ...)
 		aggroTick = 0,
 		diedEvent = diedEvent,
 		instance = instance,
+		level = level,
 		maid = maid,
 
 		Died = diedEvent.Event,

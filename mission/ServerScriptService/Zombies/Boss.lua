@@ -8,11 +8,11 @@ Boss.__index = Boss
 Boss.Name = "Boss"
 Boss.MaxHealth = 750
 
-function Boss.new(bossInstance, derivativeType)
+function Boss.new(level, bossInstance, derivativeType)
 	local bossInstance = bossInstance:Clone()
 	Instance.new("Model", bossInstance.Humanoid).Name = "Boss"
 	CollectionService:AddTag(bossInstance, "Boss")
-	local derivative = Zombie.new(derivativeType)
+	local derivative = Zombie.new(derivativeType, level)
 
 	return setmetatable({
 		Model = bossInstance,
