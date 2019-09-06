@@ -157,7 +157,9 @@ Players.PlayerRemoving:connect(function(player)
 	end
 
 	requesting[player] = nil
-	cancelTrade(player, TradeConstants.Codes.RejectLeave)
+	if tradeStates[player] then
+		cancelTrade(player, TradeConstants.Codes.RejectLeave)
+	end
 end)
 
 AcceptTrade.OnServerEvent:connect(function(player)

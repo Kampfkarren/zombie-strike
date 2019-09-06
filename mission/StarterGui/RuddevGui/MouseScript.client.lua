@@ -33,7 +33,9 @@ MOUSE_GUI.Visible = true
 
 local function UpdateReticle()
 	for _, reticle in pairs(MOUSE_GUI:GetChildren()) do
-		reticle.Visible	= reticle.Name == MOUSE.Reticle and UserInputService.MouseEnabled
+		if reticle:IsA("GuiObject") then
+			reticle.Visible	= reticle.Name == MOUSE.Reticle and UserInputService.MouseEnabled
+		end
 	end
 end
 

@@ -45,6 +45,7 @@ end
 
 function Data.GetLocalPlayerData(key)
 	-- TODO: Fix this, use data stores
+	-- Port over the hub data?
 	assert(RunService:IsClient())
 	return getPlayerData(TeleportService:GetLocalPlayerTeleportData() or {}, key)
 end

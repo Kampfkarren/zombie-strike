@@ -1,10 +1,11 @@
 local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerStorage = game:GetService("ServerStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
 local Maid = require(ReplicatedStorage.Core.Maid)
+local Nametag = require(ServerScriptService.Shared.Nametag)
 local XP = require(ReplicatedStorage.Core.XP)
 
 local Zombie = {}
@@ -268,25 +269,7 @@ function Zombie:GetScale(key)
 end
 
 function Zombie:UpdateNametag()
-	local nametag = self.nametag
-
-	if not nametag then
-		nametag = ServerStorage.Nametag:Clone()
-		nametag.Parent = self.instance.Head
-		self.nametag = nametag
-	end
-
-	local humanoid = self.instance.Humanoid
-	nametag.Health.HealthNumber.Text = ("%d/%d"):format(
-		humanoid.Health,
-		humanoid.MaxHealth
-	)
-	nametag.Health.Fill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
-
-	nametag.EnemyName.Text = self.Name
-	nametag.Level.Text = "LV. " .. self.level
-
-	return nametag
+	return Nametag(self.instance, self.level)
 end
 
 -- START BASIC HOOKS
