@@ -1,12 +1,13 @@
 local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Data = require(ReplicatedStorage.Libraries.Data)
 local Zombie = require(script.Parent.Zombie)
 
 local Boss = {}
 Boss.__index = Boss
 
 Boss.Name = "Boss"
-Boss.MaxHealth = 750
 
 function Boss.new(level, bossInstance, derivativeType)
 	local bossInstance = bossInstance:Clone()
@@ -21,6 +22,14 @@ function Boss.new(level, bossInstance, derivativeType)
 			return Boss[key] or derivative[key]
 		end,
 	})
+end
+
+function Boss:GetHealth()
+	return Data.GetDungeonData("DifficultyInfo").BossStats.Health
+end
+
+function Boss:GetSpeed()
+	return Data.GetDungeonData("DifficultyInfo").BossStats.Speed
 end
 
 function Boss:UpdateNametag()

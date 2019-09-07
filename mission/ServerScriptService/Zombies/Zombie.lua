@@ -12,7 +12,7 @@ local Zombie = {}
 Zombie.__index = Zombie
 
 Zombie.AIAggroCheckTime = 0.35
-Zombie.AIAggroRange = 30
+Zombie.AIAggroRange = 60
 
 Zombie.AttackCheckInterval = 0.1
 Zombie.AttackCooldown = 3
@@ -26,6 +26,7 @@ end
 
 function Zombie:Spawn(position)
 	self.instance:SetPrimaryPartCFrame(CFrame.new(position))
+	self.instance.Name = self.Name
 	self.instance.Parent = Workspace.Zombies
 
 	self.aliveMaid:GiveTask(ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(humanoid)
@@ -35,7 +36,7 @@ function Zombie:Spawn(position)
 	end))
 
 	local humanoid = self.instance.Humanoid
-	local health = self:GetScale("Health")
+	local health = self:GetHealth()
 	humanoid.MaxHealth = health
 	humanoid.Health = health
 
@@ -124,7 +125,7 @@ end
 -- AGGRO
 function Zombie:Aggro(focus)
 	local humanoid = self.instance.Humanoid
-	humanoid.WalkSpeed = self:GetScale("Speed")
+	humanoid.WalkSpeed = self:GetSpeed()
 
 	self:AssignAggroFocus(focus)
 	local focus = self.aggroFocus
@@ -263,10 +264,20 @@ function Zombie:GetXP()
 end
 -- END XP
 
+-- START STATS
 function Zombie:GetScale(key)
 	local scale = assert(self.Scaling[key], "no scale for " .. key)
 	return scale.Base * scale.Scale ^ (self.level - 1)
 end
+
+function Zombie:GetHealth()
+	return self:GetScale("Health")
+end
+
+function Zombie:GetSpeed()
+	return self:GetScale("Speed")
+end
+-- END STATS
 
 function Zombie:UpdateNametag()
 	return Nametag(self.instance, self.level)
