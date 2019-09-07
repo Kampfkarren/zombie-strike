@@ -10,6 +10,7 @@ local Zombies = ServerScriptService.Zombies
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Libraries.Data)
+local DungeonState = require(ServerScriptService.DungeonState)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Zombie = require(Zombies.Zombie)
@@ -75,7 +76,7 @@ local function generateDungeon(numRooms)
 	return rooms
 end
 
-local rooms = generateDungeon(1)
+local rooms = generateDungeon(5)
 
 local function spawnZombie(zombieType, level, position)
 	local zombie = Zombie.new(zombieType, level)
@@ -204,7 +205,7 @@ local function openNextGate()
 	local room = table.remove(rooms, 1)
 	local gate = room:FindFirstChild("Gate", true, "No Gate")
 
-	local enemiesLeft = 0
+	local enemiesLeft = room.EnemiesLeft.Value
 	local obbyType = room.ObbyType.Value
 
 	if obbyType == "enemy" or obbyType == "boss" then
@@ -214,8 +215,6 @@ local function openNextGate()
 				table.insert(zombieSpawns, thing)
 			end
 		end
-
-		enemiesLeft = math.ceil(#zombieSpawns * difficultyInfo.ZombieSpawnRate)
 
 		for _ = 1, enemiesLeft do
 			local spawnPoint = table.remove(zombieSpawns, math.random(#zombieSpawns))
@@ -239,6 +238,24 @@ local function openNextGate()
 end
 
 difficultyInfo = Data.GetDungeonData("DifficultyInfo")
+
+for _, room in pairs(rooms) do
+	local zombieSpawns = {}
+	for _, thing in pairs(room:GetDescendants()) do
+		if CollectionService:HasTag(thing, "ZombieSpawn") then
+			table.insert(zombieSpawns, thing)
+		end
+	end
+
+	local amount = math.ceil(#zombieSpawns * difficultyInfo.ZombieSpawnRate)
+
+	local enemiesLeft = Instance.new("NumberValue")
+	enemiesLeft.Name = "EnemiesLeft"
+	enemiesLeft.Value = amount
+	enemiesLeft.Parent = room
+
+	DungeonState.NormalZombies = DungeonState.NormalZombies + amount
+end
 
 wait(3)
 openNextGate()

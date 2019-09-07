@@ -4,6 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Data = require(ReplicatedStorage.Libraries.Data)
 local Zombie = require(script.Parent.Zombie)
 
+local AMOUNT_FOR_BOSS = 0.3
+
 local Boss = {}
 Boss.__index = Boss
 
@@ -30,6 +32,10 @@ end
 
 function Boss:GetSpeed()
 	return Data.GetDungeonData("DifficultyInfo").BossStats.Speed
+end
+
+function Boss:GetXP()
+	return Data.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
 end
 
 function Boss:UpdateNametag()

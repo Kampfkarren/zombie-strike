@@ -31,6 +31,7 @@ function LineOfSight.__call(_, origin, character, range, blacklist)
 	blacklist = blacklist or {}
 
 	local hit, point do
+		-- luacheck: ignore
 		while true do
 			hit, point = Raycast(origin, (origin - character.PrimaryPart.Position).Unit * -range, blacklist)
 

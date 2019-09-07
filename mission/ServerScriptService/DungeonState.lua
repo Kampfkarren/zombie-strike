@@ -1,0 +1,3 @@
+return {
+	NormalZombies = 0,
+}

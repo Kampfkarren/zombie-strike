@@ -4,9 +4,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
+local Data = require(ReplicatedStorage.Libraries.Data)
+local DungeonState = require(ServerScriptService.DungeonState)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local Nametag = require(ServerScriptService.Shared.Nametag)
 local XP = require(ReplicatedStorage.Core.XP)
+
+local AMOUNT_FOR_NOT_BOSS = 0.7
 
 local Zombie = {}
 Zombie.__index = Zombie
@@ -239,7 +243,7 @@ end
 function Zombie:GiveXP()
 	local xpGain = self:GetXP()
 	if xpGain > 0 then
-		ReplicatedStorage.Remotes.XPGain:FireAllClients(self.instance.PrimaryPart.Position, xpGain)
+		ReplicatedStorage.Remotes.XPGain:FireAllClients(self.instance.PrimaryPart.Position, math.floor(xpGain))
 		for _, player in pairs(Players:GetPlayers()) do
 			local playerData = player:FindFirstChild("PlayerData")
 			if playerData then
@@ -260,7 +264,7 @@ function Zombie:GiveXP()
 end
 
 function Zombie:GetXP()
-	return 400
+	return (Data.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_NOT_BOSS) / DungeonState.NormalZombies
 end
 -- END XP
 
