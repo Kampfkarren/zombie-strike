@@ -1,6 +1,7 @@
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 
 local Spring = require(ReplicatedStorage.RuddevModules.Spring)
 
@@ -29,7 +30,13 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 		local critEffect = ReplicatedStorage.CritEffect:Clone()
 		critEffect.Parent = humanoid.Parent.UpperTorso
 		critEffect:Emit(15)
+
+		local critSound = SoundService.Crit:Clone()
+		critSound.Parent = humanoid.Parent.UpperTorso
+		critSound:Play()
+
 		Debris:AddItem(critEffect)
+		Debris:AddItem(critSound)
 	end
 
 	if damageOffsets[humanoid] then
