@@ -110,6 +110,7 @@ local function generateLoot(player)
 	end
 
 	local lootTable = {}
+	local uuid = HttpService:GenerateGUID(false):gsub("-", "")
 
 	if rng:NextNumber() <= WEAPON_DROP_RATE then
 		local type = GunScaling.RandomType()
@@ -137,8 +138,6 @@ local function generateLoot(player)
 		else
 			quality = "Perfect"
 		end
-
-		local uuid = HttpService:GenerateGUID(false):gsub("-", "")
 
 		local loot = {
 			Type = type,
@@ -173,6 +172,7 @@ local function generateLoot(player)
 			Type = type,
 
 			Model = model,
+			UUID = uuid,
 		})
 	end
 
