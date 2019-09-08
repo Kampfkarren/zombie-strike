@@ -1,12 +1,14 @@
 -- Services
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 -- Constants
 
 local ITEMS = ReplicatedStorage.Items
 
 local Data = require(ReplicatedStorage.Libraries.Data)
+local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 
 -- Variables
 
@@ -54,27 +56,6 @@ local function PrepareItem(item) -- weld, unanchor, and remove mass from an item
 			stack.Value = config.Stack
 			stack.Parent = item
 	end
-end
-
-local function Equip(item) -- move an item from the back to the hand
-	spawn(function()
-		local character = item.Parent
-		local handle = item.PrimaryPart
-
-		-- remove unequipped stuff
-		if handle:FindFirstChild("UnequippedWeld") then
-			handle.UnequippedWeld:Destroy()
-		end
-
-		-- add equipped stuff
-		local gripMotor = Instance.new("Motor6D")
-			gripMotor.Name = "GripMotor"
-			gripMotor.Part0 = character.RightHand
-			gripMotor.Part1 = handle
-			gripMotor.C0 = CFrame.Angles(-math.pi / 2, 0, 0)
-			gripMotor.C1 = handle.Grip.CFrame
-			gripMotor.Parent = handle
-	end)
 end
 
 -- Initiate
