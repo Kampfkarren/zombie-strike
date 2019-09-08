@@ -8,7 +8,7 @@ return function()
 	MockPlayer.Gold = 100
 
 	MockPlayer.Weapon = {
-		Type = "Rifle",
+		Type = "Pistol",
 		Level = 1,
 		Rarity = 1,
 		Name = "Average Pistol",
@@ -47,6 +47,7 @@ return function()
 	MockPlayer.EquippedHelmet = 3
 
 	MockPlayer.EquippedHealthPack = 1
+	MockPlayer.EquippedGrenade = 1
 
 	MockPlayer.Inventory = {
 		MockPlayer.Weapon,

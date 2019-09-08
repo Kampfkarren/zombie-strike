@@ -3,13 +3,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
+local Mouse = require(ReplicatedStorage.RuddevModules.Mouse)
+
 local Abilities = script.Parent.Main.Abilities
 local LocalPlayer = Players.LocalPlayer
 
 local COOLDOWN = 10
 local COOLDOWN_TEXT = "%.1fs"
+local GRENADE_SPEED = 50
 
-local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadName, remote, frame, precondition)
+local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadName, frame, remote, callback)
 	local cooldown = frame.Cooldown
 	local label = frame.Label
 
@@ -27,13 +30,12 @@ local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadNam
 		local character = LocalPlayer.Character
 
 		if not character or character.Humanoid.Health <= 0 then return end
-
-		if precondition then
-			if not precondition() then return end
-		end
+		if using then return end
 
 		using = true
-		remote:FireServer()
+		if callback() == false then
+			using = false
+		end
 	end
 
 	remote.OnClientEvent:connect(function()
@@ -68,14 +70,36 @@ abilityButton(
 	"Q",
 	Enum.KeyCode.ButtonL1,
 	"L1",
-	ReplicatedStorage.Remotes.HealthPack,
 	Abilities.Q,
+	ReplicatedStorage.Remotes.HealthPack,
 	function()
 		if not ReplicatedStorage.HubWorld.Value then
 			local humanoid = LocalPlayer.Character.Humanoid
-			return humanoid.Health ~= humanoid.MaxHealth
+			if humanoid.Health == humanoid.MaxHealth then return end
 		end
 
-		return true
+		ReplicatedStorage.Remotes.HealthPack:FireServer()
+	end
+)
+
+abilityButton(
+	Enum.KeyCode.E,
+	"E",
+	Enum.KeyCode.ButtonR1,
+	"R1",
+	Abilities.E,
+	ReplicatedStorage.Remotes.GrenadeCooldown,
+	function()
+		local grenade = ReplicatedStorage.Remotes.FireGrenade:InvokeServer()
+		if not grenade then
+			warn("no grenade")
+			return false
+		end
+
+		local primaryCFrame = LocalPlayer.Character.PrimaryPart.CFrame
+		grenade.CFrame = primaryCFrame + primaryCFrame.RightVector
+		grenade.Velocity = (
+			Mouse.WorldPosition - LocalPlayer.Character.PrimaryPart.Position
+		).Unit * GRENADE_SPEED + Vector3.new(0, 15, 0)
 	end
 )

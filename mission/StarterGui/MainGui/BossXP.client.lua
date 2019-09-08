@@ -6,7 +6,7 @@ local function updateHealth(humanoid)
 	local health, maxHealth = humanoid.Health, humanoid.MaxHealth
 
 	Boss.Inner.Size = UDim2.new(health / maxHealth, 0, 1, 0)
-	Boss.Health.Text = health .. "/" .. maxHealth
+	Boss.Health.Text = math.floor(health) .. "/" .. maxHealth
 end
 
 local function bossAdded(character)
