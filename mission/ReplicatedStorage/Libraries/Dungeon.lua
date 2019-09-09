@@ -21,6 +21,7 @@ function Dungeon.GetDungeonTable()
 				coroutine.wrap(function()
 					local success, error = pcall(function()
 						dungeonDataStore:UpdateAsync(game.PrivateServerId, function(value)
+							assert(value ~= nil)
 							resolve(value)
 							return value
 						end)
