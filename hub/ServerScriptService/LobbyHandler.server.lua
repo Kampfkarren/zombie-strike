@@ -216,7 +216,15 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 		TeleportService:TeleportToPrivateServer(
 			DUNGEON_PLACE_ID,
 			accessCode,
-			lobby.Players
+			lobby.Players,
+			nil,
+			{
+				DungeonData = {
+					Campaign = lobby.Campaign,
+					Difficulty = lobby.Difficulty,
+					Hardcore = lobby.Hardcore,
+				}
+			}
 		)
 	end):catch(function(problem)
 		ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)

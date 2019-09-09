@@ -103,11 +103,15 @@ Players.PlayerAdded:connect(function(player)
 	updateInventory(current)
 
 	local function updateEquipment(anUpdate)
+		local equippedArmor = Data.GetPlayerData(player, "EquippedArmor")
+		local equippedHelmet = Data.GetPlayerData(player, "EquippedHelmet")
+		local equippedWeapon = Data.GetPlayerData(player, "EquippedWeapon")
+
 		UpdateEquipment:FireClient(
 			player,
-			Data.GetPlayerData(player, "EquippedArmor"),
-			Data.GetPlayerData(player, "EquippedHelmet"),
-			Data.GetPlayerData(player, "EquippedWeapon")
+			equippedArmor,
+			equippedHelmet,
+			equippedWeapon
 		)
 
 		if anUpdate then

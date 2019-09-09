@@ -133,7 +133,6 @@ INPUT.ActionBegan:connect(function(action, processed)
 		if action == "Jump" then
 			if character and humanoid.Health > 0 then
 				if rootPart:FindFirstChild("SpaceshipWeld") then
-					REMOTES.Deploy:FireServer()
 				else
 					-- if humanoid.FloorMaterial ~= Enum.Material.Air then
 					-- 	humanoid:ChangeState(Enum.HumanoidStateType.Jumping)

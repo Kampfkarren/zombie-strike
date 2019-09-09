@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Core.Data)
 local XP = require(ReplicatedStorage.Core.XP)
-
+-- TODO: initialize stuff for LootInfoButton
 Players.PlayerAdded:connect(function(player)
 	-- TODO: This won't work with levels changing in game
 	local playerData = Instance.new("Folder")

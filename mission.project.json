@@ -9,6 +9,9 @@
       "Core": {
         "$path": "shared/ReplicatedStorage/Core"
       },
+      "ItemModules": {
+        "$path": "shared/ReplicatedStorage/ItemModules"
+      },
       "RuddevModules": {
         "$path": "shared/ReplicatedStorage/RuddevModules"
       },

@@ -78,6 +78,7 @@ abilityButton(
 			if humanoid.Health == humanoid.MaxHealth then return end
 		end
 
+		print("Fire health")
 		ReplicatedStorage.Remotes.HealthPack:FireServer()
 	end
 )

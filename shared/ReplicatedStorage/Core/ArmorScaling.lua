@@ -1,7 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-
 local ArmorScaling = {}
 
 local ARMOR_BASE = 25
@@ -24,11 +22,6 @@ end
 
 function ArmorScaling.HelmetHealth(level, rarity)
 	return math.floor((HELMET_BASE * HELMET_SCALE ^ (level - 1)) * MULTIPLIERS[rarity])
-end
-
-function ArmorScaling.Model(_, rarity)
-	-- Technical debt if this guarantee is no longer true
-	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
 end
 
 return ArmorScaling

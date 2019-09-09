@@ -163,7 +163,8 @@ local function generateLoot(player)
 			type = "Helmet"
 		end
 
-		model = ArmorScaling.Model(type, rarity)
+		-- model = ArmorScaling.Model(type, rarity)
+		model = ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
 
 		table.insert(lootTable, {
 			Level = level,
