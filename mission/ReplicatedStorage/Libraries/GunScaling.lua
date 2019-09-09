@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 
 local GunScaling = {}
 
@@ -155,7 +155,7 @@ end
 
 function GunScaling.Model(_, rarity)
 	-- Technical debt if this guarantee is no longer true
-	return ((Data.GetDungeonData("Campaign") - 1) * 5) + rarity
+	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
 end
 
 function GunScaling.RandomType()

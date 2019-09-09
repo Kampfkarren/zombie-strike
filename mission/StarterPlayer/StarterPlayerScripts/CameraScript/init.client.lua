@@ -282,7 +282,7 @@ UserInputService.InputChanged:connect(function(inputObject, processed)
 
 			-- EVENTS.Sway:Fire(Vector3.new(-inputObject.Delta.X, -inputObject.Delta.Y, 0))
 		elseif inputObject.UserInputType == Enum.UserInputType.Touch then
-			if DynamicThumbstick:GetInputObject() == inputObject then
+			if DynamicThumbstick:GetInputObject() ~= inputObject then
 				x = (x - inputObject.Delta.X * TOUCH_SENSITIVITY.X * ZoomSensitivity()) % (math.pi * 2)
 				y = math.clamp(y - inputObject.Delta.Y * TOUCH_SENSITIVITY.Y * ZoomSensitivity(), MIN_Y, MAX_Y)
 			end

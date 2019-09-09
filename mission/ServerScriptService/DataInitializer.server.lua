@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local XP = require(ReplicatedStorage.Core.XP)
 
 Players.PlayerAdded:connect(function(player)

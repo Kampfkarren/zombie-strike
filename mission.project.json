@@ -29,6 +29,9 @@
         "$className": "Folder",
         "Cmdr": {
           "$path": "vendor/Cmdr/Cmdr"
+        },
+        "DataStore2": {
+          "$path": "vendor/DataStore2/DataStore2"
         }
       }
     },

@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local Nametag = require(ServerScriptService.Shared.Nametag)
@@ -264,7 +264,7 @@ function Zombie:GiveXP()
 end
 
 function Zombie:GetXP()
-	return (Data.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_NOT_BOSS) / DungeonState.NormalZombies
+	return (Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_NOT_BOSS) / DungeonState.NormalZombies
 end
 -- END XP
 

@@ -4,7 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local TeleportService = game:GetService("TeleportService")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Lobby = require(ReplicatedStorage.Libraries.Lobby)
 local Promise = require(ReplicatedStorage.Core.Promise)

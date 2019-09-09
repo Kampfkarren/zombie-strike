@@ -7,7 +7,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local ITEMS = ReplicatedStorage.Items
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 
 -- Variables

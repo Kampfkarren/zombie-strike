@@ -9,7 +9,7 @@ local Workspace = game:GetService("Workspace")
 local Zombies = ServerScriptService.Zombies
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
@@ -237,7 +237,7 @@ local function openNextGate()
 	gate:Destroy()
 end
 
-difficultyInfo = Data.GetDungeonData("DifficultyInfo")
+difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")
 
 for _, room in pairs(rooms) do
 	local zombieSpawns = {}

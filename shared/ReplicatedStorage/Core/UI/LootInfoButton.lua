@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)

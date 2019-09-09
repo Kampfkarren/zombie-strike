@@ -4,7 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local ChatConstants = require(ReplicatedStorage.ChatConstants)
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local InventoryUtil = require(ServerScriptService.Libraries.InventoryUtil)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)

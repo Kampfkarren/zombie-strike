@@ -4,7 +4,7 @@ local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
 local TradeConstants = require(ReplicatedStorage.TradeConstants)

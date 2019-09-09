@@ -28,7 +28,7 @@ function Data.GetLocalPlayerData(key)
 end
 
 if RunService:IsServer() then
-	for key, value in pairs(require(ServerScriptService.Libraries.Data)) do
+	for key, value in pairs(require(ServerScriptService.Shared.Data)) do
 		Data[key] = value
 	end
 end

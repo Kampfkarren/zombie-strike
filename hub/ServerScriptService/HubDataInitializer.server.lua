@@ -4,7 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local XP = require(ReplicatedStorage.Core.XP)

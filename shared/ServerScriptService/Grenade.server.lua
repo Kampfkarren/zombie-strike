@@ -5,8 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
-local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
+local Data = require(ReplicatedStorage.Core.Data)
 
 -- local HealthPackAnimation = ReplicatedStorage.Assets.Animations.HealthPackAnimation
 

@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Data = require(ReplicatedStorage.Libraries.Data)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local Zombie = require(script.Parent.Zombie)
 
 local AMOUNT_FOR_BOSS = 0.3
@@ -27,15 +27,15 @@ function Boss.new(level, bossInstance, derivativeType)
 end
 
 function Boss:GetHealth()
-	return Data.GetDungeonData("DifficultyInfo").BossStats.Health
+	return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Health
 end
 
 function Boss:GetSpeed()
-	return Data.GetDungeonData("DifficultyInfo").BossStats.Speed
+	return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Speed
 end
 
 function Boss:GetXP()
-	return Data.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
+	return Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
 end
 
 function Boss:UpdateNametag()

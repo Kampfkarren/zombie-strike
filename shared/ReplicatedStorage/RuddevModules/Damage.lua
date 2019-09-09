@@ -12,7 +12,7 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 local DAMAGE = {}
 
 if not ReplicatedStorage.HubWorld.Value then
-	local Data = require(ReplicatedStorage.Libraries.Data)
+	local Data = require(ReplicatedStorage.Core.Data)
 
 	local CRIT_MULTIPLIER = 2
 
