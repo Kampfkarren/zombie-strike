@@ -1,3 +1,4 @@
+local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -14,6 +15,7 @@ local UpdateLobbies = ReplicatedStorage.Remotes.UpdateLobbies
 
 local DUNGEON_PLACE_ID = 3803533582
 
+local dungeonDataStore = DataStoreService:GetDataStore("DungeonInfo")
 local lobbies = {}
 local unique = 0
 
@@ -198,34 +200,50 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 	Promise.all({
 		Promise.new(function(resolve, reject)
 			coroutine.wrap(function()
-				local success, result = pcall(function()
+				local success, result, privateServerId = pcall(function()
 					return TeleportService:ReserveServer(DUNGEON_PLACE_ID)
 				end)
 
 				if not success then
 					reject("Couldn't reserve a server: " .. result)
 				else
-					resolve(result)
+					resolve({ result, privateServerId })
 				end
 			end)()
 		end),
 		unpack(playerPromises),
 	}):andThen(function(results)
-		local accessCode = results[1]
+		return Promise.new(function(resolve, reject)
+			coroutine.wrap(function()
+				local success, result = pcall(function()
+					local accessCode, privateServerId = unpack(results[1])
+					local playerIds = {}
 
-		TeleportService:TeleportToPrivateServer(
-			DUNGEON_PLACE_ID,
-			accessCode,
-			lobby.Players,
-			nil,
-			{
-				DungeonData = {
-					Campaign = lobby.Campaign,
-					Difficulty = lobby.Difficulty,
-					Hardcore = lobby.Hardcore,
-				}
-			}
-		)
+					for _, player in pairs(lobby.Players) do
+						table.insert(playerIds, player.UserId)
+					end
+
+					dungeonDataStore:SetAsync(privateServerId, {
+						Campaign = lobby.Campaign,
+						Difficulty = lobby.Difficulty,
+						Hardcore = lobby.Hardcore,
+						Members = playerIds,
+					})
+
+					TeleportService:TeleportToPrivateServer(
+						DUNGEON_PLACE_ID,
+						accessCode,
+						lobby.Players
+					)
+				end)
+
+				if success then
+					resolve()
+				else
+					reject(result)
+				end
+			end)()
+		end)
 	end):catch(function(problem)
 		ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
 	end)
