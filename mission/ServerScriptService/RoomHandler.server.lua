@@ -257,6 +257,3 @@ for _, room in pairs(rooms) do
 
 	DungeonState.NormalZombies = DungeonState.NormalZombies + amount
 end
-
-wait(3)
-openNextGate()

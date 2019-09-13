@@ -8,7 +8,7 @@ local RETRY_TIME = 1
 local userThumbnails = {}
 
 local function playerAdded(player)
-	userThumbnails[player] = Promise.new(function(resolve)
+	userThumbnails[player.UserId] = Promise.new(function(resolve)
 		coroutine.wrap(function()
 			while true do
 				local thumbnail, finished = Players:GetUserThumbnailAsync(
@@ -34,5 +34,5 @@ for _, player in pairs(Players:GetPlayers()) do
 end
 
 return function(player)
-	return assert(userThumbnails[player])
+	return assert(userThumbnails[player.UserId])
 end
