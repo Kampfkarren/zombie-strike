@@ -6,11 +6,12 @@ local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
+local Maid = require(ReplicatedStorage.Core.Maid)
 local Nametag = require(ServerScriptService.Shared.Nametag)
 local XP = require(ReplicatedStorage.Core.XP)
 
 local AMOUNT_FOR_NOT_BOSS = 0.7
-XP.
+
 local Zombie = {}
 Zombie.__index = Zombie
 

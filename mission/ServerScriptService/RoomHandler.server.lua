@@ -15,6 +15,7 @@ local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Zombie = require(Zombies.Zombie)
 
+local JoinTimer = ReplicatedStorage.JoinTimer
 local Rooms = ServerStorage.Rooms
 
 local difficultyInfo
@@ -257,3 +258,46 @@ for _, room in pairs(rooms) do
 
 	DungeonState.NormalZombies = DungeonState.NormalZombies + amount
 end
+
+local started = false
+local startedCountdown = false
+
+local function start()
+	if started then return end
+	started = true
+	print("starting")
+	wait(3)
+	openNextGate()
+	JoinTimer.Value = 0
+end
+
+local function playerAdded()
+	if started then return end
+
+	local members = Dungeon.GetDungeonData("Members")
+	if #Players:GetPlayers() == #members then
+		print("all players connected")
+		start()
+		return
+	end
+
+	if not startedCountdown then
+		startedCountdown = true
+
+		coroutine.wrap(function()
+			for time = 30, 1, -1 do
+				if started then return end
+				JoinTimer.Value = time
+				wait(1)
+			end
+
+			start()
+		end)()
+	end
+end
+
+for _, player in pairs(Players:GetPlayers()) do
+	playerAdded(player)
+end
+
+Players.PlayerAdded:connect(playerAdded)

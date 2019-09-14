@@ -2,6 +2,7 @@
 	An implementation of Promises similar to Promise/A+.
 ]]
 
+local RunService = game:GetService("RunService")
 local PROMISE_DEBUG = false
 
 --[[
@@ -136,8 +137,8 @@ function Promise.new(callback, parent)
 		-- length of _values to handle middle nils.
 		_valuesLength = -1,
 
-		-- If an error occurs with no observers, this will be set.
-		_unhandledRejection = false,
+		-- Tracks if this Promise has no error observers..
+		_unhandledRejection = true,
 
 		-- Queues representing functions we should invoke when we update!
 		_queuedResolve = {},
@@ -151,11 +152,14 @@ function Promise.new(callback, parent)
 		-- cancellation propagation.
 		_parent = parent,
 
-		-- The number of consumers attached to this promise. This is needed so that
-		-- we don't propagate promise cancellations when there are still uncancelled
-		-- consumers.
-		_numConsumers = 0,
+		_consumers = setmetatable({}, {
+			__mode = "k";
+		}),
 	}
+
+	if parent and parent._status == Promise.Status.Started then
+		parent._consumers[self] = true
+	end
 
 	setmetatable(self, Promise)
 
@@ -168,13 +172,15 @@ function Promise.new(callback, parent)
 	end
 
 	local function onCancel(cancellationHook)
-		assert(type(cancellationHook) == "function", "onCancel must be called with a function as its first argument.")
-
-		if self._status == Promise.Status.Cancelled then
-			cancellationHook()
-		else
-			self._cancellationHook = cancellationHook
+		if cancellationHook then
+			if self._status == Promise.Status.Cancelled then
+				cancellationHook()
+			else
+				self._cancellationHook = cancellationHook
+			end
 		end
+
+		return self._status == Promise.Status.Cancelled
 	end
 
 	local _, result = wpcallPacked(callback, resolve, reject, onCancel)
@@ -186,6 +192,29 @@ function Promise.new(callback, parent)
 	end
 
 	return self
+end
+
+--[[
+	Promise.new, except Promise.spawn is implicit.
+]]
+function Promise.async(callback)
+	return Promise.new(function(...)
+		return Promise.spawn(callback, ...)
+	end)
+end
+
+--[[
+	Spawns a thread with predictable timing.
+]]
+function Promise.spawn(callback, ...)
+	local args = { ... }
+	local length = select("#", ...)
+
+	local connection
+	connection = RunService.Heartbeat:Connect(function()
+		connection:Disconnect()
+		callback(unpack(args, 1, length))
+	end)
 end
 
 --[[
@@ -262,14 +291,32 @@ function Promise.all(promises)
 	end)
 end
 
+--[[
+	Races a set of Promises and returns the first one that resolves,
+	cancelling the others.
+]]
 function Promise.race(promises)
-	for _, promise in pairs(promises) do
-		assert(Promise.is(promise))
+	assert(type(promises) == "table", "Please pass a list of promises to Promise.race")
+
+	for i, promise in ipairs(promises) do
+		assert(Promise.is(promise), ("Non-promise value passed into Promise.race at index #%d"):format(i))
 	end
 
-	return Promise.new(function(resolve, reject)
-		for _, promise in pairs(promises) do
-			promise:andThen(resolve, reject)
+	return Promise.new(function(resolve, reject, onCancel)
+		local function finalize(callback)
+			return function (...)
+				for _, promise in ipairs(promises) do
+					promise:cancel()
+				end
+
+				return callback(...)
+			end
+		end
+
+		onCancel(finalize(reject))
+
+		for _, promise in ipairs(promises) do
+			promise:andThen(finalize(resolve), finalize(reject))
 		end
 	end)
 end
@@ -285,6 +332,22 @@ function Promise.is(object)
 	return object[PromiseMarker] == true
 end
 
+--[[
+	Converts a yielding function into a Promise-returning one.
+]]
+function Promise.promisify(callback, selfValue)
+	return function(...)
+		local length, values = pack(...)
+		return Promise.new(function(resolve)
+			if selfValue == nil then
+				resolve(callback(unpack(values, 1, length)))
+			else
+				resolve(callback(selfValue, unpack(values, 1, length)))
+			end
+		end)
+	end
+end
+
 function Promise.prototype:getStatus()
 	return self._status
 end
@@ -296,7 +359,6 @@ end
 ]]
 function Promise.prototype:andThen(successHandler, failureHandler)
 	self._unhandledRejection = false
-	self._numConsumers = self._numConsumers + 1
 
 	-- Create a new promise to follow this part of the chain
 	return Promise.new(function(resolve, reject)
@@ -339,6 +401,16 @@ function Promise.prototype:catch(failureCallback)
 end
 
 --[[
+	Calls a callback on `andThen` with specific arguments.
+]]
+function Promise.prototype:andThenCall(callback, ...)
+	local length, values = pack(...)
+	return self:andThen(function()
+		return callback(unpack(values, 1, length))
+	end)
+end
+
+--[[
 	Cancels the promise, disallowing it from rejecting or resolving, and calls
 	the cancellation hook if provided.
 ]]
@@ -354,7 +426,11 @@ function Promise.prototype:cancel()
 	end
 
 	if self._parent then
-		self._parent:_consumerCancelled()
+		self._parent:_consumerCancelled(self)
+	end
+
+	for child in pairs(self._consumers) do
+		child:cancel()
 	end
 
 	self:_finalize()
@@ -364,10 +440,14 @@ end
 	Used to decrease the number of consumers by 1, and if there are no more,
 	cancel this promise.
 ]]
-function Promise.prototype:_consumerCancelled()
-	self._numConsumers = self._numConsumers - 1
+function Promise.prototype:_consumerCancelled(consumer)
+	if self._status ~= Promise.Status.Started then
+		return
+	end
 
-	if self._numConsumers <= 0 then
+	self._consumers[consumer] = nil
+
+	if next(self._consumers) == nil then
 		self:cancel()
 	end
 end
@@ -377,7 +457,7 @@ end
 	cancelled. Returns a new promise chained from this promise.
 ]]
 function Promise.prototype:finally(finallyHandler)
-	self._numConsumers = self._numConsumers + 1
+	self._unhandledRejection = false
 
 	-- Return a promise chained off of this promise
 	return Promise.new(function(resolve, reject)
@@ -391,9 +471,19 @@ function Promise.prototype:finally(finallyHandler)
 			table.insert(self._queuedFinally, finallyCallback)
 		else
 			-- The promise already settled or was cancelled, run the callback now.
-			finallyCallback()
+			finallyCallback(self._status)
 		end
 	end, self)
+end
+
+--[[
+	Calls a callback on `finally` with specific arguments.
+]]
+function Promise.prototype:finallyCall(callback, ...)
+	local length, values = pack(...)
+	return self:finally(function()
+		return callback(unpack(values, 1, length))
+	end)
 end
 
 --[[
@@ -401,45 +491,53 @@ end
 
 	This matches the execution model of normal Roblox functions.
 ]]
-function Promise.prototype:await()
+function Promise.prototype:awaitStatus()
 	self._unhandledRejection = false
 
 	if self._status == Promise.Status.Started then
-		local result
-		local resultLength
 		local bindable = Instance.new("BindableEvent")
 
-		self:andThen(
-			function(...)
-				resultLength, result = pack(...)
-				bindable:Fire(true)
-			end,
-			function(...)
-				resultLength, result = pack(...)
-				bindable:Fire(false)
-			end
-		)
 		self:finally(function()
-			bindable:Fire(nil)
+			bindable:Fire()
 		end)
 
-		local ok = bindable.Event:Wait()
+		bindable.Event:Wait()
 		bindable:Destroy()
-
-		if ok == nil then
-			-- If cancelled, we return nil.
-			return nil
-		end
-
-		return ok, unpack(result, 1, resultLength)
-	elseif self._status == Promise.Status.Resolved then
-		return true, unpack(self._values, 1, self._valuesLength)
-	elseif self._status == Promise.Status.Rejected then
-		return false, unpack(self._values, 1, self._valuesLength)
 	end
 
-	-- If the promise is cancelled, fall through to nil.
-	return nil
+	if self._status == Promise.Status.Resolved then
+		return self._status, unpack(self._values, 1, self._valuesLength)
+	elseif self._status == Promise.Status.Rejected then
+		return self._status, unpack(self._values, 1, self._valuesLength)
+	end
+
+	return self._status
+end
+
+--[[
+	Calls awaitStatus internally, returns (isResolved, values...)
+]]
+function Promise.prototype:await(...)
+	local length, result = pack(self:awaitStatus(...))
+	local status = table.remove(result, 1)
+
+	return status == Promise.Status.Resolved, unpack(result, 1, length - 1)
+end
+
+--[[
+	Calls await and only returns if the Promise resolves.
+	Throws if the Promise rejects or gets cancelled.
+]]
+function Promise.prototype:awaitValue(...)
+	local length, result = pack(self:awaitStatus(...))
+	local status = table.remove(result, 1)
+
+	assert(
+		status == Promise.Status.Resolved,
+		tostring(result[1] == nil and "" or result[1])
+	)
+
+	return unpack(result, 1, length - 1)
 end
 
 --[[
@@ -461,6 +559,9 @@ end
 
 function Promise.prototype:_resolve(...)
 	if self._status ~= Promise.Status.Started then
+		if Promise.is((...)) then
+			(...):_consumerCancelled(self)
+		end
 		return
 	end
 
@@ -477,7 +578,7 @@ function Promise.prototype:_resolve(...)
 			warn(message)
 		end
 
-		(...):andThen(
+		local promise = (...):andThen(
 			function(...)
 				self:_resolve(...)
 			end,
@@ -485,6 +586,14 @@ function Promise.prototype:_resolve(...)
 				self:_reject(...)
 			end
 		)
+
+		if promise._status == Promise.Status.Cancelled then
+			self:cancel()
+		elseif promise._status == Promise.Status.Started then
+			-- Adopt ourselves into promise for cancellation propagation.
+			self._parent = promise
+			promise._consumers[self] = true
+		end
 
 		return
 	end
@@ -520,7 +629,6 @@ function Promise.prototype:_reject(...)
 		-- synchronously. We'll wait one tick, and if there are still no
 		-- observers, then we should put a message in the console.
 
-		self._unhandledRejection = true
 		local err = tostring((...))
 
 		spawn(function()
@@ -551,8 +659,12 @@ function Promise.prototype:_finalize()
 		-- Purposefully not passing values to callbacks here, as it could be the
 		-- resolved values, or rejected errors. If the developer needs the values,
 		-- they should use :andThen or :catch explicitly.
-		callback()
+		callback(self._status)
 	end
+
+	-- Allow family to be buried
+	self._parent = nil
+	self._consumers = nil
 end
 
 return Promise

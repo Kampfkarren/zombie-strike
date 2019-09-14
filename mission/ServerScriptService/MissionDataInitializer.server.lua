@@ -3,7 +3,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Core.Data)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local XP = require(ReplicatedStorage.Core.XP)
+
 -- TODO: initialize stuff for LootInfoButton
 Players.PlayerAdded:connect(function(player)
 	-- TODO: This won't work with levels changing in game
@@ -48,4 +50,15 @@ Players.PlayerAdded:connect(function(player)
 	end
 
 	player.CharacterAdded:connect(characterAdded)
+end)
+
+local function clientDungeonKey(name, init)
+	local instance = Instance.new("NumberValue")
+	instance.Name = name
+	instance.Value = init()
+	instance.Parent = ReplicatedStorage.ClientDungeonData
+end
+
+clientDungeonKey("Members", function()
+	return #Dungeon.GetDungeonData("Members")
 end)
