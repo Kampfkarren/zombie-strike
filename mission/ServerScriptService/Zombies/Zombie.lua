@@ -1,6 +1,7 @@
 local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
@@ -11,6 +12,7 @@ local Nametag = require(ServerScriptService.Shared.Nametag)
 local XP = require(ReplicatedStorage.Core.XP)
 
 local AMOUNT_FOR_NOT_BOSS = 0.7
+local DEBUG = true
 
 local Zombie = {}
 Zombie.__index = Zombie
@@ -26,6 +28,12 @@ Zombie.WanderSpeed = 5
 
 function Zombie:Destroy()
 	self.maid:DoCleaning()
+end
+
+function Zombie.Debug(_, message)
+	if DEBUG then
+		print("🧟‍: " .. message)
+	end
 end
 
 function Zombie:Spawn(position)
@@ -85,7 +93,24 @@ function Zombie:InitializeAI()
 	spawn(function()
 		while self.instance.Humanoid.Health > 0 do
 			wait(math.random(30, 50) / 10)
-			self.instance.Humanoid.Jump = true
+
+			local headBump = Workspace:FindPartOnRay(
+				Ray.new(
+					self.instance.Head.Position,
+					self.instance.Head.CFrame.UpVector * 4
+				)
+			)
+
+			if headBump then
+				self:Debug("can't jump, something above")
+			else
+				local oldJumpPower = self.instance.Humanoid.JumpPower
+				self.instance.Humanoid.JumpPower = 40
+				self.instance.Humanoid.Jump = true
+				RunService.Heartbeat:wait()
+				RunService.Heartbeat:wait()
+				self.instance.Humanoid.JumpPower = oldJumpPower
+			end
 		end
 	end)
 end
@@ -197,7 +222,7 @@ end
 function Zombie:AssignAggroFocus(force)
 	local players = Players:GetPlayers()
 	if #players == 0 then
-		warn("AssignAggroFocus: All players have left")
+		self:Debug("AssignAggroFocus: All players have left")
 		self.aggroFocus = nil
 		self:Wander()
 		return
@@ -234,7 +259,7 @@ function Zombie:AssignAggroFocus(force)
 		return
 	end
 
-	warn("AssignAggroFocus: All players have died")
+	self:Debug("AssignAggroFocus: All players have died")
 	self:Wander()
 end
 -- END AGGRO

@@ -251,14 +251,26 @@ local function openNextGate()
 			end
 		end
 
+		local zombies = {}
+
 		for _ = 1, enemiesLeft do
 			local spawnPoint = table.remove(zombieSpawns, math.random(#zombieSpawns))
 			local zombie = spawnZombie("Common", 1, spawnPoint.WorldPosition)
+			table.insert(zombies, zombie)
+
+			local maxEnemies = enemiesLeft
+
 			zombie.Died:connect(function()
 				enemiesLeft = enemiesLeft - 1
 				if enemiesLeft == 0 then
 					wait(2)
 					openNextGate()
+				elseif enemiesLeft < maxEnemies / 2 then
+					for _, zombie in pairs(zombies) do
+						if zombie.alive and zombie.wandering then
+							zombie:Aggro()
+						end
+					end
 				end
 			end)
 		end
