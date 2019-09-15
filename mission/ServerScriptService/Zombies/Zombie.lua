@@ -151,7 +151,7 @@ function Zombie:Aggro(focus)
 			local waypoint = table.remove(waypoints)
 			if waypoint then
 				humanoid:MoveTo(waypoint.Position)
-				wait(0.2)
+				humanoid.MoveToFinished:wait()
 			else
 				wait(0.15)
 			end
@@ -164,7 +164,7 @@ function Zombie:Aggro(focus)
 			pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
 			waypoints = pathing:GetWaypoints()
 
-			wait(0.15)
+			wait(0.45)
 		end
 	end)
 

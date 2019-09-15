@@ -249,9 +249,9 @@ EVENTS.Recoil.Event:connect(function(r)
 	EVENTS.Sway:Fire(-Vector3.new(r.X, r.Z, 0))
 end)
 
--- EVENTS.Shake.Event:connect(function(s)
--- 	shaker:Shove(s)
--- end)
+EVENTS.Shake.Event:connect(function(s)
+	shaker:Shove(s)
+end)
 
 INPUT.ActionBegan:connect(function(action, processed)
 	if not processed then
