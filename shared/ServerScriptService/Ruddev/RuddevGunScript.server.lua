@@ -109,6 +109,10 @@ REMOTES.Hit.OnServerEvent:connect(function(player, hit, index)
 									end
 
 									if humanoid.Health <= 0 then
+										if hit.Name == "Head" then
+											humanoid.Parent.Head.Transparency = 1
+										end
+
 										for _, part in pairs(humanoid.Parent:GetChildren()) do
 											if part:IsA("BasePart") then
 												part.Velocity = direction * config.Damage

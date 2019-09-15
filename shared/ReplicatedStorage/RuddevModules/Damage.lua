@@ -43,7 +43,7 @@ if not ReplicatedStorage.HubWorld.Value then
 	end
 
 	function DAMAGE.PlayerCanDamage(_, _, humanoid)
-		return Players:GetPlayerFromCharacter(humanoid.Parent) == nil
+		return Players:GetPlayerFromCharacter(humanoid.Parent) == nil and humanoid.Health > 0
 	end
 
 	function DAMAGE.Damage(_, humanoid, damage, player)
