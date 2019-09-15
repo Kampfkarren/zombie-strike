@@ -76,7 +76,7 @@ function Config.GetConfig(_, item)
 	local config = {}
 	local weaponData = item:WaitForChild("WeaponData")
 
-	for baseKey, baseValue in pairs(Bases[weaponData.Type.Value]) do
+	for baseKey, baseValue in pairs(Bases[weaponData:WaitForChild("Type").Value]) do
 		config[baseKey] = baseValue
 	end
 

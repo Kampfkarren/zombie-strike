@@ -2,12 +2,11 @@ local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 local PhysicsService = game:GetService("PhysicsService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
 local Data = require(ReplicatedStorage.Core.Data)
 
--- local HealthPackAnimation = ReplicatedStorage.Assets.Animations.HealthPackAnimation
+local Effect = ReplicatedStorage.RuddevRemotes.Effect
 
 local BASE_DAMAGE = 65
 local DAMAGE_SCALE = 1.13
@@ -61,6 +60,12 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 			grenade.Anchored = true
 			grenade.Transparency = 1
 			Debris:AddItem(grenade)
+
+			Effect:FireAllClients(
+				"Explosion",
+				grenade.Position,
+				MAX_RANGE
+			)
 
 			for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
 				local range = (zombie.PrimaryPart.Position - grenade.Position).Magnitude
