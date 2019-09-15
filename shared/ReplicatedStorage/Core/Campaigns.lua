@@ -32,6 +32,8 @@ return {
 			{
 				MinLevel = 1,
 				Style = Easy,
+
+				Gold = 50,
 				XP = 600,
 				ZombieSpawnRate = 0.4,
 
@@ -45,6 +47,8 @@ return {
 			{
 				MinLevel = 6,
 				Style = Medium,
+
+				Gold = 120,
 				XP = 1300,
 				ZombieSpawnRate = 0.65,
 
@@ -58,6 +62,8 @@ return {
 			{
 				MinLevel = 12,
 				Style = Hard,
+
+				Gold = 370,
 				XP = 3000,
 				ZombieSpawnRate = 0.75,
 
@@ -71,6 +77,8 @@ return {
 			{
 				MinLevel = 18,
 				Style = VeryHard,
+
+				Gold = 800,
 				XP = 4800,
 				ZombieSpawnRate = 0.9,
 
@@ -84,6 +92,8 @@ return {
 			{
 				MinLevel = 24,
 				Style = Extreme,
+
+				Gold = 1900,
 				XP = 10000,
 				ZombieSpawnRate = 1,
 

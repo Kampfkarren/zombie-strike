@@ -3,6 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local MockPlayer = require(ReplicatedStorage.Core.MockData.MockPlayer)
+local Promise = require(ReplicatedStorage.Core.Promise)
 
 local Data = {}
 
@@ -37,5 +38,7 @@ function Data.GetPlayerData(player, key)
 		error("unknown data key " .. key)
 	end
 end
+
+Data.GetPlayerDataAsync = Promise.promisify(Data.GetPlayerData)
 
 return Data

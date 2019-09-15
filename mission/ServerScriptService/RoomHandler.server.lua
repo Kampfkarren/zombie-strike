@@ -8,7 +8,7 @@ local Workspace = game:GetService("Workspace")
 
 local Zombies = ServerScriptService.Zombies
 
-local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
+local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
@@ -17,6 +17,8 @@ local Zombie = require(Zombies.Zombie)
 
 local JoinTimer = ReplicatedStorage.JoinTimer
 local Rooms = ServerStorage.Rooms
+
+DataStore2.Combine("DATA", "Gold", "Level", "XP")
 
 local difficultyInfo
 
@@ -186,7 +188,25 @@ end
 local function endMission()
 	for _, player in pairs(Players:GetPlayers()) do
 		local loot = generateLoot(player)
-		ReplicatedStorage.Remotes.MissionOver:FireClient(player, loot, 999, 999)
+
+		local difficulty = Dungeon.GetDungeonData("DifficultyInfo")
+
+		local goldScale = player.PlayerData.GoldScale.Value
+		local xpScale = player.PlayerData.XPScale.Value
+
+		local xp = math.floor(difficulty.XP * xpScale)
+		local gold = math.floor(difficulty.Gold * goldScale)
+
+		DataStore2("Gold", player):IncrementAsync(gold, 0)
+		DataStore2("Level", player):Set(player.PlayerData.Level.Value)
+		DataStore2("XP", player):Set(player.PlayerData.XP.Value)
+
+		ReplicatedStorage.Remotes.MissionOver:FireClient(
+			player,
+			loot,
+			xp,
+			gold
+		)
 	end
 
 	for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do

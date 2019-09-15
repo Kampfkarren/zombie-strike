@@ -9,6 +9,8 @@ local DungeonState = require(ServerScriptService.DungeonState)
 
 local HUB_PLACE = 3759927663
 
+local goldScales = {}
+
 ReplicatedStorage.Remotes.RespawnMe.OnServerInvoke = function(player)
 	if Dungeon.GetDungeonData("Hardcore") then return end
 
@@ -19,6 +21,25 @@ ReplicatedStorage.Remotes.RespawnMe.OnServerInvoke = function(player)
 			RunService.Heartbeat:wait()
 			character:MoveTo(DungeonState.CurrentSpawn.WorldPosition)
 		end)()
+
+		spawn(function()
+			local diff
+
+			if goldScales[player] then
+				if goldScales[player] == 5 then
+					diff = 0
+				else
+					diff = -0.1
+					goldScales[player] = goldScales[player] + 1
+				end
+			else
+				diff = -0.1
+				goldScales[player] = 1
+			end
+
+			local GoldScale = player:WaitForChild("PlayerData"):WaitForChild("GoldScale")
+			GoldScale.Value = GoldScale.Value + diff
+		end)
 
 		player:LoadCharacter()
 	end

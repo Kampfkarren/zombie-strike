@@ -4,25 +4,41 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local Loot = require(ReplicatedStorage.Core.Loot)
+local Promise = require(ReplicatedStorage.Core.Promise)
 local XP = require(ReplicatedStorage.Core.XP)
+
+local UpdateEquipped = ReplicatedStorage.Remotes.UpdateEquipped
+
+local function numberValue(name, value, playerData)
+	local instance = Instance.new("NumberValue")
+	instance.Name = name
+	instance.Value = value
+	instance.Parent = playerData
+	return instance
+end
 
 -- TODO: initialize stuff for LootInfoButton
 Players.PlayerAdded:connect(function(player)
-	-- TODO: This won't work with levels changing in game
+	Promise.all({
+		Data.GetPlayerDataAsync(player, "Armor"):andThen(Loot.Serialize),
+		Data.GetPlayerDataAsync(player, "Helmet"):andThen(Loot.Serialize),
+		Data.GetPlayerDataAsync(player, "Weapon"):andThen(Loot.Serialize),
+	}):andThen(function(equipped)
+		UpdateEquipped:FireClient(player, unpack(equipped))
+	end)
+
 	local playerData = Instance.new("Folder")
 	playerData.Name = "PlayerData"
 
 	local level = Data.GetPlayerData(player, "Level")
-	local levelStat = Instance.new("NumberValue")
-	levelStat.Name = "Level"
-	levelStat.Value = level
-	levelStat.Parent = playerData
+	numberValue("Level", level, playerData)
 
 	local xp = Data.GetPlayerData(player, "XP")
-	local xpStat = Instance.new("NumberValue")
-	xpStat.Name = "XP"
-	xpStat.Value = xp
-	xpStat.Parent = playerData
+	numberValue("XP", xp, playerData)
+
+	numberValue("GoldScale", 1, playerData)
+	numberValue("XPScale", 1, playerData)
 
 	playerData.Parent = player
 
