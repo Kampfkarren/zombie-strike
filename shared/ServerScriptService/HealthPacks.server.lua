@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 
+local Effect = ReplicatedStorage.RuddevRemotes.Effect
 local HealthPackAnimation = ReplicatedStorage.Assets.Animations.HealthPackAnimation
 
 local COOLDOWN = 10
@@ -38,6 +39,8 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 					humanoid.Health = humanoid.Health + humanoid.MaxHealth * HEAL_AMOUNT
 					ReplicatedStorage.Remotes.HealthPack:FireClient(player)
 				end
+
+				Effect:FireAllClients("Shatter", character)
 			end
 		end)
 
