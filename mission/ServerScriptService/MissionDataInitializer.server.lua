@@ -52,13 +52,15 @@ Players.PlayerAdded:connect(function(player)
 	player.CharacterAdded:connect(characterAdded)
 end)
 
-local function clientDungeonKey(name, init)
-	local instance = Instance.new("NumberValue")
+local function clientDungeonKey(name, type)
+	local instance = Instance.new(type or "NumberValue")
 	instance.Name = name
-	instance.Value = init()
-	instance.Parent = ReplicatedStorage.ClientDungeonData
+
+	return function(value)
+		instance.Value = value
+		instance.Parent = ReplicatedStorage.ClientDungeonData
+	end
 end
 
-clientDungeonKey("Members", function()
-	return #Dungeon.GetDungeonData("Members")
-end)
+clientDungeonKey("Members")(#Dungeon.GetDungeonData("Members"))
+clientDungeonKey("Hardcore", "BoolValue")(Dungeon.GetDungeonData("Hardcore"))

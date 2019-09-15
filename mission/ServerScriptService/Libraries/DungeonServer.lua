@@ -1,5 +1,4 @@
 local DataStoreService = game:GetService("DataStoreService")
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
@@ -44,7 +43,7 @@ function Dungeon.GetDungeonData(key)
 		return Campaigns[Dungeon.GetDungeonData("Campaign")]
 	elseif key == "DifficultyInfo" then
 		return Dungeon.GetDungeonData("CampaignInfo").Difficulties[Dungeon.GetDungeonData("Difficulty")]
-	elseif MockDungeon[key] then
+	elseif MockDungeon[key] ~= nil then
 		local success, result = Dungeon.GetDungeonTable():await()
 		assert(success, result)
 		return result[key]

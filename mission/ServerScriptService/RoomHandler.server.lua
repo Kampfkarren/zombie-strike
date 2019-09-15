@@ -58,6 +58,7 @@ local function generateDungeon(numRooms)
 	local obbyParent = Instance.new("Folder")
 
 	local base = createRoom(Rooms.StartSection, obbyParent)
+	DungeonState.CurrentSpawn = base.SpawnLocation
 	local nextRoom = base
 
 	local rooms = {}
@@ -74,6 +75,7 @@ local function generateDungeon(numRooms)
 	table.insert(rooms, bossRoom)
 
 	obbyParent.Parent = Workspace
+
 	return rooms
 end
 
@@ -209,6 +211,17 @@ local function openNextGate()
 
 	local enemiesLeft = room.EnemiesLeft.Value
 	local obbyType = room.ObbyType.Value
+
+	local spawnPoint
+	for _, thing in pairs(room:GetDescendants()) do
+		if CollectionService:HasTag(thing, "RespawnPoint") then
+			spawnPoint = thing
+			break
+		end
+	end
+	assert(spawnPoint, "No RespawnPoint")
+
+	DungeonState.CurrentSpawn = spawnPoint
 
 	if obbyType == "enemy" or obbyType == "boss" then
 		local zombieSpawns = {}
