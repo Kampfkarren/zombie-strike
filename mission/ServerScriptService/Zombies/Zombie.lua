@@ -81,6 +81,13 @@ function Zombie:InitializeAI()
 			self:Aggro()
 		end
 	end))
+
+	spawn(function()
+		while self.instance.Humanoid.Health > 0 do
+			wait(math.random(30, 50) / 10)
+			self.instance.Humanoid.Jump = true
+		end
+	end)
 end
 
 function Zombie:Wander()
@@ -140,18 +147,25 @@ function Zombie:Aggro(focus)
 	local ourTick = self.aggroTick + 1
 	self.aggroTick = ourTick
 
-	local pathing = PathfindingService:CreatePath({
-		AgentCanJump = false,
-	})
+	local pathing = PathfindingService:CreatePath()
 
 	local waypoints = {}
 
 	spawn(function()
 		while self.aggroTick == ourTick and self.aggroFocus:IsDescendantOf(game) do
-			local waypoint = table.remove(waypoints)
+			local waypoint = table.remove(waypoints, 1)
 			if waypoint then
-				humanoid:MoveTo(waypoint.Position)
-				humanoid.MoveToFinished:wait()
+				if waypoint.Action == Enum.PathWaypointAction.Jump then
+					humanoid.Jump = true
+				elseif waypoint.Action == Enum.PathWaypointAction.Walk then
+					local diff = waypoint.Position - self.instance.PrimaryPart.Position
+					local angle = math.atan2(diff.X, diff.Z)
+
+					if (math.abs(math.deg(angle)) < 120 and diff.Magnitude > 5) or #waypoints == 0 then
+						humanoid:MoveTo(waypoint.Position)
+						humanoid.MoveToFinished:wait()
+					end
+				end
 			else
 				wait(0.15)
 			end
@@ -164,7 +178,7 @@ function Zombie:Aggro(focus)
 			pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
 			waypoints = pathing:GetWaypoints()
 
-			wait(0.45)
+			wait(0.25)
 		end
 	end)
 
