@@ -221,10 +221,6 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 
 			CAMERA.Focus = CAMERA.CFrame * CFrame.new(0, 0, -20)
 		end
-	elseif mode == "Spaceship" then
-		error("mode = Spaceship")
-	elseif mode == "Spectate" then
-		error("mode = Spectate")
 	end
 end)
 
@@ -251,6 +247,10 @@ end)
 
 EVENTS.Shake.Event:connect(function(s)
 	shaker:Shove(s)
+end)
+
+EVENTS.Mode.Event:connect(function(m)
+	mode = m
 end)
 
 INPUT.ActionBegan:connect(function(action, processed)

@@ -9,32 +9,32 @@ local AMOUNT_FOR_BOSS = 0.3
 local Boss = {}
 Boss.__index = Boss
 
-Boss.Name = "Boss"
+function Boss.new(level)
+	local derivative = Zombie.new(
+		"Boss" .. Dungeon.GetDungeonData("Campaign"),
+		level
+	)
 
-function Boss.new(level, bossInstance, derivativeType)
-	local bossInstance = bossInstance:Clone()
-	Instance.new("Model", bossInstance.Humanoid).Name = "Boss"
-	CollectionService:AddTag(bossInstance, "Boss")
-	local derivative = Zombie.new(derivativeType, level)
-
-	return setmetatable({
-		Model = bossInstance,
-	}, {
+	return setmetatable({}, {
 		__index = function(_, key)
 			return Boss[key] or derivative[key]
 		end,
 	})
 end
 
-function Boss:GetHealth()
+function Boss:AfterSpawn()
+	CollectionService:AddTag(self.instance, "Boss")
+end
+
+function Boss.GetHealth()
 	return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Health
 end
 
-function Boss:GetSpeed()
+function Boss.GetSpeed()
 	return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Speed
 end
 
-function Boss:GetXP()
+function Boss.GetXP()
 	return Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
 end
 

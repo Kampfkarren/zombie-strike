@@ -79,4 +79,5 @@ local function clientDungeonKey(name, type)
 end
 
 clientDungeonKey("Members")(#Dungeon.GetDungeonData("Members"))
+clientDungeonKey("Campaign")(Dungeon.GetDungeonData("Campaign"))
 clientDungeonKey("Hardcore", "BoolValue")(Dungeon.GetDungeonData("Hardcore"))

@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
@@ -337,7 +338,7 @@ function Zombie.new(zombieType, level, ...)
 
 	local zombie = originalZombie.new(level, ...)
 
-	local instance = zombie.Model:Clone()
+	local instance = ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")][zombie.Model]:Clone()
 
 	local aliveMaid = Maid.new()
 

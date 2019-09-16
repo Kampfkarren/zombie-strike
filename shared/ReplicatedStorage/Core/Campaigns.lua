@@ -35,7 +35,7 @@ return {
 
 				Gold = 50,
 				XP = 600,
-				ZombieSpawnRate = 0.4,
+				ZombieSpawnRate = 0.01,
 
 				BossStats = {
 					Health = 750,

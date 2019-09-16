@@ -1,17 +1,15 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
-local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
-local LineOfSight = require(ServerScriptService.Libraries.LineOfSight)
+local LineOfSight = require(ReplicatedStorage.Libraries.LineOfSight)
 
 local ZombieAttack = ReplicatedStorage.Assets.Animations.ZombieAttack
 
 local BasicZombie = {}
 BasicZombie.__index = BasicZombie
 
-BasicZombie.Model = ServerStorage.Zombies.Zombie
+BasicZombie.Model = "Zombie"
 BasicZombie.Name = "Zombie"
 
 BasicZombie.Scaling = {

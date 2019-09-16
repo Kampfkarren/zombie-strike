@@ -1,14 +1,13 @@
 -- TODO: Prevent shooters from being moved, or don't run the animation
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerStorage = game:GetService("ServerStorage")
 
 local Raycast = require(ReplicatedStorage.Libraries.Raycast)
 
 local Turret = {}
 Turret.__index = Turret
 
-Turret.Model = ServerStorage.Zombies.Turret
+Turret.Model = "Turret"
 Turret.Name = "Shooter Zombie"
 
 Turret.TurretCooldown = 2

@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 
 local Raycast = require(ReplicatedStorage.Libraries.Raycast)
 
-local DEBUG = true
+local DEBUG = false
 DEBUG = DEBUG and RunService:IsStudio()
 
 local debug do

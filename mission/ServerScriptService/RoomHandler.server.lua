@@ -15,6 +15,7 @@ local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Zombie = require(Zombies.Zombie)
 
+local BossTimer = ReplicatedStorage.BossTimer
 local JoinTimer = ReplicatedStorage.JoinTimer
 local Rooms = ServerStorage.Rooms
 
@@ -81,7 +82,7 @@ local function generateDungeon(numRooms)
 	return rooms
 end
 
-local rooms = generateDungeon(5)
+local rooms = generateDungeon(1)
 
 local function spawnZombie(zombieType, level, position)
 	local zombie = Zombie.new(zombieType, level)
@@ -217,13 +218,17 @@ local function endMission()
 end
 
 local function spawnBoss(position)
-	local bossZombie = Zombie.new("Boss", 1, ServerStorage.Zombies.TestBossZombie, "Common")
+	local bossZombie = Zombie.new("Boss", Dungeon.GetDungeonData("DifficultyInfo").MinLevel)
+
 	bossZombie:Spawn(position)
 	bossZombie.Died:connect(endMission)
+
 	return bossZombie
 end
 
 ServerStorage.Events.EndDungeon.Event:connect(endMission)
+
+local lastGate
 
 local function openNextGate()
 	local room = table.remove(rooms, 1)
@@ -232,14 +237,7 @@ local function openNextGate()
 	local enemiesLeft = room.EnemiesLeft.Value
 	local obbyType = room.ObbyType.Value
 
-	local spawnPoint
-	for _, thing in pairs(room:GetDescendants()) do
-		if CollectionService:HasTag(thing, "RespawnPoint") then
-			spawnPoint = thing
-			break
-		end
-	end
-	assert(spawnPoint, "No RespawnPoint")
+	local spawnPoint = assert(room:FindFirstChild("RespawnPoint", true), "No RespawnPoint")
 
 	DungeonState.CurrentSpawn = spawnPoint
 
@@ -276,12 +274,30 @@ local function openNextGate()
 		end
 	end
 
+	gate.Parent = nil
+
 	if obbyType == "boss" then
 		local bossSpawn = room:FindFirstChild("BossSpawn", true)
+		for timer = 1, 1, -1 do
+			BossTimer.Value = timer
+			wait(1)
+		end
+
+		BossTimer.Value = 0
+
+		gate.Parent = Workspace
+
+		for _, player in pairs(Players:GetPlayers()) do
+			-- TODO: Does this spawn them on top of each other?
+			coroutine.wrap(function()
+				(player.Character or player.CharacterAdded:wait()):MoveTo(spawnPoint.Position)
+			end)()
+		end
+
 		spawnBoss(bossSpawn.WorldPosition)
 	end
 
-	gate:Destroy()
+	lastGate = gate
 end
 
 difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")

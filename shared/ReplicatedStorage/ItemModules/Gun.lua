@@ -18,7 +18,10 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local DAMAGE = require(MODULES:WaitForChild("Damage"))
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
+
 local EQUIP_COOLDOWN = 0.2
+
+local HubWorld = ReplicatedStorage.HubWorld.Value
 
 -- functions
 
@@ -60,6 +63,60 @@ local function Raycast(position, direction, ignore)
 	until success
 
 	return h, p, n, humanoid
+end
+
+local function aimAssist(cframe, range)
+	if HubWorld then return end
+	local LineOfSight = require(ReplicatedStorage.Libraries.LineOfSight)
+
+	local aimAssist = Instance.new("Part")
+	aimAssist.Anchored = true
+	aimAssist.CanCollide = false
+	aimAssist.Size = Vector3.new(3, 10, range)
+	aimAssist.Transparency = 1
+	aimAssist.CFrame = cframe + cframe.LookVector * range / 2
+	aimAssist.Touched:connect(function() end)
+	aimAssist.Parent = Workspace.Effects
+
+	local closestZombie = { nil, math.huge }
+	local zombiesChecked = {}
+
+	for _, touchingPart in pairs(aimAssist:GetTouchingParts()) do
+		if touchingPart:IsDescendantOf(Workspace.Zombies) then
+			local zombie = touchingPart
+			while zombie.Parent ~= Workspace.Zombies do
+				zombie = zombie.Parent
+			end
+
+			if not zombiesChecked[zombie] then
+				zombiesChecked[zombie] = true
+
+				if zombie.Humanoid.Health > 0 then
+					if LineOfSight(cframe.Position, zombie, range, { aimAssist }) then
+						local zombiePrimary = zombie.PrimaryPart
+						local dist = (zombiePrimary.Position - cframe.Position).Magnitude
+						if dist < closestZombie[2] then
+							closestZombie = { zombie, dist }
+						end
+					end
+				end
+			end
+		end
+	end
+
+	aimAssist:Destroy()
+
+	if closestZombie[1] then
+		local zombieScreen = Workspace.CurrentCamera:WorldToScreenPoint(closestZombie[1].PrimaryPart.Position)
+		local assistScreen = Workspace.CurrentCamera:WorldToScreenPoint(aimAssist.CFrame.Position)
+		local humanoid = closestZombie[1].Humanoid
+
+		if zombieScreen.Y / assistScreen.Y >= 1.1 then
+			return closestZombie[1].Head, humanoid
+		else
+			return closestZombie[1].PrimaryPart, humanoid
+		end
+	end
 end
 
 -- modules
@@ -149,6 +206,11 @@ function module.Create(_, item)
 			table.insert(directions, direction)
 
 			local hit, pos, _, humanoid = Raycast(position, direction * config.Range, {character})
+
+			-- console aim assist
+			if not humanoid then
+				hit, humanoid = aimAssist(cframe, config.Range)
+			end
 
 			if hit and humanoid then
 				if DAMAGE:PlayerCanDamage(PLAYER, humanoid) then
