@@ -218,10 +218,14 @@ local function endMission()
 end
 
 local function spawnBoss(position)
+	local BossSequence = require(ReplicatedStorage.BossSequences[Dungeon.GetDungeonData("Campaign")])
+
 	local bossZombie = Zombie.new("Boss", Dungeon.GetDungeonData("DifficultyInfo").MinLevel)
 
-	bossZombie:Spawn(position)
+	local model = bossZombie:Spawn(position)
 	bossZombie.Died:connect(endMission)
+	BossSequence.Start(model):await()
+	print("boss seq over")
 
 	return bossZombie
 end

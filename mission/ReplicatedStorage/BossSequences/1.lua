@@ -54,23 +54,35 @@ local function animate(boss, camera)
 		end
 	else
 		wait(BOSS_ANIMATE_TIME)
+		-- boss:SetPrimaryPartCFrame(jumpCFrame)
 	end
 
+	boss:SetPrimaryPartCFrame(jumpCFrame)
 	return boss, camera
 end
 
 function Sequence.Start(boss)
-	local focus = SequenceUtil.Focus()
+	local focusCancel = {}
 
 	return SequenceUtil.Init(boss)
 		:andThen(SequenceUtil.TeleportToAttachment("BossSequenceStart1"))
 		:andThen(SequenceUtil.MoveToAttachment("BossSequenceStart2", TweenInfo.new(3.0, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)))
 		:andThen(SequenceUtil.Animate(yellAnimation))
 		:andThen(SequenceUtil.Delay(3.3))
-		:andThen(focus)
+		:andThen(SequenceUtil.Focus(focusCancel))
 		:andThen(Promise.promisify(animate))
-		:andThen(Promise.promisify(Promise.prototype.cancel, focus))
-		:andThen(SequenceUtil.Delay(1))
+		:andThen(SequenceUtil.Shake(Vector3.new(100, 100, 30)))
+		:andThen(SequenceUtil.Emit("BossJumpEmitter", 20))
+		:andThen(Promise.promisify(function(...)
+			focusCancel.cancel()
+			return ...
+		end))
+		:andThen(SequenceUtil.Delay(0.3))
+		:andThen(SequenceUtil.MoveToAttachment("BossSequenceStart3", TweenInfo.new(2.0, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut)))
+		:andThen(SequenceUtil.Animate(yellAnimation))
+		:andThen(SequenceUtil.Delay(0.5))
+		:andThen(SequenceUtil.ShowName)
+		:andThen(SequenceUtil.Delay(2.3))
 		:andThen(SequenceUtil.Finish)
 end
 

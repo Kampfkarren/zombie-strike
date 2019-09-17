@@ -179,16 +179,19 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 		end
 	end
 
-	if mode == "Default" then
-		if character then
+	if mode == "Default" or mode == "Sequence" then
+		local position, rotation
+
+		if mode == "Default" and character then
 			CAMERA.FieldOfView = Lerp(CAMERA.FieldOfView, 70 - (zooming and targetZoom or 0) + (flying and rootPart.Velocity.Magnitude / 10 or 0), math.min(deltaTime * 10, 1))
 
 			local center = rootPart.Position + CENTER_OFFSET
 			local cframe = CFrame.new(center) * CFrame.Angles(0, x, 0) * CFrame.Angles(y, 0, 0) * CFrame.new(shoulder, height, zoom - 10 * (1 - (CAMERA.FieldOfView / 70)))
-			local rotation = cframe - cframe.p
+			rotation = cframe - cframe.p
 
 			local ray = Ray.new(center, cframe.p - center)
-			local hit, position, normal = Raycast(ray)
+			local hit, _position, normal = Raycast(ray)
+			position = _position
 
 			if hit then
 				position = position + normal * 0.2
@@ -203,7 +206,12 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 			for _, v in pairs(parts) do
 				v.LocalTransparencyModifier = transparency
 			end
+		elseif mode == "Sequence" then
+			position = CAMERA.CFrame.Position
+			rotation = CAMERA.CFrame - CAMERA.CFrame.Position
+		end
 
+		if position then
 			recoil:Update(deltaTime)
 			shaker:Update(deltaTime)
 

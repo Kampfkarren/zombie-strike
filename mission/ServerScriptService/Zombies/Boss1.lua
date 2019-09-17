@@ -9,6 +9,8 @@ function CityBoss.new()
 end
 
 function CityBoss:InitializeAI()
+	local instance = self.instance
+	instance.PrimaryPart.Anchored = true
 end
 
 return CityBoss

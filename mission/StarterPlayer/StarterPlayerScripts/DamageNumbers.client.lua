@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -55,7 +56,7 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 	damageNumber.Parent = humanoid.Parent.HumanoidRootPart
 	updateColor(damageText, humanoid.Health, humanoid.MaxHealth)
 
-	if humanoid:FindFirstChild("Boss") then
+	if CollectionService:HasTag(humanoid.Parent, "Boss") then
 		damageText.UIScale.Scale = damageText.UIScale.Scale * 5
 	end
 

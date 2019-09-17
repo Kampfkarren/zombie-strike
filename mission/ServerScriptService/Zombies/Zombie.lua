@@ -82,6 +82,8 @@ function Zombie:Spawn(position)
 end
 
 function Zombie:InitializeAI()
+	self.aiInitialized = true
+
 	self:Wander()
 
 	self.aliveMaid:GiveTask(self.Damaged:connect(function(_, damagedBy)
@@ -117,6 +119,7 @@ function Zombie:InitializeAI()
 end
 
 function Zombie:Wander()
+	if not self.aiInitialized then return end
 	self.aggroTick = self.aggroTick + 1
 
 	local humanoid = self.instance.Humanoid
@@ -161,6 +164,7 @@ end
 
 -- AGGRO
 function Zombie:Aggro(focus)
+	if not self.aiInitialized then return end
 	local humanoid = self.instance.Humanoid
 	humanoid.WalkSpeed = self:GetSpeed()
 
