@@ -217,7 +217,7 @@ local function endMission()
 	end
 end
 
-local function spawnBoss(position)
+local function spawnBoss(position, room)
 	local BossSequence = require(ReplicatedStorage.BossSequences[Dungeon.GetDungeonData("Campaign")])
 
 	local bossZombie = Zombie.new("Boss", Dungeon.GetDungeonData("DifficultyInfo").MinLevel)
@@ -225,14 +225,13 @@ local function spawnBoss(position)
 	local model = bossZombie:Spawn(position)
 	bossZombie.Died:connect(endMission)
 	BossSequence.Start(model):await()
-	print("boss seq over")
+
+	bossZombie:InitializeBossAI(room)
 
 	return bossZombie
 end
 
 ServerStorage.Events.EndDungeon.Event:connect(endMission)
-
-local lastGate
 
 local function openNextGate()
 	local room = table.remove(rooms, 1)
@@ -245,7 +244,7 @@ local function openNextGate()
 
 	DungeonState.CurrentSpawn = spawnPoint
 
-	if obbyType == "enemy" or obbyType == "boss" then
+	if obbyType == "enemy" then
 		local zombieSpawns = {}
 		for _, thing in pairs(room:GetDescendants()) do
 			if CollectionService:HasTag(thing, "ZombieSpawn") then
@@ -257,7 +256,7 @@ local function openNextGate()
 
 		for _ = 1, enemiesLeft do
 			local spawnPoint = table.remove(zombieSpawns, math.random(#zombieSpawns))
-			local zombie = spawnZombie("Common", 1, spawnPoint.WorldPosition)
+			local zombie = spawnZombie("Common", Dungeon.RNGZombieLevel(), spawnPoint.WorldPosition)
 			table.insert(zombies, zombie)
 
 			local maxEnemies = enemiesLeft
@@ -265,7 +264,7 @@ local function openNextGate()
 			zombie.Died:connect(function()
 				enemiesLeft = enemiesLeft - 1
 				if enemiesLeft == 0 then
-					wait(2)
+					wait(1)
 					openNextGate()
 				elseif enemiesLeft < maxEnemies / 2 then
 					for _, zombie in pairs(zombies) do
@@ -276,6 +275,8 @@ local function openNextGate()
 				end
 			end)
 		end
+
+		wait(1)
 	end
 
 	gate.Parent = nil
@@ -298,10 +299,8 @@ local function openNextGate()
 			end)()
 		end
 
-		spawnBoss(bossSpawn.WorldPosition)
+		spawnBoss(bossSpawn.WorldPosition, room)
 	end
-
-	lastGate = gate
 end
 
 difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")
@@ -331,7 +330,7 @@ local function start()
 	if started then return end
 	started = true
 	print("starting")
-	wait(3)
+	wait(2)
 	openNextGate()
 	JoinTimer.Value = 0
 end

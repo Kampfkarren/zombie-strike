@@ -27,6 +27,11 @@ local function updateColor(label, health, maxHealth)
 end
 
 ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, damage, crit)
+	if not humanoid then
+		warn("DamageNumber: no humanoid, probably the grenade bug")
+		return
+	end
+
 	if crit then
 		local critEffect = ReplicatedStorage.CritEffect:Clone()
 		critEffect.Parent = humanoid.Parent.UpperTorso

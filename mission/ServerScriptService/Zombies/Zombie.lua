@@ -82,7 +82,7 @@ function Zombie:Spawn(position)
 end
 
 function Zombie:InitializeAI()
-	self.aiInitialized = true
+	self.defaultAiInitialized = true
 
 	self:Wander()
 
@@ -119,7 +119,7 @@ function Zombie:InitializeAI()
 end
 
 function Zombie:Wander()
-	if not self.aiInitialized then return end
+	if not self.defaultAiInitialized then return end
 	self.aggroTick = self.aggroTick + 1
 
 	local humanoid = self.instance.Humanoid
@@ -164,7 +164,7 @@ end
 
 -- AGGRO
 function Zombie:Aggro(focus)
-	if not self.aiInitialized then return end
+	if not self.defaultAiInitialized then return end
 	local humanoid = self.instance.Humanoid
 	humanoid.WalkSpeed = self:GetSpeed()
 
@@ -314,7 +314,7 @@ end
 
 -- START STATS
 function Zombie:GetScale(key)
-	local scale = assert(self.Scaling[key], "no scale for " .. key)
+	local scale = assert(self.Scaling[key] or self:CustomScale(key), "no scale for " .. key)
 	return scale.Base * scale.Scale ^ (self.level - 1)
 end
 
@@ -332,7 +332,8 @@ function Zombie:UpdateNametag()
 end
 
 -- START BASIC HOOKS
-function Zombie:AfterSpawn() end
+function Zombie.CustomScale() end
+function Zombie.AfterSpawn() end
 -- END BASIC HOOKS
 
 function Zombie.new(zombieType, level, ...)

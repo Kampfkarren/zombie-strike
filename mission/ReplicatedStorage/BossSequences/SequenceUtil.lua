@@ -18,8 +18,6 @@ local particleEmitters = {}
 
 local realBoss
 
--- TODO: Make boss invincible
--- TODO: Prevent gun fire
 function SequenceUtil.Init(boss)
 	for _, cameraAttachment in pairs(CollectionService:GetTagged("BossSequencePoint")) do
 		if cameraAttachment:IsDescendantOf(Workspace) then
@@ -52,6 +50,11 @@ function SequenceUtil.Init(boss)
 		end)
 	else
 		local mockCamera = {}
+
+		local noKill = Instance.new("Model")
+		noKill.Name = "NoKill"
+		noKill.Parent = boss.Humanoid
+
 		return Promise.new(function(resolve)
 			resolve(boss, mockCamera)
 		end)
@@ -65,6 +68,8 @@ function SequenceUtil.Finish(boss)
 
 		Mode:Fire("Default")
 		Players.LocalPlayer.PlayerGui.BossSequenceGui.Enabled = false
+	else
+		boss.Humanoid.NoKill:Destroy()
 	end
 end
 

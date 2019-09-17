@@ -52,4 +52,9 @@ function Dungeon.GetDungeonData(key)
 	end
 end
 
+function Dungeon.RNGZombieLevel()
+	local difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")
+	return math.random(difficultyInfo.MinLevel, difficultyInfo.MinLevel + 2)
+end
+
 return Dungeon

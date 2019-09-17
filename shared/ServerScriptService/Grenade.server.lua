@@ -4,6 +4,7 @@ local PhysicsService = game:GetService("PhysicsService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
+local Damage = require(ReplicatedStorage.RuddevModules.Damage)
 local Data = require(ReplicatedStorage.Core.Data)
 
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
@@ -69,7 +70,7 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 
 			for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
 				local range = (zombie.PrimaryPart.Position - grenade.Position).Magnitude
-				if zombie.Humanoid.Health > 0 then
+				if Damage:PlayerCanDamage(player, zombie.Humanoid) then
 					if range <= MAX_RANGE then
 						local baseDamage = getDamage(level)
 						local damage = lerp(baseDamage * DROPOFF, baseDamage, range / MAX_RANGE)
