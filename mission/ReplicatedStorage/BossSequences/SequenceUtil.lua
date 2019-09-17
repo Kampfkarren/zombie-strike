@@ -43,8 +43,8 @@ function SequenceUtil.Init(boss)
 		realBoss = boss
 		realBoss.Parent = nil
 
-		local boss = realBoss:Clone()
-		CollectionService:RemoveTag(boss, "Boss")
+		-- local boss = realBoss:Clone()
+		-- CollectionService:RemoveTag(boss, "Boss")
 		boss.Parent = Workspace
 
 		return Promise.new(function(resolve)
@@ -60,8 +60,8 @@ end
 
 function SequenceUtil.Finish(boss)
 	if RunService:IsClient() then
-		boss:Destroy()
-		realBoss.Parent = Workspace
+		-- boss:Destroy()
+		-- realBoss.Parent = Workspace
 
 		Mode:Fire("Default")
 		Players.LocalPlayer.PlayerGui.BossSequenceGui.Enabled = false

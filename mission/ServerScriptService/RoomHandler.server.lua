@@ -282,7 +282,7 @@ local function openNextGate()
 
 	if obbyType == "boss" then
 		local bossSpawn = room:FindFirstChild("BossSpawn", true)
-		for timer = 1, 1, -1 do
+		for timer = 5, 1, -1 do
 			BossTimer.Value = timer
 			wait(1)
 		end
