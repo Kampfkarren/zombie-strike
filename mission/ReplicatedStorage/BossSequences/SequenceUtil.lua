@@ -16,8 +16,6 @@ local SequenceUtil = {}
 local cameraAttachments = {}
 local particleEmitters = {}
 
-local realBoss
-
 function SequenceUtil.Init(boss)
 	for _, cameraAttachment in pairs(CollectionService:GetTagged("BossSequencePoint")) do
 		if cameraAttachment:IsDescendantOf(Workspace) then
@@ -36,13 +34,10 @@ function SequenceUtil.Init(boss)
 	end
 
 	if RunService:IsClient() then
-		Mode:Fire("Sequence")
+		if not ReplicatedStorage.SkipBossSequence.Value then
+			Mode:Fire("Sequence")
+		end
 
-		realBoss = boss
-		realBoss.Parent = nil
-
-		-- local boss = realBoss:Clone()
-		-- CollectionService:RemoveTag(boss, "Boss")
 		boss.Parent = Workspace
 
 		return Promise.new(function(resolve)
@@ -63,9 +58,6 @@ end
 
 function SequenceUtil.Finish(boss)
 	if RunService:IsClient() then
-		-- boss:Destroy()
-		-- realBoss.Parent = Workspace
-
 		Mode:Fire("Default")
 		Players.LocalPlayer.PlayerGui.BossSequenceGui.Enabled = false
 	else
@@ -92,14 +84,17 @@ end
 
 function SequenceUtil.TeleportToAttachment(name)
 	return function(boss, camera)
-		camera.CFrame = SequenceUtil.GetAttachmentCFrame(name)
+		if not ReplicatedStorage.SkipBossSequence.Value then
+			camera.CFrame = SequenceUtil.GetAttachmentCFrame(name)
+		end
+
 		return boss, camera
 	end
 end
 
 function SequenceUtil.MoveToAttachment(name, tweenInfo)
 	return function(boss, camera)
-		if RunService:IsClient() then
+		if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
 			TweenService:Create(
 				camera,
 				tweenInfo,
@@ -114,12 +109,17 @@ end
 function SequenceUtil.Focus(cancel)
 	cancel.cancel = function() end
 
+	if ReplicatedStorage.SkipBossSequence.Value then
+		return function(boss, camera)
+			return boss, camera
+		end
+	end
+
 	return function(boss, camera)
 		local base = camera.CFrame.Position
 		-- local offset = camera.CFrame - boss.PrimaryPart.Position
-
 		return Promise.new(function(resolve)
-			if RunService:IsClient() then
+			if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
 				local connection = RunService.RenderStepped:connect(function()
 					camera.CFrame = CFrame.new(base, boss.PrimaryPart.Position)-- * offsetAngle
 					camera.Focus = camera.CFrame
@@ -137,7 +137,7 @@ end
 
 function SequenceUtil.Animate(animation)
 	return function(boss, camera)
-		if RunService:IsClient() then
+		if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
 			boss.Humanoid:LoadAnimation(animation):Play()
 		end
 
@@ -148,6 +148,13 @@ end
 function SequenceUtil.Delay(time)
 	return function(...)
 		local args = { ... }
+
+		if ReplicatedStorage.SkipBossSequence.Value then
+			return Promise.new(function(resolve)
+				resolve(unpack(args))
+			end)
+		end
+
 		return Promise.async(function(resolve)
 			wait(time)
 			resolve(unpack(args))

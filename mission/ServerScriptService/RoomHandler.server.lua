@@ -217,8 +217,14 @@ local function endMission()
 	end
 end
 
+ServerStorage.Events.EndDungeon.Event:connect(endMission)
+
+local function getBossSequence()
+	return require(ReplicatedStorage.BossSequences[Dungeon.GetDungeonData("Campaign")])
+end
+
 local function spawnBoss(position, room)
-	local BossSequence = require(ReplicatedStorage.BossSequences[Dungeon.GetDungeonData("Campaign")])
+	local BossSequence = getBossSequence()
 
 	local bossZombie = Zombie.new("Boss", Dungeon.GetDungeonData("DifficultyInfo").MinLevel)
 
@@ -231,7 +237,25 @@ local function spawnBoss(position, room)
 	return bossZombie
 end
 
-ServerStorage.Events.EndDungeon.Event:connect(endMission)
+local function startBoss(room)
+	for _, player in pairs(Players:GetPlayers()) do
+		-- TODO: Does this spawn them on top of each other?
+		coroutine.wrap(function()
+			(player.Character or player.CharacterAdded:wait())
+				:MoveTo(DungeonState.CurrentSpawn.Position)
+		end)()
+	end
+
+	local bossSpawn = room:FindFirstChild("BossSpawn", true)
+
+	spawnBoss(bossSpawn.WorldPosition, room)
+end
+
+ServerStorage.Events.ToBoss.Event:connect(function(showSequence)
+	ReplicatedStorage.SkipBossSequence.Value = not showSequence
+
+	startBoss(rooms[#rooms])
+end)
 
 local function openNextGate()
 	local room = table.remove(rooms, 1)
@@ -282,7 +306,6 @@ local function openNextGate()
 	gate.Parent = nil
 
 	if obbyType == "boss" then
-		local bossSpawn = room:FindFirstChild("BossSpawn", true)
 		for timer = 5, 1, -1 do
 			BossTimer.Value = timer
 			wait(1)
@@ -292,14 +315,7 @@ local function openNextGate()
 
 		gate.Parent = Workspace
 
-		for _, player in pairs(Players:GetPlayers()) do
-			-- TODO: Does this spawn them on top of each other?
-			coroutine.wrap(function()
-				(player.Character or player.CharacterAdded:wait()):MoveTo(spawnPoint.Position)
-			end)()
-		end
-
-		spawnBoss(bossSpawn.WorldPosition, room)
+		startBoss(room)
 	end
 end
 

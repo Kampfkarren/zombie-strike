@@ -28,33 +28,35 @@ local function animate(boss, camera)
 	local start = boss.PrimaryPart.CFrame
 	local startAngle = start - start.Position
 
-	if RunService:IsClient() then
-		local time = 0
-		while time < BOSS_ANIMATE_TIME do
-			time = time + RunService.RenderStepped:wait()
+	if not ReplicatedStorage.SkipBossSequence.Value then
+		if RunService:IsClient() then
+			local time = 0
+			while time < BOSS_ANIMATE_TIME do
+				time = time + RunService.RenderStepped:wait()
 
-			local x = time / BOSS_ANIMATE_TIME
-			local yScale = -4 * x * (x - 1)
+				local x = time / BOSS_ANIMATE_TIME
+				local yScale = -4 * x * (x - 1)
 
-			local alpha = TweenService:GetValue(
-				x,
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			)
+				local alpha = TweenService:GetValue(
+					x,
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				)
 
-			local height = lerp(start.Position.Y, jumpCFrame.Position.Y, x) + yScale * BOSS_JUMP_HEIGHT
-			local position = start.Position:Lerp(jumpCFrame.Position, alpha)
-			local angle = startAngle:Lerp(jumpAngle, alpha)
+				local height = lerp(start.Position.Y, jumpCFrame.Position.Y, x) + yScale * BOSS_JUMP_HEIGHT
+				local position = start.Position:Lerp(jumpCFrame.Position, alpha)
+				local angle = startAngle:Lerp(jumpAngle, alpha)
 
-			boss:SetPrimaryPartCFrame(CFrame.new(
-				position.X,
-				height,
-				position.Z
-			) * angle)
+				boss:SetPrimaryPartCFrame(CFrame.new(
+					position.X,
+					height,
+					position.Z
+				) * angle)
+			end
+		else
+			wait(BOSS_ANIMATE_TIME)
+			-- boss:SetPrimaryPartCFrame(jumpCFrame)
 		end
-	else
-		wait(BOSS_ANIMATE_TIME)
-		-- boss:SetPrimaryPartCFrame(jumpCFrame)
 	end
 
 	boss:SetPrimaryPartCFrame(jumpCFrame)
@@ -63,6 +65,7 @@ end
 
 function Sequence.Start(boss)
 	local focusCancel = {}
+	print("boss sequence")
 
 	return SequenceUtil.Init(boss)
 		:andThen(SequenceUtil.TeleportToAttachment("BossSequenceStart1"))
