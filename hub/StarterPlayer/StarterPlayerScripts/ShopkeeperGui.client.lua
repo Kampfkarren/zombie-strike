@@ -6,6 +6,8 @@ local TweenService = game:GetService("TweenService")
 local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
+local Maid = require(ReplicatedStorage.Core.Maid)
+local SellCost = require(ReplicatedStorage.Libraries.SellCost)
 local State = require(ReplicatedStorage.State)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
@@ -54,15 +56,13 @@ end)
 
 ShopkeeperRange.Touched:connect(function() end)
 
-local contents = {}
+local contents = Maid.new()
 
 local function updateInventory(inventory)
 	if inventory == nil then return end
 	Shopkeeper.LootInfo.Buttons.Visible = false
 
-	for _, item in pairs(contents) do
-		item:Destroy()
-	end
+	contents:DoCleaning()
 
 	local equipped = {}
 
@@ -77,12 +77,18 @@ local function updateInventory(inventory)
 	local currentlySelected, currentLootInfo
 	local hoverStack = {}
 
+	contents:GiveTask(Shopkeeper.LootInfo.Buttons.Sell.MouseButton1Click:connect(function()
+		if currentlySelected then
+			ReplicatedStorage.Remotes.Sell:FireServer(currentlySelected)
+		end
+	end))
+
 	for index, item in pairs(inventory) do
 		local button = ItemTemplate:Clone()
 		local color = Loot.Rarities[item.Rarity].Color
 		button.ImageColor3 = color
 		ViewportFramePreview(button.ViewportFrame, Data.GetModel(item))
-		LootInfoButton(button, Shopkeeper.LootInfo.Inner, item, function(hovered)
+		contents:GiveTask(LootInfoButton(button, Shopkeeper.LootInfo.Inner, item, function(hovered)
 			if hovered then
 				hoverStack[item] = true
 
@@ -102,14 +108,14 @@ local function updateInventory(inventory)
 					Shopkeeper.LootInfo.Buttons.Visible = true
 				end
 			end
-		end)
+		end))
 
 		local isEquipped = equipped[index] == true
 
 		button.MouseButton1Click:connect(function()
 			-- TODO: Remove this entirely for gamepad, instead just press buttons
 			-- TODO: "Are you sure?" for selling
-			currentlySelected = item
+			currentlySelected = index
 
 			if currentLootInfo then
 				currentLootInfo:Destroy()
@@ -119,6 +125,11 @@ local function updateInventory(inventory)
 			currentLootInfo.Parent = Shopkeeper.LootInfo
 
 			Shopkeeper.LootInfo.Inner.Visible = false
+
+			if not isEquipped then
+				Shopkeeper.LootInfo.Buttons.Sell.Label.Text = "SELL (" .. SellCost(item) .. "G)"
+			end
+
 			Shopkeeper.LootInfo.Buttons.Sell.Visible = not isEquipped
 			Shopkeeper.LootInfo.Buttons.Upgrade.Visible = isEquipped
 
@@ -133,7 +144,7 @@ local function updateInventory(inventory)
 			button.LayoutOrder = index
 		end
 
-		table.insert(contents, button)
+		contents:GiveTask(button)
 		button.Parent = Shopkeeper.Contents
 	end
 end
