@@ -277,10 +277,12 @@ end
 
 function Zombie:Die()
 	self.alive = false
+	self.instance.Humanoid.Health = 0
 	self.diedEvent:Fire()
 	self.aliveMaid:DoCleaning()
 	ReplicatedStorage.Remotes.KillEnemy:FireAllClients(self.instance)
 	self:GiveXP()
+	self:AfterDeath()
 end
 
 -- START XP
@@ -333,6 +335,7 @@ end
 
 -- START BASIC HOOKS
 function Zombie.CustomScale() end
+function Zombie.AfterDeath() end
 function Zombie.AfterSpawn() end
 -- END BASIC HOOKS
 

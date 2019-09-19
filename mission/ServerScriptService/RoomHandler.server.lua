@@ -254,7 +254,9 @@ end
 ServerStorage.Events.ToBoss.Event:connect(function(showSequence)
 	ReplicatedStorage.SkipBossSequence.Value = not showSequence
 
-	startBoss(rooms[#rooms])
+	local room = rooms[#rooms]
+	DungeonState.CurrentSpawn = assert(room:FindFirstChild("RespawnPoint", true))
+	startBoss(room)
 end)
 
 local function openNextGate()

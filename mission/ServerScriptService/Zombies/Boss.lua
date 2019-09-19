@@ -15,7 +15,9 @@ function Boss.new(level)
 		level
 	)
 
-	return setmetatable({}, {
+	return setmetatable({
+		_derivative = derivative,
+	}, {
 		__index = function(_, key)
 			return Boss[key] or derivative[key]
 		end,
@@ -24,6 +26,9 @@ end
 
 function Boss:AfterSpawn()
 	CollectionService:AddTag(self.instance, "Boss")
+	if self._derivative.AfterSpawn then
+		self._derivative.AfterSpawn(self)
+	end
 end
 
 function Boss.GetHealth()

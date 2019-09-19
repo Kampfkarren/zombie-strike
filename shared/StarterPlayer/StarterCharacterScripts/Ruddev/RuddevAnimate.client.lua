@@ -134,7 +134,7 @@ local function SetStance(newStance)
 end
 
 local function Damage(amount)
-	animations.Actions["Damage" .. tostring(math.random(1, 3))]:Play(0.05, amount / 50, 1.5)
+	animations.Actions["Damage" .. tostring(math.random(1, 3))]:Play(0.05, amount / (HUMANOID.MaxHealth / 2), 1.5)
 end
 
 local function Grind(g)

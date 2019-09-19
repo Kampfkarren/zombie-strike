@@ -65,7 +65,6 @@ end
 
 function Sequence.Start(boss)
 	local focusCancel = {}
-	print("boss sequence")
 
 	return SequenceUtil.Init(boss)
 		:andThen(SequenceUtil.TeleportToAttachment("BossSequenceStart1"))
