@@ -10,8 +10,8 @@ return function(instance, level)
 
 	local humanoid = instance.Humanoid
 	nametag.Health.HealthNumber.Text = ("%d/%d"):format(
-		humanoid.Health,
-		humanoid.MaxHealth
+		math.ceil(humanoid.Health),
+		math.ceil(humanoid.MaxHealth)
 	)
 	nametag.Health.Fill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 

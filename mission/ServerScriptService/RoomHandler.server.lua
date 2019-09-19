@@ -53,6 +53,19 @@ local function createRoom(room, parent, connectTo)
 		)
 	end
 
+	local decor = {}
+	for _, thing in pairs(room:GetDescendants()) do
+		if CollectionService:HasTag(thing, "Decor") then
+			table.insert(decor, thing)
+		end
+	end
+
+	if #decor > 0 then
+		for _ = 1, math.random(#decor * 0.5) do
+			table.remove(decor, math.random(#decor)):Destroy()
+		end
+	end
+
 	room.Parent = parent
 	return room
 end
