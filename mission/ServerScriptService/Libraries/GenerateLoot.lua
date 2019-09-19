@@ -1,12 +1,10 @@
 local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerStorage = game:GetService("ServerStorage")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
-local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local WEAPON_DROP_RATE = 0.67

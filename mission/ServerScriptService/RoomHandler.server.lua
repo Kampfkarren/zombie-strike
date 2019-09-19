@@ -95,6 +95,14 @@ local function generateDungeon(numRooms)
 end
 
 local rooms = generateDungeon(Dungeon.GetDungeonData("DifficultyInfo").Rooms)
+local zombieTypes = {}
+
+for key, rate in pairs(Dungeon.GetDungeonData("CampaignInfo").ZombieTypes) do
+	assert(Zombies:FindFirstChild(key), "Zombie does not exist, but is in types: " .. key)
+	for _ = 1, rate do
+		table.insert(zombieTypes, key)
+	end
+end
 
 local function spawnZombie(zombieType, level, position)
 	local zombie = Zombie.new(zombieType, level)
@@ -220,7 +228,11 @@ local function openNextGate()
 
 		for _ = 1, enemiesLeft do
 			local spawnPoint = table.remove(zombieSpawns, math.random(#zombieSpawns))
-			local zombie = spawnZombie("Common", Dungeon.RNGZombieLevel(), spawnPoint.WorldPosition)
+			local zombie = spawnZombie(
+				zombieTypes[math.random(#zombieTypes)],
+				Dungeon.RNGZombieLevel(),
+				spawnPoint.WorldPosition
+			)
 			table.insert(zombies, zombie)
 
 			local maxEnemies = enemiesLeft

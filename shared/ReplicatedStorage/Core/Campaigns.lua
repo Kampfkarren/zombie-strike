@@ -30,6 +30,7 @@ local Extreme = {
 local campaignsType = t.array(t.strictInterface({
 	Name = t.string,
 	Image = t.string,
+	ZombieTypes = t.map(t.string, t.numberMin(1)),
 
 	Difficulties = t.array(t.strictInterface({
 		MinLevel = t.numberMin(1),
@@ -49,11 +50,15 @@ local campaignsType = t.array(t.strictInterface({
 	}))
 }))
 
--- TODO: assert type on this
 local Campaigns = {
 	{
 		Name = "Campaign A",
 		Image = "rbxassetid://2278464",
+		ZombieTypes = {
+			-- Turret = 3,
+			Common = 7,
+		},
+
 		Difficulties = {
 			{
 				MinLevel = 1,

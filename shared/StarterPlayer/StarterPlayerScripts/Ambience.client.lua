@@ -14,6 +14,16 @@ local LOOP_ZONE = 0.03
 
 local currentAmbience
 
+ReplicatedStorage.LocalEvents.Footstep.Event:connect(function(type)
+	if currentAmbience then
+		local table = currentAmbience[type]
+		local footstep = table[math.random(#table)]:Clone()
+		footstep.Parent = Workspace
+		footstep:Play()
+		Debris:AddItem(footstep, footstep.TimeLength + 2)
+	end
+end)
+
 if HubWorld then
 	currentAmbience = {
 		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
@@ -120,13 +130,3 @@ else
 		wait(0.1)
 	end
 end
-
-ReplicatedStorage.LocalEvents.Footstep.Event:connect(function(type)
-	if currentAmbience then
-		local table = currentAmbience[type]
-		local footstep = table[math.random(#table)]:Clone()
-		footstep.Parent = Workspace
-		footstep:Play()
-		Debris:AddItem(footstep, footstep.TimeLength + 2)
-	end
-end)
