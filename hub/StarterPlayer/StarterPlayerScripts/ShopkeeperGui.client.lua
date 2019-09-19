@@ -107,6 +107,8 @@ local function updateInventory(inventory)
 		local isEquipped = equipped[index] == true
 
 		button.MouseButton1Click:connect(function()
+			-- TODO: Remove this entirely for gamepad, instead just press buttons
+			-- TODO: "Are you sure?" for selling
 			currentlySelected = item
 
 			if currentLootInfo then
