@@ -7,70 +7,118 @@ local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
+local HubWorld = ReplicatedStorage.HubWorld.Value
 local LocalPlayer = Players.LocalPlayer
-local Rooms = Workspace:WaitForChild("Rooms")
 
 local LOOP_ZONE = 0.03
 
-local ambienceList = {}
 local currentAmbience
 
-ambienceList.RainIndoors = {
-	Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
-	Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
-	Sound = SoundService.Ambience.RainIndoors,
-}
+if HubWorld then
+	currentAmbience = {
+		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
+		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
+	}
+else
+	local Rooms = Workspace:WaitForChild("Rooms")
 
-ambienceList.RainOutdoors = {
-	Footsteps = SoundService.Footsteps.Water:GetChildren(),
-	Land = SoundService.Footsteps.WaterLand:GetChildren(),
-	Sound = SoundService.Ambience.RainOutdoors,
-}
+	local ambienceList = {}
 
-local function checkNewAmbience(room)
-	local ambience = assert(ambienceList[room:WaitForChild("Ambience").Value], "unknown ambience in " .. room.Name)
+	ambienceList.RainIndoors = {
+		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
+		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
+		Sound = SoundService.Ambience.RainIndoors,
+	}
 
-	if ambience.Used then return end
+	ambienceList.RainOutdoors = {
+		Footsteps = SoundService.Footsteps.Water:GetChildren(),
+		Land = SoundService.Footsteps.WaterLand:GetChildren(),
+		Sound = SoundService.Ambience.RainOutdoors,
+	}
 
-	ambience.Used = true
+	local function checkNewAmbience(room)
+		local ambience = assert(ambienceList[room:WaitForChild("Ambience").Value], "unknown ambience in " .. room.Name)
 
-	ambience.FadeIn = TweenService:Create(
-		ambience.Sound,
-		TweenInfo.new(0.75, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-		{ Volume = ambience.Sound.Volume }
-	)
+		if ambience.Used then return end
 
-	ambience.FadeOut = TweenService:Create(
-		ambience.Sound,
-		TweenInfo.new(0.75, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-		{ Volume = 0 }
-	)
+		ambience.Used = true
 
-	coroutine.wrap(function()
-		ContentProvider:PreloadAsync(ambience.Footsteps)
-	end)()
+		ambience.FadeIn = TweenService:Create(
+			ambience.Sound,
+			TweenInfo.new(0.75, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+			{ Volume = ambience.Sound.Volume }
+		)
 
-	coroutine.wrap(function()
-		ContentProvider:PreloadAsync(ambience.Land)
-	end)()
+		ambience.FadeOut = TweenService:Create(
+			ambience.Sound,
+			TweenInfo.new(0.75, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+			{ Volume = 0 }
+		)
 
-	ambience.Sound.Volume = 0
-	ambience.Sound:Play()
-end
+		coroutine.wrap(function()
+			ContentProvider:PreloadAsync(ambience.Footsteps)
+		end)()
 
-RunService.Heartbeat:connect(function()
-	if currentAmbience then
-		local length = currentAmbience.Sound.TimeLength
-		if length > 0 then
-			if currentAmbience.Sound.TimePosition >= length - LOOP_ZONE then
-				currentAmbience.Sound.TimePosition = 0.1
+		coroutine.wrap(function()
+			ContentProvider:PreloadAsync(ambience.Land)
+		end)()
+
+		ambience.Sound.Volume = 0
+		ambience.Sound:Play()
+	end
+
+	for _, room in pairs(Rooms:GetChildren()) do
+		checkNewAmbience(room)
+	end
+
+	Rooms.ChildAdded:connect(checkNewAmbience)
+
+	local descendants = Rooms:GetDescendants()
+	Rooms.DescendantAdded:connect(function(descendant)
+		table.insert(descendants, descendant)
+	end)
+
+	RunService.Heartbeat:connect(function()
+		if currentAmbience then
+			local length = currentAmbience.Sound.TimeLength
+			if length > 0 then
+				if currentAmbience.Sound.TimePosition >= length - LOOP_ZONE then
+					currentAmbience.Sound.TimePosition = 0.1
+				end
 			end
 		end
-	end
-end)
+	end)
 
-for _, room in pairs(Rooms:GetChildren()) do
-	checkNewAmbience(room)
+	while true do
+		local root = LocalPlayer.Character and LocalPlayer.Character.PrimaryPart
+
+		if root then
+			local hit = Workspace:FindPartOnRayWithWhitelist(
+				Ray.new(root.Position, Vector3.new(0, -1000, 0)),
+				descendants
+			)
+
+			if hit then
+				local room = hit
+				while room.Parent ~= Rooms do
+					room = room.Parent
+				end
+
+				local ambience = ambienceList[room.Ambience.Value]
+
+				if currentAmbience ~= ambience then
+					if currentAmbience then
+						currentAmbience.FadeOut:Play()
+					end
+
+					ambience.FadeIn:Play()
+					currentAmbience = ambience
+				end
+			end
+		end
+
+		wait(0.1)
+	end
 end
 
 ReplicatedStorage.LocalEvents.Footstep.Event:connect(function(type)
@@ -82,41 +130,3 @@ ReplicatedStorage.LocalEvents.Footstep.Event:connect(function(type)
 		Debris:AddItem(footstep, footstep.TimeLength + 2)
 	end
 end)
-
-Rooms.ChildAdded:connect(checkNewAmbience)
-
-local descendants = Rooms:GetDescendants()
-Rooms.DescendantAdded:connect(function(descendant)
-	table.insert(descendants, descendant)
-end)
-
-while true do
-	local root = LocalPlayer.Character and LocalPlayer.Character.PrimaryPart
-
-	if root then
-		local hit = Workspace:FindPartOnRayWithWhitelist(
-			Ray.new(root.Position, Vector3.new(0, -1000, 0)),
-			descendants
-		)
-
-		if hit then
-			local room = hit
-			while room.Parent ~= Rooms do
-				room = room.Parent
-			end
-
-			local ambience = ambienceList[room.Ambience.Value]
-
-			if currentAmbience ~= ambience then
-				if currentAmbience then
-					currentAmbience.FadeOut:Play()
-				end
-
-				ambience.FadeIn:Play()
-				currentAmbience = ambience
-			end
-		end
-	end
-
-	wait(0.1)
-end

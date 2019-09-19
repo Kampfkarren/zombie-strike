@@ -152,9 +152,11 @@ function module.Create(_, item)
 	-- functions
 
 	local mode = "Default"
-	EVENTS.Mode.Event:connect(function(m)
-		mode = m
-	end)
+	if not HubWorld then
+		EVENTS.Mode.Event:connect(function(m)
+			mode = m
+		end)
+	end
 
 	local function CanShoot()
 		if mode == "Sequence" then return end
