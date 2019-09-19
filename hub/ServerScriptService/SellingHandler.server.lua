@@ -24,6 +24,11 @@ ReplicatedStorage.Remotes.Sell.OnServerEvent:connect(function(player, index)
 		end
 	end
 
+	if player:FindFirstChild("Trading") then
+		warn("player is trading!")
+		return
+	end
+
 	local reward = SellCost(item)
 	InventoryUtil.RemoveItems(player, { index })
 	DataStore2("Gold", player):Increment(reward)

@@ -18,8 +18,6 @@ local RequestTrade = ReplicatedStorage.Remotes.RequestTrade
 local StartTrade = ReplicatedStorage.Remotes.StartTrade
 local UpdateTrade = ReplicatedStorage.Remotes.UpdateTrade
 
--- TODO: Don't let inventory be modified in any way while trading
-
 -- Map<Trader, Map<RequestingFrom, resolve>>
 local requesting = {}
 
@@ -88,6 +86,9 @@ RequestTrade.OnServerEvent:connect(function(player, otherPlayer)
 			return
 		end
 
+		Instance.new("Folder", player).Name = "Trading"
+		Instance.new("Folder", otherPlayer).Name = "Trading"
+
 		local state1 = {
 			accepted = false,
 			items = {},
@@ -139,6 +140,17 @@ local function cancelTrade(player, codeForThem, codeForYou)
 	local other = tradeState.tradingWith
 	tradeStates[player] = nil
 	tradeStates[other] = nil
+
+	local tradeFlag1 = player:FindFirstChild("Trading")
+	local tradeFlag2 = other:FindFirstChild("Trading")
+
+	if tradeFlag1 then
+		tradeFlag1:Destroy()
+	end
+
+	if tradeFlag2 then
+		tradeFlag2:Destroy()
+	end
 
 	CancelTrade:FireClient(other, player, codeForThem)
 
@@ -212,11 +224,11 @@ AcceptTrade.OnServerEvent:connect(function(player)
 		ourStore:Set(ourInventory)
 		theirStore:Set(theirInventory)
 
-		tradeStates[player] = nil
-		tradeStates[them] = nil
-
-		CancelTrade:FireClient(player, them, TradeConstants.Codes.SuccessfulTrade)
-		CancelTrade:FireClient(them, player, TradeConstants.Codes.SuccessfulTrade)
+		cancelTrade(
+			player,
+			TradeConstants.Codes.SuccessfulTrade,
+			TradeConstants.Codes.SuccessfulTrade
+		)
 
 		return
 	end
