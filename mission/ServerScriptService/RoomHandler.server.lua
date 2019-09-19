@@ -242,7 +242,7 @@ local function startBoss(room)
 		-- TODO: Does this spawn them on top of each other?
 		coroutine.wrap(function()
 			(player.Character or player.CharacterAdded:wait())
-				:MoveTo(DungeonState.CurrentSpawn.Position)
+				:MoveTo(DungeonState.CurrentSpawn.WorldPosition)
 		end)()
 	end
 

@@ -72,7 +72,7 @@ local function aimAssist(cframe, range)
 	local aimAssist = Instance.new("Part")
 	aimAssist.Anchored = true
 	aimAssist.CanCollide = false
-	aimAssist.Size = Vector3.new(3, 10, range)
+	aimAssist.Size = Vector3.new(3, 5, range)
 	aimAssist.Transparency = 1
 	aimAssist.CFrame = cframe + cframe.LookVector * range / 2
 	aimAssist.Touched:connect(function() end)
