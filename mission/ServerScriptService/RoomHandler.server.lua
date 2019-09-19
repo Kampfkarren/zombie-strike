@@ -82,7 +82,7 @@ local function generateDungeon(numRooms)
 	return rooms
 end
 
-local rooms = generateDungeon(1)
+local rooms = generateDungeon(Dungeon.GetDungeonData("DifficultyInfo").Rooms)
 
 local function spawnZombie(zombieType, level, position)
 	local zombie = Zombie.new(zombieType, level)

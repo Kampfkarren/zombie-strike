@@ -47,7 +47,7 @@ if Dungeon.GetDungeonData("Campaign") == 1 then
 					end
 				end)
 
-				ring.Parent = Workspace
+				ring.Parent = Workspace.Effects
 				TweenService:Create(ring, sizeTween, { Size = Vector3.new(RANGE, 0.25, RANGE) }):Play()
 			end)
 		end

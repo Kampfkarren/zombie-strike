@@ -8,7 +8,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local function updateHealth(humanoid)
 	local health, maxHealth = humanoid.Health, humanoid.MaxHealth
-	HealthXP.Health.TextLabel.Text = health .. "/" .. maxHealth
+	HealthXP.Health.TextLabel.Text = math.ceil(health) .. "/" .. math.ceil(maxHealth)
 end
 
 local function updateAmmo(ammo)

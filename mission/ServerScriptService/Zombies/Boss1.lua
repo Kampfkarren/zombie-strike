@@ -28,6 +28,14 @@ CityBoss.BoulderDamageScale = {
 	[24] = 2300,
 }
 
+CityBoss.SlamCount = {
+	[1] = 2,
+	[6] = 3,
+	[12] = 3,
+	[18] = 4,
+	[24] = 5,
+}
+
 CityBoss.SlamDamageScale = {
 	[1] = 25,
 	[6] = 45,
@@ -64,6 +72,8 @@ function CityBoss:AfterSpawn()
 	self.summonZombieAnimation.KeyframeReached:connect(function()
 		self:SummonZombies()
 	end)
+
+	self.slamAnimation = instance.Humanoid:LoadAnimation(Assets.SlamAnimation)
 
 	HitByBoulder.OnServerEvent:connect(function(player)
 		local character = player.Character
@@ -160,7 +170,10 @@ function CityBoss:RockTossThrow()
 end
 
 function CityBoss:Slam()
-	warn("NYI: Slam")
+	for _ = 1, CityBoss.SlamCount[self.level] do
+		self.slamAnimation:Play()
+		wait(1.5)
+	end
 end
 
 function CityBoss:SummonZombiesBegin()

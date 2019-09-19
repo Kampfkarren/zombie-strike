@@ -1,3 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local t = require(ReplicatedStorage.Vendor.t)
+
 local Easy = {
 	Name = "Easy",
 	Color = Color3.fromRGB(76, 209, 55),
@@ -23,8 +27,30 @@ local Extreme = {
 	Color = Color3.fromRGB(109, 35, 35),
 }
 
+local campaignsType = t.array(t.strictInterface({
+	Name = t.string,
+	Image = t.string,
+
+	Difficulties = t.array(t.strictInterface({
+		MinLevel = t.numberMin(1),
+		Style = t.strictInterface({
+			Name = t.string,
+			Color = t.Color3,
+		}),
+
+		Gold = t.numberMin(1),
+		Rooms = t.numberMin(1),
+		XP = t.numberMin(1),
+		ZombieSpawnRate = t.numberConstrained(0, 1),
+
+		BossStats = t.strictInterface({
+			Health = t.numberMin(1),
+		}),
+	}))
+}))
+
 -- TODO: assert type on this
-return {
+local Campaigns = {
 	{
 		Name = "Campaign A",
 		Image = "rbxassetid://2278464",
@@ -34,14 +60,12 @@ return {
 				Style = Easy,
 
 				Gold = 50,
+				Rooms = 8,
 				XP = 600,
-				-- ZombieSpawnRate = 0.4,
-				ZombieSpawnRate = 0.01,
+				ZombieSpawnRate = 0.4,
 
 				BossStats = {
 					Health = 750,
-					Speed = 18,
-					Damage = 50,
 				},
 			},
 
@@ -50,13 +74,12 @@ return {
 				Style = Medium,
 
 				Gold = 120,
+				Rooms = 10,
 				XP = 1300,
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
 					Health = 1400,
-					Speed = 18.5,
-					Damage = 120,
 				},
 			},
 
@@ -65,13 +88,12 @@ return {
 				Style = Hard,
 
 				Gold = 370,
+				Rooms = 12,
 				XP = 3000,
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
 					Health = 2800,
-					Speed = 19,
-					Damage = 280,
 				},
 			},
 
@@ -80,13 +102,12 @@ return {
 				Style = VeryHard,
 
 				Gold = 800,
+				Rooms = 14,
 				XP = 4800,
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
 					Health = 10000,
-					Speed = 19.2,
-					Damage = 650,
 				},
 			},
 
@@ -95,15 +116,18 @@ return {
 				Style = Extreme,
 
 				Gold = 1900,
+				Rooms = 16,
 				XP = 10000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
 					Health = 25000,
-					Speed = 19.6,
-					Damage = 1800,
 				},
 			},
 		},
 	},
 }
+
+assert(campaignsType(Campaigns))
+
+return Campaigns
