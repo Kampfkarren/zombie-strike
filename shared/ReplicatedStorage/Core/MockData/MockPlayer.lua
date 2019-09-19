@@ -53,15 +53,6 @@ return function()
 		MockPlayer.Weapon,
 		MockPlayer.Armor,
 		MockPlayer.Helmet,
-		{
-			Type = "Helmet",
-			Level = 1,
-			Rarity = 3,
-			Name = "Helmet",
-
-			Model = 1,
-			UUID = HttpService:GenerateGUID(false):gsub("-", ""),
-		}
 	}
 
 	return MockPlayer
