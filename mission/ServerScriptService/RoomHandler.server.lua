@@ -77,6 +77,7 @@ local function generateDungeon(numRooms)
 	local bossRoom = createRoom(roomTypes.boss[math.random(#roomTypes.boss)], obbyParent, nextRoom)
 	table.insert(rooms, bossRoom)
 
+	obbyParent.Name = "Rooms"
 	obbyParent.Parent = Workspace
 
 	return rooms
