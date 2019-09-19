@@ -2,6 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 local PhysicsService = game:GetService("PhysicsService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
 local Damage = require(ReplicatedStorage.RuddevModules.Damage)
@@ -14,7 +15,6 @@ local DAMAGE_SCALE = 1.13
 
 local COOLDOWN = 10
 local DROPOFF = 0.5
-local HEAL_AMOUNT = 0.3
 local MAX_RANGE = 50
 local PHYSICAL_PROPERTIES = PhysicalProperties.new(
 	0.01, -- density
@@ -24,6 +24,7 @@ local PHYSICAL_PROPERTIES = PhysicalProperties.new(
 	5 -- elasticity weight
 )
 local PRIME = 1
+local SOUNDS = SoundService.SFX.Explosion:GetChildren()
 
 local function getDamage(level)
 	return BASE_DAMAGE * DAMAGE_SCALE ^ (level - 1)
@@ -55,9 +56,14 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 		grenade.Parent = Workspace
 		grenade:SetNetworkOwner(player)
 
+		local primeSound = SoundService.SFX.Prime:Clone()
+		primeSound.Parent = grenade
+		primeSound:Play()
+
 		ReplicatedStorage.Remotes.GrenadeCooldown:FireClient(player)
 
 		delay(PRIME, function()
+			primeSound:Destroy()
 			grenade.Anchored = true
 			grenade.Transparency = 1
 			Debris:AddItem(grenade)
@@ -67,6 +73,10 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 				grenade.Position,
 				MAX_RANGE
 			)
+
+			local sound = SOUNDS[math.random(#SOUNDS)]
+			sound.Parent = grenade
+			sound:Play()
 
 			for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
 				local range = (zombie.PrimaryPart.Position - grenade.Position).Magnitude
