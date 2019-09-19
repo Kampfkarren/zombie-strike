@@ -1,4 +1,7 @@
+local ContentProvider = game:GetService("ContentProvider")
+local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
@@ -13,10 +16,14 @@ local ambienceList = {}
 local currentAmbience
 
 ambienceList.RainIndoors = {
+	Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
+	Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
 	Sound = SoundService.Ambience.RainIndoors,
 }
 
 ambienceList.RainOutdoors = {
+	Footsteps = SoundService.Footsteps.Water:GetChildren(),
+	Land = SoundService.Footsteps.WaterLand:GetChildren(),
 	Sound = SoundService.Ambience.RainOutdoors,
 }
 
@@ -39,6 +46,14 @@ local function checkNewAmbience(room)
 		{ Volume = 0 }
 	)
 
+	coroutine.wrap(function()
+		ContentProvider:PreloadAsync(ambience.Footsteps)
+	end)()
+
+	coroutine.wrap(function()
+		ContentProvider:PreloadAsync(ambience.Land)
+	end)()
+
 	ambience.Sound.Volume = 0
 	ambience.Sound:Play()
 end
@@ -57,6 +72,16 @@ end)
 for _, room in pairs(Rooms:GetChildren()) do
 	checkNewAmbience(room)
 end
+
+ReplicatedStorage.LocalEvents.Footstep.Event:connect(function(type)
+	if currentAmbience then
+		local table = currentAmbience[type]
+		local footstep = table[math.random(#table)]:Clone()
+		footstep.Parent = Workspace
+		footstep:Play()
+		Debris:AddItem(footstep, footstep.TimeLength + 2)
+	end
+end)
 
 Rooms.ChildAdded:connect(checkNewAmbience)
 

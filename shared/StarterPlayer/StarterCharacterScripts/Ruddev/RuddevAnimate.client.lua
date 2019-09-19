@@ -1,5 +1,6 @@
 -- services
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService		= game:GetService("RunService")
 local Players			= game:GetService("Players")
 
@@ -151,20 +152,28 @@ end
 
 -- initiate
 
-ANIMATIONS:WaitForChild("Movement").ChildAdded:connect(function(animation)
-	animations.Movement[animation.Name]	= HUMANOID:LoadAnimation(animation)
-end)
+-- ANIMATIONS:WaitForChild("Movement").ChildAdded:connect(function(animation)
+-- 	animations.Movement[animation.Name]	= HUMANOID:LoadAnimation(animation)
+-- end)
 
-ANIMATIONS:WaitForChild("Actions").ChildAdded:connect(function(animation)
-	animations.Actions[animation.Name]	= HUMANOID:LoadAnimation(animation)
-end)
+-- ANIMATIONS:WaitForChild("Actions").ChildAdded:connect(function(animation)
+-- 	animations.Actions[animation.Name]	= HUMANOID:LoadAnimation(animation)
+-- end)
 
-ANIMATIONS:WaitForChild("Emotes").ChildAdded:connect(function(animation)
-	animations.Emotes[animation.Name]	= HUMANOID:LoadAnimation(animation)
-end)
+-- ANIMATIONS:WaitForChild("Emotes").ChildAdded:connect(function(animation)
+-- 	animations.Emotes[animation.Name]	= HUMANOID:LoadAnimation(animation)
+-- end)
 
 for _, animation in pairs(ANIMATIONS.Movement:GetChildren()) do
-	animations.Movement[animation.Name]	= HUMANOID:LoadAnimation(animation)
+	local animation = HUMANOID:LoadAnimation(animation)
+
+	animation.KeyframeReached:connect(function(keyframe)
+		if keyframe == "Footstep" then
+			ReplicatedStorage.LocalEvents.Footstep:Fire("Footsteps")
+		end
+	end)
+
+	animations.Movement[animation.Name]	= animation
 end
 
 for _, animation in pairs(ANIMATIONS.Actions:GetChildren()) do
@@ -250,8 +259,10 @@ HUMANOID.StateChanged:connect(function(_, newState)
 	if newState == Enum.HumanoidStateType.Jumping then
 		if HUMANOID.FloorMaterial ~= Enum.Material.Air then
 			animations.Actions.Jump:Play(0.05, 1, 2)
+			ReplicatedStorage.LocalEvents.Footstep:Fire("Footsteps")
 		end
 	elseif newState == Enum.HumanoidStateType.Landed then
 		animations.Actions.Land:Play(0.05, 1, 1)
+		ReplicatedStorage.LocalEvents.Footstep:Fire("Land")
 	end
 end)
