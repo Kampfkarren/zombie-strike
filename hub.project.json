@@ -1,5 +1,5 @@
 {
-  "name": "mission",
+  "name": "hub",
   "servePlaceIds": [3759927663],
   "tree": {
     "$className": "DataModel",
@@ -17,6 +17,9 @@
       },
       "Vendor": {
         "$className": "Folder",
+        "Rodux": {
+          "$path": "vendor/rodux/lib"
+        },
         "t": {
           "$path": "vendor/t/lib"
         }

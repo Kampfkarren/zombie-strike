@@ -7,6 +7,7 @@ local TweenService = game:GetService("TweenService")
 local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
+local State = require(ReplicatedStorage.State)
 local TradeConstants = require(ReplicatedStorage.TradeConstants)
 local UserThumbnail = require(ReplicatedStorage.Core.UI.UserThumbnail)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
@@ -264,8 +265,6 @@ do
 		end
 	end
 
-	local ourInventory
-
 	AcceptTrade.OnClientEvent:connect(toggleAccept)
 
 	PingTrade.OnClientEvent:connect(function(index)
@@ -273,6 +272,9 @@ do
 	end)
 
 	StartTrade.OnClientEvent:connect(function(theirInventory)
+		local ourInventory = State:getState().inventory
+		assert(ourInventory, "ourInventory == nil when starting a trade!")
+
 		fillInventory(
 			TradeWindow.TheirInventory.Contents,
 			Loot.DeserializeTable(theirInventory),
@@ -347,10 +349,6 @@ do
 				button.ViewportFrame:ClearAllChildren()
 			end
 		end
-	end)
-
-	ReplicatedStorage.Remotes.UpdateInventory.OnClientEvent:connect(function(inventory)
-		ourInventory = Loot.DeserializeTable(inventory)
 	end)
 end
 

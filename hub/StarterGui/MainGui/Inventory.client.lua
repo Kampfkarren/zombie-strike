@@ -6,6 +6,7 @@ local UserInputService = game:GetService("UserInputService")
 local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
+local State = require(ReplicatedStorage.State)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local Inventory = script.Parent.Main.Inventory
@@ -13,7 +14,6 @@ local Inventory = script.Parent.Main.Inventory
 local Loadout = Inventory.Loadout
 
 local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
-local UpdateInventory = ReplicatedStorage.Remotes.UpdateInventory
 
 local inventoryTweenIn = TweenService:Create(
 	Inventory,
@@ -81,7 +81,9 @@ local function updateEquipped()
 		local color = Loot.Rarities[currentInventory[newId].Rarity].Color
 		local h, s, v = Color3.toHSV(color)
 		color = Color3.fromHSV(h, s, v * 0.8)
-		cards[newId].ImageColor3 = color
+		if cards[newId] then
+			cards[newId].ImageColor3 = color
+		end
 	end
 
 	-- TODO: Cosmetics here
@@ -98,8 +100,8 @@ Inventory.Close.MouseButton1Click:connect(function()
 	toggle(false)
 end)
 
-UpdateInventory.OnClientEvent:connect(function(inventory)
-	currentInventory = Loot.DeserializeTable(inventory)
+local function updateInventory(inventory)
+	currentInventory = inventory
 
 	for _, card in pairs(cards) do
 		card:Destroy()
@@ -110,7 +112,7 @@ UpdateInventory.OnClientEvent:connect(function(inventory)
 	for id, item in pairs(currentInventory) do
 		local color = Loot.Rarities[item.Rarity].Color
 
-		local card = script.Template:Clone()
+		local card = ReplicatedStorage.ItemTemplate:Clone()
 		card.LayoutOrder = -id
 		ViewportFramePreview(card.ViewportFrame, Data.GetModel(item))
 
@@ -139,20 +141,24 @@ UpdateInventory.OnClientEvent:connect(function(inventory)
 
 	updateEquipped()
 	resetSelectable()
-end)
+end
 
-UpdateEquipment.OnClientEvent:connect(function(armor, helmet, weapon)
-	assert(currentInventory)
+currentInventory = State:getState().inventory
+if currentInventory then
+	coroutine.wrap(updateInventory)(currentInventory)
+end
 
-	Data.SetLocalPlayerData("EquippedArmor", armor)
-	Data.SetLocalPlayerData("EquippedHelmet", helmet)
-	Data.SetLocalPlayerData("EquippedWeapon", weapon)
+State.changed:connect(function(new, old)
+	local inventory = new.inventory
 
-	Data.SetLocalPlayerData("Armor", currentInventory[armor])
-	Data.SetLocalPlayerData("Helmet", currentInventory[helmet])
-	Data.SetLocalPlayerData("Weapon", currentInventory[weapon])
+	if inventory ~= old.inventory then
+		assert(inventory ~= nil, "Inventory changed, but somehow still nil?")
+		coroutine.wrap(updateInventory)(inventory)
+	end
 
-	updateEquipped()
+	if new.equipment ~= old.equipment then
+		coroutine.wrap(updateEquipped)()
+	end
 end)
 
 local contentsGrid = Inventory.Contents.UIGridLayout
