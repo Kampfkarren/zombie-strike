@@ -43,7 +43,7 @@ local function updateHealth(humanoid)
 	end
 
 	HealthXP.Health.Inner.Size = UDim2.new(health / maxHealth, 0, 1, 0)
-	HealthXP.Health.TextLabel.Text = health .. "/" .. maxHealth
+	HealthXP.Health.TextLabel.Text = math.ceil(health) .. "/" .. math.ceil(maxHealth)
 	lastHealth = health
 end
 
