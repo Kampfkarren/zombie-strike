@@ -285,6 +285,10 @@ function Zombie:Die()
 	self:AfterDeath()
 end
 
+function Zombie:LoadAnimation(animation)
+	return self.instance.Humanoid:LoadAnimation(animation)
+end
+
 -- START XP
 function Zombie:GiveXP()
 	local xpGain = self:GetXP()

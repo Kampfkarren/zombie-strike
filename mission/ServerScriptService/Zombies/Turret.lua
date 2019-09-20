@@ -4,24 +4,58 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Raycast = require(ReplicatedStorage.Libraries.Raycast)
 
+local TURRET_RANGE = 80
+
 local Turret = {}
 Turret.__index = Turret
 
 Turret.Model = "Turret"
 Turret.Name = "Shooter Zombie"
 
-Turret.TurretCooldown = 2
-Turret.TurretDamage = 2
-Turret.TurretRange = 80
+Turret.Scaling = {
+	Damage = {
+		Base = 10,
+		Scale = 1.15,
+	},
+
+	Health = {
+		Base = 45,
+		Scale = 1.154,
+	},
+
+	RateOfFire = {
+		Base = 0.5,
+		Scale = 1.09,
+	},
+
+	Speed = {
+		Base = 5,
+		Scale = 1,
+	},
+}
 
 function Turret.new()
 	return setmetatable({}, Turret)
 end
 
+function Turret:AfterSpawn()
+	local instance = self.instance
+	local gun = instance.Gun
+
+	local aimAnimation = self:LoadAnimation(gun.Animations.Aim)
+	aimAnimation.Priority = Enum.AnimationPriority.Idle
+	aimAnimation.Looped = true
+	aimAnimation:Play()
+
+	self.shootAnimation = self:LoadAnimation(gun.Animations.AimShoot)
+end
+
 function Turret:InitializeAI()
+	local rateOfFire = self:GetScale("RateOfFire")
+
 	spawn(function()
 		local root = self.instance.HumanoidRootPart
-		wait(math.random(30, self.TurretCooldown * 100) / 100)
+		wait(math.random(30, 120) / 100)
 
 		while self.alive do
 			local closest = { nil, math.huge }
@@ -31,7 +65,7 @@ function Turret:InitializeAI()
 				if character and character.Humanoid.Health > 0 then
 					local hit, position, normal = Raycast(
 						root.Position,
-						(root.Position - character.HumanoidRootPart.Position).Unit * -self.TurretRange,
+						(root.Position - character.HumanoidRootPart.Position).Unit * -TURRET_RANGE,
 						{ self.instance }
 					)
 
@@ -56,10 +90,11 @@ function Turret:InitializeAI()
 					closest[3]
 				)
 
-				closest[1].Humanoid:TakeDamage(self.TurretDamage)
+				closest[1].Humanoid:TakeDamage(self:GetScale("Damage"))
+				self.shootAnimation:Play()
 			end
 
-			wait(self.TurretCooldown)
+			wait(1 / rateOfFire)
 		end
 	end)
 end

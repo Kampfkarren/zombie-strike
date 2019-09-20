@@ -108,7 +108,7 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, lobbyIndex
 
 	local playerLevel = Data.GetPlayerData(player, "Level")
 
-	if difficulty.MinLevel < playerLevel then
+	if difficulty.MinLevel > playerLevel then
 		warn("level too low")
 		return
 	end

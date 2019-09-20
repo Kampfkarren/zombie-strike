@@ -108,8 +108,10 @@ local Campaigns = {
 		Name = "Campaign A",
 		Image = "rbxassetid://2278464",
 		ZombieTypes = {
-			-- Turret = 3,
-			Common = 7,
+			Common = 3,
+			Fast = 1,
+			Strong = 1,
+			Turret = 1,
 		},
 
 		Difficulties = {
