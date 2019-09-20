@@ -12,8 +12,8 @@ return function(viewportFrame, model)
 	local modelCFrame, size = model:GetBoundingBox()
 	model:TranslateBy(-modelCFrame.Position)
 
-	local distance = size.Magnitude * 0.8
-	local dir = Vector3.new(-1, 0, -1).Unit
+	local distance = size.Magnitude * 1.2
+	local dir = Vector3.new(0.5, 0, 0.5).Unit
 	camera.CFrame = CFrame.new(distance * dir, Vector3.new(0, 0, 0))
 
 	camera.Parent = viewportFrame
