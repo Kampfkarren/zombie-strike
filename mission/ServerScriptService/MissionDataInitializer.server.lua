@@ -41,31 +41,6 @@ Players.PlayerAdded:connect(function(player)
 	numberValue("XPScale", 1, playerData)
 
 	playerData.Parent = player
-
-	local armor = Data.GetPlayerData(player, "Armor")
-	local armorHealth = ArmorScaling.ArmorHealth(armor.Level, armor.Rarity)
-	local armorModel = Data.GetModel(armor)
-
-	local helmet = Data.GetPlayerData(player, "Helmet")
-	local helmetHealth = ArmorScaling.HelmetHealth(helmet.Level, helmet.Rarity)
-	local helmetModel = Data.GetModel(helmet)
-
-	local function characterAdded(character)
-		local health = XP.HealthForLevel(level) + armorHealth + helmetHealth
-		character.Humanoid.MaxHealth = health
-		character.Humanoid.Health = health
-
-		armorModel.Shirt:Clone().Parent = character
-		armorModel.Pants:Clone().Parent = character
-
-		helmetModel.Hat:Clone().Parent = character
-	end
-
-	if player.Character then
-		characterAdded(player.Character)
-	end
-
-	player.CharacterAdded:connect(characterAdded)
 end)
 
 local function clientDungeonKey(name, type)
