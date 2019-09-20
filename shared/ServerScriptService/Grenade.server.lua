@@ -74,7 +74,7 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 				MAX_RANGE
 			)
 
-			local sound = SOUNDS[math.random(#SOUNDS)]
+			local sound = SOUNDS[math.random(#SOUNDS)]:Clone()
 			sound.Parent = grenade
 			sound:Play()
 
