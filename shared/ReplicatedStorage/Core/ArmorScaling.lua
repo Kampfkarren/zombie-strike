@@ -1,5 +1,3 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
 local ArmorScaling = {}
 
 local ARMOR_BASE = 25

@@ -153,11 +153,6 @@ function GunScaling.BaseStats(type, level, rarity)
 	return stats
 end
 
-function GunScaling.Model(_, rarity)
-	-- Technical debt if this guarantee is no longer true
-	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
-end
-
 function GunScaling.RandomType()
 	local types = {}
 	for type in pairs(Types) do

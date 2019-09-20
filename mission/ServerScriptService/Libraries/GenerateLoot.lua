@@ -9,6 +9,18 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 
 local WEAPON_DROP_RATE = 0.67
 
+local function armorModel(rarity)
+	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
+end
+
+local function helmetModel(rarity)
+	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
+end
+
+local function gunModel(_, rarity)
+	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
+end
+
 local function generateLootItem(player)
 	local rng = Random.new()
 
@@ -70,7 +82,7 @@ local function generateLootItem(player)
 			FireRate = stats.FireRate,
 			Level = level,
 			Magazine = stats.Magazine,
-			Model = GunScaling.Model(type, rarity),
+			Model = gunModel(type, rarity),
 			Name = quality .. " Poopoo",
 			Rarity = rarity,
 			UUID = uuid,
@@ -81,14 +93,12 @@ local function generateLootItem(player)
 		local type, model
 
 		if rng:NextNumber() >= 0.5 then
-			-- type = "Armor"
-			type = "Helmet"
+			type = "Armor"
+			model = armorModel(rarity)
 		else
 			type = "Helmet"
+			model = helmetModel(rarity)
 		end
-
-		-- model = ArmorScaling.Model(type, rarity)
-		model = ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
 
 		local loot = {
 			Level = level,
