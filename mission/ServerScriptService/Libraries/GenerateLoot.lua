@@ -5,20 +5,15 @@ local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local WEAPON_DROP_RATE = 0.67
 
-local function armorModel(rarity)
-	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
-end
-
-local function helmetModel(rarity)
-	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
-end
-
-local function gunModel(_, rarity)
-	return ((Dungeon.GetDungeonData("Campaign") - 1) * 5) + rarity
+local function getModel(type, rarity)
+	local loot = Dungeon.GetDungeonData("CampaignInfo").Loot
+	local models = assert(loot[type], "No loot for " .. type)[Loot.Rarities[rarity].Name]
+	return models[math.random(#models)]
 end
 
 local function generateLootItem(player)
@@ -82,7 +77,7 @@ local function generateLootItem(player)
 			FireRate = stats.FireRate,
 			Level = level,
 			Magazine = stats.Magazine,
-			Model = gunModel(type, rarity),
+			Model = getModel(type, rarity),
 			Name = quality .. " Poopoo",
 			Rarity = rarity,
 			UUID = uuid,
@@ -90,14 +85,12 @@ local function generateLootItem(player)
 
 		return loot
 	else
-		local type, model
+		local type
 
 		if rng:NextNumber() >= 0.5 then
 			type = "Armor"
-			model = armorModel(rarity)
 		else
 			type = "Helmet"
-			model = helmetModel(rarity)
 		end
 
 		local loot = {
@@ -106,7 +99,7 @@ local function generateLootItem(player)
 			Rarity = rarity,
 			Type = type,
 
-			Model = model,
+			Model = getModel(type, rarity),
 			UUID = uuid,
 		}
 
