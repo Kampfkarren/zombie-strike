@@ -11,6 +11,11 @@ PhysicsService:CreateCollisionGroup("Grenade")
 PhysicsService:CollisionGroupSetCollidable("Grenade", "Players", false)
 PhysicsService:CollisionGroupSetCollidable("Grenade", "Zombies", false)
 
+PhysicsService:CreateCollisionGroup("DeadZombies")
+PhysicsService:CollisionGroupSetCollidable("DeadZombies", "DeadZombies", false)
+PhysicsService:CollisionGroupSetCollidable("DeadZombies", "Zombies", false)
+PhysicsService:CollisionGroupSetCollidable("DeadZombies", "Players", false)
+
 local function collideCharacter(character, group)
 	local function playerCollide(part)
 		if part:IsA("BasePart") then
@@ -27,6 +32,10 @@ end
 
 CollectionService:GetInstanceAddedSignal("Zombie"):connect(function(zombie)
 	collideCharacter(zombie, "Zombies")
+
+	zombie.Humanoid.Died:connect(function()
+		collideCharacter(zombie, "DeadZombies")
+	end)
 end)
 
 Players.PlayerAdded:connect(function(player)
