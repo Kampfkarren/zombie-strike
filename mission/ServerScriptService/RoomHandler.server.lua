@@ -291,24 +291,36 @@ for _, room in pairs(rooms) do
 	DungeonState.NormalZombies = DungeonState.NormalZombies + amount
 end
 
-local started = false
+local started = 0
 local startedCountdown = false
 
 local function start()
-	if started then return end
-	started = true
+	if started == 2 then return end
+	started = 2
 	print("starting")
-	wait(2)
+	for countdown = -3, -1 do
+		JoinTimer.Value = countdown
+		wait(1)
+	end
+
+	JoinTimer.Value = -4
 	openNextGate()
-	JoinTimer.Value = 0
+
+	delay(3, function()
+		JoinTimer.Value = 0
+	end)
 end
 
 local function playerAdded()
-	if started then return end
+	if started ~= 0 then return end
 
 	local members = Dungeon.GetDungeonData("Members")
+
 	if #Players:GetPlayers() == #members then
 		print("all players connected")
+		started = 1
+		JoinTimer.Value = 0
+		wait(2)
 		start()
 		return
 	end
@@ -318,7 +330,7 @@ local function playerAdded()
 
 		coroutine.wrap(function()
 			for time = 30, 1, -1 do
-				if started then return end
+				if started ~= 0 then return end
 				JoinTimer.Value = time
 				wait(1)
 			end
