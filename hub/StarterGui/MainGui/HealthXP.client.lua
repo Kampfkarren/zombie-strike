@@ -15,6 +15,12 @@ local function updateAmmo(ammo)
 	HealthXP.Ammo.Text = ammo
 end
 
+local function newGun(gun)
+	local ammo = gun:WaitForChild("Ammo")
+	ammo.Changed:connect(updateAmmo)
+	updateAmmo(ammo.Value)
+end
+
 local function characterAdded(character)
 	local humanoid = character:WaitForChild("Humanoid")
 	updateHealth(humanoid)
@@ -23,9 +29,16 @@ local function characterAdded(character)
 		updateHealth(humanoid)
 	end)
 
-	local ammo = character:WaitForChild("Gun"):WaitForChild("Ammo")
-	ammo.Changed:connect(updateAmmo)
-	updateAmmo(ammo.Value)
+	local gun = character:FindFirstChild("Gun")
+	if gun then
+		newGun(gun)
+	end
+
+	character.ChildAdded:connect(function(child)
+		if child.Name == "Gun" then
+			newGun(child)
+		end
+	end)
 end
 
 local playerData = LocalPlayer:WaitForChild("PlayerData")

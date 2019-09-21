@@ -3,11 +3,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
-local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
+local GiveOutfit = require(ServerScriptService.Shared.GiveOutfit)
 local Loot = require(ReplicatedStorage.Core.Loot)
-local XP = require(ReplicatedStorage.Core.XP)
 
 local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
 local UpdateInventory = ReplicatedStorage.Remotes.UpdateInventory
@@ -63,18 +62,27 @@ Players.PlayerAdded:connect(function(player)
 
 	playerData.Parent = player
 
+	local currentMaid, currentRefresh
+
 	local function refreshCharacter()
-		local cframe = player.Character.PrimaryPart.CFrame
-		player:LoadCharacter()
-		player.Character:SetPrimaryPartCFrame(cframe)
+		if currentMaid then
+			currentMaid:DoCleaning()
+		end
+
+		if currentRefresh then
+			currentRefresh:cancel()
+		end
+
+		currentRefresh, currentMaid = GiveOutfit(player, player.Character)
 	end
 
 	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
 	local function updateInventory(inventory)
 		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
-		refreshCharacter()
 	end
+
 	inventoryStore:OnUpdate(updateInventory)
+	refreshCharacter()
 	updateInventory(current)
 
 	local function updateEquipment(anUpdate)

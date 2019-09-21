@@ -30,12 +30,19 @@ local function HandleCharacter(character)
 			itemModule:Disconnect()
 		end
 
-		local gun = character:WaitForChild("Gun")
-
 		repeat RunService.Stepped:wait() until character:IsDescendantOf(Workspace)
 
-		HandleItem(gun)
-		itemModule:Equip()
+		character.ChildAdded:connect(function(gun)
+			if gun.Name == "Gun" then
+				if itemModule then
+					itemModule:Unequip()
+					itemModule:Disconnect()
+				end
+
+				HandleItem(gun)
+				itemModule:Equip()
+			end
+		end)
 	end
 end
 

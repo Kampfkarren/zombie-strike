@@ -32,6 +32,12 @@ local cards = {}
 local currentInventory
 local equipped = {}
 
+local function fastSpawn(callback)
+	local event = Instance.new("BindableEvent")
+	event.Event:connect(callback)
+	event:Fire()
+end
+
 local function resetSelectable()
 	for _, card in pairs(cards) do
 		card.Selectable = inventoryToggled
@@ -63,10 +69,6 @@ local function updateEquip(gui, data)
 end
 
 local function updateEquipped()
-	for oldId in pairs(equipped) do
-		cards[oldId].ImageColor3 = Loot.Rarities[currentInventory[oldId].Rarity].Color
-	end
-
 	equipped = {}
 
 	for _, key in pairs({
@@ -145,19 +147,19 @@ end
 
 currentInventory = State:getState().inventory
 if currentInventory then
-	coroutine.wrap(updateInventory)(currentInventory)
+	fastSpawn(function()
+		updateInventory(currentInventory)
+	end)
 end
 
 State.changed:connect(function(new, old)
 	local inventory = new.inventory
 
-	if inventory ~= old.inventory then
+	if inventory ~= old.inventory or new.equipment ~= old.equipment then
 		assert(inventory ~= nil, "Inventory changed, but somehow still nil?")
-		coroutine.wrap(updateInventory)(inventory)
-	end
-
-	if new.equipment ~= old.equipment then
-		coroutine.wrap(updateEquipped)()
+		fastSpawn(function()
+			updateInventory(inventory)
+		end)
 	end
 end)
 

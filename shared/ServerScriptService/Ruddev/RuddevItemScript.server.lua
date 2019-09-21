@@ -8,7 +8,6 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ITEMS = ReplicatedStorage.Items
 
 local Data = require(ReplicatedStorage.Core.Data)
-local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 
 -- Variables
 
@@ -65,31 +64,3 @@ for _, item in pairs(ITEMS:GetChildren()) do
 		PrepareItem(item)
 	end
 end
-
-game.Players.PlayerAdded:connect(function(player)
-	local data = Data.GetPlayerData(player, "Weapon")
-	local function characterAdded(character)
-		local gun = Data.GetModel(data)
-		gun.Name = "Gun"
-
-		local weaponData = Instance.new("Folder")
-		weaponData.Name = "WeaponData"
-
-		for statName, stat in pairs(data) do
-			local statValue = Instance.new((type(stat) == "number" and "Number" or "String") .. "Value")
-			statValue.Name = statName
-			statValue.Value = stat
-			statValue.Parent = weaponData
-		end
-
-		gun.Ammo.Value = data.Magazine
-		weaponData.Parent = gun
-		gun.Parent = character
-		Equip(gun)
-	end
-
-	if player.Character then
-		characterAdded(player.Character)
-	end
-	player.CharacterAdded:connect(characterAdded)
-end)
