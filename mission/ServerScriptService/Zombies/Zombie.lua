@@ -179,10 +179,17 @@ function Zombie:Aggro(focus)
 
 	local pathing = PathfindingService:CreatePath()
 
-	local waypoints = {}
-
 	spawn(function()
+		local waypoints = {}
+		local lastRecalculate = 0
+
 		while self.aggroTick == ourTick and self.aggroFocus:IsDescendantOf(game) do
+			if tick() - lastRecalculate > 0.25 then
+				pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
+				waypoints = pathing:GetWaypoints()
+				lastRecalculate = tick()
+			end
+
 			local waypoint = table.remove(waypoints, 1)
 			if waypoint then
 				if waypoint.Action == Enum.PathWaypointAction.Jump then
@@ -199,16 +206,6 @@ function Zombie:Aggro(focus)
 			else
 				wait(0.15)
 			end
-		end
-	end)
-
-	spawn(function()
-		wait(math.random(40, 60) / 100)
-		while self.aggroTick == ourTick do
-			pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
-			waypoints = pathing:GetWaypoints()
-
-			wait(0.25)
 		end
 	end)
 
@@ -313,7 +310,7 @@ function Zombie:GiveXP()
 	end
 end
 
-function Zombie:GetXP()
+function Zombie.GetXP()
 	return (Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_NOT_BOSS) / DungeonState.NormalZombies
 end
 -- END XP
