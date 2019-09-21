@@ -252,11 +252,11 @@ function Promise.all(promises)
 
 	-- We need to check that each value is a promise here so that we can produce
 	-- a proper error rather than a rejected promise with our error.
-	for i = 1, #promises do
-		if not Promise.is(promises[i]) then
-			error(("Non-promise value passed into Promise.all at index #%d"):format(i), 2)
-		end
-	end
+	-- for i = 1, #promises do
+	-- 	if not Promise.is(promises[i]) then
+	-- 		error(("Non-promise value passed into Promise.all at index #%d"):format(i), 2)
+	-- 	end
+	-- end
 
 	return Promise.new(function(resolve, reject)
 		-- An array to contain our resolved values from the given promises.

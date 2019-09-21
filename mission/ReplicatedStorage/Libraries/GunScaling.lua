@@ -1,7 +1,3 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-
 local GunScaling = {}
 
 local Types = {

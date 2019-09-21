@@ -57,7 +57,7 @@ Players.PlayerAdded:connect(function(player)
 	local playerData = Instance.new("Folder")
 	playerData.Name = "PlayerData"
 
-	local level = initStat(player, "Level", playerData)
+	initStat(player, "Level", playerData)
 	initStat(player, "XP", playerData)
 	initStat(player, "Gold", playerData)
 

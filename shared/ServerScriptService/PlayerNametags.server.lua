@@ -22,5 +22,6 @@ Players.PlayerAdded:connect(function(player)
 	if player.Character then
 		characterAdded(player.Character)
 	end
+
 	player.CharacterAdded:connect(characterAdded)
 end)

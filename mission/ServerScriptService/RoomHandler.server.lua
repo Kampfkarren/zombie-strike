@@ -127,6 +127,7 @@ local function endMission()
 					resolve(Loot.SerializeTable(loot))
 				end)
 			end),
+
 			Promise.async(function(resolve)
 				local difficulty = Dungeon.GetDungeonData("DifficultyInfo")
 
@@ -136,12 +137,14 @@ local function endMission()
 				local xp = math.floor(difficulty.XP * xpScale)
 				local gold = math.floor(difficulty.Gold * goldScale)
 
-				DataStore2("Gold", player):IncrementAsync(gold, 0)
-				DataStore2("Level", player):Set(player.PlayerData.Level.Value)
-				DataStore2("XP", player):Set(player.PlayerData.XP.Value)
-
-				resolve({ xp, gold })
-			end)
+				return Promise.all({
+					DataStore2("Level", player):Set(player.PlayerData.Level.Value),
+					DataStore2("XP", player):Set(player.PlayerData.XP.Value),
+					DataStore2("Gold", player):IncrementAsync(gold, 0),
+				}):andThen(function()
+					resolve({ xp, gold })
+				end)
+			end),
 		}):andThen(function(data)
 			DataStore2.SaveAllAsync(player)
 
@@ -297,7 +300,7 @@ local startedCountdown = false
 local function start()
 	if started == 2 then return end
 	started = 2
-	print("starting")
+
 	for countdown = -3, -1 do
 		JoinTimer.Value = countdown
 		wait(1)
