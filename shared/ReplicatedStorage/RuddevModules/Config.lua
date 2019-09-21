@@ -87,6 +87,10 @@ function Config.GetConfig(_, item)
 		end
 	end
 
+	if config.Size == "Shotgun" then
+		config.ShotSize = math.floor(5 + (1.01 ^ (config.Level - 1)))
+	end
+
 	return config
 
 	-- return {
