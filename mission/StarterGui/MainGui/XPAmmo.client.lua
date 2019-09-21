@@ -10,23 +10,10 @@ local function updateAmmo(ammo)
 	XPAmmoGold.Ammo.Text = ammo
 end
 
-local function newGun(gun)
-	local ammo = gun:WaitForChild("Ammo")
+local function characterAdded(character)
+	local ammo = character:WaitForChild("Gun"):WaitForChild("Ammo")
 	ammo.Changed:connect(updateAmmo)
 	updateAmmo(ammo.Value)
-end
-
-local function characterAdded(character)
-	local gun = character:FindFirstChild("Gun")
-	if gun then
-		newGun(gun)
-	end
-
-	character.ChildAdded:connect(function(child)
-		if child.Name == "Gun" then
-			newGun(child)
-		end
-	end)
 end
 
 local playerData = LocalPlayer:WaitForChild("PlayerData")
@@ -47,16 +34,6 @@ end
 
 coroutine.wrap(updateXP)()
 xp.Changed:connect(updateXP)
-
-local gold = playerData:WaitForChild("Gold")
-
-local function updateGold(value)
-	XPAmmoGold.Gold.Text = value
-end
-
-XPAmmoGold.Gold.Visible = true
-updateGold(gold.Value)
-gold.Changed:connect(updateGold)
 
 if LocalPlayer.Character then
 	characterAdded(LocalPlayer.Character)

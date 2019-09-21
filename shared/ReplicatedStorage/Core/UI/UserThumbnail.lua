@@ -2,10 +2,12 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Promise = require(ReplicatedStorage.Core.Promise)
+local t = require(ReplicatedStorage.Vendor.t)
 
 local RETRY_TIME = 1
 
 local userThumbnails = {}
+local newUserThumbnail = Instance.new("BindableEvent")
 
 local function playerAdded(player)
 	userThumbnails[player.UserId] = Promise.new(function(resolve)
@@ -34,5 +36,17 @@ for _, player in pairs(Players:GetPlayers()) do
 end
 
 return function(player)
-	return assert(userThumbnails[player.UserId])
+	assert(t.instanceIsA("Player"))
+
+	if not userThumbnails[player.UserId] then
+		return Promise.async(function(resolve)
+			while not userThumbnails[player.UserId] do
+				newUserThumbnail.Event:wait()
+			end
+
+			userThumbnails[player.UserId]:andThen(resolve)
+		end)
+	end
+
+	return userThumbnails[player.UserId]
 end
