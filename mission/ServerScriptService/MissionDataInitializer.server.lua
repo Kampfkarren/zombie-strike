@@ -1,12 +1,10 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
-local XP = require(ReplicatedStorage.Core.XP)
 
 local UpdateEquipped = ReplicatedStorage.Remotes.UpdateEquipped
 
