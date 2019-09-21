@@ -24,7 +24,7 @@ local cancels = {}
 REMOTES.Reload.OnServerEvent:connect(function(player)
 	local character = player.Character
 
-	if character then
+	if character and character.Humanoid.Health > 0 then
 		local item = character:WaitForChild("Gun")
 		local config = CONFIG:GetConfig(item)
 		local itemAmmo = item.Ammo

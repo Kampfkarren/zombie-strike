@@ -160,7 +160,7 @@ function module.Create(_, item)
 
 	local function CanShoot()
 		if mode == "Sequence" then return end
-		return itemModule.Equipped and canShoot and ammo > 0
+		return itemModule.Equipped and canShoot and ammo > 0 and PLAYER.Character.Humanoid.Health > 0
 	end
 
 	local function Reload()
