@@ -4,6 +4,7 @@ local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -23,6 +24,7 @@ local LootInfo = LootResults.LootInfo.Inner
 local FULL_TIME_ANIMATION = 1.5
 local FULL_TIME_GOLD = 250
 local FULL_TIME_XP = 2000
+local HUB_PLACE = 3759927663
 
 local wordTweenIn = {
 	TweenInfo.new(2, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out),
@@ -88,6 +90,12 @@ local function animate(label, amount, full)
 	label.Text = amount
 end
 
+local function leave()
+	TeleportService:Teleport(HUB_PLACE)
+end
+
+LootResults.Leave.MouseButton1Click:connect(leave)
+
 ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, gold)
 	LocalPlayer.PlayerGui.RuddevGui.Enabled = false
 
@@ -142,4 +150,12 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 
 		lootButton.Parent = LootContents
 	end
+
+	for timer = 10, 1, -1 do
+		LootResults.Leave.Label.Text = "LEAVE (" .. timer .. ")"
+		wait(1)
+	end
+
+	LootResults.Leave.Label.Text = "LEAVING..."
+	leave()
 end)
