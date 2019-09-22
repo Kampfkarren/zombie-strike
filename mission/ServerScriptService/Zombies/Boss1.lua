@@ -196,7 +196,6 @@ function CityBoss:SummonZombies()
 
 			local position = basePosition + Vector3.new(x, 0, z)
 
-			-- TODO: All zombies of a common
 			local zombie = Zombie.new("Common", Dungeon.RNGZombieLevel())
 
 			table.insert(self.zombiesSummoned, zombie)
