@@ -1,6 +1,7 @@
 local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
@@ -16,14 +17,40 @@ local function getModel(type, rarity)
 	return models[math.random(#models)]
 end
 
+local function nextDungeonLevel()
+	local difficulty = Dungeon.GetDungeonData("Difficulty")
+	local difficulties = Dungeon.GetDungeonData("CampaignInfo").Difficulties
+
+	if #difficulties == difficulty then
+		-- Last difficulty
+		local campaign = Dungeon.GetDungeonData("Campaign")
+
+		if #Campaigns == campaign then
+			-- Last campaign!
+			return nil
+		else
+			-- There's a next campaign
+			return Campaigns[campaign + 1].Difficulties[1].MinLevel
+		end
+	else
+		-- Not last difficulty
+		return difficulties[difficulty + 1].MinLevel
+	end
+end
+
+local function getLootLevel(player)
+	local playerLevel = Data.GetPlayerData(player, "Level")
+
+	local dungeonLevelMin = Dungeon.GetDungeonData("DifficultyInfo").MinLevel
+
+	local nextDungeon = nextDungeonLevel() or dungeonLevelMin + 4
+
+	return math.random(dungeonLevelMin, math.min(playerLevel, nextDungeon))
+end
+
 local function generateLootItem(player)
 	local rng = Random.new()
-
-	local currentLevel = player.PlayerData.Level.Value
-	local level = currentLevel
-	if level > 5 then
-		level = level - rng:NextInteger(0, 2)
-	end
+	local level = getLootLevel(player)
 
 	local rarityRng = rng:NextNumber() * 100
 	local rarity
@@ -132,10 +159,10 @@ local function generateLoot(player)
 		local lootTable = {}
 
 		for _ = 1, amount do
-			table.insert(lootTable, generateLootItem(player))
+			table.insert(lootTable, Promise.promisify(generateLootItem)(player))
 		end
 
-		return lootTable
+		return Promise.all(lootTable)
 	end)
 end
 
