@@ -1,5 +1,7 @@
 local GuiService = game:GetService("GuiService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -10,6 +12,7 @@ local State = require(ReplicatedStorage.State)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local Inventory = script.Parent.Main.Inventory
+local LocalPlayer = Players.LocalPlayer
 
 local Loadout = Inventory.Loadout
 
@@ -131,7 +134,15 @@ local function updateInventory(inventory)
 
 		card.MouseButton1Click:connect(function()
 			if not equipped[id] then
-				UpdateEquipment:FireServer(id)
+				if item.Level > LocalPlayer.PlayerData.Level.Value then
+					StarterGui:SetCore("ChatMakeSystemMessage", {
+						Text = "You're not a high enough level to equip that!",
+						Color = Color3.fromRGB(252, 92, 101),
+						Font = Enum.Font.GothamSemibold,
+					})
+				else
+					UpdateEquipment:FireServer(id)
+				end
 			end
 		end)
 
