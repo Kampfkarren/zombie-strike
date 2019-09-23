@@ -1,3 +1,22 @@
+local RunService = game:GetService("RunService")
+
+local ROTATE_RATE = 1
+
+local bases = {}
+local rotators = {}
+local totalDelta = 0
+
+RunService.Heartbeat:connect(function(delta)
+	totalDelta = totalDelta + delta
+
+	for model in pairs(rotators) do
+		model:SetPrimaryPartCFrame(
+			CFrame.new(model.PrimaryPart.Position)
+			* CFrame.Angles(0, bases[model.UUID.Value] + totalDelta * ROTATE_RATE, 0)
+		)
+	end
+end)
+
 return function(viewportFrame, model)
 	local model = model:Clone()
 
@@ -18,4 +37,16 @@ return function(viewportFrame, model)
 
 	camera.Parent = viewportFrame
 	viewportFrame.CurrentCamera = camera
+
+	if not bases[model.UUID.Value] then
+		bases[model.UUID.Value] = math.random() * math.pi
+	end
+
+	rotators[model] = true
+
+	model.AncestryChanged:connect(function()
+		if not model:IsDescendantOf(game) then
+			rotators[model] = nil
+		end
+	end)
 end
