@@ -1,5 +1,4 @@
 local CollectionService = game:GetService("CollectionService")
-local RunService = game:GetService("RunService")
 
 local DELAY = 0.5
 local EMIT = 50
