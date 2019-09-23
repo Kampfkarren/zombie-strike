@@ -3,6 +3,10 @@
   "servePlaceIds": [3759927663],
   "tree": {
     "$className": "DataModel",
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "$path": "hub/ReplicatedFirst"
+    },
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$path": "hub/ReplicatedStorage",

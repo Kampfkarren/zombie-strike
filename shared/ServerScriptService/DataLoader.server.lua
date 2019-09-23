@@ -5,5 +5,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 
 Players.PlayerAdded:connect(function(player)
 	Data.GetPlayerData(player, "Level")
-	player:LoadCharacter()
+	if player:IsDescendantOf(game) then
+		player:LoadCharacter()
+	end
 end)

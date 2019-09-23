@@ -39,17 +39,16 @@ UpdateEquipment.OnServerEvent:connect(function(player, equip)
 end)
 
 local function initStat(player, name, parent)
-	local value = Data.GetPlayerData(player, name)
-	local stat = Instance.new("NumberValue")
-	stat.Name = name
-	stat.Value = value
-	stat.Parent = parent
-
-	DataStore2(name, player):OnUpdate(function(value)
+	Data.GetPlayerDataAsync(player, name):andThen(function(value)
+		local stat = Instance.new("NumberValue")
+		stat.Name = name
 		stat.Value = value
-	end)
+		stat.Parent = parent
 
-	return value
+		DataStore2(name, player):OnUpdate(function(value)
+			stat.Value = value
+		end)
+	end)
 end
 
 Players.PlayerAdded:connect(function(player)
@@ -76,13 +75,14 @@ Players.PlayerAdded:connect(function(player)
 		currentRefresh, currentMaid = GiveOutfit(player, player.Character)
 	end
 
+	player.CharacterAdded:connect(refreshCharacter)
+
 	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
 	local function updateInventory(inventory)
 		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
 	end
 
 	inventoryStore:OnUpdate(updateInventory)
-	refreshCharacter()
 	updateInventory(current)
 
 	local function updateEquipment(anUpdate)
