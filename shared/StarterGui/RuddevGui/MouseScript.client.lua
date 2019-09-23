@@ -84,9 +84,9 @@ if hubWorld then
 
 	UserInputService.InputChanged:connect(function(inputObject)
 		if inputObject.UserInputType == Enum.UserInputType.MouseMovement then
-			MOUSE_GUI.AnchorPoint = Vector2.new(0, 0)
+			MOUSE_GUI.AnchorPoint = Vector2.new(0.5, 0.5)
 			lastScreenPos = Vector2.new(inputObject.Position.X, inputObject.Position.Y)
-			MOUSE_GUI.Position = UDim2.new(0, inputObject.Position.X - 12, 0, inputObject.Position.Y - 12)
+			MOUSE_GUI.Position = UDim2.new(0, inputObject.Position.X, 0, inputObject.Position.Y)
 		elseif inputObject.KeyCode == Enum.KeyCode.Thumbstick2 then
 			MOUSE_GUI.AnchorPoint = Vector2.new(0.5, 0.5)
 			MOUSE_GUI.Position = UDim2.new(0.5, 0, 0.5, 0)

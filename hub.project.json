@@ -43,7 +43,10 @@
     },
     "StarterGui": {
       "$className": "StarterGui",
-      "$path": "hub/StarterGui"
+      "$path": "hub/StarterGui",
+      "RuddevGui": {
+        "$path": "shared/StarterGui/RuddevGui"
+      }
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",

@@ -40,7 +40,10 @@
     },
     "StarterGui": {
       "$className": "StarterGui",
-      "$path": "mission/StarterGui"
+      "$path": "mission/StarterGui",
+      "RuddevGui": {
+        "$path": "shared/StarterGui/RuddevGui"
+      }
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
