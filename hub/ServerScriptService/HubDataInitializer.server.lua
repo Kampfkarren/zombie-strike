@@ -28,6 +28,11 @@ UpdateEquipment.OnServerEvent:connect(function(player, equip)
 		return
 	end
 
+	if toEquip.Level > Data.GetPlayerData(player, "Level") then
+		warn("equipping item with too high level")
+		return
+	end
+
 	local equipType
 	if toEquip.Type == "Helmet" or toEquip.Type == "Armor" then
 		equipType = "Equipped" .. toEquip.Type

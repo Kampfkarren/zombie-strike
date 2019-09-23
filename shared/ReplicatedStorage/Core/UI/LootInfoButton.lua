@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
@@ -5,6 +6,8 @@ local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
+
+local LocalPlayer = Players.LocalPlayer
 
 local function changeStat(statFrame, lootStat, currentStat, format, consizeredZero)
 	consizeredZero = consizeredZero or 0
@@ -36,6 +39,14 @@ local function updateLootInfo(LootInfo, loot)
 	ViewportFramePreview(LootInfo.ViewportFrame, Data.GetModel(loot))
 
 	LootInfo.Level.Text = "Level " .. loot.Level
+	local playerLevel = LocalPlayer.PlayerData.Level.Value
+
+	if playerLevel >= loot.Level then
+		LootInfo.Level.TextColor3 = Color3.fromRGB(227, 227, 227)
+	else
+		LootInfo.Level.TextColor3 = Color3.fromRGB(214, 48, 49)
+	end
+
 	LootInfo.LootName.Text = loot.Name
 	LootInfo.Rarity.Text = rarity.Name .. " " .. loot.Type
 
