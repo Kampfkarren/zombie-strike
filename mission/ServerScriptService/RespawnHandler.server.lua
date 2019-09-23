@@ -54,6 +54,4 @@ Players.PlayerAdded:connect(function(player)
 			end)
 		end
 	end)
-
-	player:LoadCharacter()
 end)

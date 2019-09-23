@@ -314,12 +314,15 @@ local function start()
 	end)
 end
 
-local function playerAdded()
-	if started ~= 0 then return end
+local function checkCharacterCount()
+	local characterCount = 0
+	for _, player in pairs(Players:GetPlayers()) do
+		if player.Character then
+			characterCount = characterCount + 1
+		end
+	end
 
-	local members = Dungeon.GetDungeonData("Members")
-
-	if #Players:GetPlayers() == #members then
+	if characterCount == #Dungeon.GetDungeonData("Members") then
 		print("all players connected")
 		started = 1
 		JoinTimer.Value = 0
@@ -327,6 +330,13 @@ local function playerAdded()
 		start()
 		return
 	end
+end
+
+local function playerAdded(player)
+	if started ~= 0 then return end
+
+	checkCharacterCount()
+	player.CharacterAdded:connect(checkCharacterCount)
 
 	if not startedCountdown then
 		startedCountdown = true
