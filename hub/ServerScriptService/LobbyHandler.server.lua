@@ -17,6 +17,7 @@ local DUNGEON_PLACE_ID = 3803533582
 
 local dungeonDataStore = DataStoreService:GetDataStore("DungeonInfo")
 local lobbies = {}
+local teleporting = {}
 local unique = 0
 
 local function getPlayerLobby(player)
@@ -57,6 +58,11 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
 	local lobby = getPlayerLobby(player)
 	if lobby then
 		warn("player already in lobby")
+		return
+	end
+
+	if teleporting[player] then
+		warn("player already teleporting")
 		return
 	end
 
@@ -126,6 +132,11 @@ ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(function(player)
 		return
 	end
 
+	if teleporting[player] then
+		warn("LeaveLobby while teleporting")
+		return
+	end
+
 	-- TODO: Shouldn't be able to leave while teleporting
 
 	table.remove(lobby.Players, spot)
@@ -142,6 +153,11 @@ ReplicatedStorage.Remotes.KickFromLobby.OnServerEvent:connect(function(player, k
 	local lobby, lobbyIndex = getPlayerLobby(player)
 	if not lobby then
 		warn("KickFromLobby without a lobby")
+		return
+	end
+
+	if teleporting[player] then
+		warn("KickFromLobby while teleporting")
 		return
 	end
 
@@ -162,9 +178,14 @@ ReplicatedStorage.Remotes.KickFromLobby.OnServerEvent:connect(function(player, k
 end)
 
 ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
-	local lobby = getPlayerLobby(player)
+	local lobby, lobbyIndex = getPlayerLobby(player)
 	if not lobby then
 		warn("PlayLobby without a lobby")
+		return
+	end
+
+	if teleporting[player] then
+		warn("PlayLobby, already teleporting")
 		return
 	end
 
@@ -221,6 +242,7 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 
 					for _, player in pairs(lobby.Players) do
 						table.insert(playerIds, player.UserId)
+						teleporting[player] = true
 					end
 
 					dungeonDataStore:SetAsync(privateServerId, {
@@ -244,8 +266,14 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 				end
 			end)()
 		end)
+	end):andThen(function()
+		table.remove(lobbies, lobbyIndex)
+		PatchLobby:FireAllClients(lobbyIndex)
 	end):catch(function(problem)
 		ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
+		for _, player in pairs(lobby.Players) do
+			teleporting[player] = nil
+		end
 	end)
 
 	-- DUNGEON_PLACE_ID
@@ -253,4 +281,8 @@ end)
 
 Players.PlayerAdded:connect(function(player)
 	UpdateLobbies:FireClient(player, Lobby.SerializeTable(lobbies))
+end)
+
+Players.PlayerRemoving:connect(function(player)
+	teleporting[player] = nil
 end)
