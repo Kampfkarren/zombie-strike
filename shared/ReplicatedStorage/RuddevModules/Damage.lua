@@ -16,8 +16,6 @@ if not ReplicatedStorage.HubWorld.Value then
 
 	local CRIT_MULTIPLIER = 2
 
-	-- todo: implement damage functions etc
-
 	function DAMAGE.Calculate(_, item, hit, origin)
 		local config = CONFIG:GetConfig(item)
 		local damage = config.Damage
