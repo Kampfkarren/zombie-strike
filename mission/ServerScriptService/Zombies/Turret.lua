@@ -1,4 +1,3 @@
--- TODO: Prevent shooters from being moved, or don't run the animation
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
