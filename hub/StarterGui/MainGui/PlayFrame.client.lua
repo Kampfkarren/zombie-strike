@@ -388,6 +388,8 @@ do
 		end
 	end
 
+	ReplicatedStorage.LocalEvents.GetCurrentLobby.OnInvoke = getCurrentLobby
+
 	local Lobby = Inner.Lobby
 	local notConnected = Lobby.Players["1"]:Clone()
 

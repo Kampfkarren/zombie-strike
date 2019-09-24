@@ -204,6 +204,9 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 
 	for _, player in pairs(lobby.Players) do
 		if player:IsDescendantOf(game) then
+			teleporting[player] = true
+			ReplicatedStorage.Remotes.Teleporting:FireClient(player, true)
+
 			table.insert(playerPromises, Promise.new(function(resolve, reject)
 				coroutine.wrap(function()
 					local success, result = pcall(function()
@@ -244,7 +247,6 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 
 					for _, player in pairs(lobby.Players) do
 						table.insert(playerIds, player.UserId)
-						teleporting[player] = true
 					end
 
 					dungeonDataStore:SetAsync(privateServerId, {
@@ -273,8 +275,10 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 		PatchLobby:FireAllClients(lobbyIndex)
 	end):catch(function(problem)
 		ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
+
 		for _, player in pairs(lobby.Players) do
 			teleporting[player] = nil
+			ReplicatedStorage.Remotes.Teleporting:FireClient(player, false)
 		end
 	end)
 
