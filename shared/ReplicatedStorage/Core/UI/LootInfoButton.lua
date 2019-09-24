@@ -3,24 +3,34 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Core.Data)
+local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local LocalPlayer = Players.LocalPlayer
 
+local function formatNumber(format, number)
+	if format then
+		return format:format(number)
+	else
+		return EnglishNumbers(number)
+	end
+end
+
 local function changeStat(statFrame, lootStat, currentStat, format, consizeredZero)
 	consizeredZero = consizeredZero or 0
-	format = format or "%d"
-	statFrame.Current.Text = format:format(lootStat)
 
 	local diff = lootStat - currentStat
 
+	local text = formatNumber(format, diff)
+	statFrame.Current.Text = formatNumber(format, lootStat)
+
 	if diff > consizeredZero then
-		statFrame.Diff.Text = "+" .. format:format(diff)
+		statFrame.Diff.Text = "+" .. text
 		statFrame.Diff.TextColor3 = Color3.fromRGB(85, 255, 127)
 	elseif diff < 0 then
-		statFrame.Diff.Text = format:format(diff)
+		statFrame.Diff.Text = text
 		statFrame.Diff.TextColor3 = Color3.fromRGB(232, 65, 24)
 	else
 		statFrame.Diff.Text = "+0"
