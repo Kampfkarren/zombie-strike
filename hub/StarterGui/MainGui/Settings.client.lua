@@ -40,6 +40,7 @@ end
 for settingIndex, setting in pairs(Settings.Settings) do
 	local template = SettingTemplate:Clone()
 	template.LayoutOrder = settingIndex
+	template.SettingName.Text = setting.Name:upper()
 
 	local page = template.Value.Values.UIPageLayout
 	local currentChoice = Settings.GetSettingIndex(setting.Name)
