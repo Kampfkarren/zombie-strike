@@ -137,6 +137,10 @@ end
 local function getLootAmount(player)
 	local amount = 1
 
+	if Dungeon.GetDungeonData("Hardcore") then
+		amount = amount + 1
+	end
+
 	return Promise.all({
 		Data.GetPlayerDataAsync(player, "Inventory"),
 		InventorySpace(player),
