@@ -137,8 +137,6 @@ ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(function(player)
 		return
 	end
 
-	-- TODO: Shouldn't be able to leave while teleporting
-
 	table.remove(lobby.Players, spot)
 
 	if #lobby.Players == 0 then
