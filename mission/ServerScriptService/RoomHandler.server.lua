@@ -94,7 +94,8 @@ local function generateDungeon(numRooms)
 	return rooms
 end
 
-local rooms = generateDungeon(Dungeon.GetDungeonData("DifficultyInfo").Rooms)
+-- local rooms = generateDungeon(Dungeon.GetDungeonData("DifficultyInfo").Rooms)
+local rooms = generateDungeon(1)
 local zombieTypes = {}
 
 for key, rate in pairs(Dungeon.GetDungeonData("CampaignInfo").ZombieTypes) do
@@ -210,7 +211,7 @@ end)
 
 local function openNextGate()
 	local room = table.remove(rooms, 1)
-	local gate = room:FindFirstChild("Gate", true, "No Gate")
+	local gate = assert(room:FindFirstChild("Gate", true), "No Gate")
 
 	local enemiesLeft = room.EnemiesLeft.Value
 	local obbyType = room.ObbyType.Value
@@ -258,7 +259,8 @@ local function openNextGate()
 		wait(1)
 	end
 
-	gate.Parent = nil
+	-- gate.Parent = nil
+	ReplicatedStorage.Remotes.OpenGate:FireAllClients(room)
 
 	if obbyType == "boss" then
 		for timer = 5, 1, -1 do
@@ -267,8 +269,7 @@ local function openNextGate()
 		end
 
 		BossTimer.Value = 0
-
-		gate.Parent = Workspace
+		ReplicatedStorage.Remotes.OpenGate:FireAllClients(room, gate.CFrame)
 
 		startBoss(room)
 	end
@@ -303,11 +304,14 @@ local function start()
 
 	for countdown = -3, -1 do
 		JoinTimer.Value = countdown
+		if countdown == -2 then
+			coroutine.wrap(openNextGate)()
+		end
+
 		wait(1)
 	end
 
 	JoinTimer.Value = -4
-	openNextGate()
 
 	delay(3, function()
 		JoinTimer.Value = 0
