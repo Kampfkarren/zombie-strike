@@ -3,6 +3,8 @@ local HttpService = game:GetService("HttpService")
 return function()
 	local MockPlayer = {}
 
+	MockPlayer.Version = 1
+
 	MockPlayer.Level = 1
 	MockPlayer.XP = 0
 	MockPlayer.Gold = 100
@@ -14,8 +16,8 @@ return function()
 		Name = "Average Pistol",
 
 		Damage = 20,
-		FireRate = 5,
-		CritChance = 0.08,
+		FireRate = 500,
+		CritChance = 8,
 		Magazine = 9,
 
 		Model = 1,

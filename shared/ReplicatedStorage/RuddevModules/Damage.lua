@@ -64,7 +64,7 @@ if not ReplicatedStorage.HubWorld.Value then
 
 			if gun then
 				local critChance = gun.CritChance
-				if math.random() <= critChance then
+				if math.random() <= critChance / 100 then
 					damage = damage * CRIT_MULTIPLIER
 					crit = true
 				end

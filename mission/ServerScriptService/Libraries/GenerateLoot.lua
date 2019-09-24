@@ -99,9 +99,9 @@ local function generateLootItem(player)
 
 		local loot = {
 			Type = type,
-			CritChance = stats.CritChance,
+			CritChance = stats.CritChance * 100,
 			Damage = stats.Damage,
-			FireRate = stats.FireRate,
+			FireRate = stats.FireRate * 100,
 			Level = level,
 			Magazine = stats.Magazine,
 			Model = getModel(type, rarity),

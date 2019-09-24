@@ -81,13 +81,19 @@ local function updateLootInfo(LootInfo, loot)
 
 		changeStat(
 			stats.CritChance,
-			loot.CritChance * 100,
-			currentGun.CritChance * 100,
+			loot.CritChance,
+			currentGun.CritChance,
 			"%d%%",
 			0.99999999
 		)
 
-		changeStat(stats.FireRate, loot.FireRate, currentGun.FireRate, "%.1f", 0.00999999)
+		changeStat(
+			stats.FireRate,
+			loot.FireRate / 100,
+			currentGun.FireRate / 100,
+			"%.1f",
+			0.00999999
+		)
 	end
 end
 

@@ -355,7 +355,7 @@ function module.Create(_, item)
 					rCancelled = true
 					canShoot = false
 					Shoot()
-					wait(1 / config.FireRate)
+					wait(1 / (config.FireRate / 100))
 					canShoot = true
 				end
 			elseif config.FireMode == "Burst" then
