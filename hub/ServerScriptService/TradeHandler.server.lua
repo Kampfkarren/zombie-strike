@@ -5,6 +5,7 @@ local ServerStorage = game:GetService("ServerStorage")
 
 local ChatConstants = require(ReplicatedStorage.ChatConstants)
 local Data = require(ReplicatedStorage.Core.Data)
+local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local InventoryUtil = require(ServerScriptService.Libraries.InventoryUtil)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -298,6 +299,14 @@ UpdateTrade.OnServerEvent:connect(function(player, index)
 			ReplicatedStorage.Remotes.ChatMessage:FireClient(player, ChatConstants.Codes.TradeEquipped)
 			return
 		end
+	end
+
+	if InventorySpace(tradeState.tradingWith):awaitValue()
+		- #Data.GetPlayerData(tradeState.tradingWith, "Inventory")
+		<= #tradeState.items
+	then
+		ReplicatedStorage.Remotes.ChatMessage:FireClient(player, ChatConstants.Codes.TradeTooMuch)
+		return
 	end
 
 	tradeState.accepted = false

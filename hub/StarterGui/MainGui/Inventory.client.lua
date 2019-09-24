@@ -6,6 +6,7 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
 local State = require(ReplicatedStorage.State)
@@ -151,6 +152,10 @@ local function updateInventory(inventory)
 		card.Parent = Inventory.Contents
 		cards[id] = card
 	end
+
+	InventorySpace(LocalPlayer):andThen(function(space)
+		Inventory.InventorySpace.Text = #currentInventory .. "/" .. space
+	end)
 
 	updateEquipped()
 	resetSelectable()
