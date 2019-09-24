@@ -79,16 +79,18 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 			sound:Play()
 
 			for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
-				local range = (zombie.PrimaryPart.Position - grenade.Position).Magnitude
-				if Damage:PlayerCanDamage(player, zombie.Humanoid) then
-					if range <= MAX_RANGE then
-						local baseDamage = getDamage(level)
-						local damage = lerp(baseDamage * DROPOFF, baseDamage, range / MAX_RANGE)
+				if zombie.Humanoid.Health > 0 and zombie:IsDescendantOf(Workspace) then
+					local range = (zombie.PrimaryPart.Position - grenade.Position).Magnitude
+					if Damage:PlayerCanDamage(player, zombie.Humanoid) then
+						if range <= MAX_RANGE then
+							local baseDamage = getDamage(level)
+							local damage = lerp(baseDamage * DROPOFF, baseDamage, range / MAX_RANGE)
 
-						local humanoid = zombie.Humanoid
-						humanoid:TakeDamage(damage)
-						ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
-						ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
+							local humanoid = zombie.Humanoid
+							humanoid:TakeDamage(damage)
+							ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
+							ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
+						end
 					end
 				end
 			end

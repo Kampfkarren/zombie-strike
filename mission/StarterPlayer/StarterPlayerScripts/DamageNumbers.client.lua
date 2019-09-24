@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 
+local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local Spring = require(ReplicatedStorage.RuddevModules.Spring)
 
 local DamageNumber = ReplicatedStorage.DamageNumber
@@ -57,7 +58,7 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 
 	local damageNumber = DamageNumber:Clone()
 	local damageText = damageNumber.TextLabel
-	damageText.Text = math.floor(damage)
+	damageText.Text = EnglishNumbers(damage)
 	damageNumber.Parent = humanoid.Parent.HumanoidRootPart
 	updateColor(damageText, humanoid.Health, humanoid.MaxHealth)
 

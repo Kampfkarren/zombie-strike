@@ -44,7 +44,7 @@ return function()
 		UUID = HttpService:GenerateGUID(false):gsub("-", ""),
 	}
 
-	MockPlayer.EquippedWeapon = 4
+	MockPlayer.EquippedWeapon = 1
 	MockPlayer.EquippedArmor = 2
 	MockPlayer.EquippedHelmet = 3
 
@@ -55,21 +55,6 @@ return function()
 		MockPlayer.Weapon,
 		MockPlayer.Armor,
 		MockPlayer.Helmet,
-
-		{
-			Type = "Pistol",
-			Level = 1,
-			Rarity = 1,
-			Name = "Average Pistol",
-
-			Damage = 123456,
-			FireRate = 500,
-			CritChance = 8,
-			Magazine = 9,
-
-			Model = 1,
-			UUID = HttpService:GenerateGUID(false):gsub("-", ""),
-		}
 	}
 
 	MockPlayer.Settings = {}

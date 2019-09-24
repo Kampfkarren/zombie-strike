@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
+local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local UserThumbnail = require(ReplicatedStorage.Core.UI.UserThumbnail)
 
 local HubWorld = ReplicatedStorage.HubWorld.Value
@@ -18,7 +19,7 @@ local function squadMemberFrame(frame, player)
 			healthFrame.Fill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 
 			if player == LocalPlayer then
-				healthFrame.Label.Text = ("%d / %d"):format(math.ceil(humanoid.Health), math.ceil(humanoid.MaxHealth))
+				healthFrame.Label.Text = ("%d / %d"):format(EnglishNumbers(humanoid.Health), EnglishNumbers(humanoid.MaxHealth))
 			else
 				healthFrame.Percent.Text = ("%d%%"):format((humanoid.Health / humanoid.MaxHealth) * 100)
 			end

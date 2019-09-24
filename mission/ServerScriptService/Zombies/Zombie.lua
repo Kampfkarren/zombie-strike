@@ -94,9 +94,9 @@ function Zombie:InitializeAI()
 	end))
 
 	spawn(function()
-		while self.instance.Humanoid.Health > 0 do
-			wait(math.random(30, 50) / 10)
+		wait(math.random(30, 50) / 10)
 
+		while self.alive do
 			local headBump = Workspace:FindPartOnRay(
 				Ray.new(
 					self.instance.Head.Position,
@@ -114,6 +114,8 @@ function Zombie:InitializeAI()
 				RunService.Heartbeat:wait()
 				self.instance.Humanoid.JumpPower = oldJumpPower
 			end
+
+			wait(math.random(30, 50) / 10)
 		end
 	end)
 end
@@ -183,29 +185,36 @@ function Zombie:Aggro(focus)
 		local waypoints = {}
 		local lastRecalculate = 0
 
-		while self.aggroTick == ourTick and self.aggroFocus:IsDescendantOf(game) do
-			if tick() - lastRecalculate > 0.25 then
-				pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
-				waypoints = pathing:GetWaypoints()
-				lastRecalculate = tick()
-			end
+		while self.alive and self.aggroTick == ourTick and self.aggroFocus:IsDescendantOf(game) do
+			repeat
+				if tick() - lastRecalculate > 0.25 then
+					pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
 
-			local waypoint = table.remove(waypoints, 1)
-			if waypoint then
-				if waypoint.Action == Enum.PathWaypointAction.Jump then
-					humanoid.Jump = true
-				elseif waypoint.Action == Enum.PathWaypointAction.Walk then
-					local diff = waypoint.Position - self.instance.PrimaryPart.Position
-					local angle = math.atan2(diff.X, diff.Z)
-
-					if (math.abs(math.deg(angle)) < 120 and diff.Magnitude > 5) or #waypoints == 0 then
-						humanoid:MoveTo(waypoint.Position)
-						humanoid.MoveToFinished:wait()
+					if not (self.alive and self.aggroTick == ourTick and self.aggroFocus:IsDescendantOf(game)) then
+						break -- continue
 					end
+
+					waypoints = pathing:GetWaypoints()
+					lastRecalculate = tick()
 				end
-			else
-				wait(0.15)
-			end
+
+				local waypoint = table.remove(waypoints, 1)
+				if waypoint then
+					if waypoint.Action == Enum.PathWaypointAction.Jump then
+						humanoid.Jump = true
+					elseif waypoint.Action == Enum.PathWaypointAction.Walk then
+						local diff = waypoint.Position - self.instance.PrimaryPart.Position
+						local angle = math.atan2(diff.X, diff.Z)
+
+						if (math.abs(math.deg(angle)) < 120 and diff.Magnitude > 5) or #waypoints == 0 then
+							humanoid:MoveTo(waypoint.Position)
+							humanoid.MoveToFinished:wait()
+						end
+					end
+				else
+					wait(0.15)
+				end
+			until true
 		end
 	end)
 
@@ -267,7 +276,11 @@ end
 -- END AGGRO
 
 function Zombie:CheckAttack()
-	if (self.instance.HumanoidRootPart.Position - self.aggroFocus.PrimaryPart.Position).Magnitude <= self.AttackRange then
+	if self.alive and
+		(
+			self.instance.HumanoidRootPart.Position - self.aggroFocus.PrimaryPart.Position
+		).Magnitude <= self.AttackRange
+	then
 		return self:Attack()
 	end
 end

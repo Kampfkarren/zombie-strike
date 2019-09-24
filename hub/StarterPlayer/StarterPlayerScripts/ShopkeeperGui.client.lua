@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
 local Maid = require(ReplicatedStorage.Core.Maid)
@@ -127,7 +128,7 @@ local function updateInventory(inventory)
 			Shopkeeper.LootInfo.Inner.Visible = false
 
 			if not isEquipped then
-				Shopkeeper.LootInfo.Buttons.Sell.Label.Text = "SELL (" .. SellCost(item) .. "G)"
+				Shopkeeper.LootInfo.Buttons.Sell.Label.Text = "SELL (" .. EnglishNumbers(SellCost(item)) .. "G)"
 			end
 
 			Shopkeeper.LootInfo.Buttons.Sell.Visible = not isEquipped

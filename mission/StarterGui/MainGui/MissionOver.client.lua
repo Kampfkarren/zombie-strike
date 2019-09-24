@@ -9,6 +9,7 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
@@ -84,10 +85,10 @@ local function animate(label, amount, full)
 
 	repeat
 		timeSpent = timeSpent + RunService.RenderStepped:wait()
-		label.Text = math.floor(math.min(amount, lerp(0, amount, timeSpent / timeNeeded)))
+		label.Text = EnglishNumbers(math.min(amount, lerp(0, amount, timeSpent / timeNeeded)))
 	until timeSpent >= timeNeeded
 
-	label.Text = amount
+	label.Text = EnglishNumbers(amount)
 end
 
 local function leave()
