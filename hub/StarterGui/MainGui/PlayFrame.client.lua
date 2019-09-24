@@ -40,6 +40,7 @@ local function cloneAndDestroy(object)
 	return output
 end
 
+-- TODO: Modularize this
 local function automatedScrollingFrame(scrollingFrame)
 	local layout = scrollingFrame:FindFirstChildWhichIsA("UIGridStyleLayout")
 

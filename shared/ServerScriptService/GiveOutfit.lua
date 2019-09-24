@@ -6,6 +6,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local Promise = require(ReplicatedStorage.Core.Promise)
+local Settings = require(ReplicatedStorage.Core.Settings)
 local XP = require(ReplicatedStorage.Core.XP)
 
 local Armor = {
@@ -67,12 +68,27 @@ local function giveOutfit(player, character)
 		equip(player, character, Armor, maid),
 		equip(player, character, Helmet, maid),
 		equipGun(player, character, maid),
-		Data.GetPlayerDataAsync(player, "Level"):andThen(XP.HealthForLevel)
+		Data.GetPlayerDataAsync(player, "Level"):andThen(XP.HealthForLevel),
+		Promise.promisify(Settings.GetSetting)("Skin Tone", player)
+			:andThen(function(tone)
+				return Promise.async(function(resolve)
+					local description = Instance.new("HumanoidDescription")
+					description.LeftArmColor = tone
+					description.LeftLegColor = tone
+					description.RightArmColor = tone
+					description.RightLegColor = tone
+					description.HeadColor = tone
+					character.Humanoid:ApplyDescription(description)
+					resolve()
+				end)
+			end)
 	}):andThen(function(healths)
 		local health = 0
 
 		for _, add in pairs(healths) do
-			health = health + add
+			if add then
+				health = health + add
+			end
 		end
 
 		character.Humanoid.MaxHealth = health

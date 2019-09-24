@@ -7,6 +7,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local GiveOutfit = require(ServerScriptService.Shared.GiveOutfit)
 local Loot = require(ReplicatedStorage.Core.Loot)
+local Settings = require(ReplicatedStorage.Core.Settings)
 
 local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
 local UpdateInventory = ReplicatedStorage.Remotes.UpdateInventory
@@ -56,6 +57,30 @@ local function initStat(player, name, parent)
 	end)
 end
 
+local function initSettings(player, data, refreshCharacter)
+	local settingsFolder = Instance.new("Folder")
+	settingsFolder.Name = "Settings"
+
+	for _, setting in pairs(Settings.Settings) do
+		local value = Settings.GetSettingIndex(setting.Name, player)
+
+		local settingObject = Instance.new("NumberValue")
+		settingObject.Name = setting.Name
+		settingObject.Value = value
+		settingObject.Parent = settingsFolder
+	end
+
+	DataStore2("Settings", player):OnUpdate(function(newSettings)
+		for settingIndex, setting in pairs(Settings.Settings) do
+			settingsFolder[setting.Name].Value = newSettings[settingIndex]
+		end
+
+		refreshCharacter()
+	end)
+
+	settingsFolder.Parent = data
+end
+
 Players.PlayerAdded:connect(function(player)
 	local playerData = Instance.new("Folder")
 	playerData.Name = "PlayerData"
@@ -79,6 +104,10 @@ Players.PlayerAdded:connect(function(player)
 
 		currentRefresh, currentMaid = GiveOutfit(player, player.Character)
 	end
+
+	spawn(function()
+		initSettings(player, playerData, refreshCharacter)
+	end)
 
 	player.CharacterAdded:connect(refreshCharacter)
 

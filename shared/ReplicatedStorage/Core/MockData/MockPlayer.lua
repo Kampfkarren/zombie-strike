@@ -55,5 +55,7 @@ return function()
 		MockPlayer.Helmet,
 	}
 
+	MockPlayer.Settings = {}
+
 	return MockPlayer
 end
