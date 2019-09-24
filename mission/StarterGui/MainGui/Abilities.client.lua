@@ -100,6 +100,6 @@ abilityButton(
 		grenade.CFrame = primaryCFrame + primaryCFrame.RightVector
 		grenade.Velocity = (
 			Mouse.WorldPosition - LocalPlayer.Character.PrimaryPart.Position
-		).Unit * GRENADE_SPEED + Vector3.new(0, 15, 0)
+		).Unit * GRENADE_SPEED + Vector3.new(0, 30, 0)
 	end
 )
