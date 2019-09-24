@@ -38,7 +38,6 @@ function Dungeon.GetDungeonTable()
 end
 
 function Dungeon.GetDungeonData(key)
-	-- TODO: Put this in teleport data or a data store
 	if key == "CampaignInfo" then
 		return Campaigns[Dungeon.GetDungeonData("Campaign")]
 	elseif key == "DifficultyInfo" then
