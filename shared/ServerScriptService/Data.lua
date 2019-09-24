@@ -15,7 +15,6 @@ Data.Equippable = {
 
 local baseMockPlayer = MockPlayer()
 
--- TODO: Don't let player in until they load data
 function Data.GetPlayerData(player, key)
 	if Data.Equippable[key] then
 		local inventory = Data.GetPlayerData(player, "Inventory")
