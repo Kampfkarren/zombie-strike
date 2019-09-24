@@ -94,8 +94,7 @@ local function generateDungeon(numRooms)
 	return rooms
 end
 
--- local rooms = generateDungeon(Dungeon.GetDungeonData("DifficultyInfo").Rooms)
-local rooms = generateDungeon(1)
+local rooms = generateDungeon(Dungeon.GetDungeonData("DifficultyInfo").Rooms)
 local zombieTypes = {}
 
 for key, rate in pairs(Dungeon.GetDungeonData("CampaignInfo").ZombieTypes) do
