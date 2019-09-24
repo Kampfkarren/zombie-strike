@@ -16,7 +16,6 @@ local function numberValue(name, value, playerData)
 	return instance
 end
 
--- TODO: initialize stuff for LootInfoButton
 Players.PlayerAdded:connect(function(player)
 	Promise.all({
 		Data.GetPlayerDataAsync(player, "Armor"):andThen(Loot.Serialize),
