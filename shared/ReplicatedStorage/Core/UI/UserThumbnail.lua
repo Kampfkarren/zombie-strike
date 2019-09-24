@@ -36,7 +36,7 @@ for _, player in pairs(Players:GetPlayers()) do
 end
 
 return function(player)
-	assert(t.instanceIsA("Player"))
+	assert(t.instanceIsA("Player")(player))
 
 	if not userThumbnails[player.UserId] then
 		return Promise.async(function(resolve)

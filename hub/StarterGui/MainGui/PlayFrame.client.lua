@@ -7,6 +7,7 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
+local Friends = require(ReplicatedStorage.Libraries.Friends)
 local Lobby = require(ReplicatedStorage.Libraries.Lobby)
 local t = require(ReplicatedStorage.Vendor.t)
 local UserThumbnail = require(ReplicatedStorage.Core.UI.UserThumbnail)
@@ -227,7 +228,6 @@ do
 	local currentlySelected
 	local selectTick = 0
 
-	-- TODO: Re-select if the lobby updates (more players for example)
 	local function selectLobby(lobbyIndex)
 		local level = Players.LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
 
@@ -287,12 +287,20 @@ do
 		for index, lobby in pairs(lobbies) do
 			local button = LobbyTemplate:Clone()
 
+			local friends = Friends.IsFriendsWith(lobby.Players[1])
+
+			if friends then
+				button.ImageColor3 = Color3.fromRGB(9, 132, 227)
+			end
+
 			local campaign = Campaigns[lobby.Campaign]
 			local difficulty = campaign.Difficulties[lobby.Difficulty]
 
-			local cantJoin = difficulty.MinLevel > level or #lobby.Players == 4 or kickedFrom[lobby.Unique]
+			local cantJoin = difficulty.MinLevel > level
+				or #lobby.Players == 4
+				or kickedFrom[lobby.Unique]
+				or (not lobby.Public and not friends)
 
-			-- TODO: Color especial for friends
 			if cantJoin then
 				button.ImageColor3 = Color3.fromRGB(252, 92, 101)
 			end
@@ -328,6 +336,7 @@ do
 				button = button,
 				cantJoin = cantJoin,
 				fallback = lobby.Unique,
+				friends = friends,
 				level = difficulty.MinLevel,
 			})
 
@@ -338,11 +347,15 @@ do
 		end
 
 		table.sort(lobbyButtons, function(a, b)
-			-- TODO: Sort friends highest, no matter what
+			if a.friends ~= b.friends then
+				return a.friends
+			end
+
 			if a.cantJoin ~= b.cantJoin then
 				return b.cantJoin
 			end
 
+			-- TODO: If the lobby has a higher level than you, put it to the bottom
 			if a.level ~= b.level then
 				return a.level > b.level
 			end

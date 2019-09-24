@@ -8,6 +8,7 @@ local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Lobby = require(ReplicatedStorage.Libraries.Lobby)
+local Friends = require(ReplicatedStorage.Libraries.Friends)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local PatchLobby = ReplicatedStorage.Remotes.PatchLobby
@@ -102,11 +103,14 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, lobbyIndex
 		return
 	end
 
-	for _, otherPlayer in pairs(lobby.Players) do
-		if player == otherPlayer then
-			warn("already in lobby")
-			return
-		end
+	if getPlayerLobby(player) then
+		warn("already in lobby")
+		return
+	end
+
+	if not lobby.Public and not Friends.IsFriendsWith(player, lobby.Players[1]) then
+		warn("not friends with owner in private lobby")
+		return
 	end
 
 	local campaign = assert(Campaigns[lobby.Campaign])
