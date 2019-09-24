@@ -318,6 +318,8 @@ local function start()
 end
 
 local function checkCharacterCount()
+	if started ~= 0 then return end
+
 	local characterCount = 0
 	for _, player in pairs(Players:GetPlayers()) do
 		if player.Character then
