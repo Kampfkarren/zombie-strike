@@ -1,7 +1,9 @@
 -- TODO: Preload all campaign assets
+local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
@@ -60,6 +62,10 @@ local function toggle(newOpen)
 	if open then
 		PlayFrame.Visible = true
 		tweens.In:Play()
+
+		if UserInputService.GamepadEnabled then
+			GuiService.SelectedObject = Inner.JoinCreate.Join
+		end
 	else
 		tweens.Out:Play()
 		delay(TWEEN_TIME, function()
@@ -67,6 +73,8 @@ local function toggle(newOpen)
 				PlayFrame.Visible = false
 			end
 		end)
+
+		GuiService.SelectedObject = nil
 	end
 end
 
@@ -486,12 +494,33 @@ ReplicatedStorage.Remotes.KickFromLobby.OnClientEvent:connect(function(index)
 	})
 end)
 
-PlayFrame.Close.MouseButton1Click:connect(function()
+local function close()
 	if pageLayout.CurrentPage == Inner.Lobby then
 		ReplicatedStorage.Remotes.LeaveLobby:FireServer()
 	elseif pageLayout.CurrentPage == Inner.JoinCreate then
 		toggle(false)
 	else
 		pageLayout:JumpTo(Inner.JoinCreate)
+		if UserInputService.GamepadEnabled then
+			GuiService.SelectedObject = Inner.JoinCreate.Join
+		end
+	end
+end
+
+PlayFrame.Close.MouseButton1Click:connect(close)
+
+local function checkGamepad()
+	PlayButton.Gamepad.Visible = UserInputService.GamepadEnabled
+end
+
+checkGamepad()
+UserInputService.GamepadConnected:connect(checkGamepad)
+UserInputService.GamepadDisconnected:connect(checkGamepad)
+UserInputService.InputBegan:connect(function(inputObject, processed)
+	if processed then return end
+	if inputObject.KeyCode == Enum.KeyCode.ButtonY then
+		toggle(not open)
+	elseif inputObject.KeyCode == Enum.KeyCode.ButtonB then
+		close()
 	end
 end)
