@@ -8,6 +8,8 @@ local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 
+local Camera = Workspace.CurrentCamera
+local Shake = ReplicatedStorage.RuddevEvents.Shake
 local SoundGateCity = SoundService.SFX.Gate.City
 
 local CITY_GATE_ROTATE_ANGLE = math.deg(130)
@@ -89,4 +91,10 @@ ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 		sound:Play()
 		Debris:AddItem(sound)
 	end
+
+	local direction = Camera.CFrame:VectorToObjectSpace(
+		(Camera.CFrame.Position - gate.Position).Unit
+	)
+
+	Shake:Fire(direction * 15)
 end)
