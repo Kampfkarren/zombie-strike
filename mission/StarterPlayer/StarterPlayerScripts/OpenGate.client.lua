@@ -23,6 +23,10 @@ local cityGateChainTween = TweenInfo.new(
 ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 	local gate = room:FindFirstChild("Gate", true)
 
+	if not CollectionService:HasTag(gate, "LocallyCreated") then
+		gate.Parent = nil
+	end
+
 	if Dungeon.GetDungeonData("Campaign") == 1 then
 		if reset then
 			gate.Parent:SetPrimaryPartCFrame(reset)
@@ -31,8 +35,12 @@ ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 
 		local fixedGate = Instance.new("Model")
 		fixedGate.Parent = room
+
+		local gate = gate:Clone()
 		gate.Parent = fixedGate
+		CollectionService:AddTag(gate, "LocallyCreated")
 		fixedGate.PrimaryPart = gate
+
 		for _, detail in pairs(gate:GetChildren()) do
 			detail.Parent = fixedGate
 		end

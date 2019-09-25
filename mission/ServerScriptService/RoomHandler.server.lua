@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -263,7 +264,7 @@ local function openNextGate()
 		wait(1)
 	end
 
-	-- gate.Parent = nil
+	Debris:AddItem(gate, 4)
 	ReplicatedStorage.Remotes.OpenGate:FireAllClients(room)
 
 	if obbyType == "boss" then
