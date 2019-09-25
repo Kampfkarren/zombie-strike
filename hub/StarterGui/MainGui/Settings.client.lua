@@ -1,7 +1,5 @@
-local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 
 local Settings = require(ReplicatedStorage.Core.Settings)
 
@@ -59,11 +57,13 @@ for settingIndex, setting in pairs(Settings.Settings) do
 
 	button(template.Value.Previous, function()
 		page:Previous()
-		UpdateSetting:FireServer(settingIndex, tonumber(page.CurrentPage.Name))
 	end)
 
 	button(template.Value.Next, function()
 		page:Next()
+	end)
+
+	page:GetPropertyChangedSignal("CurrentPage"):connect(function()
 		UpdateSetting:FireServer(settingIndex, tonumber(page.CurrentPage.Name))
 	end)
 
