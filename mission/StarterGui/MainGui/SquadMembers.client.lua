@@ -4,6 +4,7 @@ local StarterGui = game:GetService("StarterGui")
 
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local UserThumbnail = require(ReplicatedStorage.Core.UI.UserThumbnail)
+local XP = require(ReplicatedStorage.Core.XP)
 
 local HubWorld = ReplicatedStorage.HubWorld.Value
 local LocalPlayer = Players.LocalPlayer
@@ -15,7 +16,7 @@ local function squadMemberFrame(frame, player)
 
 		if character then
 			local humanoid = player.Character:WaitForChild("Humanoid")
-			local healthFrame = frame.Health
+			local healthFrame = player == LocalPlayer and frame.Stats.Health or frame.Health
 			healthFrame.Fill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 
 			if player == LocalPlayer then
@@ -24,6 +25,22 @@ local function squadMemberFrame(frame, player)
 				healthFrame.Percent.Text = ("%d%%"):format((humanoid.Health / humanoid.MaxHealth) * 100)
 			end
 		end
+	end
+
+	if player == LocalPlayer then
+		local playerData = player:WaitForChild("PlayerData")
+		local levelValue = playerData:WaitForChild("Level")
+		local xpValue = playerData:WaitForChild("XP")
+
+		local function setXP()
+			local max = XP.XPNeededForNextLevel(levelValue.Value)
+
+			frame.Stats.XP.Fill.Size = UDim2.new(xpValue.Value / max, 0, 1, 0)
+			frame.Stats.XP.Amount.Text = EnglishNumbers(xpValue.Value) .. " / " .. EnglishNumbers(max)
+		end
+
+		xpValue.Changed:connect(setXP)
+		setXP()
 	end
 
 	UserThumbnail(player):andThen(function(thumbnail)

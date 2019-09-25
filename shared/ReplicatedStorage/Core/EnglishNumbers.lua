@@ -27,7 +27,7 @@ local units = { "K", "M" }
 
 local function EnglishNumbers(number)
 	local negative = number < 0
-	number = math.abs(number)
+	number = math.abs(math.floor(number))
 
 	for index = #units, 1, -1 do
 		local unit = units[index]
