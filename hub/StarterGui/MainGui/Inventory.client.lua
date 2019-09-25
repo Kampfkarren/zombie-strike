@@ -9,6 +9,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
+local PreventNoobPlay = require(ReplicatedStorage.Libraries.PreventNoobPlay)
 local State = require(ReplicatedStorage.State)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
@@ -53,9 +54,11 @@ local function toggle(open)
 	resetSelectable()
 
 	if open then
-		inventoryTweenIn:Play()
-		if UserInputService.GamepadEnabled then
-			GuiService.SelectedObject = Inventory.Contents:FindFirstChild("Template")
+		if PreventNoobPlay() then
+			inventoryTweenIn:Play()
+			if UserInputService.GamepadEnabled then
+				GuiService.SelectedObject = Inventory.Contents:FindFirstChild("Template")
+			end
 		end
 	else
 		local selected = GuiService.SelectedObject

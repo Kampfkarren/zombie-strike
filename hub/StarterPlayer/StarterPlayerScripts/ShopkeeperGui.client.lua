@@ -8,6 +8,7 @@ local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
 local Maid = require(ReplicatedStorage.Core.Maid)
+local PreventNoobPlay = require(ReplicatedStorage.Libraries.PreventNoobPlay)
 local SellCost = require(ReplicatedStorage.Libraries.SellCost)
 local State = require(ReplicatedStorage.State)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
@@ -46,6 +47,7 @@ end
 
 local function openTouch()
 	if touching then return end
+	if not PreventNoobPlay() then return end
 	Shopkeeper.Visible = true
 	touching = true
 	tweenOpen:Play()

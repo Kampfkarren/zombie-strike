@@ -8,7 +8,7 @@ return function()
 	MockPlayer.DungeonsPlayed = 0
 	MockPlayer.Level = 1
 	MockPlayer.XP = 0
-	MockPlayer.Gold = 100
+	MockPlayer.Gold = 0
 
 	MockPlayer.Weapon = {
 		Type = "Pistol",
