@@ -44,7 +44,7 @@ local function squadMemberFrame(frame, player)
 	end
 
 	UserThumbnail(player):andThen(function(thumbnail)
-		frame.Avatar.Image.Image = thumbnail
+		frame.Avatar.AvatarImage.Image = thumbnail
 	end)
 
 	player.AncestryChanged:connect(function()
