@@ -72,6 +72,10 @@ Bases.Sniper = {
 	Dropoff = 5,
 }
 
+function Config.GetShotgunShotSize(level)
+	return math.floor(5 * (1.01 ^ (level - 1)))
+end
+
 function Config.GetConfig(_, item)
 	local config = {}
 	local weaponData = item:WaitForChild("WeaponData")
@@ -88,28 +92,10 @@ function Config.GetConfig(_, item)
 	end
 
 	if config.Size == "Shotgun" then
-		config.ShotSize = math.floor(5 + (1.01 ^ (config.Level - 1)))
+		config.ShotSize = Config.GetShotgunShotSize(config.Level)
 	end
 
 	return config
-
-	-- return {
-	-- 	Icon = "rbxassetid://2524106240";
-	-- 	Type = "Gun";
-	-- 	Size = "Light";
-
-	-- 	Magazine = 16;
-	-- 	FireRate = 7;
-	-- 	Recoil = 30;
-	-- 	Range = 500;
-	-- 	ShotSize = 1;
-	-- 	Spread = 2;
-	-- 	Damage = 14;
-	-- 	Zoom = 20;
-	-- 	ReloadTime = 1;
-	-- 	FireMode = "Semi";
-	-- 	Dropoff = 3;
-	-- }
 end
 
 return Config

@@ -6,6 +6,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Maid = require(ReplicatedStorage.Core.Maid)
+local RuddevConfig = require(ReplicatedStorage.RuddevModules.Config)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local LocalPlayer = Players.LocalPlayer
@@ -87,7 +88,18 @@ local function updateLootInfo(LootInfo, loot)
 		local stats = LootInfo.WeaponStats
 
 		changeStat(stats.MagSize, loot.Magazine, currentGun.Magazine)
-		changeStat(stats.Damage, loot.Damage, currentGun.Damage)
+
+		local lootDamage, currentGunDamage = loot.Damage, currentGun.Damage
+
+		if loot.Type == "Shotgun" then
+			lootDamage = lootDamage * RuddevConfig.GetShotgunShotSize(loot.Level)
+		end
+
+		if currentGun.Type == "Shotgun" then
+			currentGunDamage = currentGunDamage * RuddevConfig.GetShotgunShotSize(currentGun.Level)
+		end
+
+		changeStat(stats.Damage, lootDamage, currentGunDamage)
 
 		changeStat(
 			stats.CritChance,
