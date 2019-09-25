@@ -57,30 +57,6 @@ local function initStat(player, name, parent)
 	end)
 end
 
-local function initSettings(player, data, refreshCharacter)
-	local settingsFolder = Instance.new("Folder")
-	settingsFolder.Name = "Settings"
-
-	for _, setting in pairs(Settings.Settings) do
-		local value = Settings.GetSettingIndex(setting.Name, player)
-
-		local settingObject = Instance.new("NumberValue")
-		settingObject.Name = setting.Name
-		settingObject.Value = value
-		settingObject.Parent = settingsFolder
-	end
-
-	DataStore2("Settings", player):OnUpdate(function(newSettings)
-		for settingIndex, setting in pairs(Settings.Settings) do
-			settingsFolder[setting.Name].Value = newSettings[settingIndex]
-		end
-
-		refreshCharacter()
-	end)
-
-	settingsFolder.Parent = data
-end
-
 Players.PlayerAdded:connect(function(player)
 	local playerData = Instance.new("Folder")
 	playerData.Name = "PlayerData"
@@ -94,6 +70,8 @@ Players.PlayerAdded:connect(function(player)
 	local currentMaid, currentRefresh
 
 	local function refreshCharacter()
+		if not player.Character then return end
+
 		if currentMaid then
 			currentMaid:DoCleaning()
 		end
@@ -105,9 +83,7 @@ Players.PlayerAdded:connect(function(player)
 		currentRefresh, currentMaid = GiveOutfit(player, player.Character)
 	end
 
-	spawn(function()
-		initSettings(player, playerData, refreshCharacter)
-	end)
+	Settings.HookSetting("Skin Tone", refreshCharacter, player)
 
 	player.CharacterAdded:connect(refreshCharacter)
 

@@ -73,6 +73,14 @@ end)
 
 local INPUT =  {}
 
+function INPUT.FireBegan(action)
+	actionBegan:Fire(action, false)
+end
+
+function INPUT.FireEnded(action)
+	actionEnded:Fire(action, false)
+end
+
 function INPUT.GetActionInput(_, action)
 	local input =  "nil"
 

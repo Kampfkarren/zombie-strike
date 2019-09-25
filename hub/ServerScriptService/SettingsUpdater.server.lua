@@ -19,7 +19,18 @@ UpdateSetting.OnServerEvent:connect(function(player, settingIndex, choice)
 	end
 
 	local settingsStore = DataStore2("Settings", player)
+
 	local settings = settingsStore:Get()
+
+	for previous = 1, settingIndex do
+		if settings[previous] == nil then
+			settings[previous] = Settings.GetSettingIndex(
+				Settings.Settings[previous].Name,
+				player
+			)
+		end
+	end
+
 	settings[settingIndex] = choice
 	settingsStore:Set(settings)
 end)

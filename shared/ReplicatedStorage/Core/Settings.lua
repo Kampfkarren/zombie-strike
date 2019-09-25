@@ -29,6 +29,21 @@ Settings.Settings = {
 			Color3.fromRGB(141, 85, 36),
 		},
 	},
+
+	{
+		Name = "Phone Aim",
+		Default = 1,
+
+		Choices = {
+			"Auto",
+			"Button",
+		},
+
+		Values = {
+			"Auto",
+			"Button",
+		},
+	},
 }
 
 function Settings.GetSettingIndex(settingName, player)
@@ -67,6 +82,23 @@ function Settings.GetSetting(settingName, player)
 	end
 
 	error("unknown setting " .. settingName)
+end
+
+function Settings.HookSetting(settingName, callback, player)
+	player = player or LocalPlayer
+
+	local setting = Settings.GetSetting(settingName, player)
+	callback(setting)
+
+	spawn(function()
+		player
+			:WaitForChild("PlayerData")
+			:WaitForChild("Settings")
+			:WaitForChild(settingName)
+			.Changed:connect(function()
+				callback(Settings.GetSetting(settingName, player))
+			end)
+	end)
 end
 
 return Settings

@@ -215,7 +215,7 @@ function module.Create(_, item)
 
 			local hit, pos, _, humanoid = Raycast(position, direction * config.Range, {character})
 
-			-- console aim assist
+			-- aim assist
 			if not humanoid then
 				hit, humanoid = aimAssist(cframe, config.Range)
 			end
@@ -287,10 +287,6 @@ function module.Create(_, item)
 				end
 			end
 		end))
-
-		ContextActionService:BindAction("Reload", function()
-			Reload()
-		end, true)
 	end
 
 	function itemModule.Disconnect(self)
@@ -298,7 +294,6 @@ function module.Create(_, item)
 			connection:Disconnect()
 		end
 		self.Connections = {}
-		ContextActionService:UnbindAction("Reload")
 	end
 
 	function itemModule.Equip(self)

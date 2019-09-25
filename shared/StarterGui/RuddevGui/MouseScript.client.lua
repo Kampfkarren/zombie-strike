@@ -18,6 +18,8 @@ local REMOTES	= ReplicatedStorage:WaitForChild("RuddevRemotes")
 local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 	local MOUSE		= require(MODULES:WaitForChild("Mouse"))
 
+local Settings = require(ReplicatedStorage.Core.Settings)
+
 local GUI		= script.Parent
 local MOUSE_GUI	= GUI:WaitForChild("Mouse")
 
@@ -83,7 +85,7 @@ if hubWorld then
 	lastScreenPos = Vector2.new(mouse.X, mouse.Y)
 
 	UserInputService.InputChanged:connect(function(inputObject)
-		if inputObject.UserInputType == Enum.UserInputType.MouseMovement then
+		if inputObject.UserInputType == Enum.UserInputType.MouseMovement or inputObject.UserInputType == Enum.UserInputType.Touch then
 			MOUSE_GUI.AnchorPoint = Vector2.new(0.5, 0.5)
 			lastScreenPos = Vector2.new(inputObject.Position.X, inputObject.Position.Y)
 			MOUSE_GUI.Position = UDim2.new(0, inputObject.Position.X, 0, inputObject.Position.Y)
@@ -95,6 +97,13 @@ if hubWorld then
 end
 
 RunService:BindToRenderStep("Mouse", 5, function()
+	if Settings.GetSetting("Phone Aim") == "Auto"
+		and not UserInputService.MouseEnabled
+		and not UserInputService.GamepadEnabled
+	then
+		return
+	end
+
 	if MOUSE.Reticle ~= currentReticle then
 		currentReticle	= MOUSE.Reticle
 		UpdateReticle()
