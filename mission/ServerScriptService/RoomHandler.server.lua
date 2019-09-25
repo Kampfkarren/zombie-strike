@@ -336,7 +336,7 @@ local function checkCharacterCount()
 		print("all players connected")
 		started = 1
 		JoinTimer.Value = 0
-		wait(2)
+		wait(5)
 		start()
 		return
 	end
