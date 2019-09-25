@@ -112,6 +112,10 @@ end
 
 local function endMission()
 	for _, player in pairs(Players:GetPlayers()) do
+		if player.Character then
+			Instance.new("ForceField", player.Character)
+		end
+
 		Promise.all({
 			GenerateLoot(player):andThen(function(loot)
 				return Promise.async(function(resolve)
