@@ -373,6 +373,11 @@ do
 
 		LobbyInfo.Inner.Visible = LobbyInfo.Inner.Visible and not unselect
 		Join.Lobbies.NoLobbies.Visible = #lobbies == 0
+		Join.LobbyInfo.CreateButton.Visible = #lobbies == 0
+	end)
+
+	Join.LobbyInfo.CreateButton.MouseButton1Click:connect(function()
+		pageLayout:JumpTo(Inner.Create)
 	end)
 
 	automatedScrollingFrame(Join.Lobbies)
