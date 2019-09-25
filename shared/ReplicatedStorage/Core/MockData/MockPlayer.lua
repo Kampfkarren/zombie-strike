@@ -5,6 +5,7 @@ return function()
 
 	MockPlayer.Version = 1
 
+	MockPlayer.DungeonsPlayed = 0
 	MockPlayer.Level = 1
 	MockPlayer.XP = 0
 	MockPlayer.Gold = 100

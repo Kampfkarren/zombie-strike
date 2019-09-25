@@ -145,6 +145,7 @@ local function endMission()
 					DataStore2("Level", player):Set(player.PlayerData.Level.Value),
 					DataStore2("XP", player):Set(player.PlayerData.XP.Value),
 					DataStore2("Gold", player):IncrementAsync(gold, 0),
+					DataStore2("DungeonsPlayed", player):IncrementAsync(1),
 				}):andThen(function()
 					resolve({ xp, gold })
 				end)

@@ -9,6 +9,7 @@ local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
+local FREE_EPIC_AFTER = 0
 local WEAPON_DROP_RATE = 0.67
 
 local function getModel(type, rarity)
@@ -48,9 +49,17 @@ local function getLootLevel(player)
 	return math.random(dungeonLevelMin, math.min(playerLevel, nextDungeon))
 end
 
-local function generateLootItem(player)
+local takenAdvantageOfFreeLoot = {}
+
+local function getLootRarity(player)
+	if Data.GetPlayerData(player, "DungeonsPlayed") == FREE_EPIC_AFTER
+		and not takenAdvantageOfFreeLoot[player]
+	then
+		takenAdvantageOfFreeLoot[player] = true
+		return 4
+	end
+
 	local rng = Random.new()
-	local level = getLootLevel(player)
 
 	local rarityRng = rng:NextNumber() * 100
 	local rarity
@@ -67,6 +76,14 @@ local function generateLootItem(player)
 	else
 		rarity = 1
 	end
+
+	return rarity
+end
+
+local function generateLootItem(player)
+	local rng = Random.new()
+	local level = getLootLevel(player)
+	local rarity = getLootRarity(player)
 
 	local uuid = HttpService:GenerateGUID(false):gsub("-", "")
 
