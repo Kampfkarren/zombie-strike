@@ -12,3 +12,4 @@ end)
 
 Cmdr:RegisterDefaultCommands()
 Cmdr:RegisterCommandsIn(ServerScriptService.Commands)
+Cmdr:RegisterCommandsIn(ServerScriptService.Shared.Commands)
