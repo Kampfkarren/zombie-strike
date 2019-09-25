@@ -29,7 +29,7 @@ local armorMap = {
 Loot.Rarities = {
 	{
 		Name = "Common",
-		Color = Color3.new(1, 1, 1),
+		Color = Color3.fromRGB(219, 219, 219),
 	},
 
 	{
@@ -39,7 +39,7 @@ Loot.Rarities = {
 
 	{
 		Name = "Rare",
-		Color = Color3.fromRGB(6, 82, 221),
+		Color = Color3.fromRGB(3, 52, 143),
 	},
 
 	{
