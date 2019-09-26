@@ -69,7 +69,7 @@ local Types = {
 
 	Sniper = {
 		Base = {
-			CritChance = 0.04,
+			CritChance = 0.15,
 			Damage = 30,
 			FireRate = 1.5,
 			Magazine = 6,
