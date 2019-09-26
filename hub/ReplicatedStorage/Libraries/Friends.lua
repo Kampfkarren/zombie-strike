@@ -64,6 +64,10 @@ else
 			return
 		end
 
+		if friendsCache[player] == nil then
+			friendsCache[player] = {}
+		end
+
 		friendsCache[player][newFriend] = value
 	end)
 end

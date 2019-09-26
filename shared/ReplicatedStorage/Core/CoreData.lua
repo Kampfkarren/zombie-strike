@@ -18,7 +18,9 @@ function CoreData.GetModel(data)
 
 			local armorDummy = ReplicatedStorage.ArmorDummy:Clone()
 			armorDummy.Shirt.ShirtTemplate = shirt.ShirtTemplate
+			armorDummy.Shirt.Color3 = shirt.Color3
 			armorDummy.Pants.PantsTemplate = pants.PantsTemplate
+			armorDummy.Pants.Color3 = pants.Color3
 
 			uuid.Parent = armorDummy
 
