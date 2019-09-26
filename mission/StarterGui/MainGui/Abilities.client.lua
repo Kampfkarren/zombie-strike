@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
 local Mouse = require(ReplicatedStorage.RuddevModules.Mouse)
 
@@ -98,8 +99,15 @@ abilityButton(
 
 		local primaryCFrame = LocalPlayer.Character.PrimaryPart.CFrame
 		grenade.CFrame = primaryCFrame + primaryCFrame.RightVector
-		grenade.Velocity = (
-			Mouse.WorldPosition - LocalPlayer.Character.PrimaryPart.Position
-		).Unit * GRENADE_SPEED + Vector3.new(0, 30, 0)
+
+		local unit
+
+		if UserInputService.MouseEnabled then
+			unit = (Mouse.WorldPosition - LocalPlayer.Character.PrimaryPart.Position).Unit
+		else
+			unit = Workspace.CurrentCamera.CFrame.LookVector
+		end
+
+		grenade.Velocity = unit * GRENADE_SPEED + Vector3.new(0, 30, 0)
 	end
 )
