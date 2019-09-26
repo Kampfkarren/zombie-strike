@@ -20,9 +20,9 @@ local function squadMemberFrame(frame, player)
 			healthFrame.Fill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 
 			if player == LocalPlayer then
-				healthFrame.Label.Text = ("%d / %d"):format(EnglishNumbers(humanoid.Health), EnglishNumbers(humanoid.MaxHealth))
+				healthFrame.Label.Text = ("%s / %s"):format(EnglishNumbers(humanoid.Health), EnglishNumbers(humanoid.MaxHealth))
 			else
-				healthFrame.Percent.Text = ("%d%%"):format((humanoid.Health / humanoid.MaxHealth) * 100)
+				healthFrame.Label.Text = ("%d%%"):format((humanoid.Health / humanoid.MaxHealth) * 100)
 			end
 		end
 	end
