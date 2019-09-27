@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Close = require(script.Parent.Close)
+local Inventory = require(script.Inventory)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local Shop = require(script.Shop)
@@ -49,7 +50,8 @@ local function Store(props)
 				TouchInputEnabled = false,
 			}),
 
-			Shop = e(Shop),
+			Inventory = e(Inventory),
+			-- Shop = e(Shop),
 		}),
 	})
 end

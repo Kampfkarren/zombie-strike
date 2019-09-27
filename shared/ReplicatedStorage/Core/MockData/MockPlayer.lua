@@ -55,7 +55,11 @@ return function()
 		MockPlayer.Helmet,
 	}
 
-	MockPlayer.Cosmetics = {1, 2, 3}
+	MockPlayer.Cosmetics = {
+		Owned = {1, 2, 3},
+		Equipped = {},
+	}
+
 	MockPlayer.Settings = {}
 
 	return MockPlayer

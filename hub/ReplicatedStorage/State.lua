@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Cosmetics = require(ReplicatedStorage.Cosmetics)
+local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Data = require(ReplicatedStorage.Core.Data)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
@@ -46,6 +46,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 
 	store = Rodux.createReducer({
 		contents = {},
+		equipped = {},
 		open = false,
 	}, {
 		ToggleStore = function(store)
@@ -62,10 +63,11 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	}),
 }))
 
-ReplicatedStorage.Remotes.UpdateCosmetics.OnClientEvent:connect(function(contents)
+ReplicatedStorage.Remotes.UpdateCosmetics.OnClientEvent:connect(function(contents, equipped)
 	Store:dispatch({
 		type = "UpdateCosmetics",
 		contents = contents,
+		equipped = equipped,
 	})
 end)
 

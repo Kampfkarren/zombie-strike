@@ -83,7 +83,7 @@ return function(props)
 			BackgroundTransparency = 1,
 			Image = cosmetic.Instance.Texture,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
-			Size = UDim2.new(1, 0, 0.9, 0),
+			Size = props.size,
 		}, {
 			UIScale = e("UIScale", {
 				Scale = props.previewScale,
@@ -95,7 +95,7 @@ return function(props)
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundTransparency = 1,
 				Position = UDim2.new(0.5, 0, 0.5, 0),
-				Size = UDim2.new(1, 0, 0.9, 0),
+				Size = props.size,
 			},
 
 			Model = Promise.promisify(getDummyFor)(cosmetic.Instance),

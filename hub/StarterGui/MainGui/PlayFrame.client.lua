@@ -6,6 +6,7 @@ local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
+local AutomatedScrollingFrame = require(ReplicatedStorage.Core.UI.AutomatedScrollingFrame)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
 local Lobby = require(ReplicatedStorage.Libraries.Lobby)
@@ -41,18 +42,6 @@ local function cloneAndDestroy(object)
 	local output = object:Clone()
 	object:Destroy()
 	return output
-end
-
--- TODO: Modularize this
-local function automatedScrollingFrame(scrollingFrame)
-	local layout = scrollingFrame:FindFirstChildWhichIsA("UIGridStyleLayout")
-
-	local function updateFrame()
-		scrollingFrame.CanvasSize = UDim2.new(0, layout.AbsoluteContentSize.X, 0, layout.AbsoluteContentSize.Y)
-	end
-
-	updateFrame()
-	layout:GetPropertyChangedSignal("AbsoluteContentSize"):connect(updateFrame)
 end
 
 local function toggle(newOpen)
@@ -209,7 +198,7 @@ do
 		end
 	end)
 
-	automatedScrollingFrame(Create.Map)
+	AutomatedScrollingFrame(Create.Map)
 end
 
 local lobbiesUpdated = Instance.new("BindableEvent")
@@ -380,7 +369,7 @@ do
 		pageLayout:JumpTo(Inner.Create)
 	end)
 
-	automatedScrollingFrame(Join.Lobbies)
+	AutomatedScrollingFrame(Join.Lobbies)
 end
 
 -- Lobby screen

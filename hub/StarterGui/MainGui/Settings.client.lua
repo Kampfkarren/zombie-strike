@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local AutomatedScrollingFrame = require(ReplicatedStorage.Core.UI.AutomatedScrollingFrame)
 local Settings = require(ReplicatedStorage.Core.Settings)
 
 local SettingsUi = script.Parent.Main.Settings
@@ -71,19 +72,7 @@ for settingIndex, setting in pairs(Settings.Settings) do
 	template.Visible = true
 end
 
--- TODO: Modularize this
-local function automatedScrollingFrame(scrollingFrame)
-	local layout = scrollingFrame:FindFirstChildWhichIsA("UIGridStyleLayout")
-
-	local function updateFrame()
-		scrollingFrame.CanvasSize = UDim2.new(0, layout.AbsoluteContentSize.X, 0, layout.AbsoluteContentSize.Y)
-	end
-
-	updateFrame()
-	layout:GetPropertyChangedSignal("AbsoluteContentSize"):connect(updateFrame)
-end
-
-automatedScrollingFrame(SettingsUi.Contents)
+AutomatedScrollingFrame(SettingsUi.Contents)
 
 script.Parent.Main.Buttons.Settings.MouseButton1Click:connect(function()
 	SettingsUi.Visible = not SettingsUi.Visible

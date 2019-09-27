@@ -10,15 +10,23 @@ local ViewportFramePreviewComponent = Roact.PureComponent:extend("ViewportFrameP
 function ViewportFramePreviewComponent:init()
 	self.frameRef = Roact.createRef()
 
-	self.props.Update(function()
+	if self.props.Update then
+		self.props.Update(function()
+			self:setState({
+				scale = self.props.Scale:getValue(),
+			})
+		end)
+	end
+
+	if self.props.Scale then
 		self:setState({
 			scale = self.props.Scale:getValue(),
 		})
-	end)
-
-	self:setState({
-		scale = self.props.Scale:getValue(),
-	})
+	else
+		self:setState({
+			scale = 1,
+		})
+	end
 end
 
 function ViewportFramePreviewComponent:render()

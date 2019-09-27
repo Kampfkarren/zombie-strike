@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
 
-local Cosmetics = require(ReplicatedStorage.Cosmetics)
+local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
+local CosmeticButton = require(script.Parent.CosmeticButton)
 local CosmeticPreview = require(script.Parent.CosmeticPreview)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
@@ -9,64 +9,14 @@ local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local e = Roact.createElement
 local StoreCard = Roact.PureComponent:extend("StoreCard")
 
-local COSMETIC_COLORS = {
-	Face = Color3.fromRGB(156, 136, 255),
-	LowTier = Color3.fromRGB(9, 132, 227),
-	HighTier = Color3.fromRGB(238, 82, 83),
-}
-
 local COSMETIC_TYPE_NAMES = {
 	Face = "Face",
 	LowTier = "Bundle",
 	HighTier = "LIMITED Bundle",
 }
 
-function StoreCard:init()
-	local previewScale, previewScaleSet = Roact.createBinding(1)
-	self.update, self.updateSet = Roact.createBinding(function() end)
-
-	local hover = Instance.new("NumberValue")
-	hover:GetPropertyChangedSignal("Value"):connect(function()
-		previewScaleSet(hover.Value)
-		self.update:getValue()()
-	end)
-	hover.Value = 1
-
-	local tweenHoverIn = TweenService:Create(
-		hover,
-		TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-		{ Value = 1.4 }
-	)
-
-	local tweenHoverOut = TweenService:Create(
-		hover,
-		TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-		{ Value = 1 }
-	)
-
-	self.hoverIn = function()
-		tweenHoverIn:Play()
-	end
-
-	self.hoverOut = function()
-		tweenHoverOut:Play()
-	end
-
-	self.previewScale = previewScale
-end
-
 function StoreCard:GetItem()
 	return Cosmetics.GetStoreItems()[self.props.ItemType][self.props.ItemIndex]
-end
-
-function StoreCard:GetPreview()
-	-- TODO
-	local item = self:GetItem()
-	return e(CosmeticPreview, {
-		item = item,
-		previewScale = self.previewScale,
-		updateSet = self.updateSet,
-	})
 end
 
 function StoreCard:render()
@@ -124,8 +74,6 @@ function StoreCard:render()
 		}),
 	})
 
-	children.Preview = self:GetPreview()
-
 	if self.props.owned then
 		children.Owned = e("Frame", {
 			AnchorPoint = Vector2.new(0, 0.5),
@@ -147,15 +95,15 @@ function StoreCard:render()
 		})
 	end
 
-	return e("ImageButton", {
-		BackgroundColor3 = COSMETIC_COLORS[self.props.ItemType],
-		BorderSizePixel = 0,
-		Image = "",
-		LayoutOrder = self.props.LayoutOrder,
-		Size = self.props.Size,
+	return e(CosmeticButton, {
+		Native = {
+			Image = "",
+			LayoutOrder = self.props.LayoutOrder,
+			Size = self.props.Size,
+		},
 
-		[Roact.Event.MouseEnter] = self.hoverIn,
-		[Roact.Event.MouseLeave] = self.hoverOut,
+		Item = item,
+		PreviewSize = UDim2.new(1, 0, 0.9, 0),
 	}, children)
 end
 
