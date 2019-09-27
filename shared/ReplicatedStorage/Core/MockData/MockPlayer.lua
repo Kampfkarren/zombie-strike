@@ -55,6 +55,7 @@ return function()
 		MockPlayer.Helmet,
 	}
 
+	MockPlayer.Cosmetics = {1, 2, 3}
 	MockPlayer.Settings = {}
 
 	return MockPlayer

@@ -47,6 +47,14 @@ return function(viewportFrame, model)
 	model.AncestryChanged:connect(function()
 		if not model:IsDescendantOf(game) then
 			rotators[model] = nil
+		else
+			rotators[model] = true
 		end
 	end)
+
+	return {
+		UpdateScale = function(_, newScale)
+			camera.CFrame = CFrame.new(distance * (1 / newScale) * dir, Vector3.new(0, 0, 0))
+		end,
+	}
 end

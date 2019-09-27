@@ -1,11 +1,20 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Cosmetics = require(ReplicatedStorage.Cosmetics)
 local Data = require(ReplicatedStorage.Core.Data)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Rodux = require(ReplicatedStorage.Vendor.Rodux)
 
 local Store
+
+local function copy(list)
+	local copy = {}
+	for key, value in pairs(list) do
+		copy[key] = value
+	end
+	return copy
+end
 
 Store = Rodux.Store.new(Rodux.combineReducers({
 	equipment = Rodux.createReducer(nil, {
@@ -34,7 +43,31 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 			return action.newInventory
 		end,
 	}),
+
+	store = Rodux.createReducer({
+		contents = {},
+		open = false,
+	}, {
+		ToggleStore = function(store)
+			local store = copy(store)
+			store.open = not store.open
+			return store
+		end,
+
+		UpdateCosmetics = function(store, action)
+			local store = copy(store)
+			store.contents = action.contents
+			return store
+		end,
+	}),
 }))
+
+ReplicatedStorage.Remotes.UpdateCosmetics.OnClientEvent:connect(function(contents)
+	Store:dispatch({
+		type = "UpdateCosmetics",
+		contents = contents,
+	})
+end)
 
 ReplicatedStorage.Remotes.UpdateEquipment.OnClientEvent:connect(function(armor, helmet, weapon)
 	Store:dispatch({

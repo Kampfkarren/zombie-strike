@@ -60,7 +60,7 @@ end
 -- Initiate
 
 for _, item in pairs(ITEMS:GetChildren()) do
-	if item.ItemType.Value == "Gun" then
+	if not item:IsA("PackageLink") and item.ItemType.Value == "Gun" then
 		PrepareItem(item)
 	end
 end
