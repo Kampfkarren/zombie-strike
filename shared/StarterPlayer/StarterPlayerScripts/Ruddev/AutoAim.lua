@@ -182,8 +182,7 @@ end
 
 -- TODO: Go back to explicitly tapped focus if there's no target left
 RunService.Heartbeat:connect(function()
-	if Settings.GetSetting("Phone Aim") ~= "Auto"
-		or UserInputService.MouseEnabled
+	if UserInputService.MouseEnabled
 		or UserInputService.GamepadEnabled
 	then
 		return

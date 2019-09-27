@@ -97,8 +97,7 @@ if hubWorld then
 end
 
 RunService:BindToRenderStep("Mouse", 5, function()
-	if Settings.GetSetting("Phone Aim") == "Auto"
-		and not UserInputService.MouseEnabled
+	if not UserInputService.MouseEnabled
 		and not UserInputService.GamepadEnabled
 	then
 		return

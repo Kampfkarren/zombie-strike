@@ -29,21 +29,6 @@ Settings.Settings = {
 			Color3.fromRGB(141, 85, 36),
 		},
 	},
-
-	{
-		Name = "Phone Aim",
-		Default = 1,
-
-		Choices = {
-			"Auto",
-			"Button",
-		},
-
-		Values = {
-			"Auto",
-			"Button",
-		},
-	},
 }
 
 function Settings.GetSettingIndex(settingName, player)
