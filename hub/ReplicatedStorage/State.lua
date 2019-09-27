@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Rodux = require(ReplicatedStorage.Vendor.Rodux)
 
@@ -45,9 +46,21 @@ ReplicatedStorage.Remotes.UpdateEquipment.OnClientEvent:connect(function(armor, 
 end)
 
 ReplicatedStorage.Remotes.UpdateInventory.OnClientEvent:connect(function(inventory)
+	local loot = Loot.DeserializeTable(inventory)
+
+	for _, item in pairs(loot) do
+		if item.Type ~= "Helmet" and item.Type ~= "Armor" then
+			for key, value in pairs(GunScaling.BaseStats(item.Type, item.Level, item.Rarity)) do
+				if item[key] == nil then
+					item[key] = value
+				end
+			end
+		end
+	end
+
 	Store:dispatch({
 		type = "UpdateInventory",
-		newInventory = Loot.DeserializeTable(inventory),
+		newInventory = loot,
 	})
 end)
 

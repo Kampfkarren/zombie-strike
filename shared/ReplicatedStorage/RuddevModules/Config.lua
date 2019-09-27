@@ -1,3 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+
 local Config = {}
 
 local Bases = {}
@@ -77,10 +81,12 @@ function Config.GetShotgunShotSize(level)
 end
 
 function Config.GetConfig(_, item)
-	local config = {}
 	local weaponData = item:WaitForChild("WeaponData")
+	local itemType = weaponData:WaitForChild("Type").Value
 
-	for baseKey, baseValue in pairs(Bases[weaponData:WaitForChild("Type").Value]) do
+	local config = GunScaling.BaseStats(itemType, weaponData.Level.Value, weaponData.Rarity.Value)
+
+	for baseKey, baseValue in pairs(Bases[itemType]) do
 		config[baseKey] = baseValue
 	end
 

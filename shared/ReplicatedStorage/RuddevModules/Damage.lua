@@ -45,7 +45,7 @@ if not ReplicatedStorage.HubWorld.Value then
 		return Players:GetPlayerFromCharacter(humanoid.Parent) == nil and humanoid.Health > 0
 	end
 
-	function DAMAGE.Damage(_, humanoid, damage, player)
+	function DAMAGE.Damage(_, humanoid, damage, player, critChance)
 		if player then
 			local killTag = humanoid:FindFirstChild("KillTag")
 
@@ -59,15 +59,11 @@ if not ReplicatedStorage.HubWorld.Value then
 		end
 
 		if humanoid.Health > 0 then
-			local gun = Data.GetPlayerData(player, "Weapon")
 			local crit
 
-			if gun then
-				local critChance = gun.CritChance
-				if math.random() <= critChance / 100 then
-					damage = damage * CRIT_MULTIPLIER
-					crit = true
-				end
+			if math.random() <= critChance / 100 then
+				damage = damage * CRIT_MULTIPLIER
+				crit = true
 			end
 
 			humanoid:TakeDamage(damage)

@@ -3,7 +3,7 @@ local HttpService = game:GetService("HttpService")
 return function()
 	local MockPlayer = {}
 
-	MockPlayer.Version = 1
+	MockPlayer.Version = 2
 
 	MockPlayer.DungeonsPlayed = 0
 	MockPlayer.Level = 1
@@ -16,10 +16,7 @@ return function()
 		Rarity = 1,
 		Name = "Average Pistol",
 
-		Damage = 20,
-		FireRate = 500,
-		CritChance = 8,
-		Magazine = 9,
+		Bonus = 0,
 
 		Model = 1,
 		UUID = HttpService:GenerateGUID(false):gsub("-", ""),

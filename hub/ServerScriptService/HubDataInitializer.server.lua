@@ -6,6 +6,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local GiveOutfit = require(ServerScriptService.Shared.GiveOutfit)
+local inspect = require(ReplicatedStorage.Core.inspect)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Settings = require(ReplicatedStorage.Core.Settings)
 
@@ -90,6 +91,7 @@ Players.PlayerAdded:connect(function(player)
 
 	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
 	local function updateInventory(inventory)
+		-- print(inspect(inventory))
 		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
 	end
 

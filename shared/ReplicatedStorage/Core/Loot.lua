@@ -9,10 +9,7 @@ local gunMap = {
 	"Level",
 	"Name",
 	"Rarity",
-	"Damage",
-	"FireRate",
-	"CritChance",
-	"Magazine",
+	"Bonus",
 	"Model",
 	"UUID",
 }
@@ -66,10 +63,7 @@ local serializeStruct = t.union(
 			t.literal("Sniper")
 		),
 
-		Damage = t.number,
-		FireRate = t.number,
-		CritChance = t.number,
-		Magazine = t.number,
+		Bonus = t.number,
 
 		Model = t.number,
 		UUID = t.string,

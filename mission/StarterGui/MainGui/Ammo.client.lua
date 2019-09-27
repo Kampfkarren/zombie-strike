@@ -1,4 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+
+local Config = require(ReplicatedStorage.RuddevModules.Config)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -6,14 +9,12 @@ local Ammo = script.Parent.Main.Ammo
 
 local function characterAdded(character)
 	local function updateGun(gun)
-		local magazine = gun:WaitForChild("WeaponData"):WaitForChild("Magazine")
 		local ammo = gun:WaitForChild("Ammo")
 
 		local function updateAmmo()
-			Ammo.Text = ammo.Value .. " / " .. magazine.Value
+			Ammo.Text = ammo.Value .. " / " .. Config:GetConfig(gun).Magazine
 		end
 
-		magazine.Changed:connect(updateAmmo)
 		ammo.Changed:connect(updateAmmo)
 		updateAmmo()
 	end

@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-local GunScaling = require(ReplicatedStorage.Libraries.GunScaling)
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -116,14 +116,13 @@ local function generateLootItem(player)
 
 		local loot = {
 			Type = type,
-			CritChance = stats.CritChance * 100,
-			Damage = stats.Damage,
-			FireRate = stats.FireRate * 100,
-			Level = level,
-			Magazine = stats.Magazine,
-			Model = getModel(type, rarity),
 			Name = quality .. " Poopoo",
 			Rarity = rarity,
+			Level = level,
+
+			Bonus = funny,
+
+			Model = getModel(type, rarity),
 			UUID = uuid,
 		}
 

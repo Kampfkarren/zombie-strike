@@ -101,7 +101,7 @@ REMOTES.Hit.OnServerEvent:connect(function(player, hit, index)
 									end
 
 									local damage = DAMAGE:Calculate(shot.Item, hit, position)
-									DAMAGE:Damage(humanoid, damage, player)
+									DAMAGE:Damage(humanoid, damage, player, config.CritChance)
 
 									local otherPlayer = Players:GetPlayerFromCharacter(humanoid.Parent)
 									if otherPlayer then

@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
 local Data = require(ReplicatedStorage.Core.Data)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local RuddevConfig = require(ReplicatedStorage.RuddevModules.Config)
@@ -40,6 +41,14 @@ local function changeStat(statFrame, lootStat, currentStat, format, consizeredZe
 end
 
 local function updateLootInfo(LootInfo, loot)
+	if loot.Type ~= "Helmet" and loot.Type ~= "Armor" then
+		for key, value in pairs(GunScaling.BaseStats(loot.Type, loot.Level, loot.Rarity)) do
+			if loot[key] == nil then
+				loot[key] = value
+			end
+		end
+	end
+
 	local currentGun = Data.GetLocalPlayerData("Weapon")
 	local rarity = Loot.Rarities[loot.Rarity]
 
@@ -111,8 +120,8 @@ local function updateLootInfo(LootInfo, loot)
 
 		changeStat(
 			stats.FireRate,
-			loot.FireRate / 100,
-			currentGun.FireRate / 100,
+			loot.FireRate,
+			currentGun.FireRate,
 			"%.1f",
 			0.00999999
 		)
