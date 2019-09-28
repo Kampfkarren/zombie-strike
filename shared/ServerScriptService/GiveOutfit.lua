@@ -133,7 +133,7 @@ end
 local function equipGun(player, character, maid)
 	return Data.GetPlayerDataAsync(player, "Weapon")
 		:andThen(function(data)
-			return Promise.async(function()
+			return Promise.async(function(resolve)
 				local gun = Data.GetModel(data)
 				gun.Name = "Gun"
 
@@ -153,7 +153,7 @@ local function equipGun(player, character, maid)
 
 				maid:GiveTask(gun)
 				Equip(gun)
-				return gun
+				resolve(gun)
 			end)
 		end)
 end
