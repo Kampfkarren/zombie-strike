@@ -90,6 +90,14 @@ function Shop:render()
 					Price = 1,
 				}),
 
+				Particle2 = e(StoreCard, {
+					ItemIndex = 2,
+					ItemType = "Particle",
+
+					LayoutOrder = 2,
+					Price = 1,
+				}),
+
 				Face1 = e(StoreCard, {
 					ItemIndex = 1,
 					ItemType = "Face",

@@ -87,6 +87,13 @@ Cosmetics.Cosmetics = {
 		Type = "LowTier",
 		Instance = Items.Bundle_Oof,
 	},
+
+	{
+		Name = "Balls",
+		Type = "Particle",
+		Instance = Items.Particle_Balls.Contents,
+		Image = Items.Particle_Balls.Image,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
@@ -115,8 +122,6 @@ end
 
 Cosmetics.Distribution = {
 	-- Face = 2,
-	-- Particle = 2,
-	-- LowTier = 2,
 	HighTier = {
 		788904610,
 	},
@@ -132,6 +137,7 @@ Cosmetics.Distribution = {
 
 	Particle = {
 		789066975,
+		789248766,
 	},
 }
 
