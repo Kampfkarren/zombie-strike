@@ -33,7 +33,7 @@ CollectionService:GetInstanceAddedSignal("Boss"):connect(function(boss)
 		Music.Boss:Play()
 	end
 
-	boss.Humanoid.Died:connect(function()
+	boss:WaitForChild("Humanoid").Died:connect(function()
 		TweenService:Create(
 			Music.Main,
 			TweenInfo.new(1.4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
