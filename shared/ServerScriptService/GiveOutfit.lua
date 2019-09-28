@@ -159,7 +159,7 @@ local function giveOutfit(player, character)
 			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
 				local particle = cosmetics.Equipped.Particle
 				if particle then
-					local particle = particle:Clone()
+					local particle = Cosmetics.Cosmetics[particle].Instance:Clone()
 					particle.Parent = gun.PrimaryPart.Muzzle
 					maid:GiveTask(particle)
 				end

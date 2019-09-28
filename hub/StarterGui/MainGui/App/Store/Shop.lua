@@ -80,6 +80,14 @@ function Shop:render()
 					VerticalAlignment = Enum.VerticalAlignment.Center,
 				}),
 
+				Particle1 = e(StoreCard, {
+					ItemIndex = 1,
+					ItemType = "Particle",
+
+					LayoutOrder = 1,
+					Price = 1,
+				}),
+
 				Face1 = e(StoreCard, {
 					ItemIndex = 1,
 					ItemType = "Face",

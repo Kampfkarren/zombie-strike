@@ -14,6 +14,13 @@ local cosmeticType = t.array(t.union(
 
 	t.strictInterface({
 		Name = t.string,
+		Type = t.literal("Particle"),
+		Instance = t.instanceIsA("ParticleEmitter"),
+		Image = t.instanceIsA("Decal"),
+	}),
+
+	t.strictInterface({
+		Name = t.string,
 		Type = t.union(
 			t.literal("LowTier"),
 			t.literal("HighTier")
@@ -62,6 +69,13 @@ Cosmetics.Cosmetics = {
 		Type = "HighTier",
 		Instance = Items.Bundle_Udzal,
 	},
+
+	{
+		Name = "Fire",
+		Type = "Particle",
+		Instance = Items.Particle_Fire.Fire,
+		Image = Items.Particle_Fire.Image,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
@@ -94,6 +108,7 @@ Cosmetics.Distribution = {
 	HighTier = 1,
 	LowTier = 1,
 	Face = 1,
+	Particle = 1,
 }
 
 function Cosmetics.GetStoreItems()

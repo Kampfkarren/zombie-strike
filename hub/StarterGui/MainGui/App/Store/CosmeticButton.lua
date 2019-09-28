@@ -9,6 +9,7 @@ local e = Roact.createElement
 
 local COSMETIC_COLORS = {
 	Face = Color3.fromRGB(156, 136, 255),
+	Particle = Color3.fromRGB(46, 204, 113),
 	LowTier = Color3.fromRGB(9, 132, 227),
 	HighTier = Color3.fromRGB(238, 82, 83),
 }
@@ -56,6 +57,7 @@ function CosmeticButton:render()
 	local newProps = {
 		BackgroundColor3 = color,
 		BorderSizePixel = 0,
+		ClipsDescendants = true,
 		ImageColor3 = color,
 
 		[Roact.Event.MouseEnter] = self.hoverIn,

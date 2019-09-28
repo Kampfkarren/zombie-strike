@@ -10,6 +10,7 @@ local StoreCard = Roact.PureComponent:extend("StoreCard")
 
 local COSMETIC_TYPE_NAMES = {
 	Face = "Face",
+	Particle = "Particle",
 	LowTier = "Bundle",
 	HighTier = "LIMITED Bundle",
 }

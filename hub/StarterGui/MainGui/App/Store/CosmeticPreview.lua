@@ -93,11 +93,11 @@ end
 return function(props)
 	local cosmetic = props.item
 
-	if cosmetic.Type == "Face" then
+	if cosmetic.Type == "Face" or cosmetic.Type == "Particle" then
 		return e("ImageLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			Image = cosmetic.Instance.Texture,
+			Image = (cosmetic.Image or cosmetic.Instance).Texture,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			Size = props.size,
 		}, {
