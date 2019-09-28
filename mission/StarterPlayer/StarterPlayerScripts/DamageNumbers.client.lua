@@ -50,7 +50,7 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 		local offset = damageOffsets[humanoid]
 		offset.damage = offset.damage + damage
 		offset.stray = math.random(-100, 100) / 100
-		offset.text.Text = math.floor(offset.damage)
+		offset.text.Text = EnglishNumbers(math.floor(offset.damage))
 		offset.timeSinceLast = 0
 		updateColor(offset.text, humanoid.Health, humanoid.MaxHealth)
 		return
