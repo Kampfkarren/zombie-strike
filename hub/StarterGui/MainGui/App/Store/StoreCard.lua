@@ -51,6 +51,7 @@ function StoreCard:render()
 	}, {
 		Cost = e("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
+			AutoLocalize = false,
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBold,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -69,6 +70,7 @@ function StoreCard:render()
 	}, {
 		ItemName = e("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0),
+			AutoLocalize = false,
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBold,
 			Position = UDim2.new(0.5, 0, 0, 0),

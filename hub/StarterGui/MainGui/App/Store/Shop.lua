@@ -156,6 +156,7 @@ function Shop:render()
 		}),
 
 		Timer = e("TextLabel", {
+			AutoLocalize = false,
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBlack,
 			Position = UDim2.new(0.025, 0, 0.01, 0),
