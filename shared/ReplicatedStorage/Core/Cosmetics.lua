@@ -124,6 +124,54 @@ Cosmetics.Cosmetics = {
 		Type = "Face",
 		Instance = Items.Face_Cat.Face,
 	},
+
+	{
+		Name = "Prankster",
+		Type = "Face",
+		Instance = Items.Face_Prankster.Face,
+	},
+
+	{
+		Name = "Bandage",
+		Type = "Face",
+		Instance = Items.Face_Bandage.Face,
+	},
+
+	{
+		Name = "Skeptic",
+		Type = "Face",
+		Instance = Items.Face_Skeptic.Face,
+	},
+
+	{
+		Name = "Blizzard Beast Mode",
+		Type = "Face",
+		Instance = Items.Face_BlizzardBeastMode.Face,
+	},
+
+	{
+		Name = "Golden Shiny Teeth",
+		Type = "Face",
+		Instance = Items.Face_GoldenShinyTeeth.Face,
+	},
+
+	{
+		Name = "Goofball",
+		Type = "Face",
+		Instance = Items.Face_Goofball.Face,
+	},
+
+	{
+		Name = "Freckled Cheeks",
+		Type = "Face",
+		Instance = Items.Face_FreckledCheeks.Face,
+	},
+
+	{
+		Name = "Zorgo",
+		Type = "Face",
+		Instance = Items.Face_Zorgo.Face,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
