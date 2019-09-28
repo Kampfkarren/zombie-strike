@@ -76,7 +76,9 @@ abilityButton(
 	function()
 		if not ReplicatedStorage.HubWorld.Value then
 			local humanoid = LocalPlayer.Character.Humanoid
-			if humanoid.Health == humanoid.MaxHealth then return end
+			if humanoid.Health == humanoid.MaxHealth then
+				return false
+			end
 		end
 
 		ReplicatedStorage.Remotes.HealthPack:FireServer()
