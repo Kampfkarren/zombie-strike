@@ -71,7 +71,11 @@ local function getDummyFor(instance)
 		dummy.Parent = Workspace
 
 		for _, bodyPart in pairs(instance.Contents.Armor:GetChildren()) do
-			dummy.Humanoid:ReplaceBodyPartR15(bodyPart.Name, bodyPart:Clone())
+			if bodyPart:IsA("BasePart") then
+				dummy.Humanoid:ReplaceBodyPartR15(bodyPart.Name, bodyPart:Clone())
+			elseif bodyPart:IsA("Accessory") then
+				addAccessory(dummy, bodyPart)
+			end
 		end
 
 		dummy.Humanoid:ReplaceBodyPartR15(Enum.BodyPartR15.Head, instance.Contents.Helmet:Clone())

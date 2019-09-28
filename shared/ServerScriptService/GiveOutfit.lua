@@ -93,6 +93,8 @@ local function equipModelThing(thing, character, maid)
 					ReplicatedStorage.Dummy[limb.Name]:Clone()
 				)
 			end)
+		elseif thing:IsA("Accessory") then
+			thing:Clone().Parent = character
 		end
 	end
 end

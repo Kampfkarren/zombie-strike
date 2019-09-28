@@ -194,6 +194,12 @@ Cosmetics.Cosmetics = {
 		Type = "HighTier",
 		Instance = Items.Bundle_God1,
 	},
+
+	{
+		Name = "Thanoid",
+		Type = "HighTier",
+		Instance = Items.Bundle_Thanoid,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
