@@ -100,6 +100,30 @@ Cosmetics.Cosmetics = {
 		Type = "Face",
 		Instance = Items.Face_Err.Face,
 	},
+
+	{
+		Name = "Shiny Teeth",
+		Type = "Face",
+		Instance = Items.Face_ShinyTeeth.Face,
+	},
+
+	{
+		Name = "Super Super Happy Face",
+		Type = "Face",
+		Instance = Items.Face_DevFace.Face,
+	},
+
+	{
+		Name = "Friendly Smile",
+		Type = "Face",
+		Instance = Items.Face_FriendlySmile.Face,
+	},
+
+	{
+		Name = ":3",
+		Type = "Face",
+		Instance = Items.Face_Cat.Face,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
