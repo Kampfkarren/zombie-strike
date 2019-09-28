@@ -335,7 +335,9 @@ function Zombie:GetScale(key)
 end
 
 function Zombie:GetHealth()
-	return self:GetScale("Health")
+	local health = self:GetScale("Health")
+	health = health * (1 + (0.25 * (#Players:GetPlayers() - 1)))
+	return health
 end
 
 function Zombie:GetSpeed()
