@@ -49,7 +49,13 @@ local function updateLootInfo(LootInfo, loot)
 		end
 	end
 
-	local currentGun = Data.GetLocalPlayerData("Weapon")
+	local currentGunItem = Data.GetLocalPlayerData("Weapon")
+	local currentGun = GunScaling.BaseStats(
+		currentGunItem.Type,
+		currentGunItem.Level,
+		currentGunItem.Rarity
+	)
+
 	local rarity = Loot.Rarities[loot.Rarity]
 
 	if rarity.Color then
