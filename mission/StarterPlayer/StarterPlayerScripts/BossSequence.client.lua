@@ -4,7 +4,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-local Promise = require(ReplicatedStorage.Core.Promise)
 
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 
