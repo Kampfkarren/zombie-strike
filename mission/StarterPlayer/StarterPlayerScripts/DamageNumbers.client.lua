@@ -39,7 +39,7 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 		critEffect:Emit(15)
 
 		local critSound = SoundService.Crit:Clone()
-		critSound.Parent = humanoid.Parent.UpperTorso
+		critSound.Parent = SoundService
 		critSound:Play()
 
 		Debris:AddItem(critEffect)

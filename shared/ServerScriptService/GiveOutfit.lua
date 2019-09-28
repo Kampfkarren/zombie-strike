@@ -183,7 +183,6 @@ local function equipGun(player, character)
 			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
 				local particleIndex = cosmetics.Equipped.Particle
 				if particleIndex then
-					print("particel index", Cosmetics.Cosmetics[particleIndex].Name)
 					for _, particle in pairs(Cosmetics.Cosmetics[particleIndex].Instance:GetChildren()) do
 						local particle = particle:Clone()
 						particle.Parent = gun.PrimaryPart
