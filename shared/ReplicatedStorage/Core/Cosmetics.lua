@@ -7,12 +7,14 @@ local Items = ReplicatedStorage.Items
 
 local cosmeticType = t.array(t.union(
 	t.strictInterface({
+		Index = t.number,
 		Name = t.string,
 		Type = t.literal("Face"),
 		Instance = t.instanceIsA("Decal"),
 	}),
 
 	t.strictInterface({
+		Index = t.number,
 		Name = t.string,
 		Type = t.literal("Particle"),
 		Instance = t.instanceIsA("ParticleEmitter"),
@@ -20,6 +22,7 @@ local cosmeticType = t.array(t.union(
 	}),
 
 	t.strictInterface({
+		Index = t.number,
 		Name = t.string,
 		Type = t.union(
 			t.literal("LowTier"),
@@ -29,6 +32,7 @@ local cosmeticType = t.array(t.union(
 	}),
 
 	t.strictInterface({
+		Index = t.number,
 		Name = t.string,
 		Type = t.literal("Armor"),
 		Instance = t.union(t.instanceIsA("Folder")),
@@ -39,6 +43,7 @@ local cosmeticType = t.array(t.union(
 	}),
 
 	t.strictInterface({
+		Index = t.number,
 		Name = t.string,
 		Type = t.literal("Helmet"),
 		Instance = t.union(t.instanceIsA("Accessory"), t.instanceIsA("BasePart")),
@@ -80,6 +85,7 @@ Cosmetics.Cosmetics = {
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
 	local itemType = item.Instance:FindFirstChild("ItemType")
+	item.Index = index
 
 	if itemType
 		and (itemType.Value == "BundleSimple"
@@ -105,10 +111,21 @@ Cosmetics.Distribution = {
 	-- Face = 2,
 	-- Particle = 2,
 	-- LowTier = 2,
-	HighTier = 1,
-	LowTier = 1,
-	Face = 1,
-	Particle = 1,
+	HighTier = {
+		788904610,
+	},
+
+	LowTier = {
+		0,
+	},
+
+	Face = {
+		0,
+	},
+
+	Particle = {
+		0,
+	},
 }
 
 function Cosmetics.GetStoreItems()
@@ -129,10 +146,10 @@ function Cosmetics.GetStoreItems()
 
 	local contents = {}
 
-	for key, amount in pairs(Cosmetics.Distribution) do
+	for key, passes in pairs(Cosmetics.Distribution) do
 		local products = {}
 
-		for _ = 1, amount do
+		for _ = 1, #passes do
 			table.insert(products, table.remove(collated[key], rng:NextInteger(1, #collated[key])))
 		end
 

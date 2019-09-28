@@ -1,3 +1,5 @@
+local MarketplaceService = game:GetService("MarketplaceService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
@@ -6,6 +8,7 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
 local e = Roact.createElement
+local LocalPlayer = Players.LocalPlayer
 local StoreCard = Roact.PureComponent:extend("StoreCard")
 
 local COSMETIC_TYPE_NAMES = {
@@ -17,6 +20,19 @@ local COSMETIC_TYPE_NAMES = {
 
 function StoreCard:GetItem()
 	return Cosmetics.GetStoreItems()[self.props.ItemType][self.props.ItemIndex]
+end
+
+function StoreCard:init()
+	self.buyProduct = function()
+		local props = self.props
+
+		if not props.owned then
+			MarketplaceService:PromptProductPurchase(
+				LocalPlayer,
+				Cosmetics.Distribution[props.ItemType][props.ItemIndex]
+			)
+		end
+	end
 end
 
 function StoreCard:render()
@@ -100,6 +116,7 @@ function StoreCard:render()
 			Image = "",
 			LayoutOrder = self.props.LayoutOrder,
 			Size = self.props.Size,
+			[Roact.Event.Activated] = self.buyProduct,
 		},
 
 		Item = item,
@@ -109,10 +126,15 @@ end
 
 return RoactRodux.connect(function(state, props)
 	local owned = false
-	local item = Cosmetics.GetStoreItems()[props.ItemType][props.ItemIndex]
+
+	local itemIndex = Cosmetics.GetStoreItems()[props.ItemType][props.ItemIndex].Index
+
+	if props.ItemType == "LowTier" or props.ItemType == "HighTier" then
+		itemIndex = itemIndex + 1
+	end
 
 	for _, cosmetic in pairs(state.store.contents) do
-		if Cosmetics.Cosmetics[cosmetic] == item then
+		if cosmetic == itemIndex then
 			owned = true
 			break
 		end

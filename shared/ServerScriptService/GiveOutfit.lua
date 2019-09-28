@@ -147,7 +147,10 @@ local function giveOutfit(player, character)
 					face.Parent = character.Head
 					maid:GiveTask(face)
 				else
-					character.Head.face.Transparency = 0
+					local face = character.Head:FindFirstChildOfClass("Decal")
+					if face then
+						face.Transparency = 0
+					end
 				end
 			end):andThen(function()
 				return health

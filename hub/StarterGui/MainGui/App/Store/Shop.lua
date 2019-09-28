@@ -126,7 +126,7 @@ function Shop:render()
 				ItemType = "HighTier",
 				Size = UDim2.new(0.3, 0, 1, 0),
 
-				Price = 1,
+				Price = 699,
 			}),
 		}),
 
