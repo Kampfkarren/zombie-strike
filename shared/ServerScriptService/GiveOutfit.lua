@@ -3,6 +3,7 @@ local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
+local Config = require(ReplicatedStorage.RuddevModules.Config)
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
@@ -132,26 +133,28 @@ end
 local function equipGun(player, character, maid)
 	return Data.GetPlayerDataAsync(player, "Weapon")
 		:andThen(function(data)
-			local gun = Data.GetModel(data)
-			gun.Name = "Gun"
+			return Promise.async(function()
+				local gun = Data.GetModel(data)
+				gun.Name = "Gun"
 
-			local weaponData = Instance.new("Folder")
-			weaponData.Name = "WeaponData"
+				local weaponData = Instance.new("Folder")
+				weaponData.Name = "WeaponData"
 
-			for statName, stat in pairs(data) do
-				local statValue = Instance.new((type(stat) == "number" and "Number" or "String") .. "Value")
-				statValue.Name = statName
-				statValue.Value = stat
-				statValue.Parent = weaponData
-			end
+				for statName, stat in pairs(data) do
+					local statValue = Instance.new((type(stat) == "number" and "Number" or "String") .. "Value")
+					statValue.Name = statName
+					statValue.Value = stat
+					statValue.Parent = weaponData
+				end
 
-			gun.Ammo.Value = data.Magazine
-			weaponData.Parent = gun
-			gun.Parent = character
+				weaponData.Parent = gun
+				gun.Ammo.Value = Config:GetConfig(gun).Magazine
+				gun.Parent = character
 
-			maid:GiveTask(gun)
-			Equip(gun)
-			return gun
+				maid:GiveTask(gun)
+				Equip(gun)
+				return gun
+			end)
 		end)
 end
 
