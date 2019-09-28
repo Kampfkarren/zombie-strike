@@ -92,13 +92,13 @@ local function updateInventory(inventory)
 
 	contents:GiveTask(Shopkeeper.LootInfo.Buttons.Sell.MouseButton1Click:connect(function()
 		if currentlySelected then
-			selectNext = currentlySelected
 			ReplicatedStorage.Remotes.Sell:FireServer(currentlySelected)
 		end
 	end))
 
 	contents:GiveTask(Shopkeeper.LootInfo.Buttons.Upgrade.MouseButton1Click:connect(function()
 		if currentlySelected then
+			selectNext = currentlySelected
 			ReplicatedStorage.Remotes.Upgrade:FireServer(currentlySelected)
 		end
 	end))
@@ -184,6 +184,7 @@ local function updateInventory(inventory)
 
 		if selectNext == index then
 			activate()
+			currentLootInfo.Visible = true
 			selectNext = nil
 		end
 	end
