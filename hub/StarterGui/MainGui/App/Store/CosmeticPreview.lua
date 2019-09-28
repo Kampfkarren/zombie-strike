@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local Data = require(ReplicatedStorage.Core.Data)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local ViewportFramePreviewComponent = require(script.Parent.Parent.ViewportFramePreviewComponent)
@@ -59,7 +60,7 @@ local function getDummyFor(instance)
 	elseif instance.ItemType.Value == "BundleComplex" then
 		dummy.Parent = Workspace
 
-		for _, bodyPart in pairs(instance.Contents.BodyParts:GetChildren()) do
+		for _, bodyPart in pairs(instance.Contents.Armor:GetChildren()) do
 			dummy.Humanoid:ReplaceBodyPartR15(bodyPart.Name, bodyPart:Clone())
 		end
 
@@ -72,6 +73,21 @@ local function getDummyFor(instance)
 	dummies[instance] = dummy
 
 	return dummy
+end
+
+local function ViewportFrameCosmeticPreview(props)
+	return e(ViewportFramePreviewComponent, {
+		Native = {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0.5, 0, 0.5, 0),
+			Size = props.size,
+		},
+
+		Model = props.model,
+		Scale = props.previewScale,
+		Update = props.updateSet,
+	})
 end
 
 return function(props)
@@ -90,17 +106,26 @@ return function(props)
 			}),
 		})
 	elseif cosmetic.Type == "LowTier" or cosmetic.Type == "HighTier" then
-		return e(ViewportFramePreviewComponent, {
-			Native = {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundTransparency = 1,
-				Position = UDim2.new(0.5, 0, 0.5, 0),
-				Size = props.size,
-			},
+		return e(ViewportFrameCosmeticPreview, {
+			model = Promise.promisify(getDummyFor)(cosmetic.Instance),
+			previewScale = props.previewScale,
+			size = props.size,
+			updateSet = props.updateSet,
+		})
+	elseif cosmetic.Type == "Helmet" or cosmetic.Type == "Armor" then
+		cosmetic.UUID = cosmetic.Instance:GetFullName()
 
-			Model = Promise.promisify(getDummyFor)(cosmetic.Instance),
-			Scale = props.previewScale,
-			Update = props.updateSet,
+		return e(ViewportFrameCosmeticPreview, {
+			model = Promise.async(function(resolve)
+				local model = Data.GetModel(cosmetic)
+				model.Parent = Workspace
+				RunService.Heartbeat:wait()
+				model.Parent = nil
+				resolve(model)
+			end),
+			previewScale = props.previewScale,
+			size = props.size,
+			updateSet = props.updateSet,
 		})
 	else
 		error("unknown item type for preview: " .. cosmetic.Type)

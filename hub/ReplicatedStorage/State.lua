@@ -49,16 +49,17 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		equipped = {},
 		open = false,
 	}, {
-		ToggleStore = function(store)
-			local store = copy(store)
-			store.open = not store.open
-			return store
+		ToggleStore = function(state)
+			local state = copy(state)
+			state.open = not state.open
+			return state
 		end,
 
-		UpdateCosmetics = function(store, action)
-			local store = copy(store)
-			store.contents = action.contents
-			return store
+		UpdateCosmetics = function(state, action)
+			local state = copy(state)
+			state.contents = action.contents or state.contents
+			state.equipped = action.equipped
+			return state
 		end,
 	}),
 }))

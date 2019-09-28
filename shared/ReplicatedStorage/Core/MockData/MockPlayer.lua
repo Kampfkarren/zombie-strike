@@ -56,7 +56,7 @@ return function()
 	}
 
 	MockPlayer.Cosmetics = {
-		Owned = {1, 2, 3},
+		Owned = {1, 3, 4, 6, 7},
 		Equipped = {},
 	}
 

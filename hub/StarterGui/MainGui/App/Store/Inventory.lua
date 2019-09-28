@@ -9,13 +9,14 @@ local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
 local e = Roact.createElement
 local Inventory = Roact.PureComponent:extend("Inventory")
+local UpdateCosmetics = ReplicatedStorage.Remotes.UpdateCosmetics
 
 local function EquipButton(props)
 	local children = {}
 
 	if props.Item then
 		children.Preview = e(CosmeticPreview, {
-			item = props.Item,
+			item = Cosmetics.Cosmetics[props.Item],
 			size = UDim2.new(1, 0, 0.9, 0),
 		})
 	end
@@ -57,6 +58,10 @@ function Inventory:render()
 				Image = "http://www.roblox.com/asset/?id=3973353646",
 				ImageTransparency = 0.5,
 				LayoutOrder = itemIndex,
+
+				[Roact.Event.Activated] = function()
+					UpdateCosmetics:FireServer(itemIndex)
+				end,
 			},
 
 			Item = item,

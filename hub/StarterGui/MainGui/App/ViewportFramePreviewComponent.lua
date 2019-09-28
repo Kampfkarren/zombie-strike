@@ -48,8 +48,10 @@ function ViewportFramePreviewComponent:didMount()
 	end)
 end
 
-function ViewportFramePreviewComponent:didUpdate()
-	if self.viewportFramePreview then
+function ViewportFramePreviewComponent:didUpdate(oldProps)
+	if oldProps.Model ~= self.props.Model then
+		self:didMount()
+	elseif self.viewportFramePreview then
 		self.viewportFramePreview:UpdateScale(self.state.scale)
 	end
 end

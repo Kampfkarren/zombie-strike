@@ -2,7 +2,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local CosmeticButton = require(script.Parent.CosmeticButton)
-local CosmeticPreview = require(script.Parent.CosmeticPreview)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 

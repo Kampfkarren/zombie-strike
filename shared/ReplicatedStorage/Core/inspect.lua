@@ -291,6 +291,8 @@ local inspect ={
 	elseif tv == 'number' or tv == 'boolean' or tv == 'nil' or
 		   tv == 'cdata' or tv == 'ctype' then
 	  self:puts(tostring(v))
+	elseif typeof(v) == "Instance" then
+		self:puts(v:GetFullName())
 	elseif tv == 'table' then
 	  self:putTable(v)
 	else

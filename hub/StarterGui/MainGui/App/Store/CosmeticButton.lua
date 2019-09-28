@@ -48,10 +48,15 @@ function CosmeticButton:init()
 end
 
 function CosmeticButton:render()
+	local color = COSMETIC_COLORS[
+		self.props.Item.ParentType
+		or self.props.Item.Type
+	]
+
 	local newProps = {
-		BackgroundColor3 = COSMETIC_COLORS[self.props.Item.Type],
+		BackgroundColor3 = color,
 		BorderSizePixel = 0,
-		ImageColor3 = COSMETIC_COLORS[self.props.Item.Type],
+		ImageColor3 = color,
 
 		[Roact.Event.MouseEnter] = self.hoverIn,
 		[Roact.Event.MouseLeave] = self.hoverOut,

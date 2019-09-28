@@ -19,6 +19,7 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
+-- TODO: Check for limbs here for bundle armor/helmets
 local function equip(player, character, equippable, maid)
 	return Data.GetPlayerDataAsync(player, equippable.Name)
 		:andThen(function(equipped)

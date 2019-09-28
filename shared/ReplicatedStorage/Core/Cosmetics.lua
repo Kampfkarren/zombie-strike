@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local inspect = require(ReplicatedStorage.Core.inspect)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local Items = ReplicatedStorage.Items
@@ -18,6 +19,26 @@ local cosmeticType = t.array(t.union(
 			t.literal("HighTier")
 		),
 		Instance = t.instanceIsA("Folder"),
+	}),
+
+	t.strictInterface({
+		Name = t.string,
+		Type = t.literal("Armor"),
+		Instance = t.union(t.instanceIsA("Folder")),
+		ParentType = t.union(
+			t.literal("LowTier"),
+			t.literal("HighTier")
+		),
+	}),
+
+	t.strictInterface({
+		Name = t.string,
+		Type = t.literal("Helmet"),
+		Instance = t.union(t.instanceIsA("Accessory"), t.instanceIsA("BasePart")),
+		ParentType = t.union(
+			t.literal("LowTier"),
+			t.literal("HighTier")
+		),
 	})
 ))
 
@@ -43,6 +64,29 @@ Cosmetics.Cosmetics = {
 	},
 }
 
+for index, item in ipairs(Cosmetics.Cosmetics) do
+	local itemType = item.Instance:FindFirstChild("ItemType")
+
+	if itemType
+		and (itemType.Value == "BundleSimple"
+		or itemType.Value == "BundleComplex")
+	then
+		table.insert(Cosmetics.Cosmetics, index + 1, {
+			Name = item.Name,
+			Type = "Armor",
+			Instance = item.Instance.Contents.Armor,
+			ParentType = item.Type,
+		})
+
+		table.insert(Cosmetics.Cosmetics, index + 1, {
+			Name = item.Name,
+			Type = "Helmet",
+			Instance = item.Instance.Contents.Helmet,
+			ParentType = item.Type,
+		})
+	end
+end
+
 Cosmetics.Distribution = {
 	-- Face = 2,
 	-- Particle = 2,
@@ -59,10 +103,12 @@ function Cosmetics.GetStoreItems()
 	local collated = {}
 
 	for _, cosmetic in ipairs(Cosmetics.Cosmetics) do
-		if collated[cosmetic.Type] then
-			table.insert(collated[cosmetic.Type], cosmetic)
-		else
-			collated[cosmetic.Type] = { cosmetic }
+		if Cosmetics.Distribution[cosmetic.Type] then
+			if collated[cosmetic.Type] then
+				table.insert(collated[cosmetic.Type], cosmetic)
+			else
+				collated[cosmetic.Type] = { cosmetic }
+			end
 		end
 	end
 
@@ -81,6 +127,6 @@ function Cosmetics.GetStoreItems()
 	return contents
 end
 
-assert(cosmeticType(Cosmetics.Cosmetics))
+assert(cosmeticType(Cosmetics.Cosmetics), inspect(Cosmetics.Cosmetics))
 
 return Cosmetics
