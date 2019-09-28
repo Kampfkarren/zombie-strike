@@ -57,7 +57,10 @@ local function equipModelThing(thing, character, maid)
 		local head = character.Head:Clone()
 
 		for _, thing in pairs(head:GetChildren()) do
-			if not thing:IsA("Attachment") or thing:IsA("Motor6D") then
+			if not (thing:IsA("Attachment")
+				or thing:IsA("Motor6D")
+				or thing:IsA("BillboardGui"))
+			then
 				thing:Destroy()
 			end
 		end

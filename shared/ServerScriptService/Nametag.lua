@@ -6,6 +6,11 @@ return function(instance, level)
 	if not nametag then
 		nametag = ServerStorage.Nametag:Clone()
 		nametag.Parent = instance.Head
+		instance.ChildAdded:connect(function(child)
+			if child.Name == "Head" then
+				nametag.Parent = child
+			end
+		end)
 	end
 
 	local humanoid = instance.Humanoid
