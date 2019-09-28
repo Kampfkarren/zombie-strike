@@ -36,7 +36,7 @@ local function squadMemberFrame(frame, player)
 			local max = XP.XPNeededForNextLevel(levelValue.Value)
 
 			frame.Stats.XP.Fill.Size = UDim2.new(xpValue.Value / max, 0, 1, 0)
-			frame.Stats.XP.Amount.Text = EnglishNumbers(xpValue.Value) .. " / " .. EnglishNumbers(max)
+			frame.Stats.XP.Amount.Text = EnglishNumbers(xpValue.Value, true) .. " / " .. EnglishNumbers(max)
 		end
 
 		xpValue.Changed:connect(setXP)

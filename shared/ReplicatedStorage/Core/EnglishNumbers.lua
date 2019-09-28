@@ -25,7 +25,7 @@ local TEST_CASES = {
 
 local units = { "K", "M" }
 
-local function EnglishNumbers(number)
+local function EnglishNumbers(number, roundDown)
 	local negative = number < 0
 	number = math.abs(math.floor(number))
 
@@ -34,7 +34,11 @@ local function EnglishNumbers(number)
 		local size = 10 ^ (index * 3)
 
 		if size <= number then
-			number = math.floor((number * 10 / size) + 0.5) / 10
+			if roundDown then
+				number = math.floor(number * 10 / size) / 10
+			else
+				number = math.floor((number * 10 / size) + 0.5) / 10
+			end
 
 			if number == 1000 and index < #units then
 				number = 1
