@@ -22,7 +22,7 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
-local DEBUG = false
+local DEBUG = true
 
 local function debug(message)
 	if DEBUG then
@@ -203,7 +203,7 @@ local function equipArmor(player, character)
 
 	return Promise.all({ armor, cosmetics }):andThen(function(results)
 		local armor, cosmetics = unpack(results)
-		return armor.UUID .. "/" .. tostring(cosmetics.Equipped.Helmet)
+		return armor.UUID .. "/" .. tostring(cosmetics.Equipped.Armor)
 	end), function()
 		return equip(player, character, Armor, maid), maid
 	end
