@@ -125,6 +125,7 @@ local function equipGun(player, character, maid)
 
 			maid:GiveTask(gun)
 			Equip(gun)
+			return gun
 		end)
 end
 
@@ -132,7 +133,10 @@ local function giveOutfit(player, character)
 	local maid = Maid.new(true)
 
 	return Promise.all({
+		-- Equip armor
 		equip(player, character, Armor, maid),
+
+		-- Equip helmet and face
 		equip(player, character, Helmet, maid):andThen(function(health)
 			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
 				local face = cosmetics.Equipped.Face
@@ -149,8 +153,21 @@ local function giveOutfit(player, character)
 				return health
 			end)
 		end),
-		equipGun(player, character, maid),
+
+		-- Equip gun
+		equipGun(player, character, maid):andThen(function(gun)
+			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
+				local particle = cosmetics.Equipped.Particle
+				if particle then
+					particle:Clone().Parent = gun.PrimaryPart.Muzzle
+				end
+			end)
+		end),
+
+		-- Get XP health
 		Data.GetPlayerDataAsync(player, "Level"):andThen(XP.HealthForLevel),
+
+		-- Set skin tone
 		Promise.promisify(Settings.GetSetting)("Skin Tone", player)
 			:andThen(function(tone)
 				return Promise.async(function(resolve)
