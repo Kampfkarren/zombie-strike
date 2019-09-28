@@ -105,6 +105,14 @@ function Shop:render()
 					LayoutOrder = 3,
 					Price = 49,
 				}),
+
+				Face2 = e(StoreCard, {
+					ItemIndex = 2,
+					ItemType = "Face",
+
+					LayoutOrder = 3,
+					Price = 49,
+				}),
 			}),
 
 			Low = e("Frame", {

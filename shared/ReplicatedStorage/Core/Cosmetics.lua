@@ -94,6 +94,12 @@ Cosmetics.Cosmetics = {
 		Instance = Items.Particle_Balls.Contents,
 		Image = Items.Particle_Balls.Image,
 	},
+
+	{
+		Name = "Err",
+		Type = "Face",
+		Instance = Items.Face_Err.Face,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
@@ -133,6 +139,7 @@ Cosmetics.Distribution = {
 
 	Face = {
 		789066394,
+		789260022,
 	},
 
 	Particle = {

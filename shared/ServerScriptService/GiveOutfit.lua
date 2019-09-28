@@ -170,7 +170,10 @@ local function giveOutfit(player, character)
 			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
 				local face = cosmetics.Equipped.Face
 				if face then
-					character.Head.face.Transparency = 1
+					local face = character.Head:FindFirstChildOfClass("Decal")
+					if face then
+						face.Transparency = 1
+					end
 
 					local face = Cosmetics.Cosmetics[face].Instance:Clone()
 					face.Parent = character.Head
