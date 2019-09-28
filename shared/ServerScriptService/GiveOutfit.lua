@@ -176,14 +176,14 @@ local function giveOutfit(player, character)
 		-- Equip helmet and face
 		equip(player, character, Helmet, maid):andThen(function(health)
 			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
-				local face = cosmetics.Equipped.Face
-				if face then
+				local faceIndex = cosmetics.Equipped.Face
+				if faceIndex then
 					local face = character.Head:FindFirstChildOfClass("Decal")
 					if face then
 						face.Transparency = 1
 					end
 
-					local face = Cosmetics.Cosmetics[face].Instance:Clone()
+					local face = Cosmetics.Cosmetics[faceIndex].Instance:Clone()
 					face.Parent = character.Head
 					maid:GiveTask(face)
 				else
