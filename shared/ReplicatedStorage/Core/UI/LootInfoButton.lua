@@ -118,8 +118,8 @@ local function updateLootInfo(LootInfo, loot)
 
 		changeStat(
 			stats.CritChance,
-			loot.CritChance,
-			currentGun.CritChance,
+			loot.CritChance * 100,
+			currentGun.CritChance * 100,
 			"%d%%",
 			0.99999999
 		)
