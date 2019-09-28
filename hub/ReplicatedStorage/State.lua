@@ -47,8 +47,15 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	store = Rodux.createReducer({
 		contents = {},
 		equipped = {},
+		page = "Shop",
 		open = false,
 	}, {
+		SetStorePage = function(state, action)
+			local state = copy(state)
+			state.page = action.page
+			return state
+		end,
+
 		ToggleStore = function(state)
 			local state = copy(state)
 			state.open = not state.open

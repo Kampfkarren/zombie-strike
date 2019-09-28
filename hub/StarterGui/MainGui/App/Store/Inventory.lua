@@ -76,7 +76,10 @@ function Inventory:render()
 
 	return e("Frame", {
 		BackgroundTransparency = 1,
+		LayoutOrder = 2,
 		Size = UDim2.new(1, 0, 1, 0),
+
+		[Roact.Ref] = self.props[Roact.Ref],
 	}, {
 		Equipped = e("Frame", {
 			BackgroundColor3 = Color3.new(0, 0, 0),

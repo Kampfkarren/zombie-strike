@@ -50,8 +50,10 @@ end
 function Shop:render()
 	return e("Frame", {
 		BackgroundTransparency = 1,
-		LayoutOrder = 0,
+		LayoutOrder = 1,
 		Size = UDim2.new(1, 0, 1, 0),
+
+		[Roact.Ref] = self.props[Roact.Ref],
 	}, {
 		Contents = e("Frame", {
 			AnchorPoint = Vector2.new(0.5, 1),

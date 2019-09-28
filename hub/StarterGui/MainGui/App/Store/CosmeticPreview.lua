@@ -49,7 +49,10 @@ local function getDummyFor(instance)
 	uuid.Parent = dummy
 
 	if instance.ItemType.Value == "BundleSimple" then
-		for _, clothing in pairs(instance.Contents:GetChildren()) do
+		local contents = instance.Contents.Armor:GetChildren()
+		table.insert(contents, instance.Contents.Helmet)
+
+		for _, clothing in pairs(contents) do
 			local clothing = clothing:Clone()
 			clothing.Parent = dummy
 
