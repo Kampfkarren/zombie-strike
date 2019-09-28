@@ -119,6 +119,15 @@ function Shop:render()
 					LayoutOrder = 1,
 					Price = 1,
 				}),
+
+				LowTier2 = e(StoreCard, {
+					ItemIndex = 2,
+					ItemType = "LowTier",
+					Size = UDim2.new(1, 0, 0.5, 0),
+
+					LayoutOrder = 2,
+					Price = 1,
+				}),
 			}),
 
 			High = e(StoreCard, {
