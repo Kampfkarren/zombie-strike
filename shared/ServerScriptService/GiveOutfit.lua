@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
@@ -30,6 +31,23 @@ local function getLimb(thing)
 	end
 end
 
+local resetDeath = {}
+
+local function replaceBodyPartR15(humanoid, limb, part)
+	if not resetDeath[humanoid] then
+		resetDeath[humanoid] = true
+		coroutine.wrap(function()
+			RunService.Heartbeat:wait()
+			resetDeath[humanoid] = nil
+			humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
+		end)()
+	end
+
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+	humanoid:ReplaceBodyPartR15(limb, part)
+	humanoid:BuildRigFromAttachments()
+end
+
 local function equipModelThing(thing, character, maid)
 	if thing:IsA("CharacterAppearance") or thing:IsA("Accessory") then
 		local thing = thing:Clone()
@@ -46,9 +64,10 @@ local function equipModelThing(thing, character, maid)
 
 		thing.Mesh:Clone().Parent = head
 
-		character.Humanoid:ReplaceBodyPartR15(Enum.BodyPartR15.Head, head)
+		replaceBodyPartR15(character.Humanoid, Enum.BodyPartR15.Head, head)
 			maid:GiveTask(function()
-				character.Humanoid:ReplaceBodyPartR15(
+				replaceBodyPartR15(
+					character.Humanoid,
 					Enum.BodyPartR15.Head,
 					ReplicatedStorage.Dummy.Head:Clone()
 				)
@@ -56,9 +75,13 @@ local function equipModelThing(thing, character, maid)
 	else
 		local limb = getLimb(thing)
 		if limb then
-			character.Humanoid:ReplaceBodyPartR15(limb, thing:Clone())
+			replaceBodyPartR15(character.Humanoid, limb, thing:Clone())
 			maid:GiveTask(function()
-				character.Humanoid:ReplaceBodyPartR15(limb, ReplicatedStorage.Dummy[limb.Name]:Clone())
+				replaceBodyPartR15(
+					character.Humanoid,
+					limb,
+					ReplicatedStorage.Dummy[limb.Name]:Clone()
+				)
 			end)
 		end
 	end
