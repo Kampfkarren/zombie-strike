@@ -37,6 +37,10 @@ local function EquipButton(props)
 		BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0.5,
 		BorderSizePixel = 0,
+
+		[Roact.Event.MouseButton1Click] = function()
+			UpdateCosmetics:FireServer(props.Type)
+		end,
 	}, children)
 end
 

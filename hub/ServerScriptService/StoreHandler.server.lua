@@ -20,16 +20,29 @@ Players.PlayerAdded:connect(function(player)
 end)
 
 UpdateCosmetics.OnServerEvent:connect(function(player, itemIndex)
-	if not playerOwnsCosmetic(player, itemIndex) then
-		warn("player doesn't own cosmetic they're equipping")
-		return
-	end
+	local data, dataStore = Data.GetPlayerData(player, "Cosmetics")
 
-	local cosmetic = assert(Cosmetics.Cosmetics[itemIndex], "equipping non-existent cosmetic!")
-	local _, dataStore = Data.GetPlayerData(player, "Cosmetics")
-	dataStore:Update(function(data)
-		data.Equipped[cosmetic.Type] = itemIndex
-		UpdateCosmetics:FireClient(player, nil, data.Equipped)
-		return data
-	end)
+	if type(itemIndex) == "string" then
+		if data.Equipped[itemIndex] then
+			dataStore:Update(function(data)
+				data.Equipped[itemIndex] = nil
+				UpdateCosmetics:FireClient(player, nil, data.Equipped)
+				return data
+			end)
+		end
+	else
+		if not playerOwnsCosmetic(player, itemIndex) then
+			warn("player doesn't own cosmetic they're equipping")
+			return
+		end
+
+		local cosmetic = assert(Cosmetics.Cosmetics[itemIndex], "equipping non-existent cosmetic!")
+		if data.Equipped[cosmetic.Type] ~= itemIndex then
+			dataStore:Update(function(data)
+				data.Equipped[cosmetic.Type] = itemIndex
+				UpdateCosmetics:FireClient(player, nil, data.Equipped)
+				return data
+			end)
+		end
+	end
 end)

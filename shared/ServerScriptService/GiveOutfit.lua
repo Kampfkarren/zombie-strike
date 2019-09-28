@@ -87,7 +87,6 @@ local function equipCosmetic(player, character, equippable, maid)
 		end)
 end
 
--- TODO: Check for limbs here for bundle armor/helmets
 local function equip(player, character, equippable, maid)
 	return equipCosmetic(player, character, equippable, maid)
 		:andThen(function(cosmeticEquipped)
@@ -134,7 +133,22 @@ local function giveOutfit(player, character)
 
 	return Promise.all({
 		equip(player, character, Armor, maid),
-		equip(player, character, Helmet, maid),
+		equip(player, character, Helmet, maid):andThen(function(health)
+			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
+				local face = cosmetics.Equipped.Face
+				if face then
+					character.Head.face.Transparency = 1
+
+					local face = Cosmetics.Cosmetics[face].Instance:Clone()
+					face.Parent = character.Head
+					maid:GiveTask(face)
+				else
+					character.Head.face.Transparency = 0
+				end
+			end):andThen(function()
+				return health
+			end)
+		end),
 		equipGun(player, character, maid),
 		Data.GetPlayerDataAsync(player, "Level"):andThen(XP.HealthForLevel),
 		Promise.promisify(Settings.GetSetting)("Skin Tone", player)
