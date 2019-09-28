@@ -23,7 +23,7 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
-local DEBUG = true
+local DEBUG = false
 
 local function debug(message)
 	if DEBUG then
@@ -149,17 +149,35 @@ local function equip(player, character, equippable, maid)
 		end)
 end
 
+local function equipArmor(player, character)
+	local maid = Maid.new(true)
+
+	local armor = Data.GetPlayerDataAsync(player, "Armor")
+	local cosmetics = Data.GetPlayerDataAsync(player, "Cosmetics")
+
+	return Promise.all({ armor, cosmetics }):andThen(function(results)
+		local armor, cosmetics = unpack(results)
+		return armor.UUID
+			.. "/" .. tostring(cosmetics.Equipped.Armor)
+			.. "/" .. tostring(armor.Upgrades)
+	end), function()
+		return equip(player, character, Armor, maid), maid
+	end
+end
+
 local function equipGun(player, character)
 	local maid = Maid.new(true)
 
 	local cosmetics = Data.GetPlayerDataAsync(player, "Cosmetics")
 	local weapon = Data.GetPlayerDataAsync(player, "Weapon")
+	local armorStable = equipArmor(player, character)
 
-	return Promise.all({ weapon, cosmetics }):andThen(function(results)
-		local weapon, cosmetics = unpack(results)
+	return Promise.all({ weapon, cosmetics, armorStable }):andThen(function(results)
+		local weapon, cosmetics, armorStable = unpack(results)
 		return weapon.UUID
 			.. "/" .. tostring(cosmetics.Equipped.Particle)
 			.. "/" .. tostring(weapon.Upgrades)
+			.. "/" .. armorStable
 	end), function()
 		return weapon:andThen(function(data)
 			return Promise.async(function(resolve)
@@ -196,22 +214,6 @@ local function equipGun(player, character)
 				end
 			end)
 		end), maid
-	end
-end
-
-local function equipArmor(player, character)
-	local maid = Maid.new(true)
-
-	local armor = Data.GetPlayerDataAsync(player, "Armor")
-	local cosmetics = Data.GetPlayerDataAsync(player, "Cosmetics")
-
-	return Promise.all({ armor, cosmetics }):andThen(function(results)
-		local armor, cosmetics = unpack(results)
-		return armor.UUID
-			.. "/" .. tostring(cosmetics.Equipped.Armor)
-			.. "/" .. tostring(armor.Upgrades)
-	end), function()
-		return equip(player, character, Armor, maid), maid
 	end
 end
 

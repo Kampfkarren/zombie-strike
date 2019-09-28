@@ -189,5 +189,5 @@ return function(lootButton, LootInfo, loot, callback)
 	maid:GiveTask(lootButton.SelectionLost:connect(unhover))
 	maid:GiveTask(unhover)
 
-	return maid
+	return maid, hover
 end

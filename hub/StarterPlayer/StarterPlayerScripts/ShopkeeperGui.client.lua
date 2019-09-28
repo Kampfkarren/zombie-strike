@@ -117,7 +117,7 @@ local function updateInventory(inventory)
 			previewItem.Upgrades = previewItem.Upgrades + 1
 		end
 
-		contents:GiveTask(LootInfoButton(button, Shopkeeper.LootInfo.Inner, previewItem, function(hovered)
+		local maid, hover = LootInfoButton(button, Shopkeeper.LootInfo.Inner, previewItem, function(hovered)
 			if hovered then
 				hoverStack[item] = true
 
@@ -137,7 +137,9 @@ local function updateInventory(inventory)
 					Shopkeeper.LootInfo.Buttons.Visible = true
 				end
 			end
-		end))
+		end)
+
+		contents:GiveTask(maid)
 
 		local function activate()
 			-- TODO: Remove this entirely for gamepad, instead just press buttons
@@ -183,6 +185,7 @@ local function updateInventory(inventory)
 		button.Parent = Shopkeeper.Contents
 
 		if selectNext == index then
+			hover()
 			activate()
 			currentLootInfo.Visible = true
 			selectNext = nil
