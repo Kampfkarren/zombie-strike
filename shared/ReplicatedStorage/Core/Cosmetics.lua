@@ -172,6 +172,18 @@ Cosmetics.Cosmetics = {
 		Type = "Face",
 		Instance = Items.Face_Zorgo.Face,
 	},
+
+	{
+		Name = "Monarch Butterfly Smile",
+		Type = "Face",
+		Instance = Items.Face_Butterfly.Face,
+	},
+
+	{
+		Name = "Yum",
+		Type = "Face",
+		Instance = Items.Face_Yum.Face,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
