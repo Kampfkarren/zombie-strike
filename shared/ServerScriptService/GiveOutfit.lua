@@ -192,7 +192,7 @@ local function giveOutfit(player, character)
 				local particle = cosmetics.Equipped.Particle
 				if particle then
 					local particle = Cosmetics.Cosmetics[particle].Instance:Clone()
-					particle.Parent = gun.PrimaryPart.Muzzle
+					particle.Parent = gun.PrimaryPart
 					maid:GiveTask(particle)
 				end
 			end)
