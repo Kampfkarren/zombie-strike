@@ -59,7 +59,7 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 	end
 end)
 
-REMOTES.Hit.OnServerEvent:connect(function(player, hit, index)
+local function hit(player, hit, index)
 	spawn(function() -- spawn to avoid race conditions
 		local shot = shots[player]
 
@@ -127,9 +127,11 @@ REMOTES.Hit.OnServerEvent:connect(function(player, hit, index)
 			end
 		end
 	end)
-end)
+end
 
-REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions)
+-- REMOTES.Hit.OnServerEvent:connect(hit)
+
+REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 	if shots[player] then
 		shots[player] = nil
 	end
@@ -167,6 +169,10 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions)
 				end
 			end
 		end
+	end
+
+	for _, hitMark in pairs(hits) do
+		hit(player, unpack(hitMark))
 	end
 end)
 

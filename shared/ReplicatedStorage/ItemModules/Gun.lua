@@ -199,6 +199,8 @@ function module.Create(_, item)
 		local position = muzzle.WorldPosition
 		local directions = {}
 
+		local hits = {}
+
 		for i = 1, config.ShotSize do
 			local spread = config.Spread * 10
 			local cframe = CFrame.new(position, MOUSE.WorldPosition)
@@ -224,7 +226,8 @@ function module.Create(_, item)
 				if DAMAGE:PlayerCanDamage(PLAYER, humanoid) then
 					-- local damage = DAMAGE:Calculate(item, hit, position)
 					EVENTS.Hitmarker:Fire(hit.Name == "Head", pos)
-					REMOTES.Hit:FireServer(hit, i)
+					-- REMOTES.Hit:FireServer(hit, i)
+					table.insert(hits, { hit, i })
 				end
 			end
 		end
@@ -237,7 +240,7 @@ function module.Create(_, item)
 
 		EVENTS.Gun:Fire("Update", ammo)
 		EFFECTS:Effect("Shoot", item, position, directions, ammo)
-		REMOTES.Shoot:FireServer(position, directions)
+		REMOTES.Shoot:FireServer(position, directions, hits)
 
 		EVENTS.Recoil:Fire(Vector3.new(math.random(-config.Recoil, config.Recoil) / 4, 0, math.random(config.Recoil / 2, config.Recoil)))
 	end
