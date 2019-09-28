@@ -13,7 +13,7 @@ Turret.Name = "Shooter Zombie"
 
 Turret.Scaling = {
 	Damage = {
-		Base = 10,
+		Base = 5,
 		Scale = 1.15,
 	},
 
