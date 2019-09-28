@@ -22,6 +22,14 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
+local DEBUG = true
+
+local function debug(message)
+	if DEBUG then
+		print("👚 " .. message)
+	end
+end
+
 local function getLimb(thing)
 	local success, limb = pcall(function()
 		return Enum.BodyPartR15[thing.Name]
@@ -138,9 +146,17 @@ local function equip(player, character, equippable, maid)
 		end)
 end
 
-local function equipGun(player, character, maid)
-	return Data.GetPlayerDataAsync(player, "Weapon")
-		:andThen(function(data)
+local function equipGun(player, character)
+	local maid = Maid.new(true)
+
+	local cosmetics = Data.GetPlayerDataAsync(player, "Cosmetics")
+	local weapon = Data.GetPlayerDataAsync(player, "Weapon")
+
+	return Promise.all({ weapon, cosmetics }):andThen(function(results)
+		local weapon, cosmetics = unpack(results)
+		return weapon.UUID .. "/" .. tostring(cosmetics.Equipped.Particle)
+	end), function()
+		return weapon:andThen(function(data)
 			return Promise.async(function(resolve)
 				local gun = Data.GetModel(data)
 				gun.Name = "Gun"
@@ -163,19 +179,50 @@ local function equipGun(player, character, maid)
 				Equip(gun)
 				resolve(gun)
 			end)
-		end)
+		end):andThen(function(gun)
+			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
+				local particleIndex = cosmetics.Equipped.Particle
+				if particleIndex then
+					print("particel index", Cosmetics.Cosmetics[particleIndex].Name)
+					for _, particle in pairs(Cosmetics.Cosmetics[particleIndex].Instance:GetChildren()) do
+						local particle = particle:Clone()
+						particle.Parent = gun.PrimaryPart
+						maid:GiveTask(particle)
+					end
+				end
+			end)
+		end), maid
+	end
 end
 
-local function giveOutfit(player, character)
+local function equipArmor(player, character)
 	local maid = Maid.new(true)
 
-	return Promise.all({
-		-- Equip armor
-		equip(player, character, Armor, maid),
+	local armor = Data.GetPlayerDataAsync(player, "Armor")
+	local cosmetics = Data.GetPlayerDataAsync(player, "Cosmetics")
 
-		-- Equip helmet and face
-		equip(player, character, Helmet, maid):andThen(function(health)
-			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
+	return Promise.all({ armor, cosmetics }):andThen(function(results)
+		local armor, cosmetics = unpack(results)
+		return armor.UUID .. "/" .. tostring(cosmetics.Equipped.Helmet)
+	end), function()
+		return equip(player, character, Armor, maid), maid
+	end
+end
+
+local function equipHelmet(player, character)
+	local maid = Maid.new(true)
+
+	local helmet = Data.GetPlayerDataAsync(player, "Helmet")
+	local cosmetics = Data.GetPlayerDataAsync(player, "Cosmetics")
+
+	return Promise.all({ helmet, cosmetics }):andThen(function(results)
+		local helmet, cosmetics = unpack(results)
+		return helmet.UUID
+			.. "/" .. tostring(cosmetics.Equipped.Face)
+			.. "/" .. tostring(cosmetics.Equipped.Helmet)
+	end), function()
+		return equip(player, character, Helmet, maid):andThen(function(health)
+			return cosmetics:andThen(function(cosmetics)
 				local faceIndex = cosmetics.Equipped.Face
 				if faceIndex then
 					local face = character.Head:FindFirstChildOfClass("Decal")
@@ -195,51 +242,119 @@ local function giveOutfit(player, character)
 			end):andThen(function()
 				return health
 			end)
-		end),
+		end), maid
+	end
+end
 
-		-- Equip gun
-		equipGun(player, character, maid):andThen(function(gun)
-			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
-				local particleIndex = cosmetics.Equipped.Particle
-				if particleIndex then
-					for _, particle in pairs(Cosmetics.Cosmetics[particleIndex].Instance:GetChildren()) do
-						local particle = particle:Clone()
-						particle.Parent = gun.PrimaryPart
-						maid:GiveTask(particle)
-					end
-				end
+local function equipSkinTone(player, character)
+	local tone = Promise.promisify(Settings.GetSetting)("Skin Tone", player)
+
+	return tone, function()
+		return tone:andThen(function(tone)
+			return Promise.async(function(resolve)
+				local description = Instance.new("HumanoidDescription")
+				description.LeftArmColor = tone
+				description.LeftLegColor = tone
+				description.RightArmColor = tone
+				description.RightLegColor = tone
+				description.HeadColor = tone
+				character.Humanoid:ApplyDescription(description)
+				resolve()
 			end)
-		end),
+		end)
+	end
+end
 
-		-- Get XP health
-		Data.GetPlayerDataAsync(player, "Level"):andThen(XP.HealthForLevel),
+local function giveLevel(player)
+	local level = Data.GetPlayerDataAsync(player, "Level")
 
-		-- Set skin tone
-		Promise.promisify(Settings.GetSetting)("Skin Tone", player)
-			:andThen(function(tone)
-				return Promise.async(function(resolve)
-					local description = Instance.new("HumanoidDescription")
-					description.LeftArmColor = tone
-					description.LeftLegColor = tone
-					description.RightArmColor = tone
-					description.RightLegColor = tone
-					description.HeadColor = tone
-					character.Humanoid:ApplyDescription(description)
-					resolve()
-				end)
-			end)
-	}):andThen(function(healths)
+	return level, function()
+		return level:andThen(XP.HealthForLevel)
+	end
+end
+
+local outfitSteps = {
+	Gun = equipGun,
+	Armor = equipArmor,
+	Helmet = equipHelmet,
+	SkinTone = equipSkinTone,
+	Level = giveLevel,
+}
+
+local function giveOutfit(player, character)
+	local results = {}
+	local state = {}
+	local steps = {}
+
+	local function recalculateHealth()
 		local health = 0
 
-		for _, add in pairs(healths) do
-			if add then
-				health = health + add
+		for _, result in pairs(results) do
+			if result.health then
+				health = health + result.health
 			end
 		end
 
 		character.Humanoid.MaxHealth = health
 		character.Humanoid.Health = health
-	end), maid
+	end
+
+	for stepName, step in pairs(outfitSteps) do
+		local stablePromise, exec = step(player, character)
+
+		table.insert(
+			steps,
+			stablePromise:andThen(function(stable)
+				debug(("initial stable: %s: %s"):format(tostring(stepName), tostring(stable)))
+				state[stepName] = stable
+
+				local completionPromise, maid = exec()
+				return completionPromise:andThen(function(health)
+					results[stepName] = {
+						health = health,
+						maid = maid,
+					}
+				end)
+			end)
+		)
+	end
+
+	return Promise.all(steps):andThen(function()
+		recalculateHealth()
+
+		return function()
+			local steps = {}
+
+			for stepName, currentStable in pairs(state) do
+				local step = outfitSteps[stepName]
+				local stablePromise, exec = step(player, character)
+
+				table.insert(steps, stablePromise:andThen(function(stable)
+					if stable == currentStable then
+						debug(("%s didn't change (%s)"):format(stepName, tostring(stable)))
+					else
+						debug(("%s changed (%s -> %s)"):format(stepName, tostring(currentStable), tostring(stable)))
+						state[stepName] = stable
+
+						local maid = results[stepName].maid
+						if maid then
+							maid:DoCleaning()
+						end
+
+						local completionPromise, maid = exec()
+						return completionPromise:andThen(function(health)
+							results[stepName] = {
+								health = health,
+								maid = maid,
+							}
+						end)
+					end
+				end))
+			end
+
+			return Promise.all(steps):andThen(recalculateHealth)
+		end
+	end)
 end
 
 return giveOutfit

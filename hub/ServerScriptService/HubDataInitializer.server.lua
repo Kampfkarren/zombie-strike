@@ -6,7 +6,6 @@ local ServerStorage = game:GetService("ServerStorage")
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local GiveOutfit = require(ServerScriptService.Shared.GiveOutfit)
-local inspect = require(ReplicatedStorage.Core.inspect)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Settings = require(ReplicatedStorage.Core.Settings)
 
@@ -69,25 +68,29 @@ Players.PlayerAdded:connect(function(player)
 
 	playerData.Parent = player
 
-	local currentMaid, currentRefresh
+	local updateOutfit, currentRefresh
 
 	local function refreshCharacter()
 		if not player.Character then return end
-
-		if currentMaid then
-			currentMaid:DoCleaning()
-		end
+		if not updateOutfit then return end
 
 		if currentRefresh then
 			currentRefresh:cancel()
 		end
 
-		currentRefresh, currentMaid = GiveOutfit(player, player.Character)
+		currentRefresh = updateOutfit:andThen(function(refresh)
+			refresh()
+		end)
 	end
 
-	Settings.HookSetting("Skin Tone", refreshCharacter, player)
+	player.CharacterAdded:connect(function(character)
+		updateOutfit = GiveOutfit(player, character)
+		updateOutfit:andThen(function(refresh)
+			refresh()
+		end)
+	end)
 
-	player.CharacterAdded:connect(refreshCharacter)
+	Settings.HookSetting("Skin Tone", refreshCharacter, player)
 
 	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
 	local function updateInventory(inventory)
