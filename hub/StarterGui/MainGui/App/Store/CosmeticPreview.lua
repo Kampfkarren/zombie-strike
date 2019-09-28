@@ -50,7 +50,14 @@ local function getDummyFor(instance)
 
 	if instance.ItemType.Value == "BundleSimple" then
 		local contents = instance.Contents.Armor:GetChildren()
-		table.insert(contents, instance.Contents.Helmet)
+
+		if instance.Contents.Helmet:IsA("Folder") then
+			for _, helmet in pairs(instance.Contents.Helmet:GetChildren()) do
+				table.insert(contents, helmet)
+			end
+		else
+			table.insert(contents, instance.Contents.Helmet)
+		end
 
 		for _, clothing in pairs(contents) do
 			local clothing = clothing:Clone()

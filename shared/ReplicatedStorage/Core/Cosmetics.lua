@@ -46,7 +46,11 @@ local cosmeticType = t.array(t.union(
 		Index = t.number,
 		Name = t.string,
 		Type = t.literal("Helmet"),
-		Instance = t.union(t.instanceIsA("Accessory"), t.instanceIsA("BasePart")),
+		Instance = t.union(
+			t.instanceIsA("Accessory"),
+			t.instanceIsA("Folder"),
+			t.instanceIsA("BasePart")
+		),
 		ParentType = t.union(
 			t.literal("LowTier"),
 			t.literal("HighTier")
@@ -184,6 +188,12 @@ Cosmetics.Cosmetics = {
 		Type = "Face",
 		Instance = Items.Face_Yum.Face,
 	},
+
+	{
+		Name = "Light Dominus: the God",
+		Type = "HighTier",
+		Instance = Items.Bundle_God1,
+	},
 }
 
 for index, item in ipairs(Cosmetics.Cosmetics) do
@@ -263,6 +273,6 @@ function Cosmetics.GetStoreItems()
 	return contents
 end
 
-assert(cosmeticType(Cosmetics.Cosmetics), inspect(Cosmetics.Cosmetics))
+assert(cosmeticType(Cosmetics.Cosmetics))
 
 return Cosmetics

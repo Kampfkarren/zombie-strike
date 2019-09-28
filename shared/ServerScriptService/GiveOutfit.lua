@@ -76,6 +76,12 @@ local function equipModelThing(thing, character, maid)
 					ReplicatedStorage.Dummy.Head:Clone()
 				)
 			end)
+	elseif thing.Name == "Helmet" and thing:IsA("Folder") then
+		for _, thing in pairs(thing:GetChildren()) do
+			local thing = thing:Clone()
+			thing.Parent = character
+			maid:GiveTask(thing)
+		end
 	else
 		local limb = getLimb(thing)
 		if limb then
