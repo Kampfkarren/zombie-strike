@@ -95,7 +95,6 @@ local function updateEquipped()
 		end
 	end
 
-	-- TODO: Cosmetics here
 	updateEquip(Loadout.Armor.Armor, "EquippedArmor")
 	updateEquip(Loadout.Helmet.Helmet, "EquippedHelmet")
 	updateEquip(Loadout.Weapon, "EquippedWeapon")
