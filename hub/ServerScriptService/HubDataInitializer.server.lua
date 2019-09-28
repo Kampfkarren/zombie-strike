@@ -98,7 +98,10 @@ Players.PlayerAdded:connect(function(player)
 		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
 	end
 
-	inventoryStore:OnUpdate(updateInventory)
+	inventoryStore:OnUpdate(function(inventory)
+		updateInventory(inventory)
+		refreshCharacter()
+	end)
 	updateInventory(current)
 
 	local function updateEquipment(anUpdate)

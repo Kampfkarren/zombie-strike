@@ -10,6 +10,7 @@ local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local Settings = require(ReplicatedStorage.Core.Settings)
+local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 local XP = require(ReplicatedStorage.Core.XP)
 
 local Armor = {
@@ -22,7 +23,7 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
-local DEBUG = false
+local DEBUG = true
 
 local function debug(message)
 	if DEBUG then
@@ -141,7 +142,9 @@ local function equip(player, character, equippable, maid)
 						equipModel(item, character, maid)
 					end
 
-					return equippable.Health(equipped.Level, equipped.Rarity)
+					local health = equippable.Health(equipped.Level, equipped.Rarity)
+					health = health + Upgrades.GetArmorBuff(health, equipped.Upgrades)
+					return health
 				end)
 		end)
 end
@@ -154,7 +157,9 @@ local function equipGun(player, character)
 
 	return Promise.all({ weapon, cosmetics }):andThen(function(results)
 		local weapon, cosmetics = unpack(results)
-		return weapon.UUID .. "/" .. tostring(cosmetics.Equipped.Particle)
+		return weapon.UUID
+			.. "/" .. tostring(cosmetics.Equipped.Particle)
+			.. "/" .. tostring(weapon.Upgrades)
 	end), function()
 		return weapon:andThen(function(data)
 			return Promise.async(function(resolve)
@@ -202,7 +207,9 @@ local function equipArmor(player, character)
 
 	return Promise.all({ armor, cosmetics }):andThen(function(results)
 		local armor, cosmetics = unpack(results)
-		return armor.UUID .. "/" .. tostring(cosmetics.Equipped.Armor)
+		return armor.UUID
+			.. "/" .. tostring(cosmetics.Equipped.Armor)
+			.. "/" .. tostring(armor.Upgrades)
 	end), function()
 		return equip(player, character, Armor, maid), maid
 	end
@@ -219,6 +226,7 @@ local function equipHelmet(player, character)
 		return helmet.UUID
 			.. "/" .. tostring(cosmetics.Equipped.Face)
 			.. "/" .. tostring(cosmetics.Equipped.Helmet)
+			.. "/" .. tostring(helmet.Upgrades)
 	end), function()
 		return equip(player, character, Helmet, maid):andThen(function(health)
 			return cosmetics:andThen(function(cosmetics)
