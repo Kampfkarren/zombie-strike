@@ -121,4 +121,6 @@ Players.PlayerAdded:connect(function(player)
 	for equipped in pairs(Data.Equippable) do
 		DataStore2("Equipped" .. equipped, player):OnUpdate(updateEquipment)
 	end
+
+	DataStore2("Cosmetics", player):OnUpdate(refreshCharacter)
 end)
