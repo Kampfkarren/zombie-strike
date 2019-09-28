@@ -22,7 +22,7 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
-local DEBUG = true
+local DEBUG = false
 
 local function debug(message)
 	if DEBUG then
