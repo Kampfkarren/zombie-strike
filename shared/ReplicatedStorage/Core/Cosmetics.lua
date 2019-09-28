@@ -17,7 +17,7 @@ local cosmeticType = t.array(t.union(
 		Index = t.number,
 		Name = t.string,
 		Type = t.literal("Particle"),
-		Instance = t.instanceIsA("ParticleEmitter"),
+		Instance = t.instanceIsA("Folder"),
 		Image = t.instanceIsA("Decal"),
 	}),
 
@@ -78,7 +78,7 @@ Cosmetics.Cosmetics = {
 	{
 		Name = "Fire",
 		Type = "Particle",
-		Instance = Items.Particle_Fire.Fire,
+		Instance = Items.Particle_Fire.Contents,
 		Image = Items.Particle_Fire.Image,
 	},
 

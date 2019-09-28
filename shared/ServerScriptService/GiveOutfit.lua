@@ -189,11 +189,13 @@ local function giveOutfit(player, character)
 		-- Equip gun
 		equipGun(player, character, maid):andThen(function(gun)
 			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
-				local particle = cosmetics.Equipped.Particle
-				if particle then
-					local particle = Cosmetics.Cosmetics[particle].Instance:Clone()
-					particle.Parent = gun.PrimaryPart
-					maid:GiveTask(particle)
+				local particleIndex = cosmetics.Equipped.Particle
+				if particleIndex then
+					for _, particle in pairs(Cosmetics.Cosmetics[particleIndex].Instance:GetChildren()) do
+						local particle = particle:Clone()
+						particle.Parent = gun.PrimaryPart
+						maid:GiveTask(particle)
+					end
 				end
 			end)
 		end),
