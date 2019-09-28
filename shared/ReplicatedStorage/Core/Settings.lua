@@ -29,6 +29,21 @@ Settings.Settings = {
 			Color3.fromRGB(141, 85, 36),
 		},
 	},
+
+	{
+		Name = "Music",
+		Default = "On",
+
+		Choices = {
+			"On",
+			"Off",
+		},
+
+		Values = {
+			1,
+			0,
+		},
+	},
 }
 
 function Settings.GetSettingIndex(settingName, player)
