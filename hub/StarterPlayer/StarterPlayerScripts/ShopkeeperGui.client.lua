@@ -11,6 +11,7 @@ local Maid = require(ReplicatedStorage.Core.Maid)
 local PreventNoobPlay = require(ReplicatedStorage.Libraries.PreventNoobPlay)
 local SellCost = require(ReplicatedStorage.Libraries.SellCost)
 local State = require(ReplicatedStorage.State)
+local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local ItemTemplate = ReplicatedStorage.ItemTemplate
@@ -39,6 +40,14 @@ local tweenOpen = TweenService:Create(
 	{ Position = UDim2.new(0.5, 0, 0.5, 0) }
 )
 
+local function copy(list)
+	local copy = {}
+	for index, value in pairs(list) do
+		copy[index] = value
+	end
+	return copy
+end
+
 local function closeTouch()
 	if not touching then return end
 	touching = false
@@ -60,6 +69,7 @@ end)
 ShopkeeperRange.Touched:connect(function() end)
 
 local contents = Maid.new()
+local selectNext
 
 local function updateInventory(inventory)
 	if inventory == nil then return end
@@ -82,7 +92,14 @@ local function updateInventory(inventory)
 
 	contents:GiveTask(Shopkeeper.LootInfo.Buttons.Sell.MouseButton1Click:connect(function()
 		if currentlySelected then
+			selectNext = currentlySelected
 			ReplicatedStorage.Remotes.Sell:FireServer(currentlySelected)
+		end
+	end))
+
+	contents:GiveTask(Shopkeeper.LootInfo.Buttons.Upgrade.MouseButton1Click:connect(function()
+		if currentlySelected then
+			ReplicatedStorage.Remotes.Upgrade:FireServer(currentlySelected)
 		end
 	end))
 
@@ -91,7 +108,16 @@ local function updateInventory(inventory)
 		local color = Loot.Rarities[item.Rarity].Color
 		button.ImageColor3 = color
 		ViewportFramePreview(button.ViewportFrame, Data.GetModel(item))
-		contents:GiveTask(LootInfoButton(button, Shopkeeper.LootInfo.Inner, item, function(hovered)
+
+		local isEquipped = equipped[index] == true
+		local previewItem = item
+
+		if isEquipped then
+			previewItem = copy(item)
+			previewItem.Upgrades = previewItem.Upgrades + 1
+		end
+
+		contents:GiveTask(LootInfoButton(button, Shopkeeper.LootInfo.Inner, previewItem, function(hovered)
 			if hovered then
 				hoverStack[item] = true
 
@@ -113,11 +139,8 @@ local function updateInventory(inventory)
 			end
 		end))
 
-		local isEquipped = equipped[index] == true
-
-		button.MouseButton1Click:connect(function()
+		local function activate()
 			-- TODO: Remove this entirely for gamepad, instead just press buttons
-			-- TODO: "Are you sure?" for selling
 			currentlySelected = index
 
 			if currentLootInfo then
@@ -131,6 +154,13 @@ local function updateInventory(inventory)
 
 			if not isEquipped then
 				Shopkeeper.LootInfo.Buttons.Sell.Label.Text = "SELL (" .. EnglishNumbers(SellCost(item)) .. "G)"
+			elseif item.Upgrades == Upgrades.MaxUpgrades then
+				Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.new(0.4, 0.4, 0.4)
+				Shopkeeper.LootInfo.Buttons.Upgrade.Label.Text = "MAX UPGRADE"
+			else
+				-- TODO: Not enough gold message
+				Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.fromRGB(32, 146, 81)
+				Shopkeeper.LootInfo.Buttons.Upgrade.Label.Text = "UPGRADE (" .. Upgrades.CostToUpgrade(item) .. "G)"
 			end
 
 			Shopkeeper.LootInfo.Buttons.Sell.Visible = not isEquipped
@@ -139,7 +169,9 @@ local function updateInventory(inventory)
 			Shopkeeper.LootInfo.Buttons.Visible = true
 
 			contents.CurrentLootInfo = currentLootInfo
-		end)
+		end
+
+		button.MouseButton1Click:connect(activate)
 
 		if isEquipped then
 			button.LayoutOrder = -index
@@ -149,6 +181,11 @@ local function updateInventory(inventory)
 
 		contents:GiveTask(button)
 		button.Parent = Shopkeeper.Contents
+
+		if selectNext == index then
+			activate()
+			selectNext = nil
+		end
 	end
 end
 

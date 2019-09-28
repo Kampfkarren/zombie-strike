@@ -11,6 +11,7 @@ local gunMap = {
 	"Rarity",
 	"Bonus",
 	"Model",
+	"Upgrades",
 	"UUID",
 }
 
@@ -20,6 +21,7 @@ local armorMap = {
 	"Name",
 	"Rarity",
 	"Model",
+	"Upgrades",
 	"UUID",
 }
 
@@ -64,6 +66,7 @@ local serializeStruct = t.union(
 		),
 
 		Bonus = t.number,
+		Upgrades = t.number,
 
 		Model = t.number,
 		UUID = t.string,
@@ -77,6 +80,8 @@ local serializeStruct = t.union(
 			t.literal("Armor"),
 			t.literal("Helmet")
 		),
+
+		Upgrades = t.number,
 
 		Model = t.number,
 		UUID = t.string,

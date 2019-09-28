@@ -8,6 +8,7 @@ local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local RuddevConfig = require(ReplicatedStorage.RuddevModules.Config)
+local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local LocalPlayer = Players.LocalPlayer
@@ -86,14 +87,20 @@ local function updateLootInfo(LootInfo, loot)
 		LootInfo.WeaponStats.Visible = false
 		LootInfo.ArmorStats.Visible = true
 
-		local currentHealth, lootHealth
+		local currentHealth, currentUpgrades, lootHealth
+
 		if loot.Type == "Armor" then
 			currentHealth = currentArmorBuff
+			currentUpgrades = currentArmor.Upgrades
 			lootHealth = ArmorScaling.ArmorHealth(loot.Level, loot.Rarity)
 		elseif loot.Type == "Helmet" then
 			currentHealth = currentHelmetBuff
+			currentUpgrades = currentHelmet.Upgrades
 			lootHealth = ArmorScaling.HelmetHealth(loot.Level, loot.Rarity)
 		end
+
+		currentHealth = currentHealth + Upgrades.GetArmorBuff(currentHealth, currentUpgrades)
+		lootHealth = lootHealth + Upgrades.GetArmorBuff(lootHealth, loot.Upgrades)
 
 		changeStat(LootInfo.ArmorStats.Health, lootHealth, currentHealth)
 	else
@@ -110,9 +117,12 @@ local function updateLootInfo(LootInfo, loot)
 			lootDamage = lootDamage * RuddevConfig.GetShotgunShotSize(loot.Level)
 		end
 
-		if currentGun.Type == "Shotgun" then
-			currentGunDamage = currentGunDamage * RuddevConfig.GetShotgunShotSize(currentGun.Level)
+		if currentGunItem.Type == "Shotgun" then
+			currentGunDamage = currentGunDamage * RuddevConfig.GetShotgunShotSize(currentGunItem.Level)
 		end
+
+		currentGunDamage = currentGunDamage + Upgrades.GetDamageBuff(currentGunDamage, currentGunItem.Upgrades)
+		lootDamage = lootDamage + Upgrades.GetDamageBuff(lootDamage, loot.Upgrades)
 
 		changeStat(stats.Damage, lootDamage, currentGunDamage)
 
