@@ -116,15 +116,15 @@ Cosmetics.Distribution = {
 	},
 
 	LowTier = {
-		0,
+		789065538,
 	},
 
 	Face = {
-		0,
+		789066394,
 	},
 
 	Particle = {
-		0,
+		789066975,
 	},
 }
 
