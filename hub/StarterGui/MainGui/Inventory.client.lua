@@ -128,7 +128,7 @@ local function updateInventory(inventory)
 			if not equipped[id] then
 				if hovered then
 					local h, s, v = Color3.toHSV(color)
-					card.ImageColor3 = Color3.fromHSV(h, s, v * 0.8)
+					card.ImageColor3 = Color3.fromHSV(h, s, v * 0.5)
 				else
 					card.ImageColor3 = color
 				end
