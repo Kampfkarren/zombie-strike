@@ -36,7 +36,9 @@ local function Stat(props)
 		TextXAlignment = Enum.TextXAlignment.Left,
 	}
 
+
 	local diff = props.Stat - props.Compare
+	print(diff)
 	local diffText = formatNumber(props.Format, diff)
 
 	local consideredZero = props.Zero or 0
@@ -174,8 +176,8 @@ function LootInfo:render()
 
 		stats.FireRate = e(Stat, {
 			LayoutOrder = 1,
-			Compare = currentGun.FireRate,
-			Stat = loot.FireRate,
+			Compare = math.floor(currentGun.FireRate * 10 + 0.5) / 10,
+			Stat = math.floor(loot.FireRate * 10 + 0.5) / 10,
 			StatName = "RATE",
 			Format = "%.1f",
 			Zero = 0.009999,
@@ -183,8 +185,8 @@ function LootInfo:render()
 
 		stats.CritChance = e(Stat, {
 			LayoutOrder = 2,
-			Compare = currentGun.CritChance * 100,
-			Stat = loot.CritChance * 100,
+			Compare = math.floor(currentGun.CritChance * 100),
+			Stat = math.floor(loot.CritChance * 100),
 			StatName = "CRIT%",
 			Format = "%d%%",
 		})
