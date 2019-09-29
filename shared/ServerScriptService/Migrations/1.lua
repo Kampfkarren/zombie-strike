@@ -40,5 +40,5 @@ return function(player)
 		end
 	end
 
-	inventoryStore:Set(inventory):await()
+	inventoryStore:Set(inventory)
 end

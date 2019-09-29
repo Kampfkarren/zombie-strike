@@ -12,5 +12,5 @@ return function(player)
 		item.Upgrades = 0
 	end
 
-	inventoryStore:Set(inventory):await()
+	inventoryStore:Set(inventory)
 end
