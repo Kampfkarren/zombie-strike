@@ -259,18 +259,18 @@ local function equipSkinTone(player, character)
 	local tone = Promise.promisify(Settings.GetSetting)("Skin Tone", player)
 
 	return tone, function()
+		local maid = Maid.new(true)
+
 		return tone:andThen(function(tone)
-			return Promise.async(function(resolve)
-				local description = Instance.new("HumanoidDescription")
-				description.LeftArmColor = tone
-				description.LeftLegColor = tone
-				description.RightArmColor = tone
-				description.RightLegColor = tone
-				description.HeadColor = tone
-				character.Humanoid:ApplyDescription(description)
-				resolve()
-			end)
-		end)
+			local colors = Instance.new("BodyColors")
+			colors.LeftArmColor3 = tone
+			colors.LeftLegColor3 = tone
+			colors.RightArmColor3 = tone
+			colors.RightLegColor3 = tone
+			colors.HeadColor3 = tone
+			colors.Parent = character
+			maid:GiveTask(colors)
+		end), maid
 	end
 end
 
