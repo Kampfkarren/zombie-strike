@@ -93,6 +93,7 @@ local function updateInventory(inventory)
 	contents:GiveTask(Shopkeeper.LootInfo.Buttons.Sell.MouseButton1Click:connect(function()
 		if currentlySelected then
 			ReplicatedStorage.Remotes.Sell:FireServer(currentlySelected)
+			Shopkeeper.LootInfo.Buttons.Sell.Visible = false
 		end
 	end))
 
@@ -154,14 +155,20 @@ local function updateInventory(inventory)
 
 			Shopkeeper.LootInfo.Inner.Visible = false
 
+			local upgradeCost = Upgrades.CostToUpgrade(item)
+
 			if not isEquipped then
 				Shopkeeper.LootInfo.Buttons.Sell.Label.Text = "SELL (" .. EnglishNumbers(SellCost(item)) .. " G)"
 			elseif item.Upgrades == Upgrades.MaxUpgrades then
 				Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.new(0.4, 0.4, 0.4)
 				Shopkeeper.LootInfo.Buttons.Upgrade.Label.Text = "MAX UPGRADE"
 			else
-				-- TODO: Not enough gold message
-				Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.fromRGB(32, 146, 81)
+				if upgradeCost < LocalPlayer.PlayerData.Gold.Value then
+					Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.fromRGB(32, 146, 81)
+				else
+					Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.new(0.4, 0.4, 0.4)
+				end
+
 				Shopkeeper.LootInfo.Buttons.Upgrade.Label.Text = "UPGRADE (" .. Upgrades.CostToUpgrade(item) .. " G)"
 			end
 
