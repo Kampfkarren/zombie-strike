@@ -151,4 +151,10 @@ return {
 		Type = "LowTier",
 		Instance = Items.Bundle_Valkyrian,
 	},
+
+	{
+		Name = "Skeleton",
+		Type = "LowTier",
+		Instance = Items.Bundle_Skeleton,
+	},
 }
