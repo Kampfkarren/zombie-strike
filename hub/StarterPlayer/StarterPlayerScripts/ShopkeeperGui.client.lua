@@ -113,7 +113,7 @@ local function updateInventory(inventory)
 		local isEquipped = equipped[index] == true
 		local previewItem = item
 
-		if isEquipped then
+		if isEquipped and item.Upgrades < Upgrades.MaxUpgrades then
 			previewItem = copy(item)
 			previewItem.Upgrades = previewItem.Upgrades + 1
 		end
