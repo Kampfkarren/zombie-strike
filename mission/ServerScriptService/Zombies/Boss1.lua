@@ -44,7 +44,7 @@ CityBoss.SlamDamageScale = {
 	[24] = 1500,
 }
 
-CityBoss.Name = "Master Chief"
+CityBoss.Name = "Giga Zombie"
 CityBoss.Model = "Boss"
 
 function CityBoss.new()
