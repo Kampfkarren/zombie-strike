@@ -121,6 +121,7 @@ local function generateLootItem(player)
 			Level = level,
 
 			Bonus = funny,
+			Upgrades = 0,
 
 			Model = getModel(type, rarity),
 			UUID = uuid,
@@ -141,6 +142,8 @@ local function generateLootItem(player)
 			Name = "Poopy",
 			Rarity = rarity,
 			Type = type,
+
+			Upgrades = 0,
 
 			Model = getModel(type, rarity),
 			UUID = uuid,

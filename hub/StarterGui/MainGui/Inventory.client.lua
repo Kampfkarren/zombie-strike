@@ -89,7 +89,7 @@ local function updateEquipped()
 	for newId in pairs(equipped) do
 		local color = Loot.Rarities[currentInventory[newId].Rarity].Color
 		local h, s, v = Color3.toHSV(color)
-		color = Color3.fromHSV(h, s, v * 0.8)
+		color = Color3.fromHSV(h, s, v * 0.5)
 		if cards[newId] then
 			cards[newId].ImageColor3 = color
 		end
@@ -128,7 +128,7 @@ local function updateInventory(inventory)
 			if not equipped[id] then
 				if hovered then
 					local h, s, v = Color3.toHSV(color)
-					card.ImageColor3 = Color3.fromHSV(h, s, v * 0.5)
+					card.ImageColor3 = Color3.fromHSV(h, s, v * 0.8)
 				else
 					card.ImageColor3 = color
 				end
