@@ -113,7 +113,7 @@ function LootInfo:render()
 	if loot.Type == "Helmet" or loot.Type == "Armor" then
 		local healthFunction = ArmorScaling[loot.Type .. "Health"]
 
-		local currentItem = Data.GetLocalPlayerData(loot.Type)
+		local currentItem = self.props.equipment["equipped" .. loot.Type]
 
 		stats.UIGridLayout = e("UIGridLayout", {
 			CellPadding = UDim2.new(0.1, 0, 0.02, 0),
@@ -138,7 +138,7 @@ function LootInfo:render()
 			StatName = "HEALTH",
 		})
 	else
-		local currentGunItem = Data.GetLocalPlayerData("Weapon")
+		local currentGunItem = self.props.equipment.equippedWeapon
 		local currentGun = GunScaling.BaseStats(
 			currentGunItem.Type,
 			currentGunItem.Level,

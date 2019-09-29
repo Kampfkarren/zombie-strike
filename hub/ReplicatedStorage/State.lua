@@ -33,6 +33,10 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 				armor = armor,
 				helmet = helmet,
 				weapon = weapon,
+
+				equippedArmor = currentInventory[armor],
+				equippedHelmet = currentInventory[helmet],
+				equippedWeapon = currentInventory[weapon],
 			}
 		end,
 	}),

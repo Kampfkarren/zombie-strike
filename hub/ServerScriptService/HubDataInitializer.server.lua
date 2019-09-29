@@ -92,18 +92,6 @@ Players.PlayerAdded:connect(function(player)
 
 	Settings.HookSetting("Skin Tone", refreshCharacter, player)
 
-	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
-	local function updateInventory(inventory)
-		-- print(require(game.ReplicatedStorage.Core.inspect)(inventory))
-		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
-	end
-
-	inventoryStore:OnUpdate(function(inventory)
-		updateInventory(inventory)
-		refreshCharacter()
-	end)
-	updateInventory(current)
-
 	local function updateEquipment(anUpdate)
 		local equippedArmor = Data.GetPlayerData(player, "EquippedArmor")
 		local equippedHelmet = Data.GetPlayerData(player, "EquippedHelmet")
@@ -121,6 +109,19 @@ Players.PlayerAdded:connect(function(player)
 			refreshCharacter()
 		end
 	end
+
+	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
+	local function updateInventory(inventory)
+		-- print(require(game.ReplicatedStorage.Core.inspect)(inventory))
+		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
+		updateEquipment()
+	end
+
+	inventoryStore:OnUpdate(function(inventory)
+		updateInventory(inventory)
+		refreshCharacter()
+	end)
+	updateInventory(current)
 
 	updateEquipment()
 

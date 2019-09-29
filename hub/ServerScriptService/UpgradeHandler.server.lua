@@ -28,6 +28,5 @@ ReplicatedStorage.Remotes.Upgrade.OnServerEvent:connect(function(player, index)
 
 		item.Upgrades = item.Upgrades + 1
 		inventoryStore:Set(inventory)
-		print("bought")
 	end
 end)
