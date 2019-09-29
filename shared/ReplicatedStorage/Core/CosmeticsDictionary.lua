@@ -2,6 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Items = ReplicatedStorage.Items
 
+-- DON'T REORDER THIS LIST!
+-- ALWAYS PUT NEW COSMETICS AT THE END!
+-- DATA IS SAVED AS INDEXES!
 return {
 	{
 		Name = "Chill",
