@@ -155,14 +155,14 @@ local function updateInventory(inventory)
 			Shopkeeper.LootInfo.Inner.Visible = false
 
 			if not isEquipped then
-				Shopkeeper.LootInfo.Buttons.Sell.Label.Text = "SELL (" .. EnglishNumbers(SellCost(item)) .. "G)"
+				Shopkeeper.LootInfo.Buttons.Sell.Label.Text = "SELL (" .. EnglishNumbers(SellCost(item)) .. " G)"
 			elseif item.Upgrades == Upgrades.MaxUpgrades then
 				Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.new(0.4, 0.4, 0.4)
 				Shopkeeper.LootInfo.Buttons.Upgrade.Label.Text = "MAX UPGRADE"
 			else
 				-- TODO: Not enough gold message
 				Shopkeeper.LootInfo.Buttons.Upgrade.ImageColor3 = Color3.fromRGB(32, 146, 81)
-				Shopkeeper.LootInfo.Buttons.Upgrade.Label.Text = "UPGRADE (" .. Upgrades.CostToUpgrade(item) .. "G)"
+				Shopkeeper.LootInfo.Buttons.Upgrade.Label.Text = "UPGRADE (" .. Upgrades.CostToUpgrade(item) .. " G)"
 			end
 
 			Shopkeeper.LootInfo.Buttons.Sell.Visible = not isEquipped
