@@ -26,8 +26,10 @@ local difficultyInfo
 
 local roomTypes = {
 	boss = {},
+	bossBefore = {},
 	enemy = {},
 	obby = {},
+	treasure = {},
 }
 
 for _, room in pairs(Rooms:GetChildren()) do
@@ -86,7 +88,10 @@ local function generateDungeon(numRooms)
 		table.insert(rooms, nextRoom)
 	end
 
-	local bossRoom = createRoom(roomTypes.boss[math.random(#roomTypes.boss)], obbyParent, nextRoom)
+	local bossBeforeRoom = createRoom(roomTypes.bossBefore[1], obbyParent, nextRoom)
+	table.insert(rooms, bossBeforeRoom)
+
+	local bossRoom = createRoom(roomTypes.boss[math.random(#roomTypes.boss)], obbyParent, bossBeforeRoom)
 	table.insert(rooms, bossRoom)
 
 	obbyParent.Name = "Rooms"
@@ -267,16 +272,16 @@ local function openNextGate()
 	Debris:AddItem(gate, 4)
 	ReplicatedStorage.Remotes.OpenGate:FireAllClients(room)
 
-	if obbyType == "boss" then
+	if obbyType == "bossBefore" then
 		for timer = 5, 1, -1 do
 			BossTimer.Value = timer
 			wait(1)
 		end
 
 		BossTimer.Value = 0
-		ReplicatedStorage.Remotes.OpenGate:FireAllClients(room, gate.CFrame)
+		-- ReplicatedStorage.Remotes.OpenGate:FireAllClients(room, gate.CFrame)
 
-		startBoss(room)
+		startBoss(rooms[#rooms])
 	end
 end
 

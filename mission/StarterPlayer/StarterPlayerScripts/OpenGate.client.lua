@@ -14,12 +14,6 @@ local SoundGateCity = SoundService.SFX.Gate.City
 
 local CITY_GATE_ROTATE_ANGLE = math.deg(130)
 
-local cityGateChainTween = TweenInfo.new(
-	0.5,
-	Enum.EasingStyle.Quint,
-	Enum.EasingDirection.In
-)
-
 ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 	local gate = room:FindFirstChild("Gate", true)
 
@@ -33,48 +27,26 @@ ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 			return
 		end
 
-		local fixedGate = Instance.new("Model")
-		fixedGate.Parent = room
-
 		local gate = gate:Clone()
-		gate.Parent = fixedGate
 		CollectionService:AddTag(gate, "LocallyCreated")
-		fixedGate.PrimaryPart = gate
-
-		for _, detail in pairs(gate:GetChildren()) do
-			detail.Parent = fixedGate
-		end
-
-		local chains = {}
-
-		for _, thing in pairs(room:GetDescendants()) do
-			if CollectionService:HasTag(thing, "Chain") then
-				TweenService:Create(
-					thing,
-					cityGateChainTween,
-					{ TextureSpeed = 3 }
-				):Play()
-
-				table.insert(chains, thing)
-			end
-		end
+		gate.Parent = Workspace
 
 		local total = 0
 
-		local cframe = gate.CFrame
+		local cframe = gate.PrimaryPart.CFrame
 		local finalCFrame = CFrame.new(
-			gate.Position + Vector3.new(0, 6.5, -2.5)
+			gate.PrimaryPart.Position + Vector3.new(0, 14, -4)
 		) * CFrame.Angles(CITY_GATE_ROTATE_ANGLE, 0, 0)
 
 		local gateOpenConnection do
 			gateOpenConnection = RunService.Heartbeat:connect(function(delta)
 				total = total + delta
-				fixedGate:SetPrimaryPartCFrame(
+				gate:SetPrimaryPartCFrame(
 					cframe:Lerp(
 						finalCFrame,
 						TweenService:GetValue(
 							total / 1.5,
-							Enum.EasingStyle.Sine,
+							Enum.EasingStyle.Quad,
 							Enum.EasingDirection.In
 						)
 					)
@@ -82,14 +54,6 @@ ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 
 				if total >= 1.5 then
 					gateOpenConnection:Disconnect()
-
-					for _, chain in pairs(chains) do
-						TweenService:Create(
-							chain,
-							cityGateChainTween,
-							{ TextureSpeed = 0 }
-						):Play()
-					end
 				end
 			end)
 		end
@@ -101,7 +65,7 @@ ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 	end
 
 	local direction = Camera.CFrame:VectorToObjectSpace(
-		(Camera.CFrame.Position - gate.Position).Unit
+		(Camera.CFrame.Position - gate.PrimaryPart.Position).Unit
 	)
 
 	Shake:Fire(direction * 15)
