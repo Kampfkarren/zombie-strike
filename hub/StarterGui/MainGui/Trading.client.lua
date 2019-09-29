@@ -79,6 +79,7 @@ do
 	local function playerAdded(player)
 		if player == LocalPlayer then return end
 		local playerData = player:WaitForChild("PlayerData")
+		if playerData:WaitForChild("DungeonsPlayed").Value == 0 then return end
 
 		local card = Template:Clone()
 
