@@ -38,7 +38,6 @@ local function Stat(props)
 
 
 	local diff = props.Stat - props.Compare
-	print(diff)
 	local diffText = formatNumber(props.Format, diff)
 
 	local consideredZero = props.Zero or 0
