@@ -26,7 +26,7 @@ return function(position, radius)
 	local lightTween	= TweenService:Create(explosion.PointLight, lightInfo, {Range = 0})
 	lightTween:Play()
 
-	for i = 1, 10 do
+	for _ = 1, 10 do
 		local meteor	= script.Meteor:Clone()
 			meteor.CFrame	= CFrame.new(position)
 			meteor.Parent	= EFFECTS

@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local inspect = require(ReplicatedStorage.Core.inspect)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local Items = ReplicatedStorage.Items

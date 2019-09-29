@@ -18,8 +18,6 @@ local REMOTES	= ReplicatedStorage:WaitForChild("RuddevRemotes")
 local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 	local MOUSE		= require(MODULES:WaitForChild("Mouse"))
 
-local Settings = require(ReplicatedStorage.Core.Settings)
-
 local GUI		= script.Parent
 local MOUSE_GUI	= GUI:WaitForChild("Mouse")
 

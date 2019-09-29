@@ -12,7 +12,6 @@ local PLAYER		= Players.LocalPlayer
 local GUN_MODULE	= require(ReplicatedStorage.ItemModules.Gun)
 local MODULES		= ReplicatedStorage:WaitForChild("RuddevModules")
 	local INPUT			= require(MODULES:WaitForChild("Input"))
-	local MOUSE = require(MODULES.Mouse)
 
 local AutoAim = require(script.Parent.AutoAim)
 

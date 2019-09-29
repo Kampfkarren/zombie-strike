@@ -1,13 +1,10 @@
 -- Services
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 
 -- Constants
 
 local ITEMS = ReplicatedStorage.Items
-
-local Data = require(ReplicatedStorage.Core.Data)
 
 -- Variables
 

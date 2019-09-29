@@ -1,12 +1,8 @@
 -- services
 
-local TweenService	= game:GetService("TweenService")
-local Workspace		= game:GetService("Workspace")
 local Debris		= game:GetService("Debris")
 
 -- constants
-
-local EFFECTS	= Workspace:WaitForChild("Effects")
 
 -- functions
 

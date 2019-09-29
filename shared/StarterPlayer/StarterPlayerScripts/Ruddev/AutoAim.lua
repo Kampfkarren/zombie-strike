@@ -15,7 +15,6 @@ local Config = require(ReplicatedStorage.RuddevModules.Config)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local Mouse = require(ReplicatedStorage.RuddevModules.Mouse)
 local LineOfSight = require(ReplicatedStorage.Libraries.LineOfSight)
-local Settings = require(ReplicatedStorage.Core.Settings)
 
 local CurrentCamera = Workspace.CurrentCamera
 local Zombies = Workspace:WaitForChild("Zombies")

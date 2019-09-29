@@ -12,7 +12,6 @@ local Players = game:GetService("Players")
 local CAMERA = Workspace.CurrentCamera
 local PLAYER = Players.LocalPlayer
 
-local REMOTES = ReplicatedStorage:WaitForChild("RuddevRemotes")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
@@ -132,20 +131,17 @@ INPUT.ActionBegan:connect(function(action, processed)
 	if not processed then
 		if action == "Jump" then
 			if character and humanoid.Health > 0 then
-				if rootPart:FindFirstChild("SpaceshipWeld") then
-				else
-					-- if humanoid.FloorMaterial ~= Enum.Material.Air then
-					-- 	humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-					-- end
-					coroutine.wrap(function()
-						jumping = true
-						while jumping do
-							humanoid.Jump = true
-							wait(0.1)
-						end
-					end)()
-					humanoid.Jump = true
-				end
+				-- if humanoid.FloorMaterial ~= Enum.Material.Air then
+				-- 	humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+				-- end
+				coroutine.wrap(function()
+					jumping = true
+					while jumping do
+						humanoid.Jump = true
+						wait(0.1)
+					end
+				end)()
+				humanoid.Jump = true
 			end
 		end
 	end

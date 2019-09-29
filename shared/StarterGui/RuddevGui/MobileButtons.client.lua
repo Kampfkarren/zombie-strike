@@ -2,7 +2,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
 local Input = require(ReplicatedStorage.RuddevModules.Input)
-local Settings = require(ReplicatedStorage.Core.Settings)
 
 local MobileButtons = script.Parent.MobileButtons
 
