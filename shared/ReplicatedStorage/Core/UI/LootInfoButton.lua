@@ -1,178 +1,65 @@
-local Players = game:GetService("Players")
+-- This is bad code, but LootInfo wasn't turned into a Roact component until later
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
-local Data = require(ReplicatedStorage.Core.Data)
-local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
-local GunScaling = require(ReplicatedStorage.Core.GunScaling)
-local Loot = require(ReplicatedStorage.Core.Loot)
+local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
 local Maid = require(ReplicatedStorage.Core.Maid)
-local RuddevConfig = require(ReplicatedStorage.RuddevModules.Config)
-local Upgrades = require(ReplicatedStorage.Core.Upgrades)
-local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
+local Roact = require(ReplicatedStorage.Vendor.Roact)
+local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
+local State = require(ReplicatedStorage.State)
 
-local LocalPlayer = Players.LocalPlayer
-
-local function formatNumber(format, number)
-	if format then
-		return format:format(number)
-	else
-		return EnglishNumbers(number)
-	end
-end
-
-local function changeStat(statFrame, lootStat, currentStat, format, consizeredZero)
-	consizeredZero = consizeredZero or 0
-
-	local diff = lootStat - currentStat
-
-	local text = formatNumber(format, diff)
-	statFrame.Current.Text = formatNumber(format, lootStat)
-
-	if diff > consizeredZero then
-		statFrame.Diff.Text = "+" .. text
-		statFrame.Diff.TextColor3 = Color3.fromRGB(85, 255, 127)
-	elseif diff < 0 then
-		statFrame.Diff.Text = text
-		statFrame.Diff.TextColor3 = Color3.fromRGB(232, 65, 24)
-	else
-		statFrame.Diff.Text = "+0"
-		statFrame.Diff.TextColor3 = Color3.new(0.8, 0.8, 0.8)
-	end
-end
-
-local function updateLootInfo(LootInfo, loot)
-	if loot.Type ~= "Helmet" and loot.Type ~= "Armor" then
-		for key, value in pairs(GunScaling.BaseStats(loot.Type, loot.Level, loot.Rarity)) do
-			if loot[key] == nil then
-				loot[key] = value
-			end
-		end
-	end
-
-	local currentGunItem = Data.GetLocalPlayerData("Weapon")
-	local currentGun = GunScaling.BaseStats(
-		currentGunItem.Type,
-		currentGunItem.Level,
-		currentGunItem.Rarity
-	)
-
-	local rarity = Loot.Rarities[loot.Rarity]
-
-	if rarity.Color then
-		LootInfo.ViewportFrame.BackgroundColor3 = rarity.Color
-	end
-
-	ViewportFramePreview(LootInfo.ViewportFrame, Data.GetModel(loot))
-
-	LootInfo.Level.Text = "Level " .. loot.Level
-	local playerLevel = LocalPlayer.PlayerData.Level.Value
-
-	if playerLevel >= loot.Level then
-		LootInfo.Level.TextColor3 = Color3.fromRGB(227, 227, 227)
-	else
-		LootInfo.Level.TextColor3 = Color3.fromRGB(214, 48, 49)
-	end
-
-	LootInfo.LootName.Text = loot.Name
-	LootInfo.Rarity.Text = rarity.Name .. " " .. loot.Type
-
-	if loot.Type == "Armor" or loot.Type == "Helmet" then
-		local currentArmor = Data.GetLocalPlayerData("Armor")
-		local currentArmorBuff = ArmorScaling.ArmorHealth(currentArmor.Level, currentArmor.Rarity)
-
-		local currentHelmet = Data.GetLocalPlayerData("Helmet")
-		local currentHelmetBuff = ArmorScaling.HelmetHealth(currentHelmet.Level, currentHelmet.Rarity)
-
-		LootInfo.WeaponStats.Visible = false
-		LootInfo.ArmorStats.Visible = true
-
-		local currentHealth, currentUpgrades, lootHealth
-
-		if loot.Type == "Armor" then
-			currentHealth = currentArmorBuff
-			currentUpgrades = currentArmor.Upgrades
-			lootHealth = ArmorScaling.ArmorHealth(loot.Level, loot.Rarity)
-		elseif loot.Type == "Helmet" then
-			currentHealth = currentHelmetBuff
-			currentUpgrades = currentHelmet.Upgrades
-			lootHealth = ArmorScaling.HelmetHealth(loot.Level, loot.Rarity)
-		end
-
-		currentHealth = currentHealth + Upgrades.GetArmorBuff(currentHealth, currentUpgrades)
-		lootHealth = lootHealth + Upgrades.GetArmorBuff(lootHealth, loot.Upgrades)
-
-		changeStat(LootInfo.ArmorStats.Health, lootHealth, currentHealth)
-	else
-		LootInfo.WeaponStats.Visible = true
-		LootInfo.ArmorStats.Visible = false
-
-		local stats = LootInfo.WeaponStats
-
-		changeStat(stats.MagSize, loot.Magazine, currentGun.Magazine)
-
-		local lootDamage, currentGunDamage = loot.Damage, currentGun.Damage
-
-		if loot.Type == "Shotgun" then
-			lootDamage = lootDamage * RuddevConfig.GetShotgunShotSize(loot.Level)
-		end
-
-		if currentGunItem.Type == "Shotgun" then
-			currentGunDamage = currentGunDamage * RuddevConfig.GetShotgunShotSize(currentGunItem.Level)
-		end
-
-		currentGunDamage = currentGunDamage + Upgrades.GetDamageBuff(currentGunDamage, currentGunItem.Upgrades)
-		lootDamage = lootDamage + Upgrades.GetDamageBuff(lootDamage, loot.Upgrades)
-
-		changeStat(stats.Damage, lootDamage, currentGunDamage)
-
-		changeStat(
-			stats.CritChance,
-			loot.CritChance * 100,
-			currentGun.CritChance * 100,
-			"%d%%",
-			0.99999999
-		)
-
-		changeStat(
-			stats.FireRate,
-			loot.FireRate,
-			currentGun.FireRate,
-			"%.1f",
-			0.00999999
-		)
-	end
-end
+local e = Roact.createElement
 
 local lootInfoStacks = {}
 
-return function(lootButton, LootInfo, loot, callback)
+return function(lootButton, lootInfoUi, loot, callback)
+	lootInfoUi:ClearAllChildren()
+
 	local maid = Maid.new()
 	callback = callback or function() end
 
+	local mounted
+
 	local function lootInfo()
-		updateLootInfo(LootInfo, loot)
+		if mounted then
+			Roact.unmount(mounted)
+		end
+
+		mounted = Roact.mount(e(RoactRodux.StoreProvider, {
+			store = State,
+		}, {
+			e(LootInfo, {
+				Native = {
+					Size = UDim2.new(1, 0, 1, 0),
+				},
+
+				Loot = loot,
+			})
+		}), lootInfoUi)
 	end
 
-	local stack = lootInfoStacks[LootInfo]
+	local stack = lootInfoStacks[lootInfoUi]
 
 	if not stack then
 		stack = {}
-		lootInfoStacks[LootInfo] = stack
+		lootInfoStacks[lootInfoUi] = stack
 	end
 
 	local function hover()
 		stack[lootButton] = true
 		lootInfo()
-		LootInfo.Visible = true
+		lootInfoUi.Visible = true
 		callback(true)
 	end
 
 	local function unhover()
 		stack[lootButton] = nil
 		callback(false)
+		if mounted then
+			Roact.unmount(mounted)
+		end
+
 		if next(stack) == nil then
-			LootInfo.Visible = false
+			lootInfoUi.Visible = false
 		end
 	end
 

@@ -32,7 +32,7 @@ end
 function ViewportFramePreviewComponent:render()
 	self.props.Native[Roact.Ref] = self.frameRef
 
-	return e("ViewportFrame", self.props.Native)
+	return e("ViewportFrame", self.props.Native, self.props[Roact.Children])
 end
 
 function ViewportFramePreviewComponent:didMount()

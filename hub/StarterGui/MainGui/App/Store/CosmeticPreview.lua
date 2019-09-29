@@ -5,7 +5,7 @@ local Workspace = game:GetService("Workspace")
 local Data = require(ReplicatedStorage.Core.Data)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local Promise = require(ReplicatedStorage.Core.Promise)
-local ViewportFramePreviewComponent = require(script.Parent.Parent.ViewportFramePreviewComponent)
+local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Components.ViewportFramePreviewComponent)
 
 local e = Roact.createElement
 
