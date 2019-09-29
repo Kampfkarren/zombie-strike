@@ -145,4 +145,10 @@ return {
 		Type = "HighTier",
 		Instance = Items.Bundle_Thanoid,
 	},
+
+	{
+		Name = "Valkyrian",
+		Type = "LowTier",
+		Instance = Items.Bundle_Valkyrian,
+	},
 }
