@@ -2,159 +2,67 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Items = ReplicatedStorage.Items
 
+local function quick(type, instanceType, patch)
+	return function(name, codename)
+		if codename == nil then
+			codename = name:gsub(" ", "")
+		end
+
+		local data = {
+			Name = name,
+			Type = type,
+		}
+
+		local item = Items[instanceType .. "_" .. codename]
+		patch(data, item)
+		return data
+	end
+end
+
+local face = quick("Face", "Face", function(data, item)
+	data.Instance = item.Face
+end)
+
+local particle = quick("Particle", "Particle", function(data, item)
+	data.Instance = item.Contents
+	data.Image = item.Image
+end)
+
+local lowTier = quick("LowTier", "Bundle", function(data, item)
+	data.Instance = item
+end)
+
+local highTier = quick("HighTier", "Bundle", function(data, item)
+	data.Instance = item
+end)
+
 -- DON'T REORDER THIS LIST!
 -- ALWAYS PUT NEW COSMETICS AT THE END!
 -- DATA IS SAVED AS INDEXES!
 return {
-	{
-		Name = "Chill",
-		Type = "Face",
-		Instance = Items.Face_Chill.Face,
-	},
-
-	{
-		Name = "Doge",
-		Type = "LowTier",
-		Instance = Items.Bundle_Doge,
-	},
-
-	{
-		Name = "Ud'zal",
-		Type = "HighTier",
-		Instance = Items.Bundle_Udzal,
-	},
-
-	{
-		Name = "Fire",
-		Type = "Particle",
-		Instance = Items.Particle_Fire.Contents,
-		Image = Items.Particle_Fire.Image,
-	},
-
-	{
-		Name = "Oof",
-		Type = "LowTier",
-		Instance = Items.Bundle_Oof,
-	},
-
-	{
-		Name = "Balls",
-		Type = "Particle",
-		Instance = Items.Particle_Balls.Contents,
-		Image = Items.Particle_Balls.Image,
-	},
-
-	{
-		Name = "Err",
-		Type = "Face",
-		Instance = Items.Face_Err.Face,
-	},
-
-	{
-		Name = "Shiny Teeth",
-		Type = "Face",
-		Instance = Items.Face_ShinyTeeth.Face,
-	},
-
-	{
-		Name = "Super Super Happy Face",
-		Type = "Face",
-		Instance = Items.Face_DevFace.Face,
-	},
-
-	{
-		Name = "Friendly Smile",
-		Type = "Face",
-		Instance = Items.Face_FriendlySmile.Face,
-	},
-
-	{
-		Name = ":3",
-		Type = "Face",
-		Instance = Items.Face_Cat.Face,
-	},
-
-	{
-		Name = "Prankster",
-		Type = "Face",
-		Instance = Items.Face_Prankster.Face,
-	},
-
-	{
-		Name = "Bandage",
-		Type = "Face",
-		Instance = Items.Face_Bandage.Face,
-	},
-
-	{
-		Name = "Skeptic",
-		Type = "Face",
-		Instance = Items.Face_Skeptic.Face,
-	},
-
-	{
-		Name = "Blizzard Beast Mode",
-		Type = "Face",
-		Instance = Items.Face_BlizzardBeastMode.Face,
-	},
-
-	{
-		Name = "Golden Shiny Teeth",
-		Type = "Face",
-		Instance = Items.Face_GoldenShinyTeeth.Face,
-	},
-
-	{
-		Name = "Goofball",
-		Type = "Face",
-		Instance = Items.Face_Goofball.Face,
-	},
-
-	{
-		Name = "Freckled Cheeks",
-		Type = "Face",
-		Instance = Items.Face_FreckledCheeks.Face,
-	},
-
-	{
-		Name = "Zorgo",
-		Type = "Face",
-		Instance = Items.Face_Zorgo.Face,
-	},
-
-	{
-		Name = "Monarch Butterfly Smile",
-		Type = "Face",
-		Instance = Items.Face_Butterfly.Face,
-	},
-
-	{
-		Name = "Yum",
-		Type = "Face",
-		Instance = Items.Face_Yum.Face,
-	},
-
-	{
-		Name = "Light Dominus: the God",
-		Type = "HighTier",
-		Instance = Items.Bundle_God1,
-	},
-
-	{
-		Name = "Thanoid",
-		Type = "HighTier",
-		Instance = Items.Bundle_Thanoid,
-	},
-
-	{
-		Name = "Valkyrian",
-		Type = "LowTier",
-		Instance = Items.Bundle_Valkyrian,
-	},
-
-	{
-		Name = "Skeleton",
-		Type = "LowTier",
-		Instance = Items.Bundle_Skeleton,
-	},
+	face("Chill"),
+	lowTier("Doge"),
+	highTier("Ud'zal", "Udzal"),
+	particle("Fire"),
+	lowTier("Oof"),
+	particle("Balls"),
+	face("Err"),
+	face("Shiny Teeth"),
+	face("Super Super Happy Face", "DevFace"),
+	face("Friendly Smile"),
+	face(":3", "Cat"),
+	face("Prankster"),
+	face("Bandage"),
+	face("Skeptic"),
+	face("Blizzard Beast Mode"),
+	face("Golden Shiny Teeth"),
+	face("Goofball"),
+	face("Freckled Cheeks"),
+	face("Zorgo"),
+	face("Monarch Butterfly Smile", "Butterfly"),
+	face("Yum"),
+	highTier("Light Dominus: the God", "God1"),
+	highTier("Thanoid"),
+	lowTier("Valkyrian"),
+	lowTier("Skeleton"),
 }
