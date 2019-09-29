@@ -10,6 +10,7 @@ local UserInputService = game:GetService("UserInputService")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
@@ -95,9 +96,12 @@ local function leave()
 	TeleportService:Teleport(HUB_PLACE)
 end
 
-LootResults.Leave.MouseButton1Click:connect(leave)
+LootResults.Minor.Leave.MouseButton1Click:connect(leave)
 
 ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, gold)
+	local clearTime = time()
+	LootResults.Minor.ClearTime.Text = ("%d:%02d"):format(math.floor(clearTime / 60), clearTime % 60)
+
 	LocalPlayer.PlayerGui.RuddevGui.Enabled = false
 
 	for _, frame in pairs(script.Parent.Main:GetChildren()) do
@@ -142,6 +146,14 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 		lootButton.GunName.Text = loot.Name
 		lootButton.Rarity.Text = rarity.Name
 
+		if loot.Type ~= "Helmet" and loot.Type ~= "Armor" then
+			for key, value in pairs(GunScaling.BaseStats(loot.Type, loot.Level, loot.Rarity)) do
+				if loot[key] == nil then
+					loot[key] = value
+				end
+			end
+		end
+
 		ViewportFramePreview(lootButton.ViewportFrame, Data.GetModel(loot))
 		LootInfoButton(lootButton, LootInfo, loot)
 
@@ -153,10 +165,10 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	end
 
 	for timer = 10, 1, -1 do
-		LootResults.Leave.Label.Text = "LEAVE (" .. timer .. ")"
+		LootResults.Minor.Leave.Label.Text = "LEAVE (" .. timer .. ")"
 		wait(1)
 	end
 
-	LootResults.Leave.Label.Text = "LEAVING..."
+	LootResults.Minor.Leave.Label.Text = "LEAVING..."
 	leave()
 end)

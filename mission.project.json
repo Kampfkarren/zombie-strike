@@ -21,6 +21,15 @@
       },
       "Vendor": {
         "$className": "Folder",
+        "Roact": {
+          "$path": "vendor/roact/src"
+        },
+        "RoactRodux": {
+          "$path": "vendor/roact-rodux/lib"
+        },
+        "Rodux": {
+          "$path": "vendor/rodux/lib"
+        },
         "t": {
           "$path": "vendor/t/lib"
         }
