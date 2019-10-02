@@ -63,6 +63,7 @@ function Data.GetPlayerData(player, key)
 
 		-- Check migrations
 		if key ~= "Version" and not migrated[player] then
+			-- TODO: Cancel if the player leaves
 			migrated[player] = Promise.promisify(migrateData)(player)
 			migrated[player]:await()
 		end
