@@ -36,7 +36,6 @@ local function Stat(props)
 		TextXAlignment = Enum.TextXAlignment.Left,
 	}
 
-
 	local diff = props.Stat - props.Compare
 	local diffText = formatNumber(props.Format, diff)
 

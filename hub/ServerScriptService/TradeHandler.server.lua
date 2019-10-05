@@ -178,7 +178,7 @@ end)
 AcceptTrade.OnServerEvent:connect(function(player)
 	local tradeState = tradeStates[player]
 	if not tradeState then
-		warn("no tradeState")
+		warn("AcceptTrade: no tradeState")
 		return
 	end
 
