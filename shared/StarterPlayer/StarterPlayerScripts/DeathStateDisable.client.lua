@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
@@ -27,10 +28,12 @@ end
 LocalPlayer.CharacterAdded:connect(onCharacterAdded)
 onCharacterAdded(LocalPlayer.Character)
 
-repeat
-	local success = pcall(function()
-		game:GetService("StarterGui"):SetCore("ResetButtonCallback", resetBindable)
-	end)
+if ReplicatedStorage.HubWorld.Value then
+	repeat
+		local success = pcall(function()
+			game:GetService("StarterGui"):SetCore("ResetButtonCallback", resetBindable)
+		end)
 
-	RunService.Heartbeat:wait()
-until success
+		RunService.Heartbeat:wait()
+	until success
+end
