@@ -198,6 +198,8 @@ local function spawnBoss(position, room)
 end
 
 local function startBoss(room)
+	DungeonState.CurrentSpawn = assert(room:FindFirstChild("RespawnPoint", true))
+
 	for _, player in pairs(Players:GetPlayers()) do
 		-- TODO: Does this spawn them on top of each other?
 		coroutine.wrap(function()
