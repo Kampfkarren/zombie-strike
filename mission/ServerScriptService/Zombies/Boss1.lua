@@ -37,11 +37,11 @@ CityBoss.SlamCount = {
 }
 
 CityBoss.SlamDamageScale = {
-	[1] = 25,
-	[6] = 45,
-	[12] = 120,
-	[18] = 450,
-	[24] = 1500,
+	[1] = 15,
+	[6] = 27,
+	[12] = 72,
+	[18] = 270,
+	[24] = 900,
 }
 
 CityBoss.Name = "Giga Zombie"
