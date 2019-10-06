@@ -2,6 +2,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 
@@ -162,37 +163,6 @@ function module.Create(_, item)
 		return itemModule.Equipped and canShoot and ammo > 0 and PLAYER.Character.Humanoid.Health > 0
 	end
 
-	local function Reload()
-		if (not reloading) and itemModule.Equipped and ammo < config.Magazine then
-			reloading = true
-			rCancelled = false
-
-			MOUSE.Reticle = "Reloading"
-			REMOTES.Reload:FireServer()
-			EFFECTS:Effect("Reload", item)
-			animations.Reload:Play(0.1, 1, 1/config.ReloadTime)
-
-			local start = tick()
-			local elapsed
-			repeat
-				elapsed = tick() - start
-				RunService.Stepped:wait()
-			until elapsed >= config.ReloadTime or rCancelled or (not itemModule.Equipped)
-
-			animations.Reload:Stop()
-
-			if itemModule.Equipped then
-				if elapsed >= config.ReloadTime then
-					ammo = config.Magazine
-				end
-
-				MOUSE.Reticle = config.Reticle or "Gun"
-				EVENTS.Gun:Fire("Update", ammo)
-			end
-			reloading = false
-		end
-	end
-
 	local function Shoot()
 		ammo = ammo - 1
 		local position = muzzle.WorldPosition
@@ -242,6 +212,43 @@ function module.Create(_, item)
 		REMOTES.Shoot:FireServer(position, directions, hits)
 
 		EVENTS.Recoil:Fire(Vector3.new(math.random(-config.Recoil, config.Recoil) / 4, 0, math.random(config.Recoil / 2, config.Recoil)))
+	end
+
+	local function Reload()
+		if (not reloading) and itemModule.Equipped and ammo < config.Magazine then
+			reloading = true
+			rCancelled = false
+
+			MOUSE.Reticle = "Reloading"
+			REMOTES.Reload:FireServer()
+			EFFECTS:Effect("Reload", item)
+			animations.Reload:Play(0.1, 1, 1/config.ReloadTime)
+
+			local start = tick()
+			local elapsed
+			repeat
+				elapsed = tick() - start
+				RunService.Stepped:wait()
+			until elapsed >= config.ReloadTime or rCancelled or (not itemModule.Equipped)
+
+			animations.Reload:Stop()
+
+			if itemModule.Equipped then
+				if elapsed >= config.ReloadTime then
+					ammo = config.Magazine
+				end
+
+				MOUSE.Reticle = config.Reticle or "Gun"
+				EVENTS.Gun:Fire("Update", ammo)
+			end
+			reloading = false
+
+			spawn(function()
+				if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+					itemModule:Activate()
+				end
+			end)
+		end
 	end
 
 	-- module functions
