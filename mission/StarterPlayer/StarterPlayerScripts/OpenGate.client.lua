@@ -7,6 +7,7 @@ local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local Maid = require(ReplicatedStorage.Core.Maid)
 
 local Camera = Workspace.CurrentCamera
 local Shake = ReplicatedStorage.RuddevEvents.Shake
@@ -38,24 +39,35 @@ ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
 			gate.PrimaryPart.Position + Vector3.new(0, 14, -4)
 		) * CFrame.Angles(CITY_GATE_ROTATE_ANGLE, 0, 0)
 
-		local gateOpenConnection do
-			gateOpenConnection = RunService.Heartbeat:connect(function(delta)
-				total = total + delta
-				gate:SetPrimaryPartCFrame(
-					cframe:Lerp(
-						finalCFrame,
-						TweenService:GetValue(
-							total / 1.5,
-							Enum.EasingStyle.Quad,
-							Enum.EasingDirection.In
-						)
+		local maid = Maid.new()
+
+		local gateOpenConnection = RunService.Heartbeat:connect(function(delta)
+			total = total + delta
+			gate:SetPrimaryPartCFrame(
+				cframe:Lerp(
+					finalCFrame,
+					TweenService:GetValue(
+						total / 1.5,
+						Enum.EasingStyle.Quad,
+						Enum.EasingDirection.In
 					)
 				)
+			)
 
-				if total >= 1.5 then
-					gateOpenConnection:Disconnect()
-				end
-			end)
+			if total >= 1.5 then
+				maid:DoCleaning()
+			end
+		end)
+
+		maid:GiveTask(gateOpenConnection)
+
+		for _, part in pairs(gate:GetDescendants()) do
+			if part:IsA("BasePart") and part.CanCollide then
+				part.CanCollide = false
+				maid:GiveTask(function()
+					part.CanCollide = true
+				end)
+			end
 		end
 
 		local sound = SoundGateCity:Clone()
