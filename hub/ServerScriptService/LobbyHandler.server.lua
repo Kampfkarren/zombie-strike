@@ -1,4 +1,3 @@
-local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -7,6 +6,7 @@ local TeleportService = game:GetService("TeleportService")
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
+local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporter)
 local Lobby = require(ReplicatedStorage.Libraries.Lobby)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -14,9 +14,6 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 local PatchLobby = ReplicatedStorage.Remotes.PatchLobby
 local UpdateLobbies = ReplicatedStorage.Remotes.UpdateLobbies
 
-local DUNGEON_PLACE_ID = 3803533582
-
-local dungeonDataStore = DataStoreService:GetDataStore("DungeonInfo")
 local lobbies = {}
 local teleporting = {}
 local unique = 0
@@ -224,52 +221,14 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 	end
 
 	Promise.all({
-		Promise.new(function(resolve, reject)
-			coroutine.wrap(function()
-				local success, result, privateServerId = pcall(function()
-					return TeleportService:ReserveServer(DUNGEON_PLACE_ID)
-				end)
-
-				if not success then
-					reject("Couldn't reserve a server: " .. result)
-				else
-					resolve({ result, privateServerId })
-				end
-			end)()
+		DungeonTeleporter.ReserveServer():andThen(function(accessCode, privateServerId)
+			return { accessCode, privateServerId }
+		end):catch(function(result)
+			return Promise.reject("Couldn't reserve a server: " .. result)
 		end),
 		unpack(playerPromises),
 	}):andThen(function(results)
-		return Promise.new(function(resolve, reject)
-			coroutine.wrap(function()
-				local success, result = pcall(function()
-					local accessCode, privateServerId = unpack(results[1])
-					local playerIds = {}
-
-					for _, player in pairs(lobby.Players) do
-						table.insert(playerIds, player.UserId)
-					end
-
-					dungeonDataStore:SetAsync(privateServerId, {
-						Campaign = lobby.Campaign,
-						Difficulty = lobby.Difficulty,
-						Hardcore = lobby.Hardcore,
-						Members = playerIds,
-					})
-
-					TeleportService:TeleportToPrivateServer(
-						DUNGEON_PLACE_ID,
-						accessCode,
-						lobby.Players
-					)
-				end)
-
-				if success then
-					resolve()
-				else
-					reject(result)
-				end
-			end)()
-		end)
+		return DungeonTeleporter.TeleportPlayers(lobby, unpack(results[1]))
 	end):andThen(function()
 		table.remove(lobbies, lobbyIndex)
 		PatchLobby:FireAllClients(lobbyIndex)

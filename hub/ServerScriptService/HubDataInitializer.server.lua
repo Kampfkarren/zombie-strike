@@ -5,6 +5,7 @@ local ServerStorage = game:GetService("ServerStorage")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
+local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporter)
 local GiveOutfit = require(ServerScriptService.Shared.GiveOutfit)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Settings = require(ReplicatedStorage.Core.Settings)
@@ -88,6 +89,28 @@ Players.PlayerAdded:connect(function(player)
 		updateOutfit:andThen(function(refresh)
 			refresh()
 		end)
+	end)
+
+	Data.GetPlayerDataAsync(player, "DungeonsPlayed"):andThen(function(played)
+		if played == 0 then
+			DungeonTeleporter.ReserveServer()
+				:andThen(function(accessCode, privateServerId)
+					return DungeonTeleporter.TeleportPlayers({
+						Players = { player },
+						Campaign = 1,
+						Difficulty = 1,
+						Hardcore = false,
+					}, accessCode, privateServerId)
+				end)
+				:catch(function(error)
+					warn("Couldn't teleport noob to the dungeon: " .. error)
+					spawn(function()
+						player:LoadCharacter()
+					end)
+				end)
+		else
+			player:LoadCharacter()
+		end
 	end)
 
 	Settings.HookSetting("Skin Tone", refreshCharacter, player)
