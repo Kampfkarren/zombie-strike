@@ -287,7 +287,7 @@ stds.roblox = {
 
         UDim = def_fields({"new"}),
 
-        UDim2 = def_fields({"new"}),
+        UDim2 = def_fields({"new", "fromScale"}),
 
         Vector2 = def_fields({"new"}),
 

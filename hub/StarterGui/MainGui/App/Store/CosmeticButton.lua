@@ -8,6 +8,7 @@ local CosmeticButton = Roact.PureComponent:extend("CosmeticButton")
 local e = Roact.createElement
 
 local COSMETIC_COLORS = {
+	Default = Color3.fromRGB(215, 215, 215),
 	Face = Color3.fromRGB(156, 136, 255),
 	Particle = Color3.fromRGB(46, 204, 113),
 	LowTier = Color3.fromRGB(9, 132, 227),

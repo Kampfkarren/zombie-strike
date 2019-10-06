@@ -35,6 +35,7 @@ local function addAccessory(character, accessory)
 end
 
 local dummies = {}
+local helmetArmorPreviews = {}
 
 local function getDummyFor(instance)
 	if dummies[instance] then
@@ -89,6 +90,23 @@ local function getDummyFor(instance)
 	return dummy
 end
 
+local function getHelmetArmorPreview(cosmetic)
+	if helmetArmorPreviews[cosmetic] then
+		return helmetArmorPreviews[cosmetic]
+	else
+		local promise = Promise.promisify(function()
+			local model = Data.GetModel(cosmetic)
+			model.Parent = Workspace
+			RunService.Heartbeat:wait()
+			model.Parent = nil
+			return model
+		end)()
+
+		helmetArmorPreviews[cosmetic] = promise
+		return promise
+	end
+end
+
 local function ViewportFrameCosmeticPreview(props)
 	return e(ViewportFramePreviewComponent, {
 		Native = {
@@ -130,13 +148,7 @@ return function(props)
 		cosmetic.UUID = cosmetic.Instance:GetFullName()
 
 		return e(ViewportFrameCosmeticPreview, {
-			model = Promise.async(function(resolve)
-				local model = Data.GetModel(cosmetic)
-				model.Parent = Workspace
-				RunService.Heartbeat:wait()
-				model.Parent = nil
-				resolve(model)
-			end),
+			model = getHelmetArmorPreview(cosmetic),
 			previewScale = props.previewScale,
 			size = props.size,
 			updateSet = props.updateSet,

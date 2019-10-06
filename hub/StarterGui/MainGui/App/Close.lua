@@ -11,6 +11,7 @@ return function(props)
 		Image = "rbxassetid://1249929622",
 		Position = UDim2.new(1, 0, 0, 0),
 		Size = UDim2.new(0.4, 0, 0.2, 0),
+		ZIndex = props.ZIndex,
 		[Roact.Event.Activated] = props.onClose,
 	}, {
 		e("UIAspectRatioConstraint"),

@@ -4,6 +4,7 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
 
+local Inventory = require(script.Inventory)
 local Store = require(script.Store)
 
 local e = Roact.createElement
@@ -13,6 +14,7 @@ local function App()
 		BackgroundTransparency = 1,
 		Size = UDim2.new(1, 0, 1, 0),
 	}, {
+		Inventory = e(Inventory),
 		Store = e(Store),
 	})
 end

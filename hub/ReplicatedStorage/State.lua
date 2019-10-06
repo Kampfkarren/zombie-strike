@@ -15,6 +15,20 @@ local function copy(list)
 	return copy
 end
 
+local function togglePage(name)
+	return function(state)
+		if state.current == name then
+			return {
+				current = nil
+			}
+		else
+			return {
+				current = name
+			}
+		end
+	end
+end
+
 Store = Rodux.Store.new(Rodux.combineReducers({
 	equipment = Rodux.createReducer(nil, {
 		UpdateEquipment = function(_, action)
@@ -47,24 +61,17 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	page = Rodux.createReducer({
+		current = nil,
+	}, {
+		ToggleInventory = togglePage("Inventory"),
+		ToggleStore = togglePage("Store"),
+	}),
+
 	store = Rodux.createReducer({
 		contents = {},
 		equipped = {},
-		page = "Shop",
-		open = false,
 	}, {
-		SetStorePage = function(state, action)
-			local state = copy(state)
-			state.page = action.page
-			return state
-		end,
-
-		ToggleStore = function(state)
-			local state = copy(state)
-			state.open = not state.open
-			return state
-		end,
-
 		UpdateCosmetics = function(state, action)
 			local state = copy(state)
 			state.contents = action.contents or state.contents
