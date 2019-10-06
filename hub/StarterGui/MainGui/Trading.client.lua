@@ -4,7 +4,6 @@ local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local TweenService = game:GetService("TweenService")
 
-local PreventNoobPlay = require(ReplicatedStorage.Libraries.PreventNoobPlay)
 local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
@@ -51,10 +50,8 @@ local function toggle(newOpen)
 	openTick = ourTick
 
 	if open then
-		if PreventNoobPlay() then
-			Trading.Visible = true
-			tweens.In:Play()
-		end
+		Trading.Visible = true
+		tweens.In:Play()
 	else
 		tweens.Out:Play()
 		delay(TWEEN_TIME, function()
