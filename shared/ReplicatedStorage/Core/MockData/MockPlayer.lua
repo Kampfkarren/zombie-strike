@@ -63,6 +63,7 @@ return function()
 	MockPlayer.Cosmetics = {
 		Owned = {},
 		Equipped = {},
+		LastSeen = 0,
 	}
 
 	MockPlayer.Settings = {}

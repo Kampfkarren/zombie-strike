@@ -14,4 +14,12 @@ Buttons.Store.MouseButton1Click:connect(function()
 	State:dispatch({
 		type = "ToggleStore",
 	})
+
+	State:dispatch({
+		type = "OpenedStore",
+	})
+end)
+
+State.changed:connect(function(new)
+	Buttons.Store.NewLabel.Visible = new.store.new
 end)

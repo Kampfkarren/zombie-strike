@@ -16,7 +16,7 @@ end
 
 Players.PlayerAdded:connect(function(player)
 	local data = Data.GetPlayerData(player, "Cosmetics")
-	UpdateCosmetics:FireClient(player, data.Owned, data.Equipped)
+	UpdateCosmetics:FireClient(player, data.Owned, data.Equipped, data.LastSeen)
 end)
 
 UpdateCosmetics.OnServerEvent:connect(function(player, itemIndex)
@@ -45,4 +45,9 @@ UpdateCosmetics.OnServerEvent:connect(function(player, itemIndex)
 			end)
 		end
 	end
+end)
+
+ReplicatedStorage.Remotes.UpdateStoreLastSeen.OnServerEvent:connect(function(player)
+	local _, dataStore = Data.GetPlayerData(player, "Cosmetics")
+	dataStore:Set(os.date("!*t").yday)
 end)

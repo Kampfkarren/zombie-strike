@@ -71,11 +71,19 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	store = Rodux.createReducer({
 		contents = {},
 		equipped = {},
+		new = false,
 	}, {
-		UpdateCosmetics = function(state, action)
+		OpenedStore = function(state)
+			local state = copy(state)
+			state.new = false
+			return state
+		end,
+
+		UpdateCosmetics = function(state, action, lastSeen)
 			local state = copy(state)
 			state.contents = action.contents or state.contents
 			state.equipped = action.equipped
+			state.new = lastSeen ~= os.date("!*t").yday
 			return state
 		end,
 	}),
