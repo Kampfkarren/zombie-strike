@@ -41,3 +41,6 @@ CollectionService:GetInstanceAddedSignal("Boss"):connect(function(boss)
 		):Play()
 	end)
 end)
+
+ReplicatedStorage:WaitForChild("PlayMissionMusic", math.huge)
+Music.Main:Play()

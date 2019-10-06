@@ -328,6 +328,10 @@ local function start()
 
 	JoinTimer.Value = -4
 
+	local playMusicFlag = Instance.new("Model")
+	playMusicFlag.Name = "PlayMissionMusic"
+	playMusicFlag.Parent = ReplicatedStorage
+
 	delay(3, function()
 		JoinTimer.Value = 0
 	end)
