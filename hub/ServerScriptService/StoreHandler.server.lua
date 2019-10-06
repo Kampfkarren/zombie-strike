@@ -48,6 +48,7 @@ UpdateCosmetics.OnServerEvent:connect(function(player, itemIndex)
 end)
 
 ReplicatedStorage.Remotes.UpdateStoreLastSeen.OnServerEvent:connect(function(player)
-	local _, dataStore = Data.GetPlayerData(player, "Cosmetics")
-	dataStore:Set(os.date("!*t").yday)
+	local data, dataStore = Data.GetPlayerData(player, "Cosmetics")
+	data.LastSeen = os.date("!*t").yday
+	dataStore:Set(data)
 end)
