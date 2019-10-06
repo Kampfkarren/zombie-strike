@@ -66,7 +66,14 @@ if not ReplicatedStorage.HubWorld.Value then
 
 			humanoid:TakeDamage(damage)
 			EVENTS.Damaged:Fire(humanoid, damage, player)
-			ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage, crit)
+
+			ReplicatedStorage.Remotes.DamageNumber:FireClient(player, humanoid, damage, crit)
+
+			for _, otherPlayer in pairs(Players:GetPlayers()) do
+				if otherPlayer ~= player then
+					ReplicatedStorage.Remotes.DamageNumber:FireClient(otherPlayer, humanoid, damage)
+				end
+			end
 		end
 	end
 else
