@@ -257,6 +257,12 @@ function LootInfo:render()
 	})
 end
 
+function LootInfo:didUpdate(oldProps)
+	if self.props.Loot ~= oldProps.Loot then
+		self:UpdateModelState()
+	end
+end
+
 function LootInfo:UpdateModelState()
 	self:setState({
 		Model = Data.GetModel(self.props.Loot),
