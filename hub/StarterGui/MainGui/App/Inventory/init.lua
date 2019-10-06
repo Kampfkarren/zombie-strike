@@ -114,6 +114,7 @@ function Inventory:render()
 	if self.state.space and props.inventory then
 		inventorySpace = e("TextLabel", {
 			AnchorPoint = Vector2.new(1, 0),
+			AutoLocalize = false,
 			BackgroundTransparency = 1,
 			Font = Enum.Font.Gotham,
 			Position = UDim2.fromScale(0.97, 0.01),
