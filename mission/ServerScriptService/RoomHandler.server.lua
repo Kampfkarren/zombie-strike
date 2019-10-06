@@ -272,7 +272,11 @@ local function openNextGate()
 	end
 
 	Debris:AddItem(gate, 4)
+
 	ReplicatedStorage.Remotes.OpenGate:FireAllClients(room)
+	Players.PlayerAdded:connect(function(player)
+		ReplicatedStorage.Remotes.OpenGate:FireClient(player, room)
+	end)
 
 	if obbyType == "bossBefore" then
 		for timer = 5, 1, -1 do
@@ -281,7 +285,6 @@ local function openNextGate()
 		end
 
 		BossTimer.Value = 0
-		-- ReplicatedStorage.Remotes.OpenGate:FireAllClients(room, gate.CFrame)
 
 		startBoss(rooms[#rooms])
 	end
