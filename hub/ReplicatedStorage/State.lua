@@ -75,6 +75,9 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	}, {
 		OpenedStore = function(state)
 			local state = copy(state)
+			if state.new then
+				ReplicatedStorage.Remotes.UpdateStoreLastSeen:FireServer()
+			end
 			state.new = false
 			return state
 		end,
