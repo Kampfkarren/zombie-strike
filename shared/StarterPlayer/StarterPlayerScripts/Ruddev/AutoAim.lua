@@ -208,7 +208,7 @@ RunService.Heartbeat:connect(function()
 			AutoAim.SetTarget(closest[1])
 		else
 			local boss = CollectionService:GetTagged("Boss")[1]
-			if boss and AutoAim.CanFocusTarget(boss, true) then
+			if boss and boss:WaitForChild("Humanoid").Health > 0 then
 				AutoAim.SetTarget(boss)
 			end
 		end
