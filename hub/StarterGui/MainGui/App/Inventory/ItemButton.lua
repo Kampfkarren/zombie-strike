@@ -88,7 +88,11 @@ return RoactRodux.connect(function(state, props)
 		lootType = "Weapon"
 	end
 
-	return {
-		equipped = (state.equipment or {})["equipped" .. lootType].UUID == props.Loot.UUID,
-	}
+	if state.equipment then
+		return {
+			equipped = state.equipment["equipped" .. lootType].UUID == props.Loot.UUID,
+		}
+	else
+		return {}
+	end
 end)(ItemButton)

@@ -302,13 +302,15 @@ end
 -- START XP
 function Zombie:GiveXP()
 	local xpGain = self:GetXP()
+
 	if xpGain > 0 then
-		ReplicatedStorage.Remotes.XPGain:FireAllClients(self.instance.PrimaryPart.Position, math.floor(xpGain))
 		for _, player in pairs(Players:GetPlayers()) do
 			local playerData = player:FindFirstChild("PlayerData")
+
 			if playerData then
 				local level = playerData.Level
 				local xp = playerData.XP
+				local xpGain = xpGain * playerData.XPScale.Value
 
 				local xpNeeded = XP.XPNeededForNextLevel(level.Value)
 				if xp.Value + xpGain >= xpNeeded then
@@ -318,6 +320,12 @@ function Zombie:GiveXP()
 				else
 					xp.Value = xp.Value + xpGain
 				end
+
+				ReplicatedStorage.Remotes.XPGain:FireClient(
+					player,
+					self.instance.PrimaryPart.Position,
+					math.floor(xpGain)
+				)
 			end
 		end
 	end

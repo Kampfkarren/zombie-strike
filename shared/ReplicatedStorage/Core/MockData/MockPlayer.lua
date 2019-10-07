@@ -67,6 +67,7 @@ return function()
 	}
 
 	MockPlayer.Settings = {}
+	MockPlayer.XPExpires = 0
 
 	return MockPlayer
 end

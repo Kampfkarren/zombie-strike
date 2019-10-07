@@ -35,7 +35,13 @@ Players.PlayerAdded:connect(function(player)
 	numberValue("XP", xp, playerData)
 
 	numberValue("GoldScale", 1, playerData)
-	numberValue("XPScale", 1, playerData)
+
+	local xpScale = 1
+	if os.time() < Data.GetPlayerData(player, "XPExpires") then
+		xpScale = 2
+	end
+
+	numberValue("XPScale", xpScale, playerData)
 
 	playerData.Parent = player
 end)

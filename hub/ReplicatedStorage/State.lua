@@ -71,7 +71,9 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	store = Rodux.createReducer({
 		contents = {},
 		equipped = {},
+		page = "Shop",
 		new = false,
+		xpExpiration = 0,
 	}, {
 		OpenedStore = function(state)
 			local state = copy(state)
@@ -82,11 +84,23 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 			return state
 		end,
 
+		SetStorePage = function(state, action)
+			local state = copy(state)
+			state.page = action.page
+			return state
+		end,
+
 		UpdateCosmetics = function(state, action, lastSeen)
 			local state = copy(state)
 			state.contents = action.contents or state.contents
 			state.equipped = action.equipped
 			state.new = lastSeen ~= os.date("!*t").yday
+			return state
+		end,
+
+		UpdateXPExpiration = function(state, action)
+			local state = copy(state)
+			state.xpExpiration = action.expiration
 			return state
 		end,
 	}),
@@ -106,6 +120,13 @@ ReplicatedStorage.Remotes.UpdateEquipment.OnClientEvent:connect(function(armor, 
 		newArmor = armor,
 		newHelmet = helmet,
 		newWeapon = weapon,
+	})
+end)
+
+ReplicatedStorage.Remotes.UpdateXPExpiration.OnClientEvent:connect(function(expiration)
+	Store:dispatch({
+		type = "UpdateXPExpiration",
+		expiration = expiration,
 	})
 end)
 
