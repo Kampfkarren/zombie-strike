@@ -23,7 +23,7 @@ local function circleEmitter(character, sign)
 	moveAttachment(attachment, 0, sign)
 	attachment.Parent = character.HumanoidRootPart
 
-	local emitter = script.Part.ParticleEmitter:Clone()
+	local emitter = script.Part.Circle:Clone()
 	emitter.Parent = attachment
 
 	coroutine.wrap(function()
@@ -57,4 +57,11 @@ ReplicatedStorage.Remotes.LevelUp.OnClientEvent:connect(function(player)
 
 	circleEmitter(character, 1)
 	circleEmitter(character, -1)
+
+	local torsoEmitter = script.Part.Torso:Clone()
+	torsoEmitter.Parent = character.UpperTorso
+	delay(LIFETIME, function()
+		torsoEmitter.Enabled = false
+		Debris:AddItem(torsoEmitter)
+	end)
 end)
