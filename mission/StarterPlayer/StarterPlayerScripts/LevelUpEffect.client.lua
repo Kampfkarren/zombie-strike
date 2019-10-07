@@ -9,12 +9,34 @@ local RADIUS = 3
 local CIRCLE_RATE = 5
 local VERTICAL_RATE = 1
 
-local function moveAttachment(attachment, t)
+local function moveAttachment(attachment, t, sign)
 	attachment.Position = Vector3.new(
-		RADIUS * math.sin(t * CIRCLE_RATE),
+		RADIUS * math.sin(t * CIRCLE_RATE) * sign,
 		t * VERTICAL_RATE,
 		RADIUS * math.cos(t * CIRCLE_RATE)
 	)
+end
+
+local function circleEmitter(character, sign)
+	local attachment = Instance.new("Attachment")
+
+	moveAttachment(attachment, 0, sign)
+	attachment.Parent = character.HumanoidRootPart
+
+	local emitter = script.Part.ParticleEmitter:Clone()
+	emitter.Parent = attachment
+
+	coroutine.wrap(function()
+		local t = 0
+
+		while t < LIFETIME do
+			t = t + RunService.Heartbeat:wait()
+			moveAttachment(attachment, t, sign)
+		end
+
+		emitter.Enabled = false
+		Debris:AddItem(attachment)
+	end)()
 end
 
 ReplicatedStorage.Remotes.LevelUp.OnClientEvent:connect(function(player)
@@ -33,20 +55,6 @@ ReplicatedStorage.Remotes.LevelUp.OnClientEvent:connect(function(player)
 
 	Debris:AddItem(sound)
 
-	local attachment = Instance.new("Attachment")
-	moveAttachment(attachment, 0)
-	attachment.Parent = character.HumanoidRootPart
-
-	local emitter = script.Part.ParticleEmitter:Clone()
-	emitter.Parent = attachment
-
-	local t = 0
-
-	while t < LIFETIME do
-		t = t + RunService.Heartbeat:wait()
-		moveAttachment(attachment, t)
-	end
-
-	emitter.Enabled = false
-	Debris:AddItem(attachment)
+	circleEmitter(character, 1)
+	circleEmitter(character, -1)
 end)
