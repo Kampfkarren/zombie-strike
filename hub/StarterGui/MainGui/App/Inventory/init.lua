@@ -192,7 +192,7 @@ function Inventory:render()
 
 			Armor = e("Frame", {
 				BackgroundTransparency = 1,
-				LayoutOrder = 1,
+				LayoutOrder = 2,
 				Size = UDim2.fromScale(0.9, 0.25),
 			}, {
 				e("UIListLayout", {
@@ -219,7 +219,7 @@ function Inventory:render()
 
 			Helmet = e("Frame", {
 				BackgroundTransparency = 1,
-				LayoutOrder = 2,
+				LayoutOrder = 1,
 				Size = UDim2.fromScale(0.9, 0.25),
 			}, {
 				e("UIListLayout", {
