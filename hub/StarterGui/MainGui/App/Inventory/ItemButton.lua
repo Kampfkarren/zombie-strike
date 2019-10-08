@@ -11,13 +11,18 @@ local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Componen
 local e = Roact.createElement
 local LocalPlayer = Players.LocalPlayer
 
-local ItemButton = Roact.PureComponent:extend("ItemButton")
+local ItemButton = Roact.Component:extend("ItemButton")
 
 function ItemButton:init()
 	self:setState({
 		hovered = false,
 		model = Data.GetModel(self.props.Loot),
 	})
+end
+
+function ItemButton:shouldUpdate(nextProps, nextState)
+	return self.props.state ~= nextState
+		and self.props.LayoutOrder ~= nextProps.LayoutOrder
 end
 
 function ItemButton:render()

@@ -4,7 +4,7 @@ local TweenService = game:GetService("TweenService")
 local CosmeticPreview = require(script.Parent.CosmeticPreview)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 
-local CosmeticButton = Roact.PureComponent:extend("CosmeticButton")
+local CosmeticButton = Roact.Component:extend("CosmeticButton")
 local e = Roact.createElement
 
 local COSMETIC_COLORS = {
@@ -47,6 +47,10 @@ function CosmeticButton:init()
 	end
 
 	self.previewScale = previewScale
+end
+
+function CosmeticButton:shouldUpdate(nextProps)
+	return self.props.Item ~= nextProps.Item
 end
 
 function CosmeticButton:render()
