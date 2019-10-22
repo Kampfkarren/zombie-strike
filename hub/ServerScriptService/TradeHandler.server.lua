@@ -256,8 +256,12 @@ CancelTrade.OnServerEvent:connect(function(player, denyFrom)
 	end
 end)
 
-PingTrade.OnServerEvent:connect(function(player, index)
+PingTrade.OnServerEvent:connect(function(player, uuid)
 	local tradeState = tradeStates[player]
+
+	if typeof(uuid) ~= "string" then
+		return
+	end
 
 	if not tradeState then
 		warn("ping w/o tradeState")
@@ -273,7 +277,7 @@ PingTrade.OnServerEvent:connect(function(player, index)
 		pings[player] = nil
 	end)
 
-	PingTrade:FireClient(tradeState.tradingWith, index)
+	PingTrade:FireClient(tradeState.tradingWith, uuid)
 end)
 
 UpdateTrade.OnServerEvent:connect(function(player, index)

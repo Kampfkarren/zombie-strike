@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local Loot = {}
@@ -110,6 +111,22 @@ function Loot.DeserializeTable(loot)
 		deserialized[index] = Loot.Deserialize(loot)
 	end
 	return deserialized
+end
+
+function Loot.DeserializeTableWithBase(loot)
+	local loot = Loot.DeserializeTable(loot)
+
+	for _, item in pairs(loot) do
+		if item.Type ~= "Helmet" and item.Type ~= "Armor" then
+			for key, value in pairs(GunScaling.BaseStats(item.Type, item.Level, item.Rarity)) do
+				if item[key] == nil then
+					item[key] = value
+				end
+			end
+		end
+	end
+
+	return loot
 end
 
 function Loot.Serialize(data)

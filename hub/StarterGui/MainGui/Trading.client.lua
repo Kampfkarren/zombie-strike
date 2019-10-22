@@ -76,7 +76,7 @@ do
 	local function playerAdded(player)
 		if player == LocalPlayer then return end
 		local playerData = player:WaitForChild("PlayerData")
-		if playerData:WaitForChild("DungeonsPlayed").Value == 0 then return end
+		-- if playerData:WaitForChild("DungeonsPlayed").Value == 0 then return end
 
 		local card = Template:Clone()
 
@@ -184,6 +184,16 @@ do
 
 	local lastPing = 0
 
+	local function findButtonByUuid(uuid)
+		for _, buttonTable in pairs(buttons) do
+			for _, meta in pairs(buttonTable) do
+				if meta.item.UUID == uuid then
+					return meta
+				end
+			end
+		end
+	end
+
 	local function ping(button)
 		coroutine.wrap(function()
 			for count = 0, 11 do
@@ -224,14 +234,14 @@ do
 				button.MouseButton1Click:connect(function()
 					if tick() - lastPing >= 3 then
 						lastPing = tick()
-						PingTrade:FireServer(index)
+						PingTrade:FireServer(item.UUID)
 						ping(button)
 					end
 				end)
 			end
 
 			button.Parent = frame
-			buttons[key][index] = button
+			buttons[key][index] = { button = button, item = item }
 		end
 	end
 
@@ -268,8 +278,11 @@ do
 
 	AcceptTrade.OnClientEvent:connect(toggleAccept)
 
-	PingTrade.OnClientEvent:connect(function(index)
-		ping(buttons.us[index])
+	PingTrade.OnClientEvent:connect(function(uuid)
+		local meta = findButtonByUuid(uuid)
+		if meta ~= nil then
+			ping(meta.button)
+		end
 	end)
 
 	StartTrade.OnClientEvent:connect(function(theirInventory)
@@ -278,7 +291,7 @@ do
 
 		fillInventory(
 			TradeWindow.TheirInventory.Contents,
-			Loot.DeserializeTable(theirInventory),
+			Loot.DeserializeTableWithBase(theirInventory),
 			TradeWindow.YourInventory.LootInfo,
 			"them"
 		)
@@ -289,6 +302,8 @@ do
 			TradeWindow.TheirInventory.LootInfo,
 			"us"
 		)
+
+		print(require(game.ReplicatedStorage.Core.inspect)(inventories))
 
 		Inner.UIPageLayout:JumpTo(Inner.TradeWindow)
 		toggle(true)
@@ -310,7 +325,7 @@ do
 		end
 
 		if code > 0 then
-			local button = buttons[key][itemId]
+			local button = buttons[key][itemId].button
 			local item = inventories[key][itemId]
 
 			button.Visible = false
@@ -370,4 +385,3 @@ Main.Buttons.Trading.MouseButton1Click:connect(function()
 		toggle(not open)
 	end
 end)
-
