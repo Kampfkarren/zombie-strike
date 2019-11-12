@@ -525,7 +525,7 @@ ReplicatedStorage.LocalEvents.PressPlay.Event:connect(function()
 end)
 
 local function checkGamepad()
-	PlayButton.Gamepad.Visible = UserInputService.GamepadEnabled
+	-- PlayButton.Gamepad.Visible = UserInputService.GamepadEnabled
 end
 
 checkGamepad()
