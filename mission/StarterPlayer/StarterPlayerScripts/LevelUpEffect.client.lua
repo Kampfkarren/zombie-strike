@@ -3,11 +3,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local StarterGui = game:GetService("StarterGui")
+local TweenService = game:GetService("TweenService")
 
 local LIFETIME = 3
 local RADIUS = 3
 local CIRCLE_RATE = 5
 local VERTICAL_RATE = 1
+
+local lightTweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
 
 local function moveAttachment(attachment, t, sign)
 	attachment.Position = Vector3.new(
@@ -60,8 +63,30 @@ ReplicatedStorage.Remotes.LevelUp.OnClientEvent:connect(function(player)
 
 	local torsoEmitter = script.Part.Torso:Clone()
 	torsoEmitter.Parent = character.UpperTorso
+
+	local light = script.Light:Clone()
+
+	local tweenIn = TweenService:Create(
+		light,
+		lightTweenInfo,
+		{ Range = light.Range }
+	)
+
+	local tweenOut = TweenService:Create(
+		light,
+		lightTweenInfo,
+		{ Range = 0 }
+	)
+
+	light.Range = 0
+	light.Parent = character.PrimaryPart
+	tweenIn:Play()
+
 	delay(LIFETIME, function()
 		torsoEmitter.Enabled = false
 		Debris:AddItem(torsoEmitter)
+
+		tweenOut:Play()
+		Debris:AddItem(light)
 	end)
 end)
