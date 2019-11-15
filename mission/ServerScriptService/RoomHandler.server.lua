@@ -24,20 +24,10 @@ DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP")
 
 local difficultyInfo
 
-local roomTypes = {
-	boss = {},
-	bossBefore = {},
-	enemy = {},
-	obby = {},
-	treasure = {},
-}
-
-for _, room in pairs(Rooms:GetChildren()) do
-	local obbyType = room:FindFirstChild("ObbyType")
-	if obbyType ~= nil then
-		local roomTable = assert(roomTypes[obbyType.Value])
-		table.insert(roomTable, room)
-	end
+local function fastSpawn(callback)
+	local event = Instance.new("BindableEvent")
+	event.Event:connect(callback)
+	event:Fire()
 end
 
 local function createRoom(room, parent, connectTo)
@@ -71,10 +61,26 @@ local function createRoom(room, parent, connectTo)
 	return room
 end
 
-local function generateDungeon(numRooms)
+local function generateDungeon(roomModels, numRooms)
+	local roomTypes = {
+		boss = {},
+		bossBefore = {},
+		enemy = {},
+		obby = {},
+		treasure = {},
+	}
+
+	for _, room in pairs(roomModels:GetChildren()) do
+		local obbyType = room:FindFirstChild("ObbyType")
+		if obbyType ~= nil then
+			local roomTable = assert(roomTypes[obbyType.Value])
+			table.insert(roomTable, room)
+		end
+	end
+
 	local obbyParent = Instance.new("Folder")
 
-	local base = createRoom(Rooms.StartSection, obbyParent)
+	local base = createRoom(roomModels.StartSection, obbyParent)
 	DungeonState.CurrentSpawn = base.SpawnLocation
 	local nextRoom = base
 
@@ -100,7 +106,11 @@ local function generateDungeon(numRooms)
 	return rooms
 end
 
-local rooms = generateDungeon(Dungeon.GetDungeonData("DifficultyInfo").Rooms)
+local rooms = generateDungeon(
+	Rooms[Dungeon.GetDungeonData("Campaign")],
+	Dungeon.GetDungeonData("DifficultyInfo").Rooms
+)
+
 local zombieTypes = {}
 
 for key, rate in pairs(Dungeon.GetDungeonData("CampaignInfo").ZombieTypes) do
@@ -202,10 +212,10 @@ local function startBoss(room)
 
 	for _, player in pairs(Players:GetPlayers()) do
 		-- TODO: Does this spawn them on top of each other?
-		coroutine.wrap(function()
+		fastSpawn(function()
 			(player.Character or player.CharacterAdded:wait())
 				:MoveTo(DungeonState.CurrentSpawn.WorldPosition)
-		end)()
+		end)
 	end
 
 	local bossSpawn = room:FindFirstChild("BossSpawn", true)
@@ -320,7 +330,7 @@ local function start()
 	for countdown = -3, -1 do
 		JoinTimer.Value = countdown
 		if countdown == -2 then
-			coroutine.wrap(openNextGate)()
+			fastSpawn(openNextGate)
 		end
 
 		wait(1)
@@ -366,7 +376,7 @@ local function playerAdded(player)
 	if not startedCountdown then
 		startedCountdown = true
 
-		coroutine.wrap(function()
+		fastSpawn(function()
 			for time = 30, 1, -1 do
 				if started ~= 0 then return end
 				JoinTimer.Value = time
@@ -374,7 +384,7 @@ local function playerAdded(player)
 			end
 
 			start()
-		end)()
+		end)
 	end
 end
 

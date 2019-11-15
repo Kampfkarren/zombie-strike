@@ -105,7 +105,7 @@ local campaignsType = t.array(t.strictInterface({
 
 local Campaigns = {
 	{
-		Name = "Campaign A",
+		Name = "The City",
 		Image = "rbxassetid://2278464",
 		ZombieTypes = {
 			Common = 3,
@@ -184,6 +184,48 @@ local Campaigns = {
 					Health = 75000,
 				},
 			},
+		},
+
+		Loot = classicGuns({
+			Armor = {
+				Common = range(1, 7),
+				Uncommon = range(8, 13),
+				Rare = { 14 },
+				Epic = { 15 },
+				Legendary = { 16 },
+			},
+
+			Helmet = {
+				Common = { 1 },
+				Uncommon = { 2 },
+				Rare = { 3 },
+				Epic = { 4 },
+				Legendary = { 5 },
+			},
+		}),
+	},
+
+	{
+		Name = "The Factory",
+		Image = "rbxassetid://69612219",
+		ZombieTypes = {
+			Common = 3,
+		},
+
+		Difficulties = {
+			{
+				MinLevel = 30,
+				Style = Easy,
+
+				Gold = 2500,
+				Rooms = 8,
+				XP = 19000,
+				ZombieSpawnRate = 0.5,
+
+				BossStats = {
+					Health = 1,
+				}
+			}
 		},
 
 		Loot = classicGuns({
