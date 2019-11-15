@@ -13,6 +13,7 @@ local Shake = ReplicatedStorage.RuddevEvents.Shake
 
 local gates = {
 	require(script.City),
+	require(script.Factory),
 }
 
 ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
