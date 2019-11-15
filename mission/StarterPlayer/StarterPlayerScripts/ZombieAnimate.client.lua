@@ -1,5 +1,8 @@
 local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 
 local defaultAnimations = {
 	[Enum.HumanoidStateType.Climbing] = script.Animations.climb.ClimbAnim,
@@ -15,9 +18,11 @@ local function hookZombie(zombie)
 		animations[key] = humanoid:LoadAnimation(value)
 	end
 
-	local idle = humanoid:LoadAnimation(script.Animations.idle.Animation1)
-	local run = humanoid:LoadAnimation(script.Animations.run.RunAnim)
-	local walk = humanoid:LoadAnimation(script.Animations.walk.WalkAnim)
+	local zombieAnimations = zombie:WaitForChild("Animations")
+
+	local idle = humanoid:LoadAnimation(zombieAnimations.idle.Animation1)
+	local run = humanoid:LoadAnimation(zombieAnimations.run.RunAnim)
+	local walk = humanoid:LoadAnimation(zombieAnimations.walk.WalkAnim)
 
 	walk:AdjustSpeed(0.2)
 
