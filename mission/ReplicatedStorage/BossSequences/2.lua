@@ -66,7 +66,7 @@ local function animateUp(boss, camera)
 				boss.DrumSegment.Rod:SetPrimaryPartCFrame(start:Lerp(goal, alpha))
 			end
 		else
-			wait(BOSS_ASCEND_TIME + BOSS_SPIN_TRAIL)
+			wait(BOSS_ASCEND_TIME + BOSS_SPIN_TRAIL_TIME)
 		end
 	end
 
