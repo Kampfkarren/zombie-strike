@@ -1,10 +1,8 @@
-local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
-local Workspace = game:GetService("Workspace")
 
 local Maid = require(ReplicatedStorage.Core.Maid)
 
@@ -19,14 +17,6 @@ function City.Reset(gate, original)
 end
 
 function City.Open(gate)
-	if not CollectionService:HasTag(gate, "LocallyCreated") then
-		gate.Parent = nil
-	end
-
-	local gate = gate:Clone()
-	CollectionService:AddTag(gate, "LocallyCreated")
-	gate.Parent = Workspace
-
 	local total = 0
 
 	local cframe = gate.PrimaryPart.CFrame
