@@ -22,9 +22,9 @@ local function hookZombie(zombie)
 
 	local zombieAnimations = zombie:WaitForChild("Animations")
 
-	local idle = humanoid:LoadAnimation(zombieAnimations.idle.Animation1)
-	local run = humanoid:LoadAnimation(zombieAnimations.run.RunAnim)
-	local walk = humanoid:LoadAnimation(zombieAnimations.walk.WalkAnim)
+	local idle = humanoid:LoadAnimation(zombieAnimations:WaitForChild("idle").Animation1)
+	local run = humanoid:LoadAnimation(zombieAnimations:WaitForChild("run").RunAnim)
+	local walk = humanoid:LoadAnimation(zombieAnimations:WaitForChild("walk").WalkAnim)
 
 	walk:AdjustSpeed(0.2)
 

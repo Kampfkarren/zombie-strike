@@ -7,6 +7,7 @@ local Workspace = game:GetService("Workspace")
 
 local Promise = require(ReplicatedStorage.Core.Promise)
 
+local BossSequenceFinished = ReplicatedStorage.LocalEvents.BossSequenceFinished
 local CurrentCamera = Workspace.CurrentCamera
 local Mode = ReplicatedStorage.RuddevEvents.Mode
 local Shake = ReplicatedStorage.RuddevEvents.Shake
@@ -63,6 +64,8 @@ function SequenceUtil.Finish(boss)
 	else
 		boss.Humanoid.NoKill:Destroy()
 	end
+
+	BossSequenceFinished:Fire()
 end
 
 -- WorldCFrame gives a different orientation
@@ -136,13 +139,13 @@ function SequenceUtil.Focus(cancel)
 end
 
 function SequenceUtil.Animate(animation, getHumanoid)
-	getHumanoid = getHumanoid or function()
-		return true
+	getHumanoid = getHumanoid or function(boss)
+		return boss.Humanoid
 	end
 
 	return function(boss, camera)
 		if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
-			getHumanoid():LoadAnimation(animation):Play()
+			getHumanoid(boss):LoadAnimation(animation):Play()
 		end
 
 		return boss, camera

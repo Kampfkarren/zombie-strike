@@ -1,7 +1,11 @@
 local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local HitByLaser = ReplicatedStorage.Remotes.FactoryBoss.HitByLaser
+
+local DAMAGE_BUFF = 1.125
 local HEALTH_COLOR_BLINK_HEALTH = 0.1
 local HEALTH_COLOR_BLINK_RATE = 0.2
 
@@ -11,7 +15,19 @@ local RED = Color3.fromRGB(231, 76, 60)
 local FactoryBoss = {}
 FactoryBoss.__index = FactoryBoss
 
+FactoryBoss.LaserDamageScale = {
+	[30] = 2200,
+	[36] = 7200,
+	[42] = 19800,
+	[48] = 60000,
+	[54] = 168000,
+}
+
 FactoryBoss.Name = "The Evil Dr. Zombie"
+
+local function getLevels(humanoid)
+	return math.floor(3 * (1 - humanoid.Health / humanoid.MaxHealth))
+end
 
 function FactoryBoss.new()
 	return setmetatable({
@@ -56,6 +72,18 @@ function FactoryBoss:InitializeBossAI()
 					color = newColor
 				end
 			end))
+		end
+	end)
+
+	HitByLaser.OnServerEvent:connect(function(player)
+		local character = player.Character
+		if character then
+			local damage = FactoryBoss.LaserDamageScale[self.level]
+			if not damage then
+				warn("FactoryBoss.HitByLaser: no damage scale for " .. self.level)
+				damage = 60
+			end
+			character:WaitForChild("Humanoid"):TakeDamage(damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
 		end
 	end)
 end
