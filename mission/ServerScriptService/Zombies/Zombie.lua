@@ -38,6 +38,7 @@ function Zombie.Debug(_, message)
 end
 
 function Zombie:Spawn(position)
+	local humanoid = self.instance.Humanoid
 	self.instance:SetPrimaryPartCFrame(CFrame.new(position))
 	self.instance.Name = self.Name
 	self.instance.Parent = Workspace.Zombies

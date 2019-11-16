@@ -50,7 +50,7 @@ local function animateUp(boss, camera)
 			time = 0
 
 			start = boss.DrumSegment.Rod.PrimaryPart.CFrame
-			local x, y, angle = start:ToEulerAnglesXYZ()
+			local x, y = start:ToEulerAnglesXYZ()
 			local goal = CFrame.new(start.Position) * CFrame.Angles(x, y, 0)
 
 			while time < BOSS_SPIN_TRAIL_TIME do
@@ -71,15 +71,6 @@ local function animateUp(boss, camera)
 	end
 
 	boss:SetPrimaryPartCFrame(goal)
-
-	return boss, camera
-end
-
-local function laugh(boss, camera)
-	if not ReplicatedStorage.SkipBossSequence.Value and RunService:IsClient() then
-		print("ert")
-		boss.HeadSegment.RickHeadSegment.Zombie.Humanoid:LoadAnimation(LaughAnimation):Play()
-	end
 
 	return boss, camera
 end

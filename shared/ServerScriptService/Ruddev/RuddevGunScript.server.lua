@@ -72,7 +72,6 @@ local function hit(player, hit, index)
 					local config = shot.Config
 
 					if direction then
-						local ray = Ray.new(position, direction)
 						local distance = (hit.Position - position).Magnitude
 						local ignore = {}
 
