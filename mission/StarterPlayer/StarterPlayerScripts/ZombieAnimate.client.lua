@@ -11,6 +11,8 @@ local defaultAnimations = {
 
 -- TODO: Have the Zombie class instantiate animations
 local function hookZombie(zombie)
+	if zombie:FindFirstChild("NoAnimations") ~= nil then return end
+
 	local animations = {}
 	local humanoid = zombie:WaitForChild("Humanoid")
 

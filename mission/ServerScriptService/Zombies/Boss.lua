@@ -44,6 +44,10 @@ function Boss.GetXP()
 end
 
 function Boss:UpdateNametag()
+	if self._derivative.UpdateNametag then
+		return self._derivative.UpdateNametag(self)
+	end
+
 	local super = Zombie.UpdateNametag(self)
 	super.Size = UDim2.new(40, 0, 10, 0)
 	return super

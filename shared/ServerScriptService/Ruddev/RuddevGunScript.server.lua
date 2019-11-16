@@ -83,40 +83,36 @@ local function hit(player, hit, index)
 						end
 
 						--local h = Raycast(position, direction.Unit * distance, ignore)
-
 						if distance <= config.Range then --and (not h) then
-							local offset = ray:Distance(hit.Position)
-							if offset < 15 then
-								if humanoid.Health > 0 then
+							if humanoid.Health > 0 then
 
-									shot.Directions[index] = nil
-									local numDir = 0
-									for _, v in pairs(shot.Directions) do
-										if v then
-											numDir = numDir + 1
-										end
+								shot.Directions[index] = nil
+								local numDir = 0
+								for _, v in pairs(shot.Directions) do
+									if v then
+										numDir = numDir + 1
 									end
-									if numDir == 0 then
-										shots[player] = nil
+								end
+								if numDir == 0 then
+									shots[player] = nil
+								end
+
+								local damage = DAMAGE:Calculate(shot.Item, hit, position)
+								DAMAGE:Damage(humanoid, damage, player, config.CritChance)
+
+								local otherPlayer = Players:GetPlayerFromCharacter(humanoid.Parent)
+								if otherPlayer then
+									REMOTES.HitIndicator:FireClient(otherPlayer, direction, damage)
+								end
+
+								if humanoid.Health <= 0 then
+									if hit.Name == "Head" then
+										humanoid.Parent.Head.Transparency = 1
 									end
 
-									local damage = DAMAGE:Calculate(shot.Item, hit, position)
-									DAMAGE:Damage(humanoid, damage, player, config.CritChance)
-
-									local otherPlayer = Players:GetPlayerFromCharacter(humanoid.Parent)
-									if otherPlayer then
-										REMOTES.HitIndicator:FireClient(otherPlayer, direction, damage)
-									end
-
-									if humanoid.Health <= 0 then
-										if hit.Name == "Head" then
-											humanoid.Parent.Head.Transparency = 1
-										end
-
-										for _, part in pairs(humanoid.Parent:GetChildren()) do
-											if part:IsA("BasePart") then
-												part.Velocity = direction * config.Damage
-											end
+									for _, part in pairs(humanoid.Parent:GetChildren()) do
+										if part:IsA("BasePart") then
+											part.Velocity = direction * config.Damage
 										end
 									end
 								end

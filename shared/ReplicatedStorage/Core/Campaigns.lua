@@ -101,6 +101,11 @@ local campaignsType = t.array(t.strictInterface({
 		Shotgun = lootRewardType,
 		Sniper = lootRewardType,
 	}),
+
+	Stats = t.map(t.string, t.map(t.string, t.strictInterface({
+		Base = t.number,
+		Scale = t.number,
+	}))),
 }))
 
 local Campaigns = {
@@ -203,6 +208,47 @@ local Campaigns = {
 				Legendary = { 5 },
 			},
 		}),
+
+		Stats = {
+			Common = {
+				Health = {
+					Base = 70,
+					Scale = 1.154,
+				},
+
+				Speed = {
+					Base = 14.5,
+					Scale = 1.01,
+				},
+
+				Damage = {
+					Base = 25,
+					Scale = 1.15,
+				},
+			},
+
+			Turret = {
+				Damage = {
+					Base = 5,
+					Scale = 1.15,
+				},
+
+				Health = {
+					Base = 45,
+					Scale = 1.154,
+				},
+
+				RateOfFire = {
+					Base = 0.5,
+					Scale = 1.09,
+				},
+
+				Speed = {
+					Base = 5,
+					Scale = 1,
+				},
+			},
+		},
 	},
 
 	{
@@ -210,6 +256,7 @@ local Campaigns = {
 		Image = "rbxassetid://69612219",
 		ZombieTypes = {
 			Common = 3,
+			Turret = 1,
 		},
 
 		Difficulties = {
@@ -220,10 +267,10 @@ local Campaigns = {
 				Gold = 2500,
 				Rooms = 8,
 				XP = 19000,
-				ZombieSpawnRate = 0.5,
+				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 1,
+					Health = 7000,
 				}
 			}
 		},
@@ -245,6 +292,47 @@ local Campaigns = {
 				Legendary = { 5 },
 			},
 		}),
+
+		Stats = {
+			Common = {
+				Health = {
+					Base = 3500,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 17,
+					Scale = 1,
+				},
+
+				Damage = {
+					Base = 1800,
+					Scale = 1.18,
+				},
+			},
+
+			Turret = {
+				Damage = {
+					Base = 650,
+					Scale = 1.167,
+				},
+
+				Health = {
+					Base = 2800,
+					Scale = 1.205,
+				},
+
+				RateOfFire = {
+					Base = 1,
+					Scale = 1.015,
+				},
+
+				Speed = {
+					Base = 5,
+					Scale = 1,
+				},
+			},
+		},
 	},
 }
 

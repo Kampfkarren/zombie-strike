@@ -48,16 +48,6 @@ function Zombie:Spawn(position)
 		end
 	end))
 
-	local humanoid = self.instance.Humanoid
-	local health = self:GetHealth()
-	humanoid.MaxHealth = health
-	humanoid.Health = health
-
-	humanoid.Died:connect(function()
-		self:UpdateNametag()
-		self:Die()
-	end)
-
 	self.aliveMaid:GiveTask(
 		ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(damaged, damage, damagedBy)
 			if damaged == humanoid then
@@ -74,11 +64,24 @@ function Zombie:Spawn(position)
 		end
 	end
 
+	self:SetupHumanoid()
 	self:UpdateNametag()
 	self:InitializeAI()
 	self:AfterSpawn()
 
 	return self.instance
+end
+
+function Zombie:SetupHumanoid()
+	local humanoid = self.instance.Humanoid
+	local health = self:GetHealth()
+	humanoid.MaxHealth = health
+	humanoid.Health = health
+
+	humanoid.Died:connect(function()
+		self:UpdateNametag()
+		self:Die()
+	end)
 end
 
 function Zombie:InitializeAI()
@@ -337,9 +340,21 @@ end
 -- END XP
 
 -- START STATS
+function Zombie:GetScaling()
+	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+	return assert(campaignInfo.Stats[self.zombieType])
+end
+
 function Zombie:GetScale(key)
-	local scale = assert(self.Scaling[key] or self:CustomScale(key), "no scale for " .. key)
-	return scale.Base * scale.Scale ^ (self.level - 1)
+	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+
+	local scale = assert(
+		(self.Scaling or self:GetScaling())[key]
+			or self:CustomScale(key),
+		"no scale for " .. key
+	)
+
+	return scale.Base * scale.Scale ^ (self.level - campaignInfo.Difficulties[1].MinLevel)
 end
 
 function Zombie:GetHealth()
@@ -363,6 +378,10 @@ function Zombie.AfterDeath() end
 function Zombie.AfterSpawn() end
 -- END BASIC HOOKS
 
+function Zombie:GetModel()
+	return ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")][self.Model]:Clone()
+end
+
 function Zombie.new(zombieType, level, ...)
 	assert(zombieType)
 	local originalZombie = require(script.Parent[zombieType])
@@ -370,7 +389,7 @@ function Zombie.new(zombieType, level, ...)
 
 	local zombie = originalZombie.new(level, ...)
 
-	local instance = ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")][zombie.Model]:Clone()
+	local instance = (zombie.GetModel or Zombie.GetModel)(zombie)
 
 	local aliveMaid = Maid.new()
 
@@ -390,6 +409,7 @@ function Zombie.new(zombieType, level, ...)
 		instance = instance,
 		level = level,
 		maid = maid,
+		zombieType = zombieType,
 
 		Damaged = damagedEvent.Event,
 		Died = diedEvent.Event,

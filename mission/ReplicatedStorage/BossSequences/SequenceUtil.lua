@@ -116,11 +116,11 @@ function SequenceUtil.Focus(cancel)
 	end
 
 	return function(boss, camera)
-		local base = camera.CFrame.Position
 		-- local offset = camera.CFrame - boss.PrimaryPart.Position
 		return Promise.new(function(resolve)
 			if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
 				local connection = RunService.RenderStepped:connect(function()
+					local base = camera.CFrame.Position
 					camera.CFrame = CFrame.new(base, boss.PrimaryPart.Position)-- * offsetAngle
 					camera.Focus = camera.CFrame
 				end)
@@ -135,10 +135,14 @@ function SequenceUtil.Focus(cancel)
 	end
 end
 
-function SequenceUtil.Animate(animation)
+function SequenceUtil.Animate(animation, getHumanoid)
+	getHumanoid = getHumanoid or function()
+		return true
+	end
+
 	return function(boss, camera)
 		if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
-			boss.Humanoid:LoadAnimation(animation):Play()
+			getHumanoid():LoadAnimation(animation):Play()
 		end
 
 		return boss, camera

@@ -220,7 +220,7 @@ local function startBoss(room)
 
 	local bossSpawn = room:FindFirstChild("BossSpawn", true)
 
-	spawnBoss(bossSpawn.WorldPosition, room)
+	spawnBoss(bossSpawn and bossSpawn.WorldPosition, room)
 end
 
 ServerStorage.Events.ToBoss.Event:connect(function(showSequence)

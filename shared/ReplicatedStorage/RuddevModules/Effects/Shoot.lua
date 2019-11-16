@@ -1,5 +1,6 @@
 -- services
 
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage	= game:GetService("ReplicatedStorage")
 local RunService		= game:GetService("RunService")
 local SoundService		= game:GetService("SoundService")
@@ -28,7 +29,17 @@ local function Raycast(position, direction, ignore)
 		h, p, n	= Workspace:FindPartOnRayWithIgnoreList(ray, ignore)
 
 		if h then
-			humanoid	= h.Parent:FindFirstChildOfClass("Humanoid")
+			if CollectionService:HasTag(h, "RaycastIgnore") then
+				while h:IsDescendantOf(game) and not h:FindFirstChild("Humanoid") do
+					h = h.Parent
+				end
+
+				humanoid = h.Humanoid
+				h = h.PrimaryPart
+			end
+
+			humanoid = h.Parent:FindFirstChildOfClass("Humanoid")
+
 			if humanoid then
 				if humanoid.Health <= 0 then
 					table.insert(ignore, h)

@@ -8,7 +8,10 @@ local fadeTween = {
 }
 
 ReplicatedStorage.Remotes.KillEnemy.OnClientEvent:connect(function(enemy)
-	enemy.Head:ClearAllChildren()
+	local head = enemy:FindFirstChild("Head")
+	if not head then return end
+
+	head:ClearAllChildren()
 
 	for _, thing in pairs(enemy:GetDescendants()) do
 		if thing:IsA("BasePart") or thing:IsA("Decal") then

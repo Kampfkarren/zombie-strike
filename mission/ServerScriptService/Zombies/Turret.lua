@@ -11,28 +11,6 @@ Turret.__index = Turret
 Turret.Model = "Turret"
 Turret.Name = "Shooter Zombie"
 
-Turret.Scaling = {
-	Damage = {
-		Base = 5,
-		Scale = 1.15,
-	},
-
-	Health = {
-		Base = 45,
-		Scale = 1.154,
-	},
-
-	RateOfFire = {
-		Base = 0.5,
-		Scale = 1.09,
-	},
-
-	Speed = {
-		Base = 5,
-		Scale = 1,
-	},
-}
-
 function Turret.new()
 	return setmetatable({}, Turret)
 end

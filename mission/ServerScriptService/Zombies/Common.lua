@@ -12,23 +12,6 @@ BasicZombie.__index = BasicZombie
 BasicZombie.Model = "Zombie"
 BasicZombie.Name = "Zombie"
 
-BasicZombie.Scaling = {
-	Health = {
-		Base = 70,
-		Scale = 1.154,
-	},
-
-	Speed = {
-		Base = 14.5,
-		Scale = 1.01,
-	},
-
-	Damage = {
-		Base = 25,
-		Scale = 1.15,
-	},
-}
-
 function BasicZombie:AfterSpawn()
 	self._animation = self.instance.Humanoid:LoadAnimation(ZombieAttack)
 	self.aliveMaid:GiveTask(function()
