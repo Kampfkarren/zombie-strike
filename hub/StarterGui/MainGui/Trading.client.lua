@@ -303,8 +303,6 @@ do
 			"us"
 		)
 
-		print(require(game.ReplicatedStorage.Core.inspect)(inventories))
-
 		Inner.UIPageLayout:JumpTo(Inner.TradeWindow)
 		toggle(true)
 	end)

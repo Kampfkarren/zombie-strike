@@ -32,7 +32,6 @@ function ItemButton:render()
 	local h, s, v = Color3.toHSV(color)
 
 	if props.equipped then
-		print(props.Loot.Name)
 		color = Color3.fromHSV(h, s, v * 0.6)
 	elseif self.state.hovered then
 		color = Color3.fromHSV(h, s, v * 0.7)
