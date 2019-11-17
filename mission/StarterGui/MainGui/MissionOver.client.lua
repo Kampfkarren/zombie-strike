@@ -128,7 +128,6 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	LootContents.Template:Destroy()
 
 	wait(5.3)
-
 	animate(LootResults.Info.XP.Count, xp, FULL_TIME_XP)
 	wait(0.5)
 	animate(LootResults.Info.Gold.Count, gold, FULL_TIME_GOLD)

@@ -292,11 +292,11 @@ end
 function Zombie:Die()
 	self.alive = false
 	self.instance.Humanoid.Health = 0
-	self.diedEvent:Fire()
 	self.aliveMaid:DoCleaning()
 	ReplicatedStorage.Remotes.KillEnemy:FireAllClients(self.instance)
 	self:GiveXP()
 	self:AfterDeath()
+	self.diedEvent:Fire()
 end
 
 function Zombie:LoadAnimation(animation)
