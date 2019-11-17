@@ -25,8 +25,12 @@ if Dungeon.GetDungeonData("Campaign") == 1 then
 
 	local RingSpawn = Workspace:FindFirstChild("RingSpawn", true)
 
-	boss:WaitForChild("Humanoid").AnimationPlayed:connect(function(track)
+	local trackCheck
+
+	trackCheck = boss:WaitForChild("Humanoid").AnimationPlayed:connect(function(track)
 		if pcall(function() track:GetTimeOfKeyframe("Slam") end) then
+			trackCheck:disconnect()
+
 			track.KeyframeReached:connect(function()
 				local direction = Camera.CFrame:VectorToObjectSpace(
 					(Camera.CFrame.Position - boss.HumanoidRootPart.Position).Unit
