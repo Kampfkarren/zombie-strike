@@ -352,19 +352,19 @@ local Campaigns = {
 
 		Loot = classicGuns({
 			Armor = {
-				Common = range(1, 7),
-				Uncommon = range(8, 13),
-				Rare = { 14 },
-				Epic = { 15 },
-				Legendary = { 16 },
+				Common = { 17 },
+				Uncommon = { 18 },
+				Rare = { 19 },
+				Epic = { 20 },
+				Legendary = { 21 },
 			},
 
 			Helmet = {
-				Common = { 1 },
-				Uncommon = { 2 },
-				Rare = { 3 },
-				Epic = { 4 },
-				Legendary = { 5 },
+				Common = { 6 },
+				Uncommon = { 7 },
+				Rare = { 8 },
+				Epic = { 9 },
+				Legendary = { 10 },
 			},
 		}),
 
