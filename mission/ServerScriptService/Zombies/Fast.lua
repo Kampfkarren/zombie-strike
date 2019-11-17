@@ -2,23 +2,6 @@ local Common = require(script.Parent.Common)
 
 local Fast = {}
 
-Fast.Scaling = {
-	Health = {
-		Base = 55,
-		Scale = 1.154,
-	},
-
-	Speed = {
-		Base = 19.5,
-		Scale = 1.01,
-	},
-
-	Damage = {
-		Base = 20,
-		Scale = 1.15,
-	},
-}
-
 function Fast:Wander()
 	self:Aggro()
 end

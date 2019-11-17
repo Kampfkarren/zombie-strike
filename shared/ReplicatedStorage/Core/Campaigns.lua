@@ -227,6 +227,23 @@ local Campaigns = {
 				},
 			},
 
+			Fast = {
+				Health = {
+					Base = 55,
+					Scale = 1.154,
+				},
+
+				Speed = {
+					Base = 19.5,
+					Scale = 1.01,
+				},
+
+				Damage = {
+					Base = 20,
+					Scale = 1.15,
+				},
+			},
+
 			Turret = {
 				Damage = {
 					Base = 5,
@@ -256,6 +273,7 @@ local Campaigns = {
 		Image = "rbxassetid://69612219",
 		ZombieTypes = {
 			Common = 3,
+			Fast = 1,
 			Turret = 1,
 		},
 
@@ -363,6 +381,23 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1800,
+					Scale = 1.18,
+				},
+			},
+
+			Fast = {
+				Health = {
+					Base = 2500,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 20,
+					Scale = 1,
+				},
+
+				Damage = {
+					Base = 1000,
 					Scale = 1.18,
 				},
 			},
