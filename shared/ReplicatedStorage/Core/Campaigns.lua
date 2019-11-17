@@ -270,9 +270,65 @@ local Campaigns = {
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 7000,
+					Health = 52500,
 				}
-			}
+			},
+
+			{
+				MinLevel = 36,
+				Style = Medium,
+
+				Gold = 4000,
+				Rooms = 10,
+				XP = 35000,
+				ZombieSpawnRate = 0.75,
+
+				BossStats = {
+					Health = 187000,
+				}
+			},
+
+			{
+				MinLevel = 42,
+				Style = Hard,
+
+				Gold = 20000,
+				Rooms = 12,
+				XP = 58000,
+				ZombieSpawnRate = 0.85,
+
+				BossStats = {
+					Health = 500000,
+				}
+			},
+
+			{
+				MinLevel = 48,
+				Style = VeryHard,
+
+				Gold = 50000,
+				Rooms = 14,
+				XP = 180000,
+				ZombieSpawnRate = 0.9,
+
+				BossStats = {
+					Health = 1500000,
+				}
+			},
+
+			{
+				MinLevel = 54,
+				Style = Extreme,
+
+				Gold = 120000,
+				Rooms = 16,
+				XP = 500000,
+				ZombieSpawnRate = 1,
+
+				BossStats = {
+					Health = 5000000,
+				}
+			},
 		},
 
 		Loot = classicGuns({
