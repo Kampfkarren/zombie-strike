@@ -12,7 +12,7 @@ local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DAMAGE_COOLDOWN = 1
 local SHIFT_MAX = 33
 local SPIN_BUFF = 0.125
-local SPIN_RATE = 0.42
+local SPIN_RATE = 0.34
 
 if Dungeon.GetDungeonData("Campaign") ~= 2 then return end
 
