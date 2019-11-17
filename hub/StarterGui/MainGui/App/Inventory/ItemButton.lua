@@ -22,7 +22,7 @@ end
 
 function ItemButton:shouldUpdate(nextProps, nextState)
 	return self.props.state ~= nextState
-		and self.props.LayoutOrder ~= nextProps.LayoutOrder
+		and (self.props.LayoutOrder ~= nextProps.LayoutOrder or self.props.equipped ~= nextProps.equipped)
 end
 
 function ItemButton:render()
@@ -32,6 +32,7 @@ function ItemButton:render()
 	local h, s, v = Color3.toHSV(color)
 
 	if props.equipped then
+		print(props.Loot.Name)
 		color = Color3.fromHSV(h, s, v * 0.6)
 	elseif self.state.hovered then
 		color = Color3.fromHSV(h, s, v * 0.7)
