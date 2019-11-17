@@ -10,7 +10,6 @@ function Fast.new(level)
 	return setmetatable({
 		Model = "Fast",
 		Name = "Fast Zombie",
-		Scaling = Fast.Scaling,
 	}, {
 		__index = Common.new(level),
 	})

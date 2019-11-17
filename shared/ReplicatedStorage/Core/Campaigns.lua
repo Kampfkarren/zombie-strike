@@ -275,6 +275,7 @@ local Campaigns = {
 			Common = 3,
 			Fast = 1,
 			Turret = 1,
+			AoE = 1,
 		},
 
 		Difficulties = {
@@ -422,6 +423,28 @@ local Campaigns = {
 					Base = 5,
 					Scale = 1,
 				},
+			},
+
+			AoE = {
+				Health = {
+					Base = 5000,
+					Scale = 1.205,
+				},
+
+				Speed = {
+					Base = 16,
+					Scale = 1.005,
+				},
+
+				Damage = {
+					Base = 2200,
+					Scale = 1.195,
+				},
+
+				Range = {
+					Base = 25,
+					Scale = 1,
+				}
 			},
 		},
 	},
