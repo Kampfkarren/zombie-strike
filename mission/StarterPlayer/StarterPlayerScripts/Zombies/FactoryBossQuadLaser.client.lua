@@ -14,7 +14,7 @@ local OSCILLATE_SIZE = 0.2
 local OSCILLATE_TIME = 0.1
 
 local QUAD_LASER_TIME = 3
-local ROTATE_RATE = 0.15
+local ROTATE_RATE = 0.25
 
 local TUBES = 4
 
@@ -56,7 +56,11 @@ QuadLaser.OnClientEvent:connect(function(activeTimer)
 		local hurt = false
 
 		laser.Touched:connect(function(part)
-			if shooting and LocalPlayer.Character and part:IsDescendantOf(LocalPlayer.Character) then
+			if not hurt
+				and shooting
+				and LocalPlayer.Character
+				and part:IsDescendantOf(LocalPlayer.Character)
+			then
 				hurt = true
 				QuadLaser:FireServer()
 			end

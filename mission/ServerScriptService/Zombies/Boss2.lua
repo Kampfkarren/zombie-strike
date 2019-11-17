@@ -47,11 +47,11 @@ FactoryBoss.QuadLaserRateOfFireScale = {
 }
 
 FactoryBoss.QuadLaserTime = {
-	[30] = 1.0,
-	[36] = 1.1,
-	[42] = 1.2,
-	[48] = 1.3,
-	[54] = 1.4,
+	[30] = 1.5,
+	[36] = 1.6,
+	[42] = 1.7,
+	[48] = 1.8,
+	[54] = 1.9,
 }
 
 FactoryBoss.Name = "The Evil Dr. Zombie"
