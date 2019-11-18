@@ -1,9 +1,11 @@
+local Debris = game:GetService("Debris")
 local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
+local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
@@ -295,6 +297,7 @@ function Zombie:Die()
 	self.aliveMaid:DoCleaning()
 	ReplicatedStorage.Remotes.KillEnemy:FireAllClients(self.instance)
 	self:GiveXP()
+	self:PlayDeathSound()
 	self:AfterDeath()
 	self.diedEvent:Fire()
 end
@@ -378,6 +381,20 @@ function Zombie.CustomScale() end
 function Zombie.AfterDeath() end
 function Zombie.AfterSpawn() end
 -- END BASIC HOOKS
+
+-- START SOUNDS
+function Zombie:GetDeathSound()
+	local sounds = SoundService.ZombieSounds[Dungeon.GetDungeonData("Campaign")].Death:GetChildren()
+	return sounds[math.random(#sounds)]:Clone()
+end
+
+function Zombie:PlayDeathSound()
+	local sound = self:GetDeathSound()
+	sound.Parent = self.instance.PrimaryPart
+	sound:Play()
+	Debris:AddItem(sound)
+end
+-- END SOUNDS
 
 function Zombie:GetModel()
 	return ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")][self.Model]:Clone()
