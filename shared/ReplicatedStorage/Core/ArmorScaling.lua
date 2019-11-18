@@ -1,17 +1,17 @@
 local ArmorScaling = {}
 
-local ARMOR_BASE = 25
-local HELMET_BASE = 15
+local ARMOR_BASE = 32
+local HELMET_BASE = 24
 
 local ARMOR_SCALE = 1.15
 local HELMET_SCALE = 1.15
 
 local MULTIPLIERS = {
 	1,
-	1.2,
-	1.4,
-	1.6,
-	2.1
+	1.22,
+	1.44,
+	1.66,
+	2.2,
 }
 
 function ArmorScaling.ArmorHealth(level, rarity)
