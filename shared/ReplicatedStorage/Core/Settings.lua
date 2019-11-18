@@ -19,6 +19,7 @@ Settings.Settings = {
 			"Fair",
 			"Brown",
 			"Dark",
+			"Very Dark",
 		},
 
 		Values = {
@@ -27,6 +28,7 @@ Settings.Settings = {
 			Color3.fromRGB(224, 172, 105),
 			Color3.fromRGB(198, 134, 66),
 			Color3.fromRGB(141, 85, 36),
+			Color3.fromRGB(75, 46, 21),
 		},
 	},
 
