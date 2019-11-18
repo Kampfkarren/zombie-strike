@@ -172,7 +172,13 @@ function module.Create(_, item)
 
 		for i = 1, config.ShotSize do
 			local spread = config.Spread * 10
-			local cframe = CFrame.new(position, MOUSE.WorldPosition)
+			local cframe
+
+			if HubWorld and not UserInputService.MouseEnabled then
+				cframe = muzzle.WorldCFrame
+			else
+				cframe = CFrame.new(position, MOUSE.WorldPosition)
+			end
 
 			if config.SpreadPattern then
 				local x, y = config.SpreadPattern[i][1], config.SpreadPattern[i][2]

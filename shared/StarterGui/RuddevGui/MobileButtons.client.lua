@@ -22,4 +22,19 @@ MobileButtons.Reload.InputEnded:connect(function(inputObject)
 	end
 end)
 
+MobileButtons.Shoot.InputBegan:connect(function(inputObject)
+	if inputObject.UserInputType == Enum.UserInputType.Touch then
+		Input.FireBegan("Primary")
+		MobileButtons.Shoot.ImageColor3 = COLOR_PRESS
+	end
+end)
+
+MobileButtons.Shoot.InputEnded:connect(function(inputObject)
+	if inputObject.UserInputType == Enum.UserInputType.Touch then
+		Input.FireEnded("Primary")
+		MobileButtons.Shoot.ImageColor3 = COLOR_DEFAULT
+	end
+end)
+
 MobileButtons.Visible = UserInputService.TouchEnabled
+MobileButtons.Shoot.Visible = ReplicatedStorage.HubWorld.Value

@@ -180,7 +180,7 @@ for _, animation in pairs(ANIMATIONS:WaitForChild("Actions"):GetChildren()) do
 	animations.Actions[animation.Name]	= HUMANOID:LoadAnimation(animation)
 end
 
-for _, animation in pairs(ANIMATIONS.Emotes:GetChildren()) do
+for _, animation in pairs(ANIMATIONS:WaitForChild("Emotes"):GetChildren()) do
 	animations.Emotes[animation.Name]	= HUMANOID:LoadAnimation(animation)
 end
 
