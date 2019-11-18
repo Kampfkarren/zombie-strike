@@ -125,7 +125,7 @@ local Campaigns = {
 				Style = Easy,
 
 				Gold = 50,
-				Rooms = 8,
+				Rooms = 4,
 				XP = 600,
 				ZombieSpawnRate = 0.4,
 
@@ -139,7 +139,7 @@ local Campaigns = {
 				Style = Medium,
 
 				Gold = 120,
-				Rooms = 10,
+				Rooms = 7,
 				XP = 1300,
 				ZombieSpawnRate = 0.65,
 
@@ -153,7 +153,7 @@ local Campaigns = {
 				Style = Hard,
 
 				Gold = 370,
-				Rooms = 12,
+				Rooms = 10,
 				XP = 3000,
 				ZombieSpawnRate = 0.75,
 
@@ -167,7 +167,7 @@ local Campaigns = {
 				Style = VeryHard,
 
 				Gold = 800,
-				Rooms = 14,
+				Rooms = 12,
 				XP = 4800,
 				ZombieSpawnRate = 0.9,
 
@@ -181,7 +181,7 @@ local Campaigns = {
 				Style = Extreme,
 
 				Gold = 1900,
-				Rooms = 16,
+				Rooms = 13,
 				XP = 10000,
 				ZombieSpawnRate = 1,
 
@@ -284,7 +284,7 @@ local Campaigns = {
 				Style = Easy,
 
 				Gold = 2500,
-				Rooms = 8,
+				Rooms = 4,
 				XP = 19000,
 				ZombieSpawnRate = 0.65,
 
@@ -298,7 +298,7 @@ local Campaigns = {
 				Style = Medium,
 
 				Gold = 4000,
-				Rooms = 10,
+				Rooms = 7,
 				XP = 35000,
 				ZombieSpawnRate = 0.75,
 
@@ -312,7 +312,7 @@ local Campaigns = {
 				Style = Hard,
 
 				Gold = 20000,
-				Rooms = 12,
+				Rooms = 10,
 				XP = 58000,
 				ZombieSpawnRate = 0.85,
 
@@ -326,7 +326,7 @@ local Campaigns = {
 				Style = VeryHard,
 
 				Gold = 50000,
-				Rooms = 14,
+				Rooms = 12,
 				XP = 180000,
 				ZombieSpawnRate = 0.9,
 
@@ -340,7 +340,7 @@ local Campaigns = {
 				Style = Extreme,
 
 				Gold = 120000,
-				Rooms = 16,
+				Rooms = 13,
 				XP = 500000,
 				ZombieSpawnRate = 1,
 
