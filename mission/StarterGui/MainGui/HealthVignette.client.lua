@@ -24,6 +24,8 @@ local function characterAdded(character)
 		tween:Play()
 	end)
 
+	HealthVignette.ImageTransparency = 1
+
 	humanoid.HealthChanged:connect(function(health)
 		local percent = health / humanoid.MaxHealth
 		HealthVignette.ImageTransparency = lerp(1 + (1 - HEALTH_THRESHOLD), MAX_TRANSPARENCY, 1 - percent)
