@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
@@ -70,6 +71,7 @@ Players.PlayerAdded:connect(function(player)
 	playerData.Parent = player
 
 	local updateOutfit, currentRefresh
+	local refreshing = false
 
 	local function refreshCharacter()
 		if not player.Character then return end
@@ -80,7 +82,13 @@ Players.PlayerAdded:connect(function(player)
 		end
 
 		currentRefresh = updateOutfit:andThen(function(refresh)
-			refresh()
+			if refreshing then return end
+			refreshing = true
+			coroutine.wrap(function()
+				RunService.Heartbeat:wait()
+				refreshing = false
+				refresh()
+			end)()
 		end)
 	end
 

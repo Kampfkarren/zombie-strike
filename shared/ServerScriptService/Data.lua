@@ -53,7 +53,7 @@ function Data.GetPlayerData(player, key)
 		local inventory = Data.GetPlayerData(player, "Inventory")
 		local equipped = Data.GetPlayerData(player, "Equipped" .. key)
 
-		return inventory[equipped]
+		return assert(inventory[equipped], "no equipped " .. key)
 	elseif baseMockPlayer[key] then
 		DataStore2.Combine("DATA", key)
 
