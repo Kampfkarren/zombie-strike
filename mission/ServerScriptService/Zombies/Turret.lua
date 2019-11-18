@@ -1,7 +1,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local Raycast = require(ReplicatedStorage.Libraries.Raycast)
+local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
 local TURRET_RANGE = 80
 
@@ -49,7 +51,7 @@ function Turret:InitializeAI()
 					if hit and hit:IsDescendantOf(character) then
 						local distance = (root.Position - position).Magnitude
 						if distance < closest[2] then
-							closest = { character, distance, { hit, position, normal, character.Humanoid } }
+							closest = { player, distance, { hit, position, normal, character.Humanoid } }
 						end
 					end
 				end
@@ -67,7 +69,7 @@ function Turret:InitializeAI()
 					closest[3]
 				)
 
-				closest[1].Humanoid:TakeDamage(self:GetScale("Damage"))
+				TakeDamage(closest[1], self:GetScale("Damage"))
 				self.shootAnimation:Play()
 			end
 

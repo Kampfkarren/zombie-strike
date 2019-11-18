@@ -2,12 +2,14 @@ local CollectionService = game:GetService("CollectionService")
 local PhysicsService = game:GetService("PhysicsService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
 local Assets = ReplicatedStorage.Assets.Campaign.Campaign2.Boss
 local HitByLaser = ReplicatedStorage.Remotes.FactoryBoss.HitByLaser
 local Maid = require(ReplicatedStorage.Core.Maid)
 local QuadLaser = ReplicatedStorage.Remotes.FactoryBoss.QuadLaser
+local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
 local DAMAGE_BUFF = 1.125
 local FINALE_CRUMBLE = 1.4
@@ -131,7 +133,8 @@ function FactoryBoss:InitializeBossAI()
 			if not damage then
 				error("FactoryBoss.HitByLaser: no damage scale for " .. self.level)
 			end
-			character:WaitForChild("Humanoid"):TakeDamage(damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
+			TakeDamage(player, damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
+			character:WaitForChild("Humanoid"):TakeDamage()
 		end
 	end)
 
@@ -142,7 +145,7 @@ function FactoryBoss:InitializeBossAI()
 			if not damage then
 				error("FactoryBoss.QuadLaser: no damage scale for " .. self.level)
 			end
-			character:WaitForChild("Humanoid"):TakeDamage(damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
+			TakeDamage(player, damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
 		end
 	end)
 

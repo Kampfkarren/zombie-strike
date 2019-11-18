@@ -176,7 +176,7 @@ for _, animation in pairs(ANIMATIONS.Movement:GetChildren()) do
 	animations.Movement[animation.Name]	= animation
 end
 
-for _, animation in pairs(ANIMATIONS.Actions:GetChildren()) do
+for _, animation in pairs(ANIMATIONS:WaitForChild("Actions"):GetChildren()) do
 	animations.Actions[animation.Name]	= HUMANOID:LoadAnimation(animation)
 end
 

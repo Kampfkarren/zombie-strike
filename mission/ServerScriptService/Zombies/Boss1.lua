@@ -6,6 +6,7 @@ local TweenService = game:GetService("TweenService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
+local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 local Zombie = require(script.Parent.Zombie)
 
 local Assets = ReplicatedStorage.Assets.Campaign.Campaign1.Boss
@@ -83,7 +84,7 @@ function CityBoss:AfterSpawn()
 				warn("CityBoss.HitByBoulder: no damage scale for " .. self.level)
 				damage = 60
 			end
-			character:WaitForChild("Humanoid"):TakeDamage(damage)
+			TakeDamage(player, damage)
 		end
 	end)
 
@@ -95,7 +96,7 @@ function CityBoss:AfterSpawn()
 				warn("CityBoss.HitBySlam: no damage scale for " .. self.level)
 				damage = 60
 			end
-			character:WaitForChild("Humanoid"):TakeDamage(damage)
+			TakeDamage(player, damage)
 		end
 	end)
 end

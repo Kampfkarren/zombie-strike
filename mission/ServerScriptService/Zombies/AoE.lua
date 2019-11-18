@@ -1,9 +1,11 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local CircleEffect = require(ReplicatedStorage.Libraries.CircleEffect)
 local Common = require(script.Parent.Common)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
 local CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect
 
@@ -64,7 +66,7 @@ function AoE:StompEffect()
 	for _, player in pairs(Players:GetPlayers()) do
 		local character = player.Character
 		if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude <= range then
-			character.Humanoid:TakeDamage(self:GetScale("Damage"))
+			TakeDamage(player, self:GetScale("Damage"))
 		end
 	end
 

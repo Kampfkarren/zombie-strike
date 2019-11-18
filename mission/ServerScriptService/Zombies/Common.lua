@@ -1,8 +1,10 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
 local LineOfSight = require(ReplicatedStorage.Libraries.LineOfSight)
+local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
 local ZombieAttack = ReplicatedStorage.Assets.Animations.ZombieAttack
 
@@ -34,7 +36,7 @@ function BasicZombie:Attack()
 				self.AttackRange,
 				{ Workspace.Zombies }
 			) then
-				character.Humanoid:TakeDamage(self:GetScale("Damage"))
+				TakeDamage(player, self:GetScale("Damage"))
 			end
 		end
 	end)
