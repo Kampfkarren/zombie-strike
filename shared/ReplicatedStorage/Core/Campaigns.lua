@@ -246,7 +246,7 @@ local Campaigns = {
 
 			Turret = {
 				Damage = {
-					Base = 5,
+					Base = 2.5,
 					Scale = 1.15,
 				},
 
