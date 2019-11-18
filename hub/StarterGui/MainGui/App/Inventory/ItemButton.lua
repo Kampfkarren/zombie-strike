@@ -21,6 +21,12 @@ function ItemButton:init()
 end
 
 function ItemButton:shouldUpdate(nextProps, nextState)
+	for key, value in pairs(nextProps.Loot) do
+		if self.props.Loot[key] ~= value then
+			return true
+		end
+	end
+
 	return self.props.state ~= nextState
 		and (self.props.LayoutOrder ~= nextProps.LayoutOrder or self.props.equipped ~= nextProps.equipped)
 end
