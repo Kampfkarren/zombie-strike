@@ -36,4 +36,4 @@ if LocalPlayer.Character then
 	characterAdded(LocalPlayer.Character)
 end
 
-characterAdded(LocalPlayer.Character)
+LocalPlayer.CharacterAdded:connect(characterAdded)
