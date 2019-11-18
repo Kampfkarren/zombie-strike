@@ -289,7 +289,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 52500,
+					Health = 52500 * 5,
 				}
 			},
 
@@ -303,7 +303,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 187000,
+					Health = 187000 * 5,
 				}
 			},
 
@@ -312,12 +312,12 @@ local Campaigns = {
 				Style = Hard,
 
 				Gold = 20000,
-				Rooms = 10,
+				Rooms = 8,
 				XP = 58000,
 				ZombieSpawnRate = 0.85,
 
 				BossStats = {
-					Health = 500000,
+					Health = 500000 * 3,
 				}
 			},
 
@@ -326,12 +326,12 @@ local Campaigns = {
 				Style = VeryHard,
 
 				Gold = 50000,
-				Rooms = 12,
+				Rooms = 10,
 				XP = 180000,
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
-					Health = 1500000,
+					Health = 1500000 * 5,
 				}
 			},
 
@@ -340,12 +340,12 @@ local Campaigns = {
 				Style = Extreme,
 
 				Gold = 120000,
-				Rooms = 13,
+				Rooms = 12,
 				XP = 500000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
-					Health = 5000000,
+					Health = 5000000 * 5,
 				}
 			},
 		},
@@ -405,7 +405,7 @@ local Campaigns = {
 
 			Turret = {
 				Damage = {
-					Base = 650,
+					Base = 275,
 					Scale = 1.167,
 				},
 
@@ -437,7 +437,7 @@ local Campaigns = {
 				},
 
 				Damage = {
-					Base = 2200,
+					Base = 1800,
 					Scale = 1.195,
 				},
 
