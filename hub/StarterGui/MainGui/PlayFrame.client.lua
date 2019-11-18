@@ -142,7 +142,7 @@ do
 		button.Label.Text = campaign.Name
 
 		if level < campaign.Difficulties[1].MinLevel then
-			button.ImageColor3 = Color3.new(1, 1, 1)
+			button.ImageColor3 = Color3.fromRGB(107, 107, 107)
 		end
 
 		button.MouseButton1Click:connect(function()
