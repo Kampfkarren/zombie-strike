@@ -1,14 +1,11 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local AutomatedScrollingFrameComponent = require(script.Parent.AutomatedScrollingFrameComponent)
 local Close = require(script.Parent.Close)
-local CosmeticButton = require(script.Parent.Store.CosmeticButton)
-local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Equipped = require(script.Equipped)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
+local InventoryContents = require(script.InventoryContents)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
-local ItemButton = require(script.ItemButton)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
@@ -57,44 +54,6 @@ end
 
 function Inventory:render()
 	local props = self.props
-
-	local inventory = {}
-	inventory.UIGridLayout = e("UIGridLayout", {
-		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-		SortOrder = Enum.SortOrder.LayoutOrder,
-	})
-
-	for id, item in pairs(self.props.inventory or {}) do
-		inventory["Item" .. item.UUID] = e(ItemButton, {
-			LayoutOrder = -id,
-			Loot = item,
-
-			onHover = self.onHover,
-			onUnhover = self.onUnhover,
-
-			equip = function()
-				UpdateEquipment:FireServer(id)
-			end,
-		})
-	end
-
-	for id, item in pairs(self.props.cosmeticsInventory) do
-		inventory["Cosmetic" .. id] = e(CosmeticButton, {
-			Item = Cosmetics.Cosmetics[item],
-			PreviewSize = UDim2.fromScale(1, 1),
-
-			Native = {
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-				Image = "http://www.roblox.com/asset/?id=3973353646",
-				LayoutOrder = id,
-
-				[Roact.Event.Activated] = function()
-					UpdateCosmetics:FireServer(item)
-				end,
-			}
-		})
-	end
 
 	local lootInfo
 	local hovered = next(self.state.lootStack)
@@ -272,14 +231,26 @@ function Inventory:render()
 			}),
 		}),
 
-		Contents = e(AutomatedScrollingFrameComponent, {
-			AnchorPoint = Vector2.new(0, 1),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			Position = UDim2.fromScale(0.25, 1),
-			ScrollBarThickness = 4,
-			Size = UDim2.fromScale(0.45, 0.95),
-		}, inventory),
+		Contents = e(InventoryContents, {
+			Native = {
+				AnchorPoint = Vector2.new(0, 1),
+				BackgroundTransparency = 1,
+				BorderSizePixel = 0,
+				Position = UDim2.fromScale(0.25, 1),
+				ScrollBarThickness = 4,
+				Size = UDim2.fromScale(0.45, 0.95),
+			},
+
+			showCosmetics = true,
+			onHover = self.onHover,
+			onUnhover = self.onUnhover,
+			onClickCosmetic = function(item)
+				UpdateCosmetics:FireServer(item)
+			end,
+			onClickInventory = function(id)
+				UpdateEquipment:FireServer(id)
+			end,
+		}),
 
 		LootInfo = e("Frame", {
 			AnchorPoint = Vector2.new(1, 0),
@@ -298,8 +269,6 @@ end
 
 return RoactRodux.connect(function(state)
 	return {
-		cosmeticsInventory = state.store.contents,
-		inventory = state.inventory,
 		open = state.page.current == "Inventory",
 	}
 end, function(dispatch)
