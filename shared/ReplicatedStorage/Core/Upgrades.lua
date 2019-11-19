@@ -12,6 +12,10 @@ function Upgrades.GetArmorBuff(base, upgrades)
 	return base * (Upgrades.ArmorBuff * upgrades)
 end
 
+function Upgrades.GetRegenBuff(base, upgrades)
+	return base * (Upgrades.ArmorBuff * upgrades)
+end
+
 function Upgrades.GetDamageBuff(base, upgrades)
 	return base * (Upgrades.DamageBuff * upgrades)
 end

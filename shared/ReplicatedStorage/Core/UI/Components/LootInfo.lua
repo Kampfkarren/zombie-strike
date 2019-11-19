@@ -135,7 +135,19 @@ function LootInfo:render()
 		stats.Health = e(Stat, {
 			Compare = currentHealth,
 			Stat = lootHealth,
-			StatName = "HEALTH",
+			StatName = "HP",
+		})
+
+		local currentRegen = ArmorScaling.ArmorRegen(currentItem.Level)
+		currentRegen = currentRegen + Upgrades.GetRegenBuff(currentRegen, currentItem.Upgrades)
+
+		local lootRegen = ArmorScaling.ArmorRegen(loot.Level)
+		lootRegen = lootRegen + Upgrades.GetRegenBuff(lootRegen, loot.Upgrades)
+
+		stats.Regen = e(Stat, {
+			Compare = currentRegen,
+			Stat = lootRegen,
+			StatName = "HEAL",
 		})
 	else
 		local currentGunItem = self.props.equipment.equippedWeapon
