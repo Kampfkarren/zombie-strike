@@ -1,18 +1,15 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
-local TeleportService = game:GetService("TeleportService")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporter)
-local Lobby = require(ReplicatedStorage.Libraries.Lobby)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
-local PatchLobby = ReplicatedStorage.Remotes.PatchLobby
-local UpdateLobbies = ReplicatedStorage.Remotes.UpdateLobbies
+local Lobbies = ReplicatedStorage.Lobbies
 
 local lobbies = {}
 local teleporting = {}
@@ -26,6 +23,21 @@ local function getPlayerLobby(player)
 			end
 		end
 	end
+end
+
+local function findLobbyByUnique(unique)
+	for _, lobby in pairs(lobbies) do
+		if lobby.Unique == unique then
+			return lobby
+		end
+	end
+end
+
+local function value(parent, class, name, value)
+	local object = Instance.new(class)
+	object.Name = name
+	object.Value = value
+	object.Parent = parent
 end
 
 ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
@@ -66,6 +78,25 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
 
 	unique = unique + 1
 
+	local lobbyInstance = Instance.new("Folder")
+	value(lobbyInstance, "NumberValue", "Campaign", campaignIndex)
+	value(lobbyInstance, "NumberValue", "Difficulty", difficultyIndex)
+	value(lobbyInstance, "BoolValue", "Public", public == true)
+	value(lobbyInstance, "BoolValue", "Hardcore", hardcore == true)
+	value(lobbyInstance, "NumberValue", "Unique", unique)
+	value(lobbyInstance, "ObjectValue", "Owner", player)
+
+	local players = Instance.new("Folder")
+	players.Name = "Players"
+
+	local playerValue = Instance.new("ObjectValue")
+	playerValue.Name = player.UserId
+	playerValue.Value = player
+	playerValue.Parent = players
+
+	players.Parent = lobbyInstance
+	lobbyInstance.Parent = Lobbies
+
 	local lobby = {
 		Players = { player },
 		Campaign = campaignIndex,
@@ -74,17 +105,16 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
 		Hardcore = hardcore == true,
 		Unique = unique,
 		Kicked = {},
+		Instance = lobbyInstance,
 	}
 
 	table.insert(lobbies, lobby)
 
-	PatchLobby:FireAllClients(#lobbies, Lobby.Serialize(lobby))
-
 	return true
 end
 
-ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, lobbyIndex)
-	local lobby = lobbies[lobbyIndex]
+ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
+	local lobby = findLobbyByUnique(unique)
 	if not lobby then
 		warn("invalid lobby index")
 		return
@@ -121,7 +151,11 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, lobbyIndex
 	end
 
 	table.insert(lobby.Players, player)
-	PatchLobby:FireAllClients(lobbyIndex, Lobby.Serialize(lobby))
+
+	local playerRepresentation = Instance.new("ObjectValue")
+	playerRepresentation.Name = player.UserId
+	playerRepresentation.Value = player
+	playerRepresentation.Parent = lobby.Instance.Players
 
 	return true
 end
@@ -142,9 +176,10 @@ ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(function(player)
 
 	if #lobby.Players == 0 then
 		table.remove(lobbies, lobbyIndex)
-		PatchLobby:FireAllClients(lobbyIndex)
+		lobby.Instance:Destroy()
 	else
-		PatchLobby:FireAllClients(lobbyIndex, Lobby.Serialize(lobby))
+		lobby.Instance.Players[player.UserId]:Destroy()
+		lobby.Instance.Owner.Value = lobby.Players[1]
 	end
 end)
 
@@ -164,13 +199,14 @@ ReplicatedStorage.Remotes.KickFromLobby.OnServerEvent:connect(function(player, k
 		if otherPlayer == kickPlayer then
 			table.remove(lobby.Players, spot)
 			lobby.Kicked[kickPlayer] = true
-			ReplicatedStorage.Remotes.KickFromLobby:FireClient(kickPlayer, lobbyIndex)
+			ReplicatedStorage.Remotes.KickFromLobby:FireClient(kickPlayer, lobby.Unique)
 
 			if #lobby.Players == 0 then
 				table.remove(lobbies, lobbyIndex)
-				PatchLobby:FireAllClients(lobbyIndex)
+				lobby.Instance:Destroy()
 			else
-				PatchLobby:FireAllClients(lobbyIndex, Lobby.Serialize(lobby))
+				lobby.Instance.Players[kickPlayer.UserId]:Destroy()
+				lobby.Instance.Owner.Value = lobby.Players[1]
 			end
 		end
 	end
@@ -231,7 +267,7 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 		return DungeonTeleporter.TeleportPlayers(lobby, unpack(results[1]))
 	end):andThen(function()
 		table.remove(lobbies, lobbyIndex)
-		PatchLobby:FireAllClients(lobbyIndex)
+		lobby.Instance:Destroy()
 	end):catch(function(problem)
 		ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
 
@@ -242,10 +278,6 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 	end)
 
 	-- DUNGEON_PLACE_ID
-end)
-
-Players.PlayerAdded:connect(function(player)
-	UpdateLobbies:FireClient(player, Lobby.SerializeTable(lobbies))
 end)
 
 Players.PlayerRemoving:connect(function(player)

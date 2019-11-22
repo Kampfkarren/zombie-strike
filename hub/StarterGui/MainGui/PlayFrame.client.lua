@@ -9,10 +9,9 @@ local TweenService = game:GetService("TweenService")
 local AutomatedScrollingFrame = require(ReplicatedStorage.Core.UI.AutomatedScrollingFrame)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
-local Lobby = require(ReplicatedStorage.Libraries.Lobby)
-local t = require(ReplicatedStorage.Vendor.t)
 local UserThumbnail = require(ReplicatedStorage.Core.UI.UserThumbnail)
 
+local Lobbies = ReplicatedStorage.Lobbies
 local LocalPlayer = Players.LocalPlayer
 local PlayButton = script.Parent.Main.PlayButton
 local PlayFrame = script.Parent.Main.PlayFrame
@@ -20,6 +19,7 @@ local Inner = script.Parent.Main.PlayFrame.Inner
 
 local TWEEN_TIME = 0.5
 
+local currentLobby
 local kickedFrom = {}
 local open, openTick = false, 0
 local pageLayout = PlayFrame.Inner.UIPageLayout
@@ -81,8 +81,6 @@ end)
 Inner.JoinCreate.Join.MouseButton1Click:connect(function()
 	pageLayout:JumpTo(Inner.Join)
 end)
-
-local lobbies = {}
 
 -- Create campaign
 do
@@ -203,11 +201,6 @@ end
 
 local lobbiesUpdated = Instance.new("BindableEvent")
 
-local function updateLobbies()
-	assert(t.table(lobbies))
-	lobbiesUpdated:Fire(lobbies)
-end
-
 -- Lobby browser
 do
 	local Join = Inner.Join
@@ -219,10 +212,9 @@ do
 	local currentlySelected
 	local selectTick = 0
 
-	local function selectLobby(lobbyIndex)
+	local function selectLobby(lobby)
 		local level = Players.LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
 
-		local lobby = assert(lobbies[lobbyIndex])
 		local campaign = assert(Campaigns[lobby.Campaign])
 		local difficulty = assert(campaign.Difficulties[lobby.Difficulty])
 
@@ -236,8 +228,8 @@ do
 		lobbyInfo.MapImage.Image = campaign.Image
 		lobbyInfo.MapImage.Hardcore.Visible = lobby.Hardcore
 
-		lobbyInfo.User.Username.Text = lobby.Players[1].Name
-		UserThumbnail(lobby.Players[1]):andThen(function(avatar)
+		lobbyInfo.User.Username.Text = lobby.Owner.Name
+		UserThumbnail(lobby.Owner):andThen(function(avatar)
 			if selectTick == ourTick then
 				lobbyInfo.User.Avatar.Image = avatar
 			end
@@ -254,7 +246,7 @@ do
 			lobbyInfo.Join.ImageColor3 = Color3.new(1, 1, 1)
 		else
 			lobbyInfo.Join.MouseButton1Click:connect(function()
-				if ReplicatedStorage.Remotes.JoinLobby:InvokeServer(lobbyIndex) then
+				if ReplicatedStorage.Remotes.JoinLobby:InvokeServer(lobby.Unique) then
 					pageLayout:JumpTo(Inner.Lobby)
 				end
 			end)
@@ -275,10 +267,10 @@ do
 
 		local unselect = true
 
-		for index, lobby in pairs(lobbies) do
+		for _, lobby in pairs(lobbies) do
 			local button = LobbyTemplate:Clone()
 
-			local friends = Friends.IsFriendsWith(lobby.Players[1])
+			local friends = Friends.IsFriendsWith(lobby.Owner)
 
 			if friends then
 				button.ImageColor3 = Color3.fromRGB(9, 132, 227)
@@ -296,7 +288,7 @@ do
 				button.ImageColor3 = Color3.fromRGB(252, 92, 101)
 			end
 
-			UserThumbnail(lobby.Players[1]):andThen(function(avatar)
+			UserThumbnail(lobby.Owner):andThen(function(avatar)
 				button.Inner.Avatar.Image = avatar
 			end)
 
@@ -313,14 +305,14 @@ do
 			end
 
 			button.Inner.Info.Campaign.Text = campaignName
-			button.Inner.Info.Username.Text = lobby.Players[1].Name
+			button.Inner.Info.Username.Text = lobby.Owner.Name
 
 			button.MouseButton1Click:connect(function()
-				selectLobby(index)
+				selectLobby(lobby)
 			end)
 
 			button.SelectionGained:connect(function()
-				selectLobby(index)
+				selectLobby(lobby)
 			end)
 
 			table.insert(lobbyButtons, {
@@ -333,7 +325,7 @@ do
 
 			if lobby.Unique == currentlySelected then
 				unselect = false
-				selectLobby(index)
+				selectLobby(lobby)
 			end
 		end
 
@@ -375,13 +367,7 @@ end
 -- Lobby screen
 do
 	local function getCurrentLobby()
-		for _, lobby in pairs(lobbies) do
-			for _, player in pairs(lobby.Players) do
-				if player == LocalPlayer then
-					return lobby
-				end
-			end
-		end
+		return currentLobby
 	end
 
 	ReplicatedStorage.LocalEvents.GetCurrentLobby.OnInvoke = getCurrentLobby
@@ -425,7 +411,7 @@ do
 
 		-- Player panel
 
-		local isOwner = current.Players[1] == LocalPlayer
+		local isOwner = current.Owner == LocalPlayer
 
 		for playerIndex, player in pairs(current.Players) do
 			local card = Lobby.Players[playerIndex]
@@ -478,26 +464,8 @@ do
 	end)
 end
 
-ReplicatedStorage.Remotes.UpdateLobbies.OnClientEvent:connect(function(allLobbies)
-	lobbies = Lobby.DeserializeTable(allLobbies)
-	updateLobbies()
-end)
-
-ReplicatedStorage.Remotes.PatchLobby.OnClientEvent:connect(function(index, lobby)
-	assert(#lobbies <= index)
-
-	if lobby then
-		lobbies[index] = Lobby.Deserialize(lobby)
-	else
-		table.remove(lobbies, index)
-	end
-
-	updateLobbies()
-end)
-
-ReplicatedStorage.Remotes.KickFromLobby.OnClientEvent:connect(function(index)
-	local lobby = assert(lobbies[index])
-	kickedFrom[lobby.Unique] = true
+ReplicatedStorage.Remotes.KickFromLobby.OnClientEvent:connect(function(unique)
+	kickedFrom[unique] = true
 	StarterGui:SetCore("ChatMakeSystemMessage", {
 		Text = "You were kicked from the lobby.",
 		Color = Color3.fromRGB(252, 92, 101),
@@ -524,18 +492,47 @@ ReplicatedStorage.LocalEvents.PressPlay.Event:connect(function()
 	toggle(true)
 end)
 
-local function checkGamepad()
-	-- PlayButton.Gamepad.Visible = UserInputService.GamepadEnabled
+local function updateLobbies()
+	currentLobby = nil
+	local lobbies = {}
+
+	for _, lobby in pairs(Lobbies:GetChildren()) do
+		local playersFolder = lobby:WaitForChild("Players")
+		playersFolder.ChildAdded:connect(updateLobbies)
+		playersFolder.ChildRemoved:connect(updateLobbies)
+
+		local players = {}
+		local ours = false
+
+		for _, player in pairs(playersFolder:GetChildren()) do
+			if tonumber(player.Name) == LocalPlayer.UserId then
+				ours = true
+			end
+
+			table.insert(players, player.Value)
+		end
+
+		local lobby = {
+			Campaign = lobby.Campaign.Value,
+			Difficulty = lobby.Difficulty.Value,
+			Hardcore = lobby.Hardcore.Value,
+			Players = players,
+			Public = lobby.Public.Value,
+			Owner = lobby.Owner.Value,
+			Unique = lobby.Unique.Value,
+		}
+
+		if ours then
+			currentLobby = lobby
+		end
+
+		table.insert(lobbies, lobby)
+	end
+
+	lobbiesUpdated:Fire(lobbies)
 end
 
-checkGamepad()
-UserInputService.GamepadConnected:connect(checkGamepad)
-UserInputService.GamepadDisconnected:connect(checkGamepad)
-UserInputService.InputBegan:connect(function(inputObject, processed)
-	if processed then return end
-	if inputObject.KeyCode == Enum.KeyCode.ButtonY then
-		toggle(not open)
-	elseif inputObject.KeyCode == Enum.KeyCode.ButtonB then
-		close()
-	end
-end)
+updateLobbies()
+Lobbies.ChildAdded:connect(updateLobbies)
+Lobbies.ChildRemoved:connect(updateLobbies)
+
