@@ -110,8 +110,8 @@ local campaignsType = t.array(t.strictInterface({
 
 local Campaigns = {
 	{
-		Name = "The City",
-		Image = "rbxassetid://2278464",
+		Name = "The Retro City",
+		Image = "rbxassetid://4435346700",
 		ZombieTypes = {
 			Common = 3,
 			Fast = 1,
@@ -127,7 +127,7 @@ local Campaigns = {
 				Gold = 50,
 				Rooms = 4,
 				XP = 600,
-				ZombieSpawnRate = 0.4,
+				ZombieSpawnRate = 0.5,
 
 				BossStats = {
 					Health = 2250,
