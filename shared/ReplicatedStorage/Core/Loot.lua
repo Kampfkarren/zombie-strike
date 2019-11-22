@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+local QualityDictionary = require(ReplicatedStorage.Core.QualityDictionary)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local Loot = {}
@@ -152,7 +153,20 @@ end
 
 function Loot.GetLootName(loot)
 	local model = ReplicatedStorage.Items[loot.Type .. loot.Model]
-	return model.ItemName.Value
+	local qualityName = ""
+
+	if loot.Type ~= "Armor" and loot.Type ~= "Helmet" then
+		for _, quality in ipairs(QualityDictionary) do
+			if loot.Bonus <= quality[1] then
+				qualityName = quality[2] .. " "
+				break
+			end
+		end
+
+		assert(qualityName ~= "")
+	end
+
+	return qualityName .. model.ItemName.Value
 end
 
 return Loot
