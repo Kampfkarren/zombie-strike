@@ -34,7 +34,7 @@ Settings.Settings = {
 
 	{
 		Name = "Music",
-		Default = "On",
+		Default = 1,
 
 		Choices = {
 			"On",
