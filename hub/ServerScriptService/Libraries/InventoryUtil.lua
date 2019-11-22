@@ -4,6 +4,14 @@ local Data = require(ReplicatedStorage.Core.Data)
 
 local InventoryUtil = {}
 
+function InventoryUtil.FindByUuid(inventory, uuid)
+	for index, item in pairs(inventory) do
+		if item.UUID == uuid then
+			return item, index
+		end
+	end
+end
+
 function InventoryUtil.RemoveItems(player, indexes, dontSet)
 	local inventory, inventoryStore = Data.GetPlayerData(player, "Inventory")
 

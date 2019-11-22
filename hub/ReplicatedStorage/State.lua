@@ -14,18 +14,40 @@ local function copy(list)
 	return copy
 end
 
-local function togglePage(name)
-	return function(state)
-		if state.current == name then
-			return {
-				current = nil
-			}
-		else
+local function pageReducer(pages)
+	local output = {}
+
+	for _, name in ipairs(pages) do
+		output["Toggle" .. name] = function(state)
+			if state.current == name then
+				return {
+					current = nil
+				}
+			else
+				return {
+					current = name
+				}
+			end
+		end
+
+		output["Close" .. name] = function(state)
+			if state.current == name then
+				return {
+					current = nil
+				}
+			else
+				return state
+			end
+		end
+
+		output["Open" .. name] = function()
 			return {
 				current = name
 			}
 		end
 	end
+
+	return output
 end
 
 Store = Rodux.Store.new(Rodux.combineReducers({
@@ -62,10 +84,11 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 
 	page = Rodux.createReducer({
 		current = nil,
-	}, {
-		ToggleInventory = togglePage("Inventory"),
-		ToggleStore = togglePage("Store"),
-	}),
+	}, pageReducer({
+		"Inventory",
+		"Shopkeeper",
+		"Store",
+	})),
 
 	store = Rodux.createReducer({
 		contents = {},

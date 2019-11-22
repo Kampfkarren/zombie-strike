@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 
+local assign = require(ReplicatedStorage.Core.assign)
 local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -18,6 +18,31 @@ function ItemButton:init()
 		hovered = false,
 		model = Data.GetModel(self.props.Loot),
 	})
+
+	self.mouseEnter = function()
+		self:setState({
+			hovered = true,
+		})
+
+		self.props.onHover(self.props.Loot)
+	end
+
+	self.mouseLeave = function()
+		self:setState({
+			hovered = false,
+		})
+
+		self.props.onUnhover(self.props.Loot)
+	end
+
+	self.activated = function()
+		local props = self.props
+		if props.equipped then
+			props.onClickEquipped()
+		else
+			props.onClickUnequipped()
+		end
+	end
 end
 
 function ItemButton:shouldUpdate(nextProps, nextState)
@@ -25,6 +50,10 @@ function ItemButton:shouldUpdate(nextProps, nextState)
 		if self.props.Loot[key] ~= value then
 			return true
 		end
+	end
+
+	if self.props[Roact.Children] ~= nextProps[Roact.Children] then
+		return true
 	end
 
 	return self.props.state ~= nextState
@@ -49,36 +78,10 @@ function ItemButton:render()
 		ImageColor3 = color,
 		LayoutOrder = props.LayoutOrder,
 
-		[Roact.Event.MouseEnter] = function()
-			self:setState({
-				hovered = true,
-			})
-
-			props.onHover(props.Loot)
-		end,
-
-		[Roact.Event.MouseLeave] = function()
-			self:setState({
-				hovered = false,
-			})
-
-			props.onUnhover(props.Loot)
-		end,
-
-		[Roact.Event.Activated] = function()
-			if not props.equipped then
-				if props.Loot.Level > LocalPlayer.PlayerData.Level.Value then
-					StarterGui:SetCore("ChatMakeSystemMessage", {
-						Text = "You're not a high enough level to equip that!",
-						Color = Color3.fromRGB(252, 92, 101),
-						Font = Enum.Font.GothamSemibold,
-					})
-				else
-					props.equip()
-				end
-			end
-		end,
-	}, {
+		[Roact.Event.Activated] = self.activated,
+		[Roact.Event.MouseEnter] = self.mouseEnter,
+		[Roact.Event.MouseLeave] = self.mouseLeave,
+	}, assign({
 		ViewportFrame = e(ViewportFramePreviewComponent, {
 			Model = self.state.model,
 
@@ -89,7 +92,7 @@ function ItemButton:render()
 				Size = UDim2.fromScale(0.9, 0.9),
 			},
 		}),
-	})
+	}, props[Roact.Children] or {}))
 end
 
 return RoactRodux.connect(function(state, props)

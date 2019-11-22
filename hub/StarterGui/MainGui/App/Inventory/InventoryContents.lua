@@ -10,6 +10,10 @@ local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
 local e = Roact.createElement
 
+local function couldNoop(callback)
+	return callback or function() end
+end
+
 local function InventoryContents(props)
 	local inventory = {}
 	inventory.UIGridLayout = e("UIGridLayout", {
@@ -17,16 +21,25 @@ local function InventoryContents(props)
 		SortOrder = Enum.SortOrder.LayoutOrder,
 	})
 
+	local itemButtonChildren = props.itemButtonChildren or {}
+
 	for id, item in pairs(props.inventory or {}) do
+		local function callback(original)
+			return function()
+				couldNoop(original)(item, id)
+			end
+		end
+
 		inventory["Item" .. item.UUID] = e(ItemButton, {
 			LayoutOrder = -id,
 			Loot = item,
 
-			onHover = props.onHover,
-			onUnhover = props.onUnhover,
-			equip = function()
-				props.onClickInventory(id)
-			end,
+			onHover = callback(props.onHover),
+			onUnhover = callback(props.onUnhover),
+			onClickEquipped = callback(props.onClickInventoryEquipped),
+			onClickUnequipped = callback(props.onClickInventoryUnequipped),
+
+			[Roact.Children] = itemButtonChildren[item.UUID],
 		})
 	end
 
@@ -43,7 +56,7 @@ local function InventoryContents(props)
 					LayoutOrder = id,
 
 					[Roact.Event.Activated] = function()
-						props.onClickCosmetic(item)
+						couldNoop(props.onClickCosmetic)(item, id)
 					end,
 				}
 			})

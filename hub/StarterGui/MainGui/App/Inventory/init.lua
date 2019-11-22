@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 
 local Close = require(script.Parent.Close)
 local Equipped = require(script.Equipped)
@@ -244,11 +245,21 @@ function Inventory:render()
 			showCosmetics = true,
 			onHover = self.onHover,
 			onUnhover = self.onUnhover,
+
 			onClickCosmetic = function(item)
 				UpdateCosmetics:FireServer(item)
 			end,
-			onClickInventory = function(id)
-				UpdateEquipment:FireServer(id)
+
+			onClickInventoryUnequipped = function(loot, id)
+				if loot.Level > LocalPlayer.PlayerData.Level.Value then
+					StarterGui:SetCore("ChatMakeSystemMessage", {
+						Text = "You're not a high enough level to equip that!",
+						Color = Color3.fromRGB(252, 92, 101),
+						Font = Enum.Font.GothamSemibold,
+					})
+				else
+					UpdateEquipment:FireServer(id)
+				end
 			end,
 		}),
 

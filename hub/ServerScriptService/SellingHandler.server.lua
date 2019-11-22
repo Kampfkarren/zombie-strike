@@ -8,9 +8,9 @@ local SellCost = require(ReplicatedStorage.Libraries.SellCost)
 
 DataStore2.Combine("DATA", "Gold")
 
-ReplicatedStorage.Remotes.Sell.OnServerEvent:connect(function(player, index)
+ReplicatedStorage.Remotes.Sell.OnServerEvent:connect(function(player, uuid)
 	local inventory = Data.GetPlayerData(player, "Inventory")
-	local item = inventory[index]
+	local item, index = InventoryUtil.FindByUuid(inventory, uuid)
 	if item == nil then
 		warn("player tried to sell non existent item!")
 		return

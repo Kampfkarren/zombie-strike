@@ -108,7 +108,6 @@ function LootInfo:render()
 	end
 
 	local stats = {}
-	local upgradeStars
 
 	if loot.Type == "Helmet" or loot.Type == "Armor" then
 		local healthFunction = ArmorScaling[loot.Type .. "Health"]
@@ -208,18 +207,6 @@ function LootInfo:render()
 			Stat = loot.Magazine,
 			StatName = "AMMO",
 		})
-
-		upgradeStars = e("TextLabel", {
-			AnchorPoint = Vector2.new(0, 1),
-			BackgroundTransparency = 1,
-			Font = Enum.Font.GothamBold,
-			Position = UDim2.new(0.01, 0, 1, 0),
-			Size = UDim2.new(0.9, 0, 0.2, 0),
-			Text = string.rep("⭐", loot.Upgrades),
-			TextColor3 = Color3.new(1, 1, 1),
-			TextScaled = true,
-			TextXAlignment = Enum.TextXAlignment.Left,
-		})
 	end
 
 	return e("Frame", frameProps, {
@@ -272,7 +259,17 @@ function LootInfo:render()
 			},
 		}, {
 			e("UIAspectRatioConstraint"),
-			upgradeStars,
+			UpgradeStars = e("TextLabel", {
+				AnchorPoint = Vector2.new(0, 1),
+				BackgroundTransparency = 1,
+				Font = Enum.Font.GothamBold,
+				Position = UDim2.new(0.01, 0, 1, 0),
+				Size = UDim2.new(0.9, 0, 0.2, 0),
+				Text = string.rep("⭐", loot.Upgrades),
+				TextColor3 = Color3.new(1, 1, 1),
+				TextScaled = true,
+				TextXAlignment = Enum.TextXAlignment.Left,
+			}),
 		}),
 
 		Stats = e("Frame", {
