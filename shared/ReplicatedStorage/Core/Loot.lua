@@ -8,7 +8,6 @@ local Loot = {}
 local gunMap = {
 	"Type",
 	"Level",
-	"Name",
 	"Rarity",
 	"Bonus",
 	"Model",
@@ -19,7 +18,6 @@ local gunMap = {
 local armorMap = {
 	"Type",
 	"Level",
-	"Name",
 	"Rarity",
 	"Model",
 	"Upgrades",
@@ -56,7 +54,6 @@ Loot.Rarities = {
 local serializeStruct = t.union(
 	t.strictInterface({
 		Level = t.number,
-		Name = t.string,
 		Rarity = t.numberConstrained(1, #Loot.Rarities),
 		Type = t.union(
 			t.literal("Pistol"),
@@ -75,7 +72,6 @@ local serializeStruct = t.union(
 
 	t.strictInterface({
 		Level = t.number,
-		Name = t.string,
 		Rarity = t.numberConstrained(1, #Loot.Rarities),
 		Type = t.union(
 			t.literal("Armor"),
@@ -152,6 +148,11 @@ function Loot.SerializeTable(loot)
 		serialized[index] = Loot.Serialize(loot)
 	end
 	return serialized
+end
+
+function Loot.GetLootName(loot)
+	local model = ReplicatedStorage.Items[loot.Type .. loot.Model]
+	return model.ItemName.Value
 end
 
 return Loot

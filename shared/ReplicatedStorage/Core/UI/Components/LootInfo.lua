@@ -242,7 +242,7 @@ function LootInfo:render()
 			Font = Enum.Font.GothamBold,
 			LayoutOrder = 2,
 			Size = UDim2.new(0.9, 0, 0.1, 0),
-			Text = loot.Name,
+			Text = Loot.GetLootName(loot),
 			TextColor3 = Color3.fromRGB(227, 227, 227),
 			TextScaled = true,
 		}),

@@ -3,7 +3,7 @@ local HttpService = game:GetService("HttpService")
 return function()
 	local MockPlayer = {}
 
-	MockPlayer.Version = 4
+	MockPlayer.Version = 5
 
 	MockPlayer.DungeonsPlayed = 0
 	MockPlayer.Level = 1

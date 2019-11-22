@@ -90,33 +90,10 @@ local function generateLootItem(player)
 	if rng:NextNumber() <= WEAPON_DROP_RATE then
 		local type = GunScaling.RandomType()
 
-		local stats = GunScaling.BaseStats(type, level, rarity)
-
 		local funny = rng:NextInteger(0, 35)
-		stats.Damage = math.floor(stats.Damage * (1 + funny / 35))
-
-		local quality
-		if funny <= 4 then
-			quality = "Average"
-		elseif funny <= 9 then
-			quality = "Superior"
-		elseif funny <= 14 then
-			quality = "Choice"
-		elseif funny <= 19 then
-			quality = "Valuable"
-		elseif funny <= 24 then
-			quality = "Great"
-		elseif funny <= 29 then
-			quality = "Ace"
-		elseif funny <= 34 then
-			quality = "Extraordinary"
-		else
-			quality = "Perfect"
-		end
 
 		local loot = {
 			Type = type,
-			Name = quality .. " Poopoo",
 			Rarity = rarity,
 			Level = level,
 
@@ -139,7 +116,6 @@ local function generateLootItem(player)
 
 		local loot = {
 			Level = level,
-			Name = "Poopy",
 			Rarity = rarity,
 			Type = type,
 

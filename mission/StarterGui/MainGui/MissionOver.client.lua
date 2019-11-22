@@ -142,7 +142,7 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 			lootButton.BackgroundColor3 = rarity.Color
 		end
 
-		lootButton.GunName.Text = loot.Name
+		lootButton.GunName.Text = Loot.GetLootName(loot)
 		lootButton.Rarity.Text = rarity.Name
 
 		if loot.Type ~= "Helmet" and loot.Type ~= "Armor" then
