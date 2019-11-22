@@ -1,64 +1,51 @@
 local Debris = game:GetService("Debris")
+local PhysicsService = game:GetService("PhysicsService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 
-local Maid = require(ReplicatedStorage.Core.Maid)
+local Explosion = require(ReplicatedStorage.RuddevModules.Effects.Explosion)
 
 local SoundGateCity = SoundService.SFX.Gate.City
 
-local CITY_GATE_ROTATE_ANGLE = math.deg(130)
+local RUBBLE_EXPLOSION_RADIUS = 20
+local RUBBLE_FADE_INFO = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+local RUBBLE_START_FADE = 0.5
 
 local City = {}
 
-function City.Reset(gate, original)
-	gate.Parent:SetPrimaryPartCFrame(original)
-end
+local rng = Random.new()
 
 function City.Open(gate)
-	local total = 0
-
-	local cframe = gate.PrimaryPart.CFrame
-	local finalCFrame = CFrame.new(
-		gate.PrimaryPart.Position + Vector3.new(0, 14, -4)
-	) * CFrame.Angles(CITY_GATE_ROTATE_ANGLE, 0, 0)
-
-	local maid = Maid.new()
-
-	local gateOpenConnection = RunService.Heartbeat:connect(function(delta)
-		total = total + delta
-		gate:SetPrimaryPartCFrame(
-			cframe:Lerp(
-				finalCFrame,
-				TweenService:GetValue(
-					total / 1.5,
-					Enum.EasingStyle.Quad,
-					Enum.EasingDirection.In
-				)
-			)
-		)
-
-		if total >= 1.5 then
-			maid:DoCleaning()
-		end
-	end)
-
-	maid:GiveTask(gateOpenConnection)
-
-	for _, part in pairs(gate:GetDescendants()) do
-		if part:IsA("BasePart") and part.CanCollide then
+	for _, part in pairs(gate:GetChildren()) do
+		if part.Name == "InvisiblePart" then
 			part.CanCollide = false
-			maid:GiveTask(function()
-				part.CanCollide = true
+			Explosion(part.Position, RUBBLE_EXPLOSION_RADIUS)
+
+			local sound = SoundGateCity:Clone()
+			sound.Parent = part
+			sound:Play()
+			Debris:AddItem(sound)
+		else
+			part.Anchored = false
+			PhysicsService:SetPartCollisionGroup(part, "DeadZombies")
+			part.Velocity = Vector3.new(
+				rng:NextInteger(-150, 150),
+				rng:NextInteger(-150, 150),
+				rng:NextInteger(-150, 150)
+			)
+
+			delay(RUBBLE_START_FADE, function()
+				TweenService:Create(
+					part,
+					RUBBLE_FADE_INFO,
+					{ Size = Vector3.new() }
+				):Play()
 			end)
+
+			Debris:AddItem(part)
 		end
 	end
-
-	local sound = SoundGateCity:Clone()
-	sound.Parent = gate
-	sound:Play()
-	Debris:AddItem(sound)
 
 	return gate
 end

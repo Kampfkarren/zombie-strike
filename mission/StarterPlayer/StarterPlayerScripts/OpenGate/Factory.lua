@@ -12,9 +12,6 @@ local GATE_OPEN_TIME = 1
 
 local Factory = {}
 
-function Factory.Reset(_gate, _original)
-end
-
 function Factory.Open(gate)
 	local sound = SoundGateFactory:Clone()
 	sound.Parent = gate.PrimaryPart

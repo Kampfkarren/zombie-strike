@@ -12,16 +12,11 @@ local gates = {
 	require(script.Factory),
 }
 
-ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room, reset)
+ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room)
 	local gate = room:FindFirstChild("Gate", true)
 
 	local campaign = Dungeon.GetDungeonData("Campaign")
 	local gateModule = assert(gates[campaign], "No gate for campaign " .. campaign)
-
-	if reset then
-		gateModule.Reset(gate, reset)
-		return
-	end
 
 	if not CollectionService:HasTag(gate, "LocallyCreated") then
 		gate.Parent = nil
