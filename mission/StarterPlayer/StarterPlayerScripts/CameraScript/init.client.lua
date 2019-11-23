@@ -51,15 +51,14 @@ local recoil = SPRING:Create(1, 100, 10, 2)
 local shaker = SPRING:Create(1, 100, 4, 3)
 
 local mode = "Default"
-local flying = false
 
 local modalStack = 0
 
-local flyShake = 0
-
 -- functions
 
-local function Lerp(a, b, d) return a + (b - a) * d end
+local function Lerp(a, b, d)
+	return a + (b - a) * d
+end
 
 local function ZoomSensitivity()
 	return (CAMERA.FieldOfView / 70)^2
@@ -94,6 +93,7 @@ local function HandleCharacter(newCharacter)
 		end)
 
 		rootPart = newCharacter:WaitForChild("HumanoidRootPart")
+		_, y, x = rootPart.CFrame:ToEulerAnglesXYZ()
 		character = newCharacter
 	end
 end
@@ -183,10 +183,17 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 		local position, rotation
 
 		if mode == "Default" and character then
-			CAMERA.FieldOfView = Lerp(CAMERA.FieldOfView, 70 - (zooming and targetZoom or 0) + (flying and rootPart.Velocity.Magnitude / 10 or 0), math.min(deltaTime * 10, 1))
+			CAMERA.FieldOfView = Lerp(CAMERA.FieldOfView, 70 - (zooming and targetZoom or 0), math.min(deltaTime * 10, 1))
 
 			local center = rootPart.Position + CENTER_OFFSET
-			local cframe = CFrame.new(center) * CFrame.Angles(0, x, 0) * CFrame.Angles(y, 0, 0) * CFrame.new(shoulder, height, zoom - 10 * (1 - (CAMERA.FieldOfView / 70)))
+			local cframe = CFrame.new(center)
+				* CFrame.Angles(0, x, 0)
+				* CFrame.Angles(y, 0, 0)
+				* CFrame.new(
+					shoulder,
+					height,
+					zoom - 10 * (1 - (CAMERA.FieldOfView / 70))
+				)
 			rotation = cframe - cframe.p
 
 			local ray = Ray.new(center, cframe.p - center)
@@ -220,13 +227,6 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 
 			CAMERA.CFrame = CFrame.new(position) * rotation * CFrame.new(offset + offset2) * CFrame.Angles(offset.Z / 20, -offset.X / 20, 0)
 
-			if flying then
-				flyShake = flyShake + deltaTime * (rootPart.Velocity.Magnitude / 80)
-				local x, y = math.noise(flyShake, 0.3, 0.7), math.noise(0.3, flyShake, 0.7)
-
-				CAMERA.CFrame = CAMERA.CFrame * CFrame.Angles(x * 0.015, y * 0.015, 0)
-			end
-
 			CAMERA.Focus = CAMERA.CFrame * CFrame.new(0, 0, -20)
 		end
 	end
@@ -236,10 +236,6 @@ end)
 
 script.Mode.Event:connect(function(m)
 	mode = m
-end)
-
-script.Flying.Event:connect(function(f)
-	flying = f
 end)
 
 EVENTS.Modal.Event:connect(Modal)
