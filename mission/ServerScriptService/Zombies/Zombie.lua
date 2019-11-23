@@ -213,7 +213,7 @@ function Zombie:Aggro(focus)
 						local angle = math.atan2(diff.X, diff.Z)
 
 						if (math.abs(math.deg(angle)) < 120 and diff.Magnitude > 5) or #waypoints == 0 then
-							humanoid:MoveTo(waypoint.Position)
+							humanoid:MoveTo(waypoint.Position, self.aggroFocus.PrimaryPart)
 							humanoid.MoveToFinished:wait()
 						end
 					end
@@ -383,7 +383,7 @@ function Zombie.AfterSpawn() end
 -- END BASIC HOOKS
 
 -- START SOUNDS
-function Zombie:GetDeathSound()
+function Zombie.GetDeathSound()
 	local sounds = SoundService.ZombieSounds[Dungeon.GetDungeonData("Campaign")].Death:GetChildren()
 	return sounds[math.random(#sounds)]:Clone()
 end
