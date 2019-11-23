@@ -54,7 +54,7 @@ function Data.GetPlayerData(player, key)
 		local equipped = Data.GetPlayerData(player, "Equipped" .. key)
 
 		return assert(inventory[equipped], "no equipped " .. key)
-	elseif baseMockPlayer[key] then
+	elseif baseMockPlayer[key] ~= nil then
 		DataStore2.Combine("DATA", key)
 
 		if migrated[player] then

@@ -4,6 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
+local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
@@ -11,6 +13,22 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 
 local FREE_EPIC_AFTER = 0
 local WEAPON_DROP_RATE = 0.67
+
+local RARITY_PERCENTAGES = {
+	{ 0.5, 5 },
+	{ 7.5, 4 },
+	{ 17, 3 },
+	{ 35, 2 },
+	{ 40, 1 },
+}
+
+local RARITY_PERCENTAGES_LEGENDARY = {
+	{ 5, 5 },
+	{ 6.38, 4 },
+	{ 16, 3 },
+	{ 34, 2 },
+	{ 39, 1 },
+}
 
 local function getModel(type, rarity)
 	local loot = Dungeon.GetDungeonData("CampaignInfo").Loot
@@ -59,25 +77,32 @@ local function getLootRarity(player)
 		return 4
 	end
 
+	local legendaryBonus, legendaryBonusStore = Data.GetPlayerData(player, "LegendaryBonus")
+	local moreLegendaries = GamePasses.PlayerOwnsPass(player, GamePassDictionary.MoreLegendaries)
+
+	if not legendaryBonus
+		and not takenAdvantageOfFreeLoot[player]
+		and moreLegendaries
+	then
+		takenAdvantageOfFreeLoot[player] = true
+		legendaryBonusStore:Set(true)
+		return 5
+	end
+
 	local rng = Random.new()
 
 	local rarityRng = rng:NextNumber() * 100
-	local rarity
 
-	-- Numbers are cumulative sums
-	if rarityRng <= 0.1 then
-		rarity = 5
-	elseif rarityRng <= 5 then
-		rarity = 4
-	elseif rarityRng <= 20 then
-		rarity = 3
-	elseif rarityRng <= 40 then
-		rarity = 2
-	else
-		rarity = 1
+	local cumulative = 0
+	for _, percent in ipairs(moreLegendaries and RARITY_PERCENTAGES_LEGENDARY or RARITY_PERCENTAGES) do
+		if rarityRng <= cumulative + percent[1] then
+			return percent[2]
+		else
+			cumulative = cumulative + percent[1]
+		end
 	end
 
-	return rarity
+	error("unreachable code! GenerateLoot did not give a rarity percent")
 end
 
 local function generateLootItem(player)
@@ -87,7 +112,7 @@ local function generateLootItem(player)
 
 	local uuid = HttpService:GenerateGUID(false):gsub("-", "")
 
-	if rng:NextNumber() <= WEAPON_DROP_RATE then
+	if takenAdvantageOfFreeLoot[player] or rng:NextNumber() <= WEAPON_DROP_RATE then
 		local type = GunScaling.RandomType()
 
 		local funny = rng:NextInteger(0, 35)

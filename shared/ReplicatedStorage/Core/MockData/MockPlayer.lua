@@ -5,6 +5,7 @@ return function()
 
 	MockPlayer.Version = 5
 
+	MockPlayer.LegendaryBonus = false
 	MockPlayer.DungeonsPlayed = 0
 	MockPlayer.Level = 1
 	MockPlayer.XP = 0
