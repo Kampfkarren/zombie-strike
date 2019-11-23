@@ -134,7 +134,6 @@ function FactoryBoss:InitializeBossAI()
 				error("FactoryBoss.HitByLaser: no damage scale for " .. self.level)
 			end
 			TakeDamage(player, damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
-			character:WaitForChild("Humanoid"):TakeDamage()
 		end
 	end)
 
