@@ -11,6 +11,8 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES.Config)
 	local DAMAGE = require(MODULES.Damage)
 
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+
 -- variables
 
 local shots = {}
@@ -111,7 +113,10 @@ local function hit(player, hit, index)
 
 									for _, part in pairs(humanoid.Parent:GetChildren()) do
 										if part:IsA("BasePart") then
-											part.Velocity = direction * config.Damage
+											part.Velocity = direction * GunScaling.BaseStats(
+												shot.Item.WeaponData.Type.Value,
+												1, 1
+											).Damage
 										end
 									end
 								end
