@@ -15,13 +15,16 @@ local GRENADE_SPEED = 50
 
 local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadName, frame, remote, callback)
 	local cooldown = frame.Cooldown
-	local label = frame.Label
+	local label = frame.Tooltip
 
 	local using = false
 
 	local function updateLabel()
-		if UserInputService:GetLastInputType() == Enum.UserInputType.Gamepad1 then
+		local inputType = UserInputService:GetLastInputType()
+		if inputType == Enum.UserInputType.Gamepad1 then
 			label.Text = gamepadName
+		elseif inputType == Enum.UserInputType.Touch then
+			label.Text = ""
 		else
 			label.Text = keyboardName
 		end
