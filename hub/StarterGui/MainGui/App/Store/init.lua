@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local assign = require(ReplicatedStorage.Core.assign)
 local Close = require(script.Parent.Close)
+local GamePasses = require(script.GamePasses)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local Shop = require(script.Shop)
@@ -51,6 +52,7 @@ end)(CategoryButton)
 local Store = Roact.PureComponent:extend("Store")
 
 function Store:init()
+	self.gamePassesRef = Roact.createRef()
 	self.shopRef = Roact.createRef()
 	self.xpMultiplierRef = Roact.createRef()
 
@@ -64,6 +66,8 @@ function Store:UpdateCurrentPage()
 		page:JumpTo(self.shopRef:getValue())
 	elseif self.props.page == "XP" then
 		page:JumpTo(self.xpMultiplierRef:getValue())
+	elseif self.props.page == "GamePasses" then
+		page:JumpTo(self.gamePassesRef:getValue())
 	end
 end
 
@@ -124,6 +128,13 @@ function Store:render()
 				Size = UDim2.new(0.25, 0, 1, 0),
 				LayoutOrder = 2,
 			}),
+
+			GamePasses = e(CategoryButton, {
+				Page = "GamePasses",
+				Text = "GAME PASSES",
+				Size = UDim2.new(0.3, 0, 1, 0),
+				LayoutOrder = 3,
+			}),
 		}),
 
 		Contents = e("Frame", {
@@ -147,6 +158,10 @@ function Store:render()
 				TouchInputEnabled = false,
 
 				[Roact.Ref] = self.pageLayoutRef,
+			}),
+
+			GamePasses = e(GamePasses, {
+				[Roact.Ref] = self.gamePassesRef,
 			}),
 
 			Shop = e(Shop, {
