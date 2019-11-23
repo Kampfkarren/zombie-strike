@@ -59,7 +59,7 @@ if not ReplicatedStorage.HubWorld.Value then
 		if humanoid.Health > 0 then
 			local crit = false
 
-			if math.random() <= critChance / 100 then
+			if math.random() <= critChance then
 				damage = damage * CRIT_MULTIPLIER
 				crit = true
 			end
