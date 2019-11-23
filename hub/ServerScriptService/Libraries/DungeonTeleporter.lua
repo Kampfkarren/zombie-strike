@@ -12,7 +12,10 @@ local DungeonTeleporter = {}
 
 function DungeonTeleporter.ReserveServer()
 	return Promise.promisify(function()
-		return TeleportService:ReserveServer(DUNGEON_PLACE_ID)
+		local startTime = tick()
+		local accessCode, privateServerId = TeleportService:ReserveServer(DUNGEON_PLACE_ID)
+		print("🕴Reserve server took", tick() - startTime, "seconds")
+		return accessCode, privateServerId
 	end)()
 end
 
@@ -24,12 +27,14 @@ function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId)
 			table.insert(playerIds, player.UserId)
 		end
 
+		local startTime = tick()
 		dungeonDataStore:SetAsync(privateServerId, {
 			Campaign = lobby.Campaign,
 			Difficulty = lobby.Difficulty,
 			Hardcore = lobby.Hardcore,
 			Members = playerIds,
 		})
+		print("🕴Setting dungeon data store took", tick() - startTime, "seconds")
 
 		TeleportService:TeleportToPrivateServer(
 			DUNGEON_PLACE_ID,

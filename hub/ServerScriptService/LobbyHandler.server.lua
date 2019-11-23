@@ -33,6 +33,16 @@ local function findLobbyByUnique(unique)
 	end
 end
 
+local function countdown(lobby, number)
+	return function()
+		return Promise.new(function(resolve)
+			lobby.Instance.Countdown.Value = number
+
+			delay(1, resolve)
+		end)
+	end
+end
+
 local function value(parent, class, name, value)
 	local object = Instance.new(class)
 	object.Name = name
@@ -85,6 +95,7 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
 	value(lobbyInstance, "BoolValue", "Hardcore", hardcore == true)
 	value(lobbyInstance, "NumberValue", "Unique", unique)
 	value(lobbyInstance, "ObjectValue", "Owner", player)
+	value(lobbyInstance, "NumberValue", "Countdown", 0)
 
 	local players = Instance.new("Folder")
 	players.Name = "Players"
@@ -113,6 +124,29 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
 	return true
 end
 
+-- We found Lobby's racist tweets from 2014 :/
+ReplicatedStorage.Remotes.CancelLobby.OnServerEvent:connect(function(player)
+	local lobby = getPlayerLobby(player)
+	if not lobby then
+		warn("CancelLobby: no lobby")
+		return
+	end
+
+	if lobby.Players[1] ~= player then
+		warn("CancelLobby: player tried to cancel lobby they didn't own")
+		return
+	end
+
+	if lobby.Teleporting then
+		warn("CancelLobby: already teleporting, too late")
+		return
+	end
+
+	if lobby.Promise then
+		lobby.Promise:cancel()
+	end
+end)
+
 ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
 	local lobby = findLobbyByUnique(unique)
 	if not lobby then
@@ -122,6 +156,11 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
 
 	if lobby.Kicked[player] then
 		warn("joined while kicked")
+		return
+	end
+
+	if lobby.Promise then
+		warn("lobby is teleporting")
 		return
 	end
 
@@ -167,7 +206,7 @@ ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(function(player)
 		return
 	end
 
-	if teleporting[player] then
+	if lobby.Teleporting then
 		warn("LeaveLobby while teleporting")
 		return
 	end
@@ -180,6 +219,9 @@ ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(function(player)
 	else
 		lobby.Instance.Players[player.UserId]:Destroy()
 		lobby.Instance.Owner.Value = lobby.Players[1]
+		if lobby.Promise then
+			lobby.Promise:cancel()
+		end
 	end
 end)
 
@@ -229,16 +271,11 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 		return
 	end
 
-	for _, player in pairs(lobby.Players) do
-		ReplicatedStorage.Remotes.PlayLobby:FireClient(player, true)
-	end
-
 	local playerPromises = {}
 
 	for _, player in pairs(lobby.Players) do
 		if player:IsDescendantOf(game) then
 			teleporting[player] = true
-			ReplicatedStorage.Remotes.Teleporting:FireClient(player, true)
 
 			table.insert(playerPromises, Promise.new(function(resolve, reject)
 				coroutine.wrap(function()
@@ -256,28 +293,41 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 		end
 	end
 
-	Promise.all({
-		DungeonTeleporter.ReserveServer():andThen(function(accessCode, privateServerId)
-			return { accessCode, privateServerId }
-		end):catch(function(result)
-			return Promise.reject("Couldn't reserve a server: " .. result)
-		end),
-		unpack(playerPromises),
-	}):andThen(function(results)
-		return DungeonTeleporter.TeleportPlayers(lobby, unpack(results[1]))
-	end):andThen(function()
-		table.remove(lobbies, lobbyIndex)
-		lobby.Instance:Destroy()
-	end):catch(function(problem)
-		ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
+	lobby.Promise = countdown(lobby, 3)()
+		:andThen(countdown(lobby, 2))
+		:andThen(countdown(lobby, 1))
+		:andThen(function()
+			lobby.Teleporting = true
 
-		for _, player in pairs(lobby.Players) do
-			teleporting[player] = nil
-			ReplicatedStorage.Remotes.Teleporting:FireClient(player, false)
-		end
-	end)
+			return Promise.all({
+				DungeonTeleporter.ReserveServer():andThen(function(accessCode, privateServerId)
+					return { accessCode, privateServerId }
+				end):catch(function(result)
+					return Promise.reject("Couldn't reserve a server: " .. result)
+				end),
+				unpack(playerPromises),
+			})
+		end):andThen(function(results)
+			for _, player in pairs(Players:GetPlayers()) do
+				ReplicatedStorage.Remotes.Teleporting:FireClient(player, true)
+			end
 
-	-- DUNGEON_PLACE_ID
+			return DungeonTeleporter.TeleportPlayers(lobby, unpack(results[1]))
+		end):andThen(function()
+			table.remove(lobbies, lobbyIndex)
+			lobby.Instance:Destroy()
+		end):catch(function(problem)
+			ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
+		end):finally(function()
+			lobby.Instance.Countdown.Value = 0
+			lobby.Teleporting = false
+			lobby.Promise = nil
+
+			for _, player in pairs(lobby.Players) do
+				teleporting[player] = nil
+				ReplicatedStorage.Remotes.Teleporting:FireClient(player, false)
+			end
+		end)
 end)
 
 Players.PlayerRemoving:connect(function(player)

@@ -366,6 +366,10 @@ end
 
 -- Lobby screen
 do
+	local PLAY_BUTTON_COLOR = Color3.fromRGB(59, 215, 48)
+
+	local playButtonCountdown
+
 	local function getCurrentLobby()
 		return currentLobby
 	end
@@ -386,6 +390,17 @@ do
 	lobbiesUpdated.Event:connect(function()
 		local current = getCurrentLobby()
 
+		local function reset()
+			Lobby.Info.Play.ImageColor3 = PLAY_BUTTON_COLOR
+			Lobby.Info.Cancel.Visible = false
+			Lobby.Info.Leave.Visible = true
+		end
+
+		if playButtonCountdown then
+			playButtonCountdown:Disconnect()
+			reset()
+		end
+
 		if not current then
 			if pageLayout.CurrentPage == Inner.Lobby then
 				pageLayout:JumpTo(Inner.Join)
@@ -393,6 +408,8 @@ do
 
 			return
 		end
+
+		local isOwner = current.Owner == LocalPlayer
 
 		-- Map info
 		local MapInfo = Lobby.Info.MapInfo
@@ -410,8 +427,6 @@ do
 		MapInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
 
 		-- Player panel
-
-		local isOwner = current.Owner == LocalPlayer
 
 		for playerIndex, player in pairs(current.Players) do
 			local card = Lobby.Players[playerIndex]
@@ -446,20 +461,15 @@ do
 	end)
 
 	ReplicatedStorage.Remotes.PlayLobby.OnClientEvent:connect(function(playing, problem)
-		if playing then
-			Lobby.Info.Play.ImageColor3 = Color3.new(1, 1, 1)
-			Lobby.Info.Play.Label.Text = "PLAYING..."
-		else
-			Lobby.Info.Play.ImageColor3 = Color3.fromRGB(70, 255, 57)
-			Lobby.Info.Play.Label.Text = "PLAY"
+		Lobby.Info.Play.ImageColor3 = PLAY_BUTTON_COLOR
+		Lobby.Info.Play.Label.Text = "PLAY"
 
-			if problem then
-				StarterGui:SetCore("ChatMakeSystemMessage", {
-					Text = ("Error when playing: %s"):format(problem),
-					Color = Color3.fromRGB(252, 92, 101),
-					Font = Enum.Font.GothamSemibold,
-				})
-			end
+		if problem then
+			StarterGui:SetCore("ChatMakeSystemMessage", {
+				Text = ("Error when playing: %s"):format(problem),
+				Color = Color3.fromRGB(252, 92, 101),
+				Font = Enum.Font.GothamSemibold,
+			})
 		end
 	end)
 end
@@ -493,18 +503,15 @@ ReplicatedStorage.LocalEvents.PressPlay.Event:connect(function()
 end)
 
 local function updateLobbies()
+	local oldLobby = currentLobby
 	currentLobby = nil
 	local lobbies = {}
 
 	for _, lobby in pairs(Lobbies:GetChildren()) do
-		local playersFolder = lobby:WaitForChild("Players")
-		playersFolder.ChildAdded:connect(updateLobbies)
-		playersFolder.ChildRemoved:connect(updateLobbies)
-
 		local players = {}
 		local ours = false
 
-		for _, player in pairs(playersFolder:GetChildren()) do
+		for _, player in pairs(lobby:WaitForChild("Players"):GetChildren()) do
 			if tonumber(player.Name) == LocalPlayer.UserId then
 				ours = true
 			end
@@ -520,6 +527,7 @@ local function updateLobbies()
 			Public = lobby.Public.Value,
 			Owner = lobby.Owner.Value,
 			Unique = lobby.Unique.Value,
+			Instance = lobby,
 		}
 
 		if ours then
@@ -529,10 +537,22 @@ local function updateLobbies()
 		table.insert(lobbies, lobby)
 	end
 
+	if currentLobby ~= oldLobby then
+		ReplicatedStorage.LocalEvents.LobbyUpdated:Fire(currentLobby)
+	end
+
 	lobbiesUpdated:Fire(lobbies)
 end
 
 updateLobbies()
-Lobbies.ChildAdded:connect(updateLobbies)
+
+Lobbies.ChildAdded:connect(function(lobby)
+	local playersFolder = lobby:WaitForChild("Players")
+	playersFolder.ChildAdded:connect(updateLobbies)
+	playersFolder.ChildRemoved:connect(updateLobbies)
+	lobby.Owner.Changed:Connect(updateLobbies)
+	updateLobbies()
+end)
+
 Lobbies.ChildRemoved:connect(updateLobbies)
 
