@@ -41,7 +41,7 @@ end
 
 local function Hitmarker(headshot, position)
 	local hitmarker	= script.Hitmarker:Clone()
-	if UserInputService.MouseEnabled then
+	if UserInputService.MouseEnabled and not ReplicatedStorage.HubWorld.Value then
 		hitmarker.AnchorPoint = Vector2.new(0.5, 0.5)
 		hitmarker.Position	= UDim2.new(0.5, 0, 0.5, 0)
 		hitmarker.Size		= UDim2.new(0.05, 0, 0.05, 0)

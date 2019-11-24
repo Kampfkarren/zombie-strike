@@ -9,76 +9,74 @@ local EVENTS = ReplicatedStorage:WaitForChild("RuddevEvents")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES:WaitForChild("Config"))
 
+local CRIT_MULTIPLIER = 2
 local DAMAGE = {}
 
-if not ReplicatedStorage.HubWorld.Value then
-	local CRIT_MULTIPLIER = 2
+function DAMAGE.Calculate(_, item, hit, origin)
+	local config = CONFIG:GetConfig(item)
+	local damage = config.Damage
 
-	function DAMAGE.Calculate(_, item, hit, origin)
-		local config = CONFIG:GetConfig(item)
-		local damage = config.Damage
-
-		if hit.Name == "Head" then
-			damage = damage * 1.2
-		end
-
-		local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-
-		if humanoid and humanoid:FindFirstChild("Down") then
-			if humanoid.Down.Value then
-				damage = damage * 2
-			end
-		end
-
-		local distance = (origin - hit.Position).Magnitude
-		local falloff = math.clamp(1 - (distance / config.Range)^3, 0, 1)
-		local minDamage = damage * 0.3
-		damage = math.max(damage * falloff, minDamage)
-
-		return math.ceil(damage)
+	if hit.Name == "Head" then
+		damage = damage * 1.2
 	end
 
-	function DAMAGE.PlayerCanDamage(_, _, humanoid)
-		if humanoid:FindFirstChild("NoKill") then return end
-		return Players:GetPlayerFromCharacter(humanoid.Parent) == nil and humanoid.Health > 0
+	local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
+
+	if humanoid and humanoid:FindFirstChild("Down") then
+		if humanoid.Down.Value then
+			damage = damage * 2
+		end
 	end
 
-	function DAMAGE.Damage(_, humanoid, damage, player, critChance)
-		if player then
-			local killTag = humanoid:FindFirstChild("KillTag")
+	local distance = (origin - hit.Position).Magnitude
+	local falloff = math.clamp(1 - (distance / config.Range)^3, 0, 1)
+	local minDamage = damage * 0.3
+	damage = math.max(damage * falloff, minDamage)
 
-			if not killTag then
-				killTag = Instance.new("ObjectValue")
-					killTag.Name = "KillTag"
-					killTag.Parent = humanoid
-			end
+	return math.ceil(damage)
+end
 
-			killTag.Value = player
+function DAMAGE.PlayerCanDamage(_, _, humanoid)
+	if humanoid:FindFirstChild("NoKill") then return end
+	return Players:GetPlayerFromCharacter(humanoid.Parent) == nil and humanoid.Health > 0
+end
+
+function DAMAGE.Damage(_, humanoid, damage, player, critChance)
+	if player then
+		local killTag = humanoid:FindFirstChild("KillTag")
+
+		if not killTag then
+			killTag = Instance.new("ObjectValue")
+				killTag.Name = "KillTag"
+				killTag.Parent = humanoid
 		end
 
-		if humanoid.Health > 0 then
-			local crit = false
+		killTag.Value = player
+	end
 
-			if math.random() <= critChance then
-				damage = damage * CRIT_MULTIPLIER
-				crit = true
-			end
+	if humanoid.Health > 0 then
+		local crit = false
 
+		if math.random() <= critChance then
+			damage = damage * CRIT_MULTIPLIER
+			crit = true
+		end
+
+		if not ReplicatedStorage.HubWorld.Value then
 			humanoid:TakeDamage(damage)
-			EVENTS.Damaged:Fire(humanoid, damage, player)
+		end
 
-			ReplicatedStorage.Remotes.DamageNumber:FireClient(player, humanoid, damage, crit)
+		EVENTS.Damaged:Fire(humanoid, damage, player)
 
+		ReplicatedStorage.Remotes.DamageNumber:FireClient(player, humanoid, damage, crit)
+
+		if not ReplicatedStorage.HubWorld.Value then
 			for _, otherPlayer in pairs(Players:GetPlayers()) do
 				if otherPlayer ~= player then
 					ReplicatedStorage.Remotes.DamageNumber:FireClient(otherPlayer, humanoid, damage)
 				end
 			end
 		end
-	end
-else
-	function DAMAGE.PlayerCanDamage()
-		return false
 	end
 end
 

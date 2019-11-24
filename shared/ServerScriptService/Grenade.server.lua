@@ -87,7 +87,9 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 							local damage = lerp(baseDamage * DROPOFF, baseDamage, range / MAX_RANGE)
 
 							local humanoid = zombie.Humanoid
-							humanoid:TakeDamage(damage)
+							if not ReplicatedStorage.HubWorld.Value then
+								humanoid:TakeDamage(damage)
+							end
 							ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
 							ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
 						end
