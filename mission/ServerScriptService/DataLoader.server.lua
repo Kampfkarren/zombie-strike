@@ -19,7 +19,6 @@ Players.PlayerAdded:connect(function(player)
 		RunService.Heartbeat:wait()
 
 		local x, y, z = (spawnLocation.CFrame - spawnLocation.Position):ToEulerAnglesXYZ()
-		print(x, y, z)
 
 		player.Character:SetPrimaryPartCFrame(
 			CFrame.new(player.Character.PrimaryPart.Position)

@@ -128,10 +128,6 @@ end
 
 local function endMission()
 	for _, player in pairs(Players:GetPlayers()) do
-		if player.Character then
-			Instance.new("ForceField", player.Character)
-		end
-
 		Promise.all({
 			GenerateLoot(player):andThen(function(loot)
 				return Promise.async(function(resolve)
@@ -199,6 +195,13 @@ local function spawnBoss(position, room)
 	local bossZombie = Zombie.new("Boss", Dungeon.GetDungeonData("DifficultyInfo").MinLevel)
 
 	local model = bossZombie:Spawn(position)
+	model:FindFirstChildOfClass("Humanoid").Died:connect(function()
+		for _, player in pairs(Players:GetPlayers()) do
+			if player.Character then
+				Instance.new("ForceField").Parent = player.Character
+			end
+		end
+	end)
 	bossZombie.Died:connect(endMission)
 	BossSequence.Start(model):await()
 
