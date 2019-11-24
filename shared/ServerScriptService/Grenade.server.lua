@@ -15,6 +15,7 @@ local DAMAGE_SCALE = 1.13
 
 local COOLDOWN = 10
 local DROPOFF = 0.5
+local MAX_BOSS_RANGE = 100
 local MAX_RANGE = 50
 local PHYSICAL_PROPERTIES = PhysicalProperties.new(
 	0.01, -- density
@@ -82,9 +83,13 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 				if zombie.Humanoid.Health > 0 and zombie:IsDescendantOf(Workspace) then
 					local range = (zombie.PrimaryPart.Position - grenade.Position).Magnitude
 					if Damage:PlayerCanDamage(player, zombie.Humanoid) then
-						if range <= MAX_RANGE then
+						local maxRange = CollectionService:HasTag(zombie, "Boss")
+							and MAX_BOSS_RANGE
+							or MAX_RANGE
+
+						if range <= maxRange then
 							local baseDamage = getDamage(level)
-							local damage = lerp(baseDamage * DROPOFF, baseDamage, range / MAX_RANGE)
+							local damage = lerp(baseDamage * DROPOFF, baseDamage, range / maxRange)
 
 							local humanoid = zombie.Humanoid
 							if not ReplicatedStorage.HubWorld.Value then
