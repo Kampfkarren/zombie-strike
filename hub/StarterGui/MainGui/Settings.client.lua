@@ -74,7 +74,7 @@ end
 
 AutomatedScrollingFrame(SettingsUi.Contents)
 
-script.Parent.Main.Buttons.Settings.MouseButton1Click:connect(function()
+script.Parent.Main.Buttons.Small.Settings.MouseButton1Click:connect(function()
 	SettingsUi.Visible = not SettingsUi.Visible
 end)
 
