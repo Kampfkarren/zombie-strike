@@ -26,6 +26,12 @@ Buttons.Small.Feedback.MouseButton1Click:connect(function()
 	})
 end)
 
+Buttons.Small.Settings.MouseButton1Click:connect(function()
+	State:dispatch({
+		type = "ToggleSettings",
+	})
+end)
+
 State.changed:connect(function(new)
 	Buttons.Store.NewLabel.Visible = new.store.new
 end)

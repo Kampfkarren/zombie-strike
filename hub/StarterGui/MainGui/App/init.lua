@@ -6,6 +6,7 @@ local State = require(ReplicatedStorage.State)
 
 local Feedback = require(script.Feedback)
 local Inventory = require(script.Inventory)
+local Settings = require(script.Settings)
 local Shopkeeper = require(script.Shopkeeper)
 local Store = require(script.Store)
 
@@ -18,6 +19,7 @@ local function App()
 	}, {
 		Feedback = e(Feedback),
 		Inventory = e(Inventory),
+		Settings = e(Settings),
 		Shopkeeper = e(Shopkeeper),
 		Store = e(Store),
 	})
