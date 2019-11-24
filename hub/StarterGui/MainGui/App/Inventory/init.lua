@@ -280,6 +280,7 @@ end
 
 return RoactRodux.connect(function(state)
 	return {
+		inventory = state.inventory,
 		open = state.page.current == "Inventory",
 	}
 end, function(dispatch)

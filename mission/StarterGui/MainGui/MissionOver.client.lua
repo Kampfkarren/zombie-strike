@@ -127,6 +127,10 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	local template = LootContents.Template:Clone()
 	LootContents.Template:Destroy()
 
+	if #loot == 0 then
+		LootContents.InventoryFull.Visible = true
+	end
+
 	wait(5.3)
 	animate(LootResults.Info.XP.Count, xp, FULL_TIME_XP)
 	wait(0.5)

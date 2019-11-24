@@ -169,8 +169,6 @@ local function getLootAmount(player)
 		local difference = space - #inventory
 
 		if amount > difference then
-			warn("player's inventory is too full!")
-			ReplicatedStorage.Remotes.InventoryFull:FireClient(player, amount - difference)
 			return difference
 		else
 			return amount
