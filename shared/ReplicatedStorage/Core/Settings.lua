@@ -11,7 +11,10 @@ local Settings = {}
 Settings.Settings = {
 	{
 		Name = "Skin Tone",
-		Default = "Random",
+		Default = {
+			Type = "Random",
+			Range = { 1, 6 },
+		},
 
 		Choices = {
 			"Light",
@@ -62,8 +65,8 @@ function Settings.GetSettingIndex(settingName, player)
 
 				if value then
 					return value
-				elseif setting.Default == "Random" then
-					return Random.new(player.UserId):NextInteger(1, #setting.Values)
+				elseif type(setting.Default) == "table" and setting.Default.Type == "Random" then
+					return Random.new(player.UserId):NextInteger(unpack(setting.Default.Range))
 				else
 					return setting.Default
 				end
