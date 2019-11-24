@@ -44,7 +44,7 @@ function Dungeon.GetDungeonTable()
 	end
 
 	if not dungeonTablePromise then
-		dungeonTablePromise = Promise.new(function(resolve, reject)
+		dungeonTablePromise = Promise.new(function(resolve)
 			coroutine.wrap(function()
 				while true do
 					local success, error = pcall(function()
@@ -88,6 +88,8 @@ function Dungeon.GetDungeonData(key)
 		error("dungeon key does not exist: " .. key)
 	end
 end
+
+Dungeon.GetDungeonDataAsync = Promise.promisify(Dungeon.GetDungeonData)
 
 function Dungeon.RNGZombieLevel()
 	local difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")

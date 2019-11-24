@@ -34,6 +34,12 @@ else
 
 	local ambienceList = {}
 
+	ambienceList.Concrete = {
+		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
+		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
+		Sound = Instance.new("Sound"),
+	}
+
 	ambienceList.RainIndoors = {
 		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
 		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
@@ -46,8 +52,15 @@ else
 		Sound = SoundService.Ambience.RainOutdoors,
 	}
 
+	ambienceList.Treasure = {
+		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
+		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
+		Sound = SoundService.Treasure,
+	}
+
 	local function checkNewAmbience(room)
-		local ambience = assert(ambienceList[room:WaitForChild("Ambience").Value], "unknown ambience in " .. room.Name)
+		local ambienceValue = room:WaitForChild("Ambience")
+		local ambience = assert(ambienceList[ambienceValue.Value], "unknown ambience in " .. room.Name)
 
 		if ambience.Used then return end
 
@@ -123,6 +136,7 @@ else
 
 					ambience.FadeIn:Play()
 					currentAmbience = ambience
+					ReplicatedStorage.LocalEvents.AmbienceChanged:Fire(room.Ambience.Value, currentAmbience)
 				end
 			end
 		end

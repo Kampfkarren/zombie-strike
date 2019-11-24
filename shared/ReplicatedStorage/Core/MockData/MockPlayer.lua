@@ -15,7 +15,6 @@ return function()
 		Type = "Pistol",
 		Level = 1,
 		Rarity = 1,
-		Name = "Average Pistol",
 
 		Bonus = 0,
 		Upgrades = 0,
@@ -28,7 +27,6 @@ return function()
 		Type = "Armor",
 		Level = 1,
 		Rarity = 1,
-		Name = "Armor",
 
 		Upgrades = 0,
 
@@ -40,7 +38,6 @@ return function()
 		Type = "Helmet",
 		Level = 1,
 		Rarity = 1,
-		Name = "Helmet",
 
 		Upgrades = 0,
 

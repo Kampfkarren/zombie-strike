@@ -61,7 +61,7 @@ local function createAdvancer(traceback, callback, resolve, reject)
 		if ok then
 			resolve(unpack(result, 1, resultLength))
 		else
-			reject(result[1], traceback)
+			reject(result[1] .. "\n" .. traceback)
 		end
 	end
 end
@@ -193,15 +193,10 @@ function Promise._newWithSelf(executor, ...)
 end
 
 function Promise._new(traceback, executor, ...)
-	return Promise._newWithSelf(function(self, resolve, reject)
+	return Promise._newWithSelf(function(self, ...)
 		self._source = traceback
 
-		executor(resolve, function(err, traceback)
-			err = err or "error"
-			traceback = traceback or ""
-			self._error = err
-			reject(err .. "\n" .. traceback)
-		end)
+		executor(...)
 	end, ...)
 end
 
@@ -880,7 +875,7 @@ end
 	Calls await and only returns if the Promise resolves.
 	Throws if the Promise rejects or gets cancelled.
 ]]
-function Promise.prototype:awaitValue(...)
+function Promise.prototype:expect(...)
 	local length, result = pack(self:awaitStatus(...))
 	local status = table.remove(result, 1)
 
@@ -891,6 +886,8 @@ function Promise.prototype:awaitValue(...)
 
 	return unpack(result, 1, length - 1)
 end
+
+Promise.prototype.awaitValue = Promise.prototype.expect
 
 --[[
 	Intended for use in tests.

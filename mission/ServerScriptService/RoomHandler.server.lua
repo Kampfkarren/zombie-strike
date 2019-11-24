@@ -12,6 +12,7 @@ local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
+local GenerateTreasureLoot = require(ServerScriptService.Libraries.GenerateTreasureLoot)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local Zombie = require(Zombies.Zombie)
@@ -19,6 +20,8 @@ local Zombie = require(Zombies.Zombie)
 local BossTimer = ReplicatedStorage.BossTimer
 local JoinTimer = ReplicatedStorage.JoinTimer
 local Rooms = ServerStorage.Rooms
+
+local SPAWN_RATE = 1
 
 DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP", "DungeonsPlayed")
 
@@ -86,9 +89,21 @@ local function generateDungeon(roomModels, numRooms)
 
 	local rooms = {}
 
-	for _ = 1, numRooms do
-		-- local obbies = roomTypes.obby
-		-- nextRoom = createRoom(obbies[math.random(#obbies)], obbyParent, nextRoom)
+	local halfway = math.floor(numRooms / 2)
+
+	for room = 1, numRooms do
+		local treasure = GenerateTreasureLoot:expect()
+		if room == halfway and treasure ~= nil then
+			local treasures = roomTypes.treasure
+			nextRoom = createRoom(treasures[math.random(#treasures)], obbyParent, nextRoom)
+			if treasure.Rarity == 5 then
+				nextRoom.ChestEpic:Destroy()
+			elseif treasure.Rarity == 4 then
+				nextRoom.ChestLegendary:Destroy()
+			end
+			table.insert(rooms, nextRoom)
+		end
+
 		local zombies = roomTypes.enemy
 		nextRoom = createRoom(zombies[math.random(#zombies)], obbyParent, nextRoom)
 		table.insert(rooms, nextRoom)
@@ -282,6 +297,8 @@ local function openNextGate()
 		end
 
 		wait(1)
+	elseif obbyType == "treasure" then
+		delay(4, openNextGate)
 	end
 
 	Debris:AddItem(gate, 4)
