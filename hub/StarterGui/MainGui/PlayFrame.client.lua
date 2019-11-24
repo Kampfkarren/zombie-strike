@@ -123,16 +123,26 @@ do
 	end
 
 	local function selectCampaign(campaignIndex)
+		local latestDifficulty
+
+		for index, difficulty in ipairs(Campaigns[campaignIndex].Difficulties) do
+			if level >= difficulty.MinLevel then
+				latestDifficulty = index
+			else
+				break
+			end
+		end
+
 		updateState({
 			campaign = Campaigns[campaignIndex],
 			campaignIndex = campaignIndex,
-			difficulty = 1,
+			difficulty = latestDifficulty,
 			hardcore = false,
 			public = true,
 		})
 	end
 
-	selectCampaign(1)
+	local latestCampaign
 
 	for campaignIndex, campaign in ipairs(Campaigns) do
 		-- Create a map button for every campaign
@@ -141,6 +151,8 @@ do
 
 		if level < campaign.Difficulties[1].MinLevel then
 			button.ImageColor3 = Color3.fromRGB(107, 107, 107)
+		else
+			latestCampaign = campaignIndex
 		end
 
 		button.MouseButton1Click:connect(function()
@@ -149,6 +161,8 @@ do
 
 		button.Parent = Create.Map
 	end
+
+	selectCampaign(latestCampaign)
 
 	Create.Info.Difficulty.Next.MouseButton1Click:connect(function()
 		updateState({
