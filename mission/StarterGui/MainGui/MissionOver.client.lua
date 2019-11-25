@@ -1,9 +1,11 @@
 local CollectionService = game:GetService("CollectionService")
+local ContentProvider = game:GetService("ContentProvider")
 local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -27,6 +29,7 @@ local FULL_TIME_ANIMATION = 1.5
 local FULL_TIME_GOLD = 250
 local FULL_TIME_XP = 2000
 local HUB_PLACE = 3759927663
+local REVEAL_ANIMATE_INTERVAL = 1
 
 local wordTweenIn = {
 	TweenInfo.new(2, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out),
@@ -36,6 +39,11 @@ local wordTweenIn = {
 local wordTweenOut = {
 	TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
 	{ Position = UDim2.new(-0.5, 0, 0.5, 0) },
+}
+
+local questionMarkTween = {
+	TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In, 0, true),
+	{ Rotation = -35 }
 }
 
 local tweenWord1In = TweenService:Create(
@@ -124,8 +132,11 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	-- Loot contents
 	local loot = Loot.DeserializeTable(loot)
 
-	local template = LootContents.Template:Clone()
-	LootContents.Template:Destroy()
+	local itemTemplate = LootContents.ItemTemplate:Clone()
+	LootContents.ItemTemplate:Destroy()
+
+	local revealTemplate = LootContents.RevealTemplate:Clone()
+	LootContents.RevealTemplate:Destroy()
 
 	if #loot == 0 then
 		LootContents.InventoryFull.Visible = true
@@ -135,43 +146,81 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	animate(LootResults.Info.XP.Count, xp, FULL_TIME_XP)
 	wait(0.5)
 	animate(LootResults.Info.Gold.Count, gold, FULL_TIME_GOLD)
-	wait(0.5)
 
-	-- TODO: Animate it
+	local revealButtons = {}
+	local revealed = 0
+
+	local amountOfLoot = #loot
+
 	for index, loot in pairs(loot) do
-		local lootButton = template:Clone()
-		local rarity = Loot.Rarities[loot.Rarity]
+		local revealButton = revealTemplate:Clone()
+		revealButton.LayoutOrder = index
 
-		if rarity.Color then
-			lootButton.BackgroundColor3 = rarity.Color
-		end
+		revealButton.MouseButton1Click:connect(function()
+			local lootButton = itemTemplate:Clone()
+			lootButton.LayoutOrder = index
 
-		lootButton.GunName.Text = Loot.GetLootName(loot)
-		lootButton.Rarity.Text = rarity.Name
+			local rarity = Loot.Rarities[loot.Rarity]
 
-		if loot.Type ~= "Helmet" and loot.Type ~= "Armor" then
-			for key, value in pairs(GunScaling.BaseStats(loot.Type, loot.Level, loot.Rarity)) do
-				if loot[key] == nil then
-					loot[key] = value
+			if rarity.Color then
+				lootButton.BackgroundColor3 = rarity.Color
+			end
+
+			lootButton.GunName.Text = Loot.GetLootName(loot)
+			lootButton.Rarity.Text = rarity.Name
+
+			if loot.Type ~= "Helmet" and loot.Type ~= "Armor" then
+				for key, value in pairs(GunScaling.BaseStats(loot.Type, loot.Level, loot.Rarity)) do
+					if loot[key] == nil then
+						loot[key] = value
+					end
 				end
 			end
-		end
 
-		ViewportFramePreview(lootButton.ViewportFrame, Data.GetModel(loot))
-		LootInfoButton(lootButton, LootInfo, loot)
+			ViewportFramePreview(lootButton.ViewportFrame, Data.GetModel(loot))
+			local _, hover = LootInfoButton(lootButton, LootInfo, loot)
 
-		if index == 1 and UserInputService.GamepadEnabled then
-			GuiService.SelectedObject = LootContents:FindFirstChild("Template")
-		end
+			if index == 1 and UserInputService.GamepadEnabled then
+				GuiService.SelectedObject = LootContents:FindFirstChild("Template")
+			end
 
-		lootButton.Parent = LootContents
+			revealButton:Destroy()
+			lootButton.Parent = LootContents
+			hover()
+
+			local sound = SoundService.SFX.Reveal:Clone()
+			sound.PlayOnRemove = true
+			sound.Parent = SoundService
+			sound:Destroy()
+
+			revealed = revealed + 1
+
+			if revealed == amountOfLoot then
+				for timer = 10, 1, -1 do
+					LootResults.Minor.Leave.Label.Text = "LEAVE (" .. timer .. ")"
+					wait(1)
+				end
+
+				LootResults.Minor.Leave.Label.Text = "LEAVING..."
+				leave()
+			end
+		end)
+
+		revealButton.Parent = LootContents
+		table.insert(revealButtons, revealButton)
 	end
 
-	for timer = 10, 1, -1 do
-		LootResults.Minor.Leave.Label.Text = "LEAVE (" .. timer .. ")"
-		wait(1)
-	end
+	spawn(function()
+		while true do
+			for _, revealButton in pairs(revealButtons) do
+				if revealButton:IsDescendantOf(game) then
+					TweenService:Create(revealButton.QuestionMark, unpack(questionMarkTween)):Play()
+				end
+			end
 
-	LootResults.Minor.Leave.Label.Text = "LEAVING..."
-	leave()
+			wait(REVEAL_ANIMATE_INTERVAL)
+		end
+	end)
 end)
+
+ContentProvider:PreloadAsync({ SoundService.SFX.Reveal })
