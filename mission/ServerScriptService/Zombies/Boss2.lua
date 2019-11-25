@@ -221,7 +221,7 @@ function FactoryBoss:AfterDeath()
 	end
 end
 
-function FactoryBoss:EmitFire()
+function FactoryBoss.EmitFire()
 	local particles = CollectionService:GetTagged("FinaleExplode")
 	particles[math.random(#particles)]:Emit(math.random(2, 4))
 end
