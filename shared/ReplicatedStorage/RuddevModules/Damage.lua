@@ -11,6 +11,8 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 
 local CRIT_MULTIPLIER = 2
 local DAMAGE = {}
+local BUFF_BULLETSTORM = 1.25
+local BUFF_RAGE = 2
 
 function DAMAGE.Calculate(_, item, hit, origin)
 	local config = CONFIG:GetConfig(item)
@@ -60,6 +62,12 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance)
 		if math.random() <= critChance then
 			damage = damage * CRIT_MULTIPLIER
 			crit = true
+		end
+
+		if ReplicatedStorage.CurrentPowerup.Value:match("Rage/") then
+			damage = damage * BUFF_RAGE
+		elseif ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
+			damage = damage * BUFF_BULLETSTORM
 		end
 
 		if not ReplicatedStorage.HubWorld.Value then

@@ -11,6 +11,7 @@ local CircleEffect = {}
 
 CircleEffect.Presets = {
 	BIG_ROBO_ZOMBIE = 1,
+	TANK_BUFF = 2,
 }
 
 CircleEffect.PresetOptions = {
@@ -18,6 +19,11 @@ CircleEffect.PresetOptions = {
 		Color = Color3.fromRGB(255, 124, 124),
 		Range = 25,
 	},
+
+	[CircleEffect.Presets.TANK_BUFF] = {
+		Color = Color3.fromRGB(255, 124, 124),
+		Range = 25,
+	}
 }
 
 function CircleEffect.Run(properties)

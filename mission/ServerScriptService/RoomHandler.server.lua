@@ -21,7 +21,8 @@ local BossTimer = ReplicatedStorage.BossTimer
 local JoinTimer = ReplicatedStorage.JoinTimer
 local Rooms = ServerStorage.Rooms
 
-local SPAWN_RATE = 1
+local SPEED_BONUS = 0.25
+local SPEED_TIME = 3.5
 
 DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP", "DungeonsPlayed")
 
@@ -299,6 +300,14 @@ local function openNextGate()
 		wait(1)
 	elseif obbyType == "treasure" then
 		delay(4, openNextGate)
+	end
+
+	for _, player in pairs(Players:GetPlayers()) do
+		local speedMultiplier = player:WaitForChild("SpeedMultiplier")
+		speedMultiplier.Value = speedMultiplier.Value + SPEED_BONUS
+		delay(SPEED_TIME, function()
+			speedMultiplier.Value = speedMultiplier.Value - SPEED_BONUS
+		end)
 	end
 
 	Debris:AddItem(gate, 4)

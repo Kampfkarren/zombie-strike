@@ -147,7 +147,10 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 
 		if #directions == config.ShotSize then
 			if ammo.Value > 0 then
-				ammo.Value = ammo.Value - 1
+				if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
+					ammo.Value = ammo.Value - 1
+				end
+
 				for i, dir in pairs(directions) do
 					directions[i] = dir.Unit
 				end

@@ -164,7 +164,10 @@ function module.Create(_, item)
 	end
 
 	local function Shoot()
-		ammo = ammo - 1
+		if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
+			ammo = ammo - 1
+		end
+
 		local position = muzzle.WorldPosition
 		local directions = {}
 

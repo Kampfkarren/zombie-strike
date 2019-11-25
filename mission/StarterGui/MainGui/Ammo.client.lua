@@ -6,16 +6,22 @@ local Config = require(ReplicatedStorage.RuddevModules.Config)
 local LocalPlayer = Players.LocalPlayer
 
 local Ammo = script.Parent.Main.Ammo
+local CurrentPowerup = ReplicatedStorage.CurrentPowerup
 
 local function characterAdded(character)
 	local function updateGun(gun)
 		local ammo = gun:WaitForChild("Ammo")
 
 		local function updateAmmo()
-			Ammo.Text = ammo.Value .. " / " .. Config:GetConfig(gun).Magazine
+			if CurrentPowerup.Value:match("Bulletstorm/") then
+				Ammo.Text = "∞/∞"
+			else
+				Ammo.Text = ammo.Value .. " / " .. Config:GetConfig(gun).Magazine
+			end
 		end
 
 		ammo.Changed:connect(updateAmmo)
+		CurrentPowerup.Changed:connect(updateAmmo)
 		updateAmmo()
 	end
 

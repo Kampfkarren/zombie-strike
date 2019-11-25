@@ -8,6 +8,7 @@ local ServerStorage = game:GetService("ServerStorage")
 local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
+local Buffs = require(ServerScriptService.Libraries.Buffs)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local Maid = require(ReplicatedStorage.Core.Maid)
@@ -298,8 +299,13 @@ function Zombie:Die()
 	ReplicatedStorage.Remotes.KillEnemy:FireAllClients(self.instance)
 	self:GiveXP()
 	self:PlayDeathSound()
+	self:MaybeDropBuff()
 	self:AfterDeath()
 	self.diedEvent:Fire()
+end
+
+function Zombie:MaybeDropBuff()
+	Buffs.MaybeDropBuff(self.instance.PrimaryPart.Position)
 end
 
 function Zombie:LoadAnimation(animation)

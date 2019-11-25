@@ -1,3 +1,6 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local BULLETSTORM_BUFF = 0.75
 local INVINCIBILITY_TIME = 0.75
 local MOBILE_DAMAGE_BUFF = 0.5
 
@@ -13,6 +16,10 @@ return function(player, damage)
 
 	if player:FindFirstChild("MobileDamageBuff") then
 		damage = damage * MOBILE_DAMAGE_BUFF
+	end
+
+	if ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
+		damage = damage * BULLETSTORM_BUFF
 	end
 
 	if character then
