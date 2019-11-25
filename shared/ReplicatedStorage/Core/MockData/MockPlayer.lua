@@ -5,6 +5,9 @@ return function()
 
 	MockPlayer.Version = 5
 
+	-- ASSUMPTION: We will never have more than 9 difficulties in a campaign
+	MockPlayer.LastKnownDifficulty = 11
+
 	MockPlayer.LegendaryBonus = false
 	MockPlayer.DungeonsPlayed = 0
 	MockPlayer.Level = 1
