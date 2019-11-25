@@ -12,13 +12,17 @@ local LocalPlayer = Players.LocalPlayer
 local RespawnMe = ReplicatedStorage.Remotes.RespawnMe
 
 local HARDCORE_TIME = 1.5
+local START_SPECTATE_TIME = 1
 local MIN_COINS = 50
 
 local characterAdded
 
 if Dungeon.GetDungeonData("Hardcore") then
 	characterAdded = function(character)
-		character:WaitForChild("Humanoid").Died:wait()
+		local humanoid = character:WaitForChild("Humanoid")
+		while humanoid.Health > 0 do
+			humanoid.HealthChanged:wait()
+		end
 
 		local total = 0
 
@@ -32,6 +36,13 @@ if Dungeon.GetDungeonData("Hardcore") then
 
 			DeathFade.TintColor = Color3.new(1, tint, tint)
 		until total >= HARDCORE_TIME
+
+		wait(START_SPECTATE_TIME)
+
+		LocalPlayer.PlayerGui.MainGui.Main.Abilities.Visible = false
+		LocalPlayer.PlayerGui.MainGui.Main.Ammo.Visible = false
+
+		ReplicatedStorage.LocalEvents.StartSpectate:Fire()
 	end
 else
 	local amount = 100

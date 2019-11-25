@@ -296,3 +296,7 @@ end)
 
 HandleCharacter(PLAYER.Character or PLAYER.CharacterAdded:wait())
 PLAYER.CharacterAdded:connect(HandleCharacter)
+
+ReplicatedStorage.LocalEvents.Spectate.Event:connect(function(player)
+	HandleCharacter(player.Character)
+end)

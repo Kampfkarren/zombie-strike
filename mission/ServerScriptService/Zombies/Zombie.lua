@@ -192,12 +192,20 @@ function Zombie:Aggro(focus)
 		local waypoints = {}
 		local lastRecalculate = 0
 
-		while self.alive and self.aggroTick == ourTick and self.aggroFocus:IsDescendantOf(game) do
+		while self.alive
+			and self.aggroTick == ourTick
+			and self.aggroFocus:IsDescendantOf(game)
+			and self.aggroFocus.Humanoid.Health > 0
+		do
 			repeat
 				if tick() - lastRecalculate > 0.25 then
 					pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
 
-					if not (self.alive and self.aggroTick == ourTick and self.aggroFocus:IsDescendantOf(game)) then
+					if not (self.alive
+						and self.aggroTick == ourTick
+						and self.aggroFocus:IsDescendantOf(game)
+						and self.aggroFocus.Humanoid.Health > 0
+					) then
 						break -- continue
 					end
 

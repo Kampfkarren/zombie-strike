@@ -50,7 +50,20 @@ Players.PlayerAdded:connect(function(player)
 		if Dungeon.GetDungeonData("Hardcore") then
 			character.Humanoid.Died:connect(function()
 				wait(2.5)
-				TeleportService:Teleport(HUB_PLACE, player)
+
+				local persist = false
+
+				for _, otherPlayer in pairs(Players:GetPlayers()) do
+					local character = otherPlayer.Character
+					if character.Humanoid.Health > 0 then
+						persist = true
+						break
+					end
+				end
+
+				if not persist then
+					TeleportService:Teleport(HUB_PLACE, player)
+				end
 			end)
 		end
 	end)
