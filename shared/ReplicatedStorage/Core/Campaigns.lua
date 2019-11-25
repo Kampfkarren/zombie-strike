@@ -448,6 +448,69 @@ local Campaigns = {
 			},
 		},
 	},
+
+	{
+		Name = "The Firelands",
+		Image = "rbxassetid://15648392",
+		ZombieTypes = {
+			Common = 3,
+			-- Fast = 1,
+			-- Strong = 1,
+		},
+
+		Difficulties = {
+			{
+				MinLevel = 60,
+				Style = Hard,
+
+				Gold = 320000,
+				Rooms = 6,
+				XP = 2500000,
+				ZombieSpawnRate = 0.65,
+
+				BossStats = {
+					Health = 25000000,
+				},
+			}
+		},
+
+		Loot = classicGuns({
+			Armor = {
+				Common = { 17 },
+				Uncommon = { 18 },
+				Rare = { 19 },
+				Epic = { 20 },
+				Legendary = { 21 },
+			},
+
+			Helmet = {
+				Common = { 6 },
+				Uncommon = { 7 },
+				Rare = { 8 },
+				Epic = { 9 },
+				Legendary = { 10 },
+			},
+		}),
+
+		Stats = {
+			Common = {
+				Health = {
+					Base = 400000,
+					Scale = 1.18,
+				},
+
+				Speed = {
+					Base = 17,
+					Scale = 1.01,
+				},
+
+				Damage = {
+					Base = 80000,
+					Scale = 1.18,
+				},
+			},
+		}
+	},
 }
 
 assert(campaignsType(Campaigns))

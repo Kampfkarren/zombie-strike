@@ -1,5 +1,4 @@
 local CollectionService = game:GetService("CollectionService")
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
@@ -11,6 +10,7 @@ local Shake = ReplicatedStorage.RuddevEvents.Shake
 local gates = {
 	require(script.City),
 	require(script.Factory),
+	require(script.Firelands),
 }
 
 ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room)

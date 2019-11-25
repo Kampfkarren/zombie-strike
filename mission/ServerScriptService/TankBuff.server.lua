@@ -38,9 +38,11 @@ ReplicatedStorage.CurrentPowerup.Changed:connect(function(powerup)
 							<= CircleEffect.PresetOptions[CircleEffect.Presets.TANK_BUFF].Range
 						then
 							local humanoid = zombie.Humanoid
-							humanoid:TakeDamage(damage)
-							ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
-							ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
+							if humanoid.Health > 0 then
+								humanoid:TakeDamage(damage)
+								ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
+								ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
+							end
 						end
 					end
 				end
