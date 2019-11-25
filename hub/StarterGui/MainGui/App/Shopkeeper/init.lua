@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local InventoryContents = require(script.Parent.Inventory.InventoryContents)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
+local Modalifier = require(ReplicatedStorage.Core.UI.Components.Modalifier)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local SellCost = require(ReplicatedStorage.Libraries.SellCost)
@@ -29,6 +30,8 @@ local function copy(list)
 end
 
 function ShopkeeperGui:init()
+	self.ref = Roact.createRef()
+
 	self:setState({
 		lootStack = {},
 		selected = nil,
@@ -71,6 +74,23 @@ function ShopkeeperGui:init()
 				equipped = false,
 			},
 		})
+	end
+
+	self.sellAll = function()
+		self:setState({
+			selling = true,
+		})
+	end
+
+	self.closeSellAll = function()
+		self:setState({
+			selling = false,
+		})
+	end
+
+	self.trulySellAll = function()
+		Sell:FireServer("*")
+		self.closeSellAll()
 	end
 end
 
@@ -186,6 +206,61 @@ function ShopkeeperGui:render()
 		}
 	end
 
+	local sellAllDropdown
+
+	if self.state.selling then
+		sellAllDropdown = e(Modalifier, {
+			OnClosed = self.closeSellAll,
+			Window = self.ref:getValue(),
+
+			Render = function()
+				return e("Frame", {
+					BackgroundTransparency = 0.5,
+					BackgroundColor3 = Color3.new(0, 0, 0),
+					BorderSizePixel = 0,
+					Size = UDim2.fromScale(1, 1),
+				}, {
+					Label = e("TextLabel", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						Font = Enum.Font.GothamBold,
+						Position = UDim2.fromScale(0.5, 0.4),
+						Size = UDim2.fromScale(0.6, 0.4),
+						Text = "Are you sure you want to sell ALL unequipped items?",
+						TextColor3 = Color3.new(1, 1, 1),
+						TextScaled = true,
+					}),
+
+					Yes = e("TextButton", {
+						AnchorPoint = Vector2.new(0.5, 1),
+						BackgroundColor3 = UPGRADE_COLOR,
+						BorderSizePixel = 0,
+						Font = Enum.Font.GothamBold,
+						Position = UDim2.fromScale(0.3, 0.9),
+						Size = UDim2.fromScale(0.3, 0.1),
+						Text = "YES",
+						TextColor3 = Color3.new(1, 1, 1),
+						TextScaled = true,
+						[Roact.Event.Activated] = self.trulySellAll,
+					}),
+
+					No = e("TextButton", {
+						AnchorPoint = Vector2.new(0.5, 1),
+						BackgroundColor3 = SELL_COLOR,
+						BorderSizePixel = 0,
+						Font = Enum.Font.GothamBold,
+						Position = UDim2.fromScale(0.7, 0.9),
+						Size = UDim2.fromScale(0.3, 0.1),
+						Text = "NO",
+						TextColor3 = Color3.new(1, 1, 1),
+						TextScaled = true,
+						[Roact.Event.Activated] = self.closeSellAll,
+					}),
+				})
+			end,
+		})
+	end
+
 	return e("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Color3.fromRGB(18, 18, 18),
@@ -194,6 +269,7 @@ function ShopkeeperGui:render()
 		Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(0.6, 0.7),
 		Visible = self.props.open,
+		[Roact.Ref] = self.ref,
 	}, {
 		e("UIAspectRatioConstraint", {
 			AspectRatio = 2.6,
@@ -236,6 +312,21 @@ function ShopkeeperGui:render()
 
 			Inner = lootInfo,
 		}),
+
+		SellAll = e("TextButton", {
+			AnchorPoint = Vector2.new(1, 1),
+			BackgroundColor3 = SELL_COLOR,
+			BorderSizePixel = 0,
+			Font = Enum.Font.GothamBold,
+			Position = UDim2.fromScale(1, 0),
+			Size = UDim2.fromScale(0.3, 0.1),
+			Text = "SELL ALL",
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+			[Roact.Event.Activated] = self.sellAll,
+		}),
+
+		SellAllDropdown = sellAllDropdown,
 	})
 end
 
@@ -247,13 +338,6 @@ function ShopkeeperGui.getDerivedStateFromProps(nextProps, lastState)
 	local knownUuids = {}
 	for index, knownItem in pairs(nextProps.inventory or {}) do
 		knownUuids[knownItem.UUID] = { index, knownItem }
-	end
-
-	local lootStack = {}
-	for loot, value in pairs(lootStack or {}) do
-		if knownUuids[loot.UUID] then
-			lootStack[loot] = value
-		end
 	end
 
 	local selected = lastState.selected
@@ -271,7 +355,7 @@ function ShopkeeperGui.getDerivedStateFromProps(nextProps, lastState)
 
 	return {
 		lastInventory = nextProps.inventory,
-		lootStack = lootStack,
+		lootStack = {},
 		selected = selected,
 	}
 end

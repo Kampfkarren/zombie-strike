@@ -11,7 +11,7 @@ local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Componen
 local e = Roact.createElement
 local LocalPlayer = Players.LocalPlayer
 
-local ItemButton = Roact.Component:extend("ItemButton")
+local ItemButton = Roact.PureComponent:extend("ItemButton")
 
 function ItemButton:init()
 	self:setState({
@@ -43,21 +43,6 @@ function ItemButton:init()
 			props.onClickUnequipped()
 		end
 	end
-end
-
-function ItemButton:shouldUpdate(nextProps, nextState)
-	for key, value in pairs(nextProps.Loot) do
-		if self.props.Loot[key] ~= value then
-			return true
-		end
-	end
-
-	if self.props[Roact.Children] ~= nextProps[Roact.Children] then
-		return true
-	end
-
-	return self.props.state ~= nextState
-		and (self.props.LayoutOrder ~= nextProps.LayoutOrder or self.props.equipped ~= nextProps.equipped)
 end
 
 function ItemButton:render()

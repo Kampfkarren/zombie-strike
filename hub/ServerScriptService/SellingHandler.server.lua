@@ -10,26 +10,46 @@ DataStore2.Combine("DATA", "Gold")
 
 ReplicatedStorage.Remotes.Sell.OnServerEvent:connect(function(player, uuid)
 	local inventory = Data.GetPlayerData(player, "Inventory")
-	local item, index = InventoryUtil.FindByUuid(inventory, uuid)
-	if item == nil then
-		warn("player tried to sell non existent item!")
-		return
-	end
-
-	for equippable in pairs(Data.Equippable) do
-		local equipped = Data.GetPlayerData(player, "Equipped" .. equippable)
-		if equipped == index then
-			warn("player tried to sell equipped item!")
-			return
-		end
-	end
 
 	if player:FindFirstChild("Trading") then
 		warn("player is trading!")
 		return
 	end
 
-	local reward = SellCost(item)
-	InventoryUtil.RemoveItems(player, { index })
+	local removeIndices, reward = {}, 0
+
+	if uuid == "*" then
+		local equipped = {}
+
+		for equippable in pairs(Data.Equippable) do
+			equipped[Data.GetPlayerData(player, "Equipped" .. equippable)] = true
+		end
+
+		for index, item in ipairs(inventory) do
+			if not equipped[index] then
+				table.insert(removeIndices, index)
+				reward = reward + SellCost(item)
+			end
+		end
+	else
+		local item, index = InventoryUtil.FindByUuid(inventory, uuid)
+		if item == nil then
+			warn("player tried to sell non existent item!")
+			return
+		end
+
+		for equippable in pairs(Data.Equippable) do
+			local equipped = Data.GetPlayerData(player, "Equipped" .. equippable)
+			if equipped == index then
+				warn("player tried to sell equipped item!")
+				return
+			end
+		end
+
+		reward = SellCost(item)
+		table.insert(removeIndices, index)
+	end
+
+	InventoryUtil.RemoveItems(player, removeIndices)
 	DataStore2("Gold", player):Increment(reward)
 end)
