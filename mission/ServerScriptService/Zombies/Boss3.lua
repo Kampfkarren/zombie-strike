@@ -182,7 +182,9 @@ end
 
 function FirelandsBoss:AfterDeath()
 	for _, zombie in pairs(self.zombiesSummoned) do
-		zombie:Die()
+		coroutine.wrap(function()
+			zombie:Die()
+		end)()
 	end
 
 	wait(DEATH_TIME)

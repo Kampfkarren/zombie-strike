@@ -56,7 +56,9 @@ end
 
 function CityBoss:AfterDeath()
 	for _, zombie in pairs(self.zombiesSummoned) do
-		zombie:Die()
+		coroutine.wrap(function()
+			zombie:Die()
+		end)()
 	end
 end
 
