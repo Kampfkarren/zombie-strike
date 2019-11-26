@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ServerStorage = game:GetService("ServerStorage")
 
 local CircleEffect = require(ReplicatedStorage.Libraries.CircleEffect)
 local Common = require(script.Parent.Common)
@@ -17,7 +18,7 @@ AoE.AttackRange = 15
 function AoE.new(level)
 	return setmetatable({
 		Model = "AoE",
-		Name = "Big Robo-Zombie",
+		Name = ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")].AoE.ZombieName.Value,
 		_deriative = Common.new(level),
 	}, {
 		__index = function(self, key)

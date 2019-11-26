@@ -444,7 +444,7 @@ local Campaigns = {
 				Range = {
 					Base = 25,
 					Scale = 1,
-				}
+				},
 			},
 		},
 	},
@@ -454,8 +454,8 @@ local Campaigns = {
 		Image = "rbxassetid://15648392",
 		ZombieTypes = {
 			Common = 3,
-			-- Fast = 1,
-			-- Strong = 1,
+			Fast = 1,
+			AoE = 1,
 		},
 
 		Difficulties = {
@@ -505,8 +505,47 @@ local Campaigns = {
 				},
 
 				Damage = {
-					Base = 80000,
+					Base = 48000,
 					Scale = 1.18,
+				},
+			},
+
+			Fast = {
+				Health = {
+					Base = 350000,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 23,
+					Scale = 1.005,
+				},
+
+				Damage = {
+					Base = 42000,
+					Scale = 1.18,
+				},
+			},
+
+			AoE = {
+				Health = {
+					Base = 1600000,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 16.5,
+					Scale = 1,
+				},
+
+				Damage = {
+					Base = 60000,
+					Scale = 1.18,
+				},
+
+				Range = {
+					Base = 25,
+					Scale = 1,
 				},
 			},
 		}

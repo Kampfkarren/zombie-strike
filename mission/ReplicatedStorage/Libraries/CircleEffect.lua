@@ -50,7 +50,7 @@ function CircleEffect.Run(properties)
 	effect.Parent = workspace
 
 	TweenService:Create(effect, tweens.Size, {
-		Size = Vector3.new(script.Part.Size.X, properties.Range, properties.Range)
+		Size = Vector3.new(script.Part.Size.X, properties.Range * 2, properties.Range)
 	}):Play()
 
 	TweenService:Create(effect, unpack(tweens.Transparency)):Play()
