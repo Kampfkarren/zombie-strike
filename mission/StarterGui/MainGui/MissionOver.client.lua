@@ -80,6 +80,8 @@ local tweenLoot = TweenService:Create(
 	{ Position = UDim2.new(0, 0, 0, 0) }
 )
 
+local musicTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
 -- local tweenBlurOut = TweenService:Create(
 -- 	Blur,
 -- 	TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -135,6 +137,19 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 		tweenWord2Out:Play()
 		tweenLoot:Play()
 	end)
+
+	-- Change music
+	for _, music in pairs(SoundService.Music:GetDescendants()) do
+		if music.Name == "MissionEnd" then
+			music:Play()
+		elseif music:IsA("Sound") then
+			TweenService:Create(
+				music,
+				musicTweenInfo,
+				{ Volume = 0 }
+			):Play()
+		end
+	end
 
 	-- Loot contents
 	local loot = Loot.DeserializeTable(loot)
