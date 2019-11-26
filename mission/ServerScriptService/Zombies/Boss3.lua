@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
@@ -6,8 +7,14 @@ local Workspace = game:GetService("Workspace")
 local ChargeBigLaser = ReplicatedStorage.Remotes.FirelandsBoss.ChargeBigLaser
 local TriLaser = ReplicatedStorage.Remotes.FirelandsBoss.TriLaser
 
-local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
+local SummonSpot = ReplicatedStorage.Assets.Campaign.Campaign3.Boss.SummonSpot
 
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
+local Zombie = require(script.Parent.Zombie)
+
+local SUMMON_DELAY = 2
+local SUMMON_INTERVAL = 0.3
 local TRI_LASER_COUNT = 4
 local TRI_LASER_MOVE_DELAY = 0.5
 local TRI_LASER_TIME = 3
@@ -30,6 +37,13 @@ FirelandsBoss.MassiveLaserWindup = {
 	[72] = 2.8,
 }
 
+FirelandsBoss.SummonCount = {
+	[60] = 3,
+	[64] = 4,
+	[68] = 5,
+	[72] = 6,
+}
+
 FirelandsBoss.TriLaserDamage = {
 	[60] = 210000,
 	[64] = 350000,
@@ -39,6 +53,7 @@ FirelandsBoss.TriLaserDamage = {
 
 function FirelandsBoss.new()
 	return setmetatable({
+		zombiesSummoned = {},
 	}, FirelandsBoss)
 end
 
@@ -99,11 +114,72 @@ function FirelandsBoss:TriLaser()
 	end
 end
 
+function FirelandsBoss:SummonZombies()
+	local parts = {}
+
+	for _ = 1, FirelandsBoss.SummonCount[self.level] do
+		local spot = SummonSpot:Clone()
+		local zombieSummonPart = self.bossRoom.ZombieSummon
+		local sizeX, sizeZ = zombieSummonPart.Size.X, zombieSummonPart.Size.Z
+
+		local position = zombieSummonPart.Position + Vector3.new(
+			math.random(-sizeX / 2, sizeX / 2),
+			spot.Position.Y + spot.Size.X / 2 - 3,
+			math.random(-sizeZ / 2, sizeZ / 2)
+		)
+
+		spot.Position = position
+		spot.Parent = Workspace
+
+		table.insert(parts, spot)
+	end
+
+	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+
+	local zombieTypes = {}
+
+	for zombieType in pairs(campaignInfo.ZombieTypes) do
+		table.insert(zombieTypes, zombieType)
+	end
+
+	wait(SUMMON_DELAY)
+
+	for _, part in ipairs(parts) do
+		part.Transparency = 1
+
+		local zombie = Zombie.new(
+			zombieTypes[math.random(#zombieTypes)],
+			Dungeon.RNGZombieLevel()
+		)
+
+		table.insert(self.zombiesSummoned, zombie)
+
+		zombie.Died:connect(function()
+			for index, otherZombie in pairs(self.zombiesSummoned) do
+				if otherZombie == zombie then
+					table.remove(self.zombiesSummoned, index)
+				end
+			end
+		end)
+
+		zombie.GetXP = function()
+			return 0
+		end
+
+		zombie:Spawn(part.Position)
+		zombie:Aggro()
+
+		Debris:AddItem(part)
+		wait(SUMMON_INTERVAL)
+	end
+end
+
 function FirelandsBoss.UpdateNametag() end
 
 FirelandsBoss.AttackSequence = {
 	FirelandsBoss.BigLaser,
 	FirelandsBoss.TriLaser,
+	FirelandsBoss.SummonZombies,
 }
 
 return FirelandsBoss

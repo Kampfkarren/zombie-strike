@@ -1,5 +1,4 @@
 local CollectionService = game:GetService("CollectionService")
-local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
