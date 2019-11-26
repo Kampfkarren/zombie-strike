@@ -40,7 +40,7 @@ ChargeBigLaser.OnClientEvent:connect(function(newActive)
 	until not active
 
 	bigLaser.Warning:Destroy()
-	bigLaser.BossLaserBig.Color = Color3.new(1, 0, 0)
+	bigLaser.BossLaserBig.Color = Color3.fromRGB(255, 107, 2)
 	bigLaser.BossLaserBig.Material = Enum.Material.Neon
 
 	local character = LocalPlayer.Character

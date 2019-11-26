@@ -4,8 +4,14 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
 local ChargeBigLaser = ReplicatedStorage.Remotes.FirelandsBoss.ChargeBigLaser
+local TriLaser = ReplicatedStorage.Remotes.FirelandsBoss.TriLaser
 
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
+
+local TRI_LASER_COUNT = 4
+local TRI_LASER_MOVE_DELAY = 0.5
+local TRI_LASER_TIME = 3
+local TRI_LASER_WINDUP = 0.9
 
 local FirelandsBoss = {}
 FirelandsBoss.__index = FirelandsBoss
@@ -18,15 +24,21 @@ FirelandsBoss.MassiveLaserDamage = {
 }
 
 FirelandsBoss.MassiveLaserWindup = {
-	[60] = 2,
-	[64] = 1.8,
-	[68] = 1.6,
-	[72] = 1.4,
+	[60] = 4,
+	[64] = 3.6,
+	[68] = 3.2,
+	[72] = 2.8,
+}
+
+FirelandsBoss.TriLaserDamage = {
+	[60] = 210000,
+	[64] = 350000,
+	[68] = 630000,
+	[72] = 1120000,
 }
 
 function FirelandsBoss.new()
 	return setmetatable({
-
 	}, FirelandsBoss)
 end
 
@@ -43,6 +55,10 @@ function FirelandsBoss:InitializeBossAI(room)
 
 	ChargeBigLaser.OnServerEvent:connect(function(player)
 		TakeDamage(player, FirelandsBoss.MassiveLaserDamage[self.level])
+	end)
+
+	TriLaser.OnServerEvent:connect(function(player)
+		TakeDamage(player, FirelandsBoss.TriLaserDamage[self.level])
 	end)
 
 	wait(1.5)
@@ -72,10 +88,22 @@ function FirelandsBoss:BigLaser()
 	ChargeBigLaser:FireAllClients(false)
 end
 
+function FirelandsBoss:TriLaser()
+	for _ = 1, TRI_LASER_COUNT do
+		self:NewSpot()
+		wait(TRI_LASER_MOVE_DELAY)
+		TriLaser:FireAllClients(true)
+		wait(TRI_LASER_TIME)
+		TriLaser:FireAllClients(false)
+		wait(TRI_LASER_WINDUP)
+	end
+end
+
 function FirelandsBoss.UpdateNametag() end
 
 FirelandsBoss.AttackSequence = {
 	FirelandsBoss.BigLaser,
+	FirelandsBoss.TriLaser,
 }
 
 return FirelandsBoss
