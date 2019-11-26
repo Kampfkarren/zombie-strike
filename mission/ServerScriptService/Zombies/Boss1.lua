@@ -6,6 +6,7 @@ local TweenService = game:GetService("TweenService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 local Zombie = require(script.Parent.Zombie)
 
@@ -56,9 +57,9 @@ end
 
 function CityBoss:AfterDeath()
 	for _, zombie in pairs(self.zombiesSummoned) do
-		coroutine.wrap(function()
+		FastSpawn(function()
 			zombie:Die()
-		end)()
+		end)
 	end
 end
 

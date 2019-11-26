@@ -10,6 +10,7 @@ local TriLaser = ReplicatedStorage.Remotes.FirelandsBoss.TriLaser
 local SummonSpot = ReplicatedStorage.Assets.Campaign.Campaign3.Boss.SummonSpot
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 local Zombie = require(script.Parent.Zombie)
 
@@ -182,9 +183,9 @@ end
 
 function FirelandsBoss:AfterDeath()
 	for _, zombie in pairs(self.zombiesSummoned) do
-		coroutine.wrap(function()
+		FastSpawn(function()
 			zombie:Die()
-		end)()
+		end)
 	end
 
 	wait(DEATH_TIME)
