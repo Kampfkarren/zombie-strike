@@ -1,5 +1,7 @@
+local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local SoundService = game:GetService("SoundService")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
@@ -32,9 +34,21 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 		local humanoid = character.Humanoid
 		local animation = humanoid:LoadAnimation(HealthPackAnimation)
 
+		local healthPrime = SoundService.SFX.HealthPrime:Clone()
+		local healthUse = SoundService.SFX.HealthUse:Clone()
+
+		healthPrime.Parent = character.PrimaryPart
+		healthPrime:Play()
+		Debris:AddItem(healthPrime)
+
+		healthUse.Parent = character.PrimaryPart
+		Debris:AddItem(healthUse)
+
 		animation.KeyframeReached:connect(function(name)
 			if name == "Heal" then
+				healthUse:Play()
 				healthPack:Destroy()
+
 				if humanoid.Health > 0 then
 					humanoid.Health = humanoid.Health + humanoid.MaxHealth * HEAL_AMOUNT
 					ReplicatedStorage.Remotes.HealthPack:FireClient(player)
