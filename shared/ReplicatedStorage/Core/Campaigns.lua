@@ -27,6 +27,11 @@ local Extreme = {
 	Color = Color3.fromRGB(109, 35, 35),
 }
 
+local Insane = {
+	Name = "Insane",
+	Color = Color3.fromRGB(141, 30, 30),
+}
+
 local function range(start, finish)
 	local range = {}
 
@@ -471,7 +476,49 @@ local Campaigns = {
 				BossStats = {
 					Health = 25000000,
 				},
-			}
+			},
+
+			{
+				MinLevel = 64,
+				Style = VeryHard,
+
+				Gold = 640000,
+				Rooms = 8,
+				XP = 3100000,
+				ZombieSpawnRate = 0.75,
+
+				BossStats = {
+					Health = 45000000,
+				},
+			},
+
+			{
+				MinLevel = 68,
+				Style = Extreme,
+
+				Gold = 1280000,
+				Rooms = 10,
+				XP = 4500000,
+				ZombieSpawnRate = 0.85,
+
+				BossStats = {
+					Health = 90000000,
+				},
+			},
+
+			{
+				MinLevel = 72,
+				Style = Insane,
+
+				Gold = 2560000,
+				Rooms = 12,
+				XP = 7400000,
+				ZombieSpawnRate = 1,
+
+				BossStats = {
+					Health = 180000000,
+				},
+			},
 		},
 
 		Loot = classicGuns({
@@ -495,7 +542,7 @@ local Campaigns = {
 		Stats = {
 			Common = {
 				Health = {
-					Base = 400000,
+					Base = 280000,
 					Scale = 1.18,
 				},
 
@@ -512,7 +559,7 @@ local Campaigns = {
 
 			Fast = {
 				Health = {
-					Base = 350000,
+					Base = 245000,
 					Scale = 1.19,
 				},
 
@@ -529,7 +576,7 @@ local Campaigns = {
 
 			AoE = {
 				Health = {
-					Base = 1600000,
+					Base = 880000,
 					Scale = 1.19,
 				},
 
