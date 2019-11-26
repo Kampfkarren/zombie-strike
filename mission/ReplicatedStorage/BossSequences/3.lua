@@ -69,15 +69,15 @@ local function animateUp(boss, camera)
 
 			firePreview.Transparency = 1
 			firePreview.Mid.Fire:Emit(50)
+			firePreview.Mid.Fire.Enabled = false
 			boss:SetPrimaryPartCFrame(goal)
-			CollectionService:AddTag(boss, "BossOscillate")
-			-- firePreview:Destroy()
 		else
 			wait(BOSS_ARRIVE_TIME + BOSS_ASCEND_TIME)
 		end
 	end
 
 	boss:SetPrimaryPartCFrame(goal)
+	CollectionService:AddTag(boss, "BossOscillate")
 
 	return boss, camera
 end
