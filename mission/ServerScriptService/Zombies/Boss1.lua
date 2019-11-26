@@ -56,6 +56,10 @@ function CityBoss.new()
 	}, CityBoss)
 end
 
+function CityBoss.GetDeathSound()
+	return SoundService.ZombieSounds["1"].Boss.Death
+end
+
 function CityBoss:AfterDeath()
 	for _, zombie in pairs(self.zombiesSummoned) do
 		FastSpawn(function()
