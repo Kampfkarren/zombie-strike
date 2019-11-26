@@ -1,6 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
@@ -20,6 +21,12 @@ local sizeTween = TweenInfo.new(
 	Enum.EasingDirection.Out
 )
 
+local function playSound(soundFolder)
+	local children = soundFolder:GetChildren()
+	local sound = children[math.random(#children)]
+	sound:Play()
+end
+
 if Dungeon.GetDungeonData("Campaign") == 1 then
 	local boss = CollectionService:GetInstanceAddedSignal("Boss"):wait()
 
@@ -36,6 +43,7 @@ if Dungeon.GetDungeonData("Campaign") == 1 then
 					(Camera.CFrame.Position - boss.HumanoidRootPart.Position).Unit
 				)
 
+				playSound(SoundService.ZombieSounds["1"].Boss.Impact)
 				Shake:Fire(direction * 15)
 
 				local ring = Ring:Clone()

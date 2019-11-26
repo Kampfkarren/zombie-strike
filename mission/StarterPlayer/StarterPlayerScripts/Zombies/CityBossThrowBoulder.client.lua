@@ -1,6 +1,7 @@
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
@@ -17,7 +18,15 @@ local function randomAngle()
 	return math.random(-math.pi * 100, math.pi * 100) / 100
 end
 
+local function playSound(soundFolder)
+	local children = soundFolder:GetChildren()
+	local sound = children[math.random(#children)]
+	sound:Play()
+end
+
 ThrowBoulder.OnClientEvent:connect(function(boulderModel, position)
+	playSound(SoundService.ZombieSounds["1"].Boss.RockThrow)
+
 	local boulder = boulderModel.PrimaryPart:Clone()
 	boulder.GripMotor:Destroy()
 	boulder.Anchored = true
