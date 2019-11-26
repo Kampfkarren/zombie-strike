@@ -81,7 +81,7 @@ TriLaserEvent.OnClientEvent:connect(function(newActive)
 
 		lasers:SetPrimaryPartCFrame(boss.Body.Eye.PrimaryPart.CFrame * CFrame.Angles(0, math.pi, 0))
 		time = time + RunService.Heartbeat:wait()
-	until not active
+	until not active or boss.Humanoid.Health <= 0
 
 	lasers:Destroy()
 end)

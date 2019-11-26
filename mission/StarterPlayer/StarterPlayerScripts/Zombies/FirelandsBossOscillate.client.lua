@@ -14,7 +14,7 @@ local boss = CollectionService:GetInstanceAddedSignal("BossOscillate"):wait()
 
 local total = 0
 
-RunService.Heartbeat:connect(function(delta)
+local oscillateConnection = RunService.Heartbeat:connect(function(delta)
 	total = total + delta
 	boss.Body:SetPrimaryPartCFrame(boss.PrimaryPart.CFrame + BOSS_OSCILLATE_RANGE * math.sin(total))
 end)
@@ -29,4 +29,8 @@ boss.NextPosition.Changed:connect(function(newPositionObject)
 		total = total + RunService.Heartbeat:wait()
 		boss:SetPrimaryPartCFrame(base:Lerp(goal, math.sin(total / BOSS_MOVE_TIME)))
 	end
+end)
+
+CollectionService:GetInstanceRemovedSignal("BossOscillate"):connect(function()
+	oscillateConnection:Disconnect()
 end)

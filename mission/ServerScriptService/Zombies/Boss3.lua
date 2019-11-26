@@ -13,6 +13,7 @@ local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 local Zombie = require(script.Parent.Zombie)
 
+local DEATH_TIME = 3
 local SUMMON_DELAY = 2
 local SUMMON_INTERVAL = 0.3
 local TRI_LASER_COUNT = 4
@@ -107,10 +108,13 @@ function FirelandsBoss:TriLaser()
 	for _ = 1, TRI_LASER_COUNT do
 		self:NewSpot()
 		wait(TRI_LASER_MOVE_DELAY)
+		if not self.alive then return end
 		TriLaser:FireAllClients(true)
 		wait(TRI_LASER_TIME)
+		if not self.alive then return end
 		TriLaser:FireAllClients(false)
 		wait(TRI_LASER_WINDUP)
+		if not self.alive then return end
 	end
 end
 
@@ -144,6 +148,8 @@ function FirelandsBoss:SummonZombies()
 
 	wait(SUMMON_DELAY)
 
+	if not self.alive then return end
+
 	for _, part in ipairs(parts) do
 		part.Transparency = 1
 
@@ -172,6 +178,14 @@ function FirelandsBoss:SummonZombies()
 		Debris:AddItem(part)
 		wait(SUMMON_INTERVAL)
 	end
+end
+
+function FirelandsBoss:AfterDeath()
+	for _, zombie in pairs(self.zombiesSummoned) do
+		zombie:Die()
+	end
+
+	wait(DEATH_TIME)
 end
 
 function FirelandsBoss.UpdateNametag() end
