@@ -18,6 +18,8 @@ local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local Blur = Lighting.Blur
+local Finish = SoundService.SFX.Finish
+local GoingUp = SoundService.SFX.GoingUp
 local LocalPlayer = Players.LocalPlayer
 local LootResults = script.Parent.Main.LootResults
 local YouWin = script.Parent.Main.YouWin
@@ -92,12 +94,17 @@ local function animate(label, amount, full)
 	local timeNeeded = math.min(FULL_TIME_ANIMATION, lerp(0, FULL_TIME_ANIMATION, amount / full))
 	local timeSpent = 0
 
+	GoingUp:Play()
+
 	repeat
 		timeSpent = timeSpent + RunService.RenderStepped:wait()
 		label.Text = EnglishNumbers(math.min(amount, lerp(0, amount, timeSpent / timeNeeded)))
 	until timeSpent >= timeNeeded
 
 	label.Text = EnglishNumbers(amount)
+
+	Finish:Play()
+	GoingUp:Stop()
 end
 
 local function leave()
