@@ -31,6 +31,7 @@ local target, targetMaid
 
 local hitmarker = Instance.new("BillboardGui")
 hitmarker.AlwaysOnTop = true
+hitmarker.ClipsDescendants = true
 hitmarker.Enabled = false
 hitmarker.Size = UDim2.new(SIZE_MAX, 0, SIZE_MAX, 0)
 
@@ -41,9 +42,13 @@ label.Rotation = 45
 label.Size = UDim2.new(1, 0, 1, 0)
 label.Text = "+"
 label.TextColor3 = Color3.fromRGB(185, 0, 0)
-label.TextScaled = true
+label.TextSize = 20
 label.TextTransparency = 0.2
 label.Parent = hitmarker
+
+local selectionBox = Instance.new("SelectionBox")
+selectionBox.Color3 = Color3.new(1, 0, 0)
+selectionBox.Parent = Workspace
 
 local tweenShrink = TweenService:Create(
 	hitmarker,
@@ -71,6 +76,10 @@ end
 
 function AutoAim.CanFocusTarget(target, skipRange)
 	if not itemModule then
+		return false
+	end
+
+	if target.Humanoid.Health <= 0 then
 		return false
 	end
 
@@ -113,6 +122,7 @@ function AutoAim.SetTarget(newTarget)
 	targetMaid:GiveTask(function()
 		hitmarker.Adornee = nil
 		hitmarker.Enabled = false
+		selectionBox.Adornee = nil
 
 		if itemModule then
 			itemModule:Deactivate()
@@ -121,7 +131,7 @@ function AutoAim.SetTarget(newTarget)
 		target = nil
 	end)
 
-	coroutine.wrap(itemModule.Activate)()
+	Mouse.WorldPosition = newTarget.PrimaryPart.Position
 
 	targetMaid:GiveTask(newTarget.Humanoid.Died:connect(function()
 		targetMaid:DoCleaning()
@@ -132,12 +142,14 @@ function AutoAim.SetTarget(newTarget)
 			AutoAim.SetTarget(nil)
 		else
 			Mouse.WorldPosition = newTarget.PrimaryPart.Position
+			coroutine.wrap(itemModule.Activate)()
 		end
 	end))
 
 	hitmarker.Adornee = newTarget.PrimaryPart
 	hitmarker.Enabled = true
 	hitmarker.Size = UDim2.new(SIZE_MAX, 0, SIZE_MAX, 0)
+	selectionBox.Adornee = newTarget.PrimaryPart
 	tweenShrink:Play()
 end
 

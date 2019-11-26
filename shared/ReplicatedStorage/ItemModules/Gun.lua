@@ -253,7 +253,9 @@ function module.Create(_, item)
 			reloading = false
 
 			spawn(function()
-				if UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+				if UserInputService.MouseEnabled
+					and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+				then
 					itemModule:Activate()
 				end
 			end)
@@ -351,7 +353,7 @@ function module.Create(_, item)
 		self.Equipped = false
 	end
 
-	function itemModule.Activate(_)
+	function itemModule.Activate()
 		clicking = true
 
 		if tick() - equipTime >= EQUIP_COOLDOWN then
