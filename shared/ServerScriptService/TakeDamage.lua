@@ -20,6 +20,8 @@ return function(player, damage)
 
 	if ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
 		damage = damage * BULLETSTORM_BUFF
+	elseif ReplicatedStorage.CurrentPowerup.Value:match("Tank/") then
+		return
 	end
 
 	if character then
