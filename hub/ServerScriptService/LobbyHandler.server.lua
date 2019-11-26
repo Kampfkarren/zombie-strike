@@ -308,7 +308,7 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 				unpack(playerPromises),
 			})
 		end):andThen(function(results)
-			for _, player in pairs(Players:GetPlayers()) do
+			for _, player in pairs(lobby.Players) do
 				ReplicatedStorage.Remotes.Teleporting:FireClient(player, true)
 			end
 
