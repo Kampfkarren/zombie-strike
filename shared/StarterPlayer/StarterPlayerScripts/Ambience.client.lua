@@ -40,6 +40,12 @@ else
 		Sound = Instance.new("Sound"),
 	}
 
+	ambienceList.Firelands = {
+		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
+		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
+		Sound = SoundService.Ambience.Firelands,
+	}
+
 	ambienceList.RainIndoors = {
 		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
 		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
