@@ -48,7 +48,7 @@ label.Parent = hitmarker
 
 local selectionBox = Instance.new("SelectionBox")
 selectionBox.Color3 = Color3.new(1, 0, 0)
-selectionBox.Parent = Workspace
+-- selectionBox.Parent = Workspace
 
 local tweenShrink = TweenService:Create(
 	hitmarker,
