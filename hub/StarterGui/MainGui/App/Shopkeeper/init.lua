@@ -226,7 +226,7 @@ function ShopkeeperGui:render()
 						Font = Enum.Font.GothamBold,
 						Position = UDim2.fromScale(0.5, 0.4),
 						Size = UDim2.fromScale(0.6, 0.4),
-						Text = "Are you sure you want to sell ALL unequipped items?",
+						Text = "Are you sure you want to sell ALL unequipped and unfavorited items?",
 						TextColor3 = Color3.new(1, 1, 1),
 						TextScaled = true,
 					}),

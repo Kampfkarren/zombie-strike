@@ -1,7 +1,7 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local assign = require(ReplicatedStorage.Core.assign)
+local CircleBackground = require(ReplicatedStorage.Core.UI.Components.CircleBackground)
 local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -9,9 +9,11 @@ local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Components.ViewportFramePreviewComponent)
 
 local e = Roact.createElement
-local LocalPlayer = Players.LocalPlayer
 
 local ItemButton = Roact.PureComponent:extend("ItemButton")
+
+local ICON_FAVORITED = "rbxassetid://4462267516"
+local ICON_UNFAVORITED = "rbxassetid://4462267332"
 
 function ItemButton:init()
 	self:setState({
@@ -43,6 +45,10 @@ function ItemButton:init()
 			props.onClickUnequipped()
 		end
 	end
+
+	self.favorite = function()
+		ReplicatedStorage.Remotes.FavoriteLoot:FireServer(self.props.Loot.UUID)
+	end
 end
 
 function ItemButton:render()
@@ -67,6 +73,22 @@ function ItemButton:render()
 		[Roact.Event.MouseEnter] = self.mouseEnter,
 		[Roact.Event.MouseLeave] = self.mouseLeave,
 	}, assign({
+		FavoriteFrame = e("Frame", {
+			AnchorPoint = Vector2.new(1, 0),
+			BackgroundTransparency = 1,
+			Position = UDim2.fromScale(0.88, 0.09),
+			Size = UDim2.fromScale(0.2, 0.2),
+		}, {
+			e(CircleBackground, {}, {
+				FavoriteButton = e("ImageButton", {
+					BackgroundTransparency = 1,
+					Image = props.Loot.Favorited and ICON_FAVORITED or ICON_UNFAVORITED,
+					Size = UDim2.fromScale(1, 1),
+					[Roact.Event.Activated] = self.favorite,
+				}),
+			}),
+		}),
+
 		ViewportFrame = e(ViewportFramePreviewComponent, {
 			Model = self.state.model,
 

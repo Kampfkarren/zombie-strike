@@ -215,10 +215,12 @@ AcceptTrade.OnServerEvent:connect(function(player)
 		end
 
 		for _, give in pairs(giving) do
+			give.Favorited = false
 			table.insert(theirInventory, give)
 		end
 
 		for _, receive in pairs(receiving) do
+			receive.Favorited = false
 			table.insert(ourInventory, receive)
 		end
 

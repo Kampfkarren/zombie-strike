@@ -26,7 +26,7 @@ ReplicatedStorage.Remotes.Sell.OnServerEvent:connect(function(player, uuid)
 		end
 
 		for index, item in ipairs(inventory) do
-			if not equipped[index] then
+			if not equipped[index] and not item.Favorited then
 				table.insert(removeIndices, index)
 				reward = reward + SellCost(item)
 			end

@@ -165,6 +165,18 @@ local function equipArmor(player, character)
 	end
 end
 
+local function valueClass(typeName)
+	if typeName == "boolean" then
+		return "Bool"
+	elseif typeName == "string" then
+		return "String"
+	elseif typeName == "number" then
+		return "Number"
+	else
+		error("unknown value class: " .. typeName)
+	end
+end
+
 local function equipGun(player, character)
 	local maid = Maid.new(true)
 
@@ -188,7 +200,7 @@ local function equipGun(player, character)
 				weaponData.Name = "WeaponData"
 
 				for statName, stat in pairs(data) do
-					local statValue = Instance.new((type(stat) == "number" and "Number" or "String") .. "Value")
+					local statValue = Instance.new(valueClass(type(stat)) .. "Value")
 					statValue.Name = statName
 					statValue.Value = stat
 					statValue.Parent = weaponData

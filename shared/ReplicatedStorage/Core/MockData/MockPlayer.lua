@@ -3,7 +3,7 @@ local HttpService = game:GetService("HttpService")
 return function()
 	local MockPlayer = {}
 
-	MockPlayer.Version = 5
+	MockPlayer.Version = 6
 
 	-- ASSUMPTION: We will never have more than 9 difficulties in a campaign
 	MockPlayer.LastKnownDifficulty = 11
