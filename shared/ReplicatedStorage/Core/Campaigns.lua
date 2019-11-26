@@ -294,7 +294,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 52500 * 5,
+					Health = 52500 * 2.5,
 				}
 			},
 
@@ -308,7 +308,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 187000 * 5,
+					Health = 187000 * 2.5,
 				}
 			},
 
@@ -322,7 +322,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.85,
 
 				BossStats = {
-					Health = 500000 * 3,
+					Health = 500000 * 1.5,
 				}
 			},
 
@@ -336,7 +336,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
-					Health = 1500000 * 5,
+					Health = 1500000 * 2.5,
 				}
 			},
 
@@ -350,7 +350,7 @@ local Campaigns = {
 				ZombieSpawnRate = 1,
 
 				BossStats = {
-					Health = 5000000 * 5,
+					Health = 5000000 * 2.5,
 				}
 			},
 		},
