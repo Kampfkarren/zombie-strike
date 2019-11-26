@@ -66,7 +66,7 @@ function AoE:StompEffect()
 
 	for _, player in pairs(Players:GetPlayers()) do
 		local character = player.Character
-		if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude <= range then
+		if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude <= range / 2 then
 			TakeDamage(player, self:GetScale("Damage"))
 		end
 	end
