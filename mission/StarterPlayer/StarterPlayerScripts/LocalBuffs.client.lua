@@ -33,7 +33,8 @@ CurrentPowerup.Changed:connect(function(powerupData)
 	timer = tonumber(timer)
 
 	if powerup ~= lastPowerup and powerup ~= "" then
-		SoundService.SFX.BuffActivated:Play()
+		SoundService.SFX.Buffs.BuffActivated:Play()
+		SoundService.SFX.Buffs.BuffLoop:Play()
 
 		BuffTimer.Visible = true
 		BuffTimer.CurrentBuff.Text = powerup:upper() .. " BUFF!"
@@ -50,9 +51,11 @@ CurrentPowerup.Changed:connect(function(powerupData)
 			if total >= timer then
 				connection:Disconnect()
 				BuffTimer.Visible = false
+				SoundService.SFX.Buffs.BuffLoop:Stop()
+				SoundService.SFX.Buffs.BuffOver:Play()
 			end
 		end)
 	end
 end)
 
-ContentProvider:PreloadAsync({ SoundService.SFX.BuffActivated })
+ContentProvider:PreloadAsync(SoundService.SFX.Buffs:GetChildren())
