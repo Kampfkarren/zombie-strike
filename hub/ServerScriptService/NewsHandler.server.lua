@@ -8,6 +8,7 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 
 local SendNews = ReplicatedStorage.Remotes.SendNews
 
+local DUNGEONS_UNTIL_UPGRADE = 3
 local INVENTORY_SPACE_TO_ALERT = 25 / 30
 
 local NO_NEWS = newproxy(true)
@@ -68,10 +69,25 @@ local function checkUnlockedContent(player)
 		end)
 end
 
+local function checkUpgradeSomething(player)
+	return Data.GetPlayerDataAsync(player, "UpgradedSomething")
+		:andThen(function(upgradedSomething)
+			if not upgradedSomething then
+				return Data.GetPlayerDataAsync(player, "DungeonsPlayed")
+					:andThen(function(dungeonsPlayed)
+						if dungeonsPlayed > DUNGEONS_UNTIL_UPGRADE then
+							return { { "UpgradeSomething" }}
+						end
+					end)
+			end
+		end)
+end
+
 Players.PlayerAdded:connect(function(player)
 	Promise.all({
 		checkInventorySpace(player),
 		checkUnlockedContent(player),
+		checkUpgradeSomething(player),
 	}):andThen(function(results)
 		local news = {}
 

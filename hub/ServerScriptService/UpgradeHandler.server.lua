@@ -8,7 +8,7 @@ local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 ReplicatedStorage.Remotes.Upgrade.OnServerEvent:connect(function(player, uuid)
 	local inventory, inventoryStore = Data.GetPlayerData(player, "Inventory")
 
-	local item, index = InventoryUtil.FindByUuid(inventory, uuid)
+	local item = InventoryUtil.FindByUuid(inventory, uuid)
 	if item == nil then
 		warn("player tried to upgrade non existent item!")
 		return
@@ -31,5 +31,8 @@ ReplicatedStorage.Remotes.Upgrade.OnServerEvent:connect(function(player, uuid)
 
 		item.Upgrades = item.Upgrades + 1
 		inventoryStore:Set(inventory)
+
+		local _, upgradedSomethingStore = Data.GetPlayerData(player, "UpgradedSomething")
+		upgradedSomethingStore:Set(true)
 	end
 end)

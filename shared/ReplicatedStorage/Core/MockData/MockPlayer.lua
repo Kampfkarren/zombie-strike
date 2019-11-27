@@ -7,6 +7,8 @@ return function()
 
 	MockPlayer.CodesUsed = {}
 
+	MockPlayer.UpgradedSomething = false
+
 	-- ASSUMPTION: We will never have more than 9 difficulties in a campaign
 	MockPlayer.LastKnownDifficulty = 11
 
