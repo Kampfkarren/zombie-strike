@@ -4,7 +4,7 @@ local BASE_HEALTH = 100
 local BASE_MAX_XP = 100
 
 local HEALTH_MULTIPLIER = 1.15
-local XP_MULTIPLIER = 1.15
+local XP_MULTIPLIER = 1.2
 
 local function round(n)
 	return math.floor(n + 0.5)
