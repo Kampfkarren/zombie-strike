@@ -127,6 +127,7 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 			if timeSinceLast >= LIFETIME then
 				connection:disconnect()
 				diedConnection:disconnect()
+				Debris:AddItem(damageNumber)
 				damageOffsets[humanoid] = nil
 			end
 		end)
