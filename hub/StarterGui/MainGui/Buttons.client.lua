@@ -20,6 +20,12 @@ Buttons.Store.MouseButton1Click:connect(function()
 	})
 end)
 
+Buttons.Small.Codes.MouseButton1Click:connect(function()
+	State:dispatch({
+		type = "ToggleCodes",
+	})
+end)
+
 Buttons.Small.Feedback.MouseButton1Click:connect(function()
 	State:dispatch({
 		type = "ToggleFeedback",

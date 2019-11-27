@@ -63,13 +63,24 @@ function Codes:render()
 		AspectRatio = 2,
 	})
 
+	local labelText = "Enter codes from the group!"
+	local response = self.state.response or {}
+
+	if response.type == "received" then
+		labelText = "SUCCESS! " .. response.gold .. "G received!"
+	elseif response.type == "claimed" then
+		labelText = "Code already claimed..."
+	elseif response.type == "invalid" then
+		labelText = "Code does not exist."
+	end
+
 	children.Label = e("TextLabel", {
 		AnchorPoint = Vector2.new(0.5, 0),
 		BackgroundTransparency = 1,
 		Font = Enum.Font.GothamSemibold,
 		Position = UDim2.fromScale(0.5, 0.01),
 		Size = UDim2.fromScale(0.95, 0.2),
-		Text = "Enter codes from the group!",
+		Text = labelText,
 		TextColor3 = Color3.new(1, 1, 1),
 		TextScaled = true,
 		ZIndex = 0,
@@ -86,7 +97,6 @@ function Codes:render()
 		Input = e("TextBox", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			ClearTextOnFocus = false,
 			Font = Enum.Font.GothamBold,
 			PlaceholderColor3 = Color3.new(0.88, 0.88, 0.88),
 			PlaceholderText = "Enter Code",
