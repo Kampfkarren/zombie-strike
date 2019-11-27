@@ -196,7 +196,7 @@ function module.Create(_, item)
 			local hit, pos, _, humanoid = Raycast(position, direction * config.Range, {character})
 
 			-- aim assist
-			if not humanoid then
+			if not humanoid and config.Size ~= "Shotgun" then
 				hit, humanoid = aimAssist(cframe, config.Range)
 			end
 
