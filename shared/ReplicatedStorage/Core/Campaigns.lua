@@ -542,13 +542,13 @@ local Campaigns = {
 		Stats = {
 			Common = {
 				Health = {
-					Base = 280000,
-					Scale = 1.18,
+					Base = 200000,
+					Scale = 1.19,
 				},
 
 				Speed = {
 					Base = 17,
-					Scale = 1.01,
+					Scale = 1.005,
 				},
 
 				Damage = {
@@ -559,7 +559,7 @@ local Campaigns = {
 
 			Fast = {
 				Health = {
-					Base = 245000,
+					Base = 140000,
 					Scale = 1.19,
 				},
 
@@ -576,7 +576,7 @@ local Campaigns = {
 
 			AoE = {
 				Health = {
-					Base = 880000,
+					Base = 352000,
 					Scale = 1.19,
 				},
 
