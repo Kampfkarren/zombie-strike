@@ -552,7 +552,7 @@ local Campaigns = {
 				},
 
 				Damage = {
-					Base = 48000,
+					Base = 68000,
 					Scale = 1.18,
 				},
 			},
@@ -586,7 +586,7 @@ local Campaigns = {
 				},
 
 				Damage = {
-					Base = 60000,
+					Base = 90000,
 					Scale = 1.18,
 				},
 
