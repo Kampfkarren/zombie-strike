@@ -169,6 +169,9 @@ function LootInfo:render()
 		currentGunDamage = currentGunDamage + Upgrades.GetDamageBuff(currentGunDamage, currentGunItem.Upgrades)
 		lootDamage = lootDamage + Upgrades.GetDamageBuff(lootDamage, loot.Upgrades)
 
+		currentGunDamage = currentGunDamage * (1 + currentGunItem.Bonus / 100)
+		lootDamage = lootDamage * (1 + loot.Bonus / 100)
+
 		stats.UIGridLayout = e("UIGridLayout", {
 			CellPadding = UDim2.new(0.02, 0, 0.02, 0),
 			CellSize = UDim2.new(0.48, 0, 0.48, 0),

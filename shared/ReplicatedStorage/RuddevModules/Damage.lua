@@ -18,6 +18,8 @@ function DAMAGE.Calculate(_, item, hit, origin)
 	local config = CONFIG:GetConfig(item)
 	local damage = config.Damage
 
+	damage = damage * (1 + config.Upgrades / 100)
+
 	if hit.Name == "Head" then
 		damage = damage * 1.2
 	end
