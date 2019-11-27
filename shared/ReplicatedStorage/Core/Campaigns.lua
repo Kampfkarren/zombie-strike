@@ -443,7 +443,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1800,
-					Scale = 1.195,
+					Scale = 1.184,
 				},
 
 				Range = {
