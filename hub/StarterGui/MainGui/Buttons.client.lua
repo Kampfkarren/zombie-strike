@@ -10,6 +10,12 @@ Buttons.Inventory.MouseButton1Click:connect(function()
 	})
 end)
 
+Buttons.Trading.MouseButton1Click:connect(function()
+	State:dispatch({
+		type = "ToggleTrading",
+	})
+end)
+
 Buttons.Store.MouseButton1Click:connect(function()
 	State:dispatch({
 		type = "ToggleStore",

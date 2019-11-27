@@ -33,6 +33,8 @@ local function InventoryContents(props)
 		inventory["Item" .. item.UUID] = e(ItemButton, {
 			LayoutOrder = -id,
 			Loot = item,
+			HideFavorites = props.hideFavorites,
+			NoInteractiveFavorites = props.noInteractiveFavorites,
 
 			onHover = callback(props.onHover),
 			onUnhover = callback(props.onUnhover),
@@ -70,9 +72,9 @@ local function InventoryContents(props)
 	return e(AutomatedScrollingFrameComponent, mergedProps)
 end
 
-return RoactRodux.connect(function(state)
+return RoactRodux.connect(function(state, ownProps)
 	return {
 		cosmeticsInventory = state.store.contents,
-		inventory = state.inventory,
+		inventory = ownProps.inventory or state.inventory,
 	}
 end)(InventoryContents)

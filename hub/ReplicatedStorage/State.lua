@@ -91,6 +91,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		"Settings",
 		"Shopkeeper",
 		"Store",
+		"Trading",
 	})),
 
 	store = Rodux.createReducer({
@@ -126,6 +127,63 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		UpdateXPExpiration = function(state, action)
 			local state = copy(state)
 			state.xpExpiration = action.expiration
+			return state
+		end,
+	}),
+
+	trading = Rodux.createReducer({
+		trading = false,
+		theirInventory = {},
+		theirOffer = {},
+		yourOffer = {},
+	}, {
+		CloseTrade = function()
+			return {
+				trading = false,
+				theirInventory = {},
+				theirOffer = {},
+				yourOffer = {},
+			}
+		end,
+
+		OpenNewTrade = function(_, action)
+			return {
+				trading = true,
+				theirInventory = action.theirInventory,
+				theirOffer = {},
+				yourOffer = {},
+			}
+		end,
+
+		OfferTrade = function(state, action)
+			local state = copy(state)
+
+			if action.who == "us" then
+				local yourOffer = copy(state.yourOffer)
+				table.insert(yourOffer, action.uuid)
+				state.yourOffer = yourOffer
+			else
+				local theirOffer = copy(state.theirOffer)
+				table.insert(theirOffer, action.uuid)
+				state.theirOffer = theirOffer
+			end
+
+			return state
+		end,
+
+		TakeDownTrade = function(state, action)
+			local state = copy(state)
+
+			if action.who == "us" then
+				local yourOffer = copy(state.yourOffer)
+				table.remove(yourOffer, assert(table.find(yourOffer, action.uuid)))
+				state.yourOffer = yourOffer
+			else
+				local theirOffer = copy(state.theirOffer)
+				table.remove(theirOffer, assert(table.find(theirOffer, action.uuid)))
+				state.theirOffer = theirOffer
+			end
+
 			return state
 		end,
 	}),

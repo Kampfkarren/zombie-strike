@@ -282,9 +282,12 @@ PingTrade.OnServerEvent:connect(function(player, uuid)
 	PingTrade:FireClient(tradeState.tradingWith, uuid)
 end)
 
-UpdateTrade.OnServerEvent:connect(function(player, index)
-	if index == 0 then
-		warn("UpdateTrade: index == 0")
+UpdateTrade.OnServerEvent:connect(function(player, uuid, remove)
+	local inventory = Data.GetPlayerData(player, "Inventory")
+	local _, index = InventoryUtil.FindByUuid(inventory, uuid)
+
+	if index == nil then
+		warn("UpdateTrade: index == nil")
 		return
 	end
 
@@ -318,7 +321,18 @@ UpdateTrade.OnServerEvent:connect(function(player, index)
 	tradeState.accepted = false
 	tradeState.otherState.accepted = false
 
-	if index > 0 then
+	if remove then
+		local indexInItems = table.find(tradeState.items, index)
+
+		if indexInItems == nil then
+			warn("UpdateTrade: indexInItems == nil (removing item not in trade)")
+		end
+
+		table.remove(tradeState.items, indexInItems)
+
+		UpdateTrade:FireClient(player, true, false, uuid)
+		UpdateTrade:FireClient(tradeState.tradingWith, false, false, uuid)
+	else
 		if #tradeState.items == MAX_ITEMS then
 			warn("too many items")
 			return
@@ -333,18 +347,8 @@ UpdateTrade.OnServerEvent:connect(function(player, index)
 		end
 
 		table.insert(tradeState.items, index)
-		UpdateTrade:FireClient(player, true, index)
-		UpdateTrade:FireClient(tradeState.tradingWith, false, index)
-	else
-		local offer = table.remove(tradeState.items, -index)
-
-		if not offer then
-			warn("no offer item")
-			return
-		end
-
-		UpdateTrade:FireClient(player, true, index)
-		UpdateTrade:FireClient(tradeState.tradingWith, false, index)
+		UpdateTrade:FireClient(player, true, true, uuid)
+		UpdateTrade:FireClient(tradeState.tradingWith, false, true, uuid)
 	end
 end)
 

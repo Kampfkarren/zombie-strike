@@ -10,6 +10,7 @@ local Inventory = require(script.Inventory)
 local Settings = require(script.Settings)
 local Shopkeeper = require(script.Shopkeeper)
 local Store = require(script.Store)
+local Trading = require(script.Trading)
 
 local e = Roact.createElement
 
@@ -24,6 +25,7 @@ local function App()
 		Settings = e(Settings),
 		Shopkeeper = e(Shopkeeper),
 		Store = e(Store),
+		Trading = e(Trading),
 	})
 end
 

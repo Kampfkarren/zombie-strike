@@ -376,10 +376,3 @@ local function close()
 end
 
 Trading.Close.MouseButton1Click:connect(close)
-Main.Buttons.Trading.MouseButton1Click:connect(function()
-	if open then
-		close()
-	else
-		toggle(not open)
-	end
-end)

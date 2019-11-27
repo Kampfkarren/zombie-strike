@@ -40,14 +40,16 @@ function ItemButton:init()
 	self.activated = function()
 		local props = self.props
 		if props.equipped then
-			props.onClickEquipped()
+			(props.onClickEquipped or function() end)(props.Loot)
 		else
-			props.onClickUnequipped()
+			(props.onClickUnequipped or function() end)(props.Loot)
 		end
 	end
 
 	self.favorite = function()
-		ReplicatedStorage.Remotes.FavoriteLoot:FireServer(self.props.Loot.UUID)
+		if not self.props.NoInteractiveFavorites then
+			ReplicatedStorage.Remotes.FavoriteLoot:FireServer(self.props.Loot.UUID)
+		end
 	end
 end
 
@@ -63,6 +65,36 @@ function ItemButton:render()
 		color = Color3.fromHSV(h, s, v * 0.7)
 	end
 
+	local favoriteFrame
+
+	if not props.HideFavorites then
+		local favoriteButton = e("ImageButton", {
+			BackgroundTransparency = 1,
+			Image = props.Loot.Favorited and ICON_FAVORITED or ICON_UNFAVORITED,
+			Size = UDim2.fromScale(1, 1),
+			[Roact.Event.Activated] = self.favorite,
+		})
+
+		local child
+
+		if props.NoInteractiveFavorites then
+			child = favoriteButton
+		else
+			child = e(CircleBackground, {}, {
+				FavoriteButton = favoriteButton,
+			})
+		end
+
+		favoriteFrame = e("Frame", {
+			AnchorPoint = Vector2.new(1, 0),
+			BackgroundTransparency = 1,
+			Position = UDim2.fromScale(0.88, 0.09),
+			Size = UDim2.fromScale(0.2, 0.2),
+		}, {
+			FavoriteButton = child,
+		})
+	end
+
 	return e("ImageButton", {
 		BackgroundTransparency = 1,
 		Image = "http://www.roblox.com/asset/?id=3973353646",
@@ -73,21 +105,7 @@ function ItemButton:render()
 		[Roact.Event.MouseEnter] = self.mouseEnter,
 		[Roact.Event.MouseLeave] = self.mouseLeave,
 	}, assign({
-		FavoriteFrame = e("Frame", {
-			AnchorPoint = Vector2.new(1, 0),
-			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.88, 0.09),
-			Size = UDim2.fromScale(0.2, 0.2),
-		}, {
-			e(CircleBackground, {}, {
-				FavoriteButton = e("ImageButton", {
-					BackgroundTransparency = 1,
-					Image = props.Loot.Favorited and ICON_FAVORITED or ICON_UNFAVORITED,
-					Size = UDim2.fromScale(1, 1),
-					[Roact.Event.Activated] = self.favorite,
-				}),
-			}),
-		}),
+		FavoriteFrame = favoriteFrame,
 
 		ViewportFrame = e(ViewportFramePreviewComponent, {
 			Model = self.state.model,
@@ -100,6 +118,12 @@ function ItemButton:render()
 			},
 		}),
 	}, props[Roact.Children] or {}))
+end
+
+function ItemButton:willUnmount()
+	if self.props.onUnhover then
+		self.props.onUnhover(self.props.Loot)
+	end
 end
 
 return RoactRodux.connect(function(state, props)

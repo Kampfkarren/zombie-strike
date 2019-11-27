@@ -1,12 +1,18 @@
+local None = require(script.Parent.None)
+
 return function(list, patch)
 	local assigned = {}
 
 	for key, value in pairs(patch) do
-		assigned[key] = value
+		if value ~= None then
+			assigned[key] = value
+		end
 	end
 
 	for key, value in pairs(list) do
-		assigned[key] = value
+		if patch[key] ~= None then
+			assigned[key] = value
+		end
 	end
 
 	return assigned

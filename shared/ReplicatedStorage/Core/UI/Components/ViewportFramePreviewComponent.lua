@@ -5,7 +5,7 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local e = Roact.createElement
-local ViewportFramePreviewComponent = Roact.PureComponent:extend("ViewportFramePreviewComponent")
+local ViewportFramePreviewComponent = Roact.Component:extend("ViewportFramePreviewComponent")
 
 local function getUuid(model)
 	if not Promise.is(model) then
