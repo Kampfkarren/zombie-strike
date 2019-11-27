@@ -38,7 +38,7 @@ function Inventory:init()
 
 	self.onHover = function(loot)
 		local lootStack = copy(self.state.lootStack)
-		lootStack[loot] = true
+		lootStack[loot.UUID] = loot
 		self:setState({
 			lootStack = lootStack,
 		})
@@ -46,7 +46,7 @@ function Inventory:init()
 
 	self.onUnhover = function(loot)
 		local lootStack = copy(self.state.lootStack)
-		lootStack[loot] = nil
+		lootStack[loot.UUID] = nil
 		self:setState({
 			lootStack = lootStack,
 		})
@@ -57,7 +57,8 @@ function Inventory:render()
 	local props = self.props
 
 	local lootInfo
-	local hovered = next(self.state.lootStack)
+
+	local _, hovered = next(self.state.lootStack)
 
 	if hovered then
 		lootInfo = e(LootInfo, {
