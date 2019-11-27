@@ -4,6 +4,7 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
 
+local Codes = require(script.Codes)
 local Feedback = require(script.Feedback)
 local Inventory = require(script.Inventory)
 local Settings = require(script.Settings)
@@ -17,6 +18,7 @@ local function App()
 		BackgroundTransparency = 1,
 		Size = UDim2.new(1, 0, 1, 0),
 	}, {
+		Codes = e(Codes),
 		Feedback = e(Feedback),
 		Inventory = e(Inventory),
 		Settings = e(Settings),

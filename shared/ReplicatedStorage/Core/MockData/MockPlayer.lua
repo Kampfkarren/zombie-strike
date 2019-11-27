@@ -5,6 +5,8 @@ return function()
 
 	MockPlayer.Version = 6
 
+	MockPlayer.CodesUsed = {}
+
 	-- ASSUMPTION: We will never have more than 9 difficulties in a campaign
 	MockPlayer.LastKnownDifficulty = 11
 

@@ -85,6 +85,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	page = Rodux.createReducer({
 		current = nil,
 	}, pageReducer({
+		"Codes",
 		"Feedback",
 		"Inventory",
 		"Settings",
