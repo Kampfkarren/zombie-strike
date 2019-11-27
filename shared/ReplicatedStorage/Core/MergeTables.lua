@@ -1,23 +1,15 @@
-local function mergeTables(...)
-	local args = { ... }
-	local n = select("#", ...)
+return function(...)
 	local merged = {}
 
-	for index = 1, n do
-		local item = args[index]
-		if item ~= nil then
-			assert(type(item) == "table")
-			for key, value in pairs(item) do
-				if type(merged[key]) == "table" then
-					merged[key] = mergeTables(merged[key], value)
-				else
-					merged[key] = value
-				end
-			end
+	for _, list in pairs({ ... }) do
+		if type(list) ~= "table" then
+			error(("%s is not a table"):format(tostring(list)))
+		end
+
+		for key, value in pairs(list) do
+			merged[key] = value
 		end
 	end
 
 	return merged
 end
-
-return mergeTables
