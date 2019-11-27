@@ -294,7 +294,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 52500 * 2.5,
+					Health = 131250,
 				}
 			},
 
@@ -308,7 +308,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 187000 * 2.5,
+					Health = 467500,
 				}
 			},
 
@@ -322,7 +322,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.85,
 
 				BossStats = {
-					Health = 500000 * 1.5,
+					Health = 750000,
 				}
 			},
 
@@ -336,7 +336,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
-					Health = 1500000 * 2.5,
+					Health = 3750000,
 				}
 			},
 
@@ -350,7 +350,7 @@ local Campaigns = {
 				ZombieSpawnRate = 1,
 
 				BossStats = {
-					Health = 5000000 * 2.5,
+					Health = 6250000,
 				}
 			},
 		},
@@ -377,7 +377,7 @@ local Campaigns = {
 			Common = {
 				Health = {
 					Base = 3500,
-					Scale = 1.15,
+					Scale = 1.135,
 				},
 
 				Speed = {
@@ -387,14 +387,14 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1800,
-					Scale = 1.17,
+					Scale = 1.125,
 				},
 			},
 
 			Fast = {
 				Health = {
 					Base = 2500,
-					Scale = 1.17,
+					Scale = 1.135,
 				},
 
 				Speed = {
@@ -404,7 +404,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1000,
-					Scale = 1.17,
+					Scale = 1.125,
 				},
 			},
 
@@ -416,7 +416,7 @@ local Campaigns = {
 
 				Health = {
 					Base = 2800,
-					Scale = 1.15,
+					Scale = 1.125,
 				},
 
 				RateOfFire = {
@@ -433,17 +433,17 @@ local Campaigns = {
 			AoE = {
 				Health = {
 					Base = 5000,
-					Scale = 1.205,
+					Scale = 1.145,
 				},
 
 				Speed = {
 					Base = 16,
-					Scale = 1.005,
+					Scale = 1.003,
 				},
 
 				Damage = {
 					Base = 1800,
-					Scale = 1.184,
+					Scale = 1.135,
 				},
 
 				Range = {
