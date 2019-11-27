@@ -59,4 +59,8 @@ SendNews.OnClientEvent:connect(function(news)
 	end)
 
 	News.Visible = true
+
+	local uiPageLayout = Instance.new("UIPageLayout")
+	uiPageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	uiPageLayout.Parent = News.Inner.Image
 end)
