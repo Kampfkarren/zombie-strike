@@ -377,7 +377,7 @@ local Campaigns = {
 			Common = {
 				Health = {
 					Base = 3500,
-					Scale = 1.19,
+					Scale = 1.15,
 				},
 
 				Speed = {
@@ -387,14 +387,14 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1800,
-					Scale = 1.18,
+					Scale = 1.17,
 				},
 			},
 
 			Fast = {
 				Health = {
 					Base = 2500,
-					Scale = 1.19,
+					Scale = 1.17,
 				},
 
 				Speed = {
@@ -404,7 +404,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1000,
-					Scale = 1.18,
+					Scale = 1.17,
 				},
 			},
 
@@ -416,7 +416,7 @@ local Campaigns = {
 
 				Health = {
 					Base = 2800,
-					Scale = 1.205,
+					Scale = 1.15,
 				},
 
 				RateOfFire = {
