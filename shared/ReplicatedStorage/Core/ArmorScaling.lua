@@ -6,7 +6,7 @@ local ARMOR_SCALE = 1.15
 local HELMET_BASE = 24
 local HELMET_SCALE = 1.15
 
-local REGEN_BASE = 3.5
+local REGEN_BASE = 1.4
 local REGEN_SCALE = 1.15
 
 local MULTIPLIERS = {
