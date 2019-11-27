@@ -45,6 +45,7 @@ end):andThen(function(campaignInfo)
 		Bonus = 35,
 		Model = models[math.random(#models)],
 		Upgrades = 0,
+		Favorited = false,
 		UUID = "TREASURE_LOOT", -- Changed at runtime
 	}
 end)

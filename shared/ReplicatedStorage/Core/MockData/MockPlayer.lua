@@ -23,6 +23,7 @@ return function()
 
 		Bonus = 0,
 		Upgrades = 0,
+		Favorited = false,
 
 		Model = 1,
 		UUID = HttpService:GenerateGUID(false):gsub("-", ""),
@@ -34,6 +35,7 @@ return function()
 		Rarity = 1,
 
 		Upgrades = 0,
+		Favorited = false,
 
 		Model = 1,
 		UUID = HttpService:GenerateGUID(false):gsub("-", ""),
@@ -45,6 +47,7 @@ return function()
 		Rarity = 1,
 
 		Upgrades = 0,
+		Favorited = false,
 
 		Model = 1,
 		UUID = HttpService:GenerateGUID(false):gsub("-", ""),

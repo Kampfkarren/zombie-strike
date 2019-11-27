@@ -124,6 +124,7 @@ local function generateLootItem(player)
 
 			Bonus = funny,
 			Upgrades = 0,
+			Favorited = false,
 
 			Model = getModel(type, rarity),
 			UUID = uuid,
@@ -145,6 +146,7 @@ local function generateLootItem(player)
 			Type = type,
 
 			Upgrades = 0,
+			Favorited = false,
 
 			Model = getModel(type, rarity),
 			UUID = uuid,
