@@ -6,14 +6,18 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 
 local Assets = ReplicatedStorage.Assets.Campaign.Campaign2.Boss
+local FloorLaser = ReplicatedStorage.Remotes.FactoryBoss.FloorLaser
 local HitByLaser = ReplicatedStorage.Remotes.FactoryBoss.HitByLaser
-local Maid = require(ReplicatedStorage.Core.Maid)
 local QuadLaser = ReplicatedStorage.Remotes.FactoryBoss.QuadLaser
+
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
+local Maid = require(ReplicatedStorage.Core.Maid)
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
 local DAMAGE_BUFF = 1.125
 local FINALE_CRUMBLE = 1.4
 local FINALE_TIME = 3
+local FLOOR_LASER = 5
 local HEALTH_COLOR_BLINK_HEALTH = 0.1
 local HEALTH_COLOR_BLINK_RATE = 0.2
 local QUAD_LASER_TIME = 3
@@ -27,6 +31,14 @@ PhysicsService:CollisionGroupSetCollidable("FactoryBoss", "FactoryBoss", false)
 
 local FactoryBoss = {}
 FactoryBoss.__index = FactoryBoss
+
+FactoryBoss.FloorLaserDamageScale = {
+	[30] = 3000,
+	[36] = 9000,
+	[42] = 24750,
+	[48] = 75000,
+	[54] = 210000,
+}
 
 FactoryBoss.LaserDamageScale = {
 	[30] = 2200,
@@ -75,6 +87,7 @@ function FactoryBoss.new()
 			{ 1 / 3, RED },
 			{ 2 / 3, Color3.fromRGB(241, 196, 15) },
 		},
+		hitByFloor = {},
 	}, FactoryBoss)
 end
 
@@ -148,16 +161,38 @@ function FactoryBoss:InitializeBossAI()
 		end
 	end)
 
-	wait(math.random(1, 3))
+	FloorLaser.OnServerEvent:connect(function(player)
+		if not self.hitByFloor[player] then
+			self.hitByFloor[player] = true
 
-	while true do
-		wait(FactoryBoss.QuadLaserRateOfFireScale[self.level])
-		if self.alive then
-			self:QuadLaser()
-		else
-			break
+			TakeDamage(
+				player,
+				FactoryBoss.FloorLaserDamageScale[self.level]
+					* DAMAGE_BUFF
+					^ getLevels(self.instance.Humanoid)
+			)
 		end
-	end
+	end)
+
+	FastSpawn(function()
+		wait(math.random(3, 6))
+		while self.alive do
+			if self.alive then
+				self:QuadLaser()
+			else
+				break
+			end
+			wait(FactoryBoss.QuadLaserRateOfFireScale[self.level])
+		end
+	end)
+
+	FastSpawn(function()
+		wait(math.random(1, 3))
+		while self.alive do
+			self:FloorLaser()
+			wait(FLOOR_LASER)
+		end
+	end)
 end
 
 function FactoryBoss:SetWarningColor(color)
@@ -172,6 +207,11 @@ function FactoryBoss:Spawn()
 	self:AfterSpawn()
 	self:SetupHumanoid()
 	return self.instance
+end
+
+function FactoryBoss:FloorLaser()
+	self.hitByFloor = {}
+	FloorLaser:FireAllClients()
 end
 
 function FactoryBoss:QuadLaser()
