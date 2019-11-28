@@ -257,8 +257,9 @@ do
 		lobbyInfo.Info.Difficulty.TextColor3 = difficulty.Style.Color
 
 		if difficulty.MinLevel > level or #lobby.Players == 4 or kickedFrom[lobby.Unique] then
-			lobbyInfo.Join.ImageColor3 = Color3.new(1, 1, 1)
+			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(234, 32, 39)
 		else
+			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(32, 187, 108)
 			lobbyInfo.Join.MouseButton1Click:connect(function()
 				if ReplicatedStorage.Remotes.JoinLobby:InvokeServer(lobby.Unique) then
 					pageLayout:JumpTo(Inner.Lobby)
