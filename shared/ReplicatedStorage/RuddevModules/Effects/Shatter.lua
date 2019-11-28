@@ -7,12 +7,13 @@ local Debris = game:GetService("Debris")
 -- functions
 
 return function(character, betterEquipment)
-	print(betterEquipment)
 	local boost = "Health"
 	local upperTorso = character.UpperTorso
 
 	local icon = script[boost].IconEmitter:Clone()
-	icon.Color = ColorSequence.new(Color3.new(1, 1, 0))
+	if betterEquipment then
+		icon.Color = ColorSequence.new(Color3.new(1, 1, 0))
+	end
 	icon.Parent = upperTorso
 
 	local spark = script[boost].SparkEmitter:Clone()
