@@ -1,6 +1,6 @@
 return {
 	Campaign = 3,
 	Difficulty = 1,
-	Hardcore = false,
+	Hardcore = true,
 	Members = { 56140227 },
 }

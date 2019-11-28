@@ -163,6 +163,10 @@ local function getLootAmount(player)
 		amount = amount + 1
 	end
 
+	if GamePasses.PlayerOwnsPass(player, GamePassDictionary.MoreLoot) then
+		amount = amount + 1
+	end
+
 	return Promise.all({
 		Data.GetPlayerDataAsync(player, "Inventory"),
 		InventorySpace(player),
