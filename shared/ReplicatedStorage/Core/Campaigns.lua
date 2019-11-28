@@ -111,6 +111,8 @@ local campaignsType = t.array(t.strictInterface({
 		Base = t.number,
 		Scale = t.number,
 	}))),
+
+	AIAggroRange = t.number,
 }))
 
 local Campaigns = {
@@ -271,6 +273,8 @@ local Campaigns = {
 				},
 			},
 		},
+
+		AIAggroRange = 90,
 	},
 
 	{
@@ -452,6 +456,8 @@ local Campaigns = {
 				},
 			},
 		},
+
+		AIAggroRange = 60,
 	},
 
 	{
@@ -595,7 +601,9 @@ local Campaigns = {
 					Scale = 1,
 				},
 			},
-		}
+		},
+
+		AIAggroRange = 60,
 	},
 }
 

@@ -22,7 +22,6 @@ local Zombie = {}
 Zombie.__index = Zombie
 
 Zombie.AIAggroCheckTime = 0.35
-Zombie.AIAggroRange = 60
 
 Zombie.AttackCheckInterval = 0.1
 Zombie.AttackCooldown = 3
@@ -160,7 +159,9 @@ function Zombie:Wander()
 			for _, player in pairs(Players:GetPlayers()) do
 				local character = player.Character
 				if character and character.Humanoid.Health > 0 then
-					if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude <= self.AIAggroRange then
+					if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude
+						<= Dungeon.GetDungeonData("CampaignInfo").AIAggroRange
+					then
 						self:Aggro(character)
 					end
 				end
