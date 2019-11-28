@@ -66,11 +66,11 @@ function AutoAim.GetMaxRange()
 	local config = Config:GetConfig(itemModule.Item)
 
 	if config.Type == "Sniper" then
-		return 100
+		return 200
 	elseif config.Type == "Shotgun" then
-		return 25
+		return 50
 	else
-		return 40
+		return 80
 	end
 end
 
