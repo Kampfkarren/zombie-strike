@@ -12,7 +12,7 @@ local e = Roact.createElement
 
 local function CategoryButton(props)
 	return e("ImageButton", {
-		BackgroundColor3 = props.opened and Color3.fromRGB(143, 80, 110) or Color3.fromRGB(231, 133, 181),
+		BackgroundColor3 = props.opened and Color3.fromRGB(224, 86, 253) or Color3.fromRGB(190, 46, 221),
 		BorderSizePixel = 0,
 		Image = "",
 		LayoutOrder = props.LayoutOrder,
@@ -85,7 +85,7 @@ function Store:render()
 	return e("Frame", {
 		Active = true,
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundColor3 = Color3.fromRGB(232, 67, 147),
+		BackgroundColor3 = Color3.fromRGB(190, 46, 221),
 		BackgroundTransparency = 0.5,
 		BorderSizePixel = 0,
 		Visible = props.open,
