@@ -87,6 +87,11 @@ local function getDummyFor(instance)
 				addAccessory(dummy, accessory)
 			end
 		else
+			if helmet:FindFirstChild("NoHead") then
+				dummy.Head.Transparency = 1
+				dummy.Head:FindFirstChildOfClass("Decal"):Destroy()
+			end
+
 			addAccessory(dummy, helmet)
 		end
 
