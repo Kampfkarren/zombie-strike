@@ -152,7 +152,6 @@ end
 
 function SettingsMenu:SetSetting(settingName, value)
 	local settings = copy(self.state.settings or {})
-
 	settings[settingName] = value
 
 	self:setState({

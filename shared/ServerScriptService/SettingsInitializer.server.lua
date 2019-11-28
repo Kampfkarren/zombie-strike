@@ -11,8 +11,16 @@ Players.PlayerAdded:connect(function(player)
 	local settingsFolder = Instance.new("Folder")
 	settingsFolder.Name = "Settings"
 
-	for _, setting in pairs(Settings.Settings) do
-		local value = Settings.GetSettingIndex(setting.Name, player)
+	local settingsStore = DataStore2("Settings", player)
+
+	for index, setting in pairs(Settings.Settings) do
+		local value, new = Settings.GetSettingIndex(setting.Name, player)
+
+		if new then
+			local settings = settingsStore:Get()
+			settings[index] = value
+			settingsStore:Set(settings)
+		end
 
 		local settingObject = Instance.new("NumberValue")
 		settingObject.Name = setting.Name
@@ -20,7 +28,7 @@ Players.PlayerAdded:connect(function(player)
 		settingObject.Parent = settingsFolder
 	end
 
-	DataStore2("Settings", player):OnUpdate(function(newSettings)
+	settingsStore:OnUpdate(function(newSettings)
 		for settingIndex, setting in pairs(Settings.Settings) do
 			settingsFolder[setting.Name].Value = newSettings[settingIndex]
 		end

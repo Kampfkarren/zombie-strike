@@ -24,7 +24,7 @@ Settings.Settings = {
 			"Brown",
 			"Dark",
 			"Very Dark",
-			"Yellow",
+			"Homer",
 			"Zombie",
 			"Purple",
 		},
@@ -80,11 +80,11 @@ function Settings.GetSettingIndex(settingName, player)
 				local value = Data.GetPlayerData(player, "Settings")[settingIndex]
 
 				if value then
-					return value
+					return value, false
 				elseif type(setting.Default) == "table" and setting.Default.Type == "Random" then
-					return Random.new(player.UserId):NextInteger(unpack(setting.Default.Range))
+					return Random.new(player.UserId):NextInteger(unpack(setting.Default.Range)), true
 				else
-					return setting.Default
+					return setting.Default, true
 				end
 			end
 		end
