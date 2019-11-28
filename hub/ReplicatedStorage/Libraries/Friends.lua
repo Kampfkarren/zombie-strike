@@ -13,8 +13,10 @@ local friendsCache = {}
 -- The server trusts the player on who their friends are, but if you check
 -- the other way around, then bad people can go into private only games.
 function Friends.IsFriendsWith(friend, player)
-	if true then
-		return true
+	if player == nil then
+		warn("Friends.IsFriendsWith received nil")
+		warn(debug.traceback())
+		return false
 	end
 
 	if RunService:IsClient() then
