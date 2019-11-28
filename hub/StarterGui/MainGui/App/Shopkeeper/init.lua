@@ -18,6 +18,7 @@ local Upgrade = ReplicatedStorage.Remotes.Upgrade
 local ShopkeeperGui = Roact.PureComponent:extend("ShopkeeperGui")
 
 local DISABLED_COLOR = Color3.new(0.4, 0.4, 0.4)
+local GOLD_COLOR = Color3.fromRGB(251, 197, 49)
 local SELL_COLOR = Color3.fromRGB(195, 64, 50)
 local UPGRADE_COLOR = Color3.fromRGB(32, 146, 81)
 
@@ -313,6 +314,19 @@ function ShopkeeperGui:render()
 			Inner = lootInfo,
 		}),
 
+		Gold = e("TextLabel", {
+			AnchorPoint = Vector2.new(1, 1),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamBold,
+			Position = UDim2.fromScale(0.69, 0),
+			Size = UDim2.fromScale(0.3, 0.1),
+			Text = EnglishNumbers(self.props.gold) .. " G",
+			TextColor3 = GOLD_COLOR,
+			TextScaled = true,
+			TextStrokeTransparency = 0,
+			TextXAlignment = Enum.TextXAlignment.Right,
+		}),
+
 		SellAll = e("TextButton", {
 			AnchorPoint = Vector2.new(1, 1),
 			BackgroundColor3 = SELL_COLOR,
@@ -372,6 +386,7 @@ return RoactRodux.connect(function(state)
 
 	return {
 		equippedItems = equippedItems,
+		gold = state.gold,
 		inventory = state.inventory,
 		open = state.page.current == "Shopkeeper",
 	}

@@ -76,6 +76,12 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	gold = Rodux.createReducer(0, {
+		UpdateGold = function(_, action)
+			return action.gold
+		end,
+	}),
+
 	inventory = Rodux.createReducer(nil, {
 		UpdateInventory = function(_, action)
 			return action.newInventory
