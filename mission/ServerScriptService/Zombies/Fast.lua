@@ -21,7 +21,6 @@ function Fast.new(level)
 
 	return setmetatable({
 		Model = "Fast",
-		Name = "Fast Zombie",
 		_derivative = derivative,
 	}, {
 		__index = derivative,

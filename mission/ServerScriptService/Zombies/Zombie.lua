@@ -42,7 +42,7 @@ end
 function Zombie:Spawn(position)
 	local humanoid = self.instance.Humanoid
 	self.instance:SetPrimaryPartCFrame(CFrame.new(position))
-	self.instance.Name = self.Name
+	self.instance.Name = self:GetName()
 	self.instance.Parent = Workspace.Zombies
 
 	self.aliveMaid:GiveTask(ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(humanoid)
@@ -386,6 +386,11 @@ function Zombie:GetSpeed()
 	return self:GetScale("Speed")
 end
 -- END STATS
+
+function Zombie:GetName()
+	return self.Name
+		or self:GetModel().ZombieName.Value
+end
 
 function Zombie:UpdateNametag()
 	return Nametag(self.instance, self.level)

@@ -12,7 +12,6 @@ local BasicZombie = {}
 BasicZombie.__index = BasicZombie
 
 BasicZombie.Model = "Zombie"
-BasicZombie.Name = "Zombie"
 
 function BasicZombie:AfterSpawn()
 	self._animation = self.instance.Humanoid:LoadAnimation(ZombieAttack)

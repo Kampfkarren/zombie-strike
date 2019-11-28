@@ -11,7 +11,6 @@ local Turret = {}
 Turret.__index = Turret
 
 Turret.Model = "Turret"
-Turret.Name = "Shooter Zombie"
 
 function Turret.new()
 	return setmetatable({}, Turret)

@@ -18,7 +18,6 @@ AoE.AttackRange = 15
 function AoE.new(level)
 	return setmetatable({
 		Model = "AoE",
-		Name = ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")].AoE.ZombieName.Value,
 		_deriative = Common.new(level),
 	}, {
 		__index = function(self, key)
