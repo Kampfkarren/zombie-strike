@@ -431,9 +431,8 @@ do
 		local difficulty = campaign.Difficulties[current.Difficulty]
 
 		MapInfo.Campaign.Text = campaign.Name
-
 		MapInfo.MapImage.Image = campaign.Image
-		MapInfo.MapImage.Hardcore.Visible = campaign.Hardcore
+		MapInfo.MapImage.Hardcore.Visible = current.Hardcore
 
 		MapInfo.Info.Difficulty.Text = difficulty.Style.Name
 		MapInfo.Info.Difficulty.TextColor3 = difficulty.Style.Color
