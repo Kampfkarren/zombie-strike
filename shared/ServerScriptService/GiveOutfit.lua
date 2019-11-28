@@ -290,6 +290,7 @@ local function equipSkinTone(player, character)
 			colors.LeftLegColor3 = tone
 			colors.RightArmColor3 = tone
 			colors.RightLegColor3 = tone
+			colors.TorsoColor3 = tone
 			colors.HeadColor3 = tone
 			colors.Parent = character
 			maid:GiveTask(colors)
