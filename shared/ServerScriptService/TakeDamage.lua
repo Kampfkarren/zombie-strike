@@ -1,9 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local BULLETSTORM_BUFF = 0.75
+local DEATH_BUFF_INTERVAL = 0.075
+local DEATH_BUFF_MAX = 5
 local INVINCIBILITY_TIME = 0.75
 local MOBILE_DAMAGE_BUFF = 0.5
 
+local deathCounts = {}
 local lastInvincible = {}
 
 return function(player, damage)
@@ -11,11 +14,17 @@ return function(player, damage)
 		return
 	end
 
-	lastInvincible[player] = tick()
 	local character = player.Character
+	if character and character.Humanoid.Health <= 0 then
+		return
+	end
+
+	lastInvincible[player] = tick()
 
 	if player:FindFirstChild("MobileDamageBuff") then
 		damage = damage * MOBILE_DAMAGE_BUFF
+	else
+		damage = damage * (1 - DEATH_BUFF_INTERVAL * (deathCounts[player] or 0))
 	end
 
 	if ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
@@ -24,7 +33,8 @@ return function(player, damage)
 		return
 	end
 
-	if character then
-		character.Humanoid:TakeDamage(damage)
+	character.Humanoid:TakeDamage(damage)
+	if character.Humanoid.Health <= 0 then
+		deathCounts[player] = math.min(DEATH_BUFF_MAX, (deathCounts[player] or 0) + 1)
 	end
 end
