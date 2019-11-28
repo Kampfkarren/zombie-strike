@@ -539,7 +539,7 @@ local Campaigns = {
 
 				Gold = 2560000,
 				Rooms = 12,
-				XP = 7400000,
+				XP = 4500000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
