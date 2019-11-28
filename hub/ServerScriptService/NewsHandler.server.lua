@@ -77,6 +77,8 @@ local function checkUpgradeSomething(player)
 					:andThen(function(dungeonsPlayed)
 						if dungeonsPlayed > DUNGEONS_UNTIL_UPGRADE then
 							return { { "UpgradeSomething" }}
+						else
+							return NO_NEWS
 						end
 					end)
 			end
