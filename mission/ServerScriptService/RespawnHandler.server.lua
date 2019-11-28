@@ -62,7 +62,9 @@ Players.PlayerAdded:connect(function(player)
 				end
 
 				if not persist then
-					TeleportService:Teleport(HUB_PLACE, player)
+					for _, player in pairs(Players:GetPlayers()) do
+						TeleportService:Teleport(HUB_PLACE, player)
+					end
 				end
 			end)
 		end
