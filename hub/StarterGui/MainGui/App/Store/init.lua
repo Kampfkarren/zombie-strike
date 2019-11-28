@@ -82,15 +82,17 @@ end
 function Store:render()
 	local props = self.props
 
-	return e("Frame", {
+	return e("TextButton", {
 		Active = true,
 		AnchorPoint = Vector2.new(0.5, 0.5),
+		AutoButtonColor = false,
 		BackgroundColor3 = Color3.fromRGB(190, 46, 221),
 		BackgroundTransparency = 0.5,
 		BorderSizePixel = 0,
 		Visible = props.open,
 		Position = UDim2.new(0.5, 0, 0.5, 0),
 		Size = UDim2.new(0.6, 0, 0.7, 0),
+		Text = "",
 		ZIndex = 3,
 	}, {
 		e("UIAspectRatioConstraint", {
