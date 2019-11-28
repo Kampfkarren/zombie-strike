@@ -84,7 +84,11 @@ function Config.GetConfig(_, item)
 	local weaponData = item:WaitForChild("WeaponData")
 	local itemType = weaponData:WaitForChild("Type").Value
 
-	local config = GunScaling.BaseStats(itemType, weaponData.Level.Value, weaponData.Rarity.Value)
+	local config = GunScaling.BaseStats(
+		itemType,
+		weaponData:WaitForChild("Level").Value,
+		weaponData:WaitForChild("Rarity").Value
+	)
 
 	for baseKey, baseValue in pairs(Bases[itemType]) do
 		config[baseKey] = baseValue
