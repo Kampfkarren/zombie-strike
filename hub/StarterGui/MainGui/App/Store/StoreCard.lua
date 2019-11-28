@@ -1,6 +1,7 @@
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local CosmeticButton = require(script.Parent.CosmeticButton)
@@ -27,6 +28,7 @@ function StoreCard:init()
 		local props = self.props
 
 		if not props.owned then
+			SoundService.SFX.Purchase:Play()
 			MarketplaceService:PromptProductPurchase(
 				LocalPlayer,
 				Cosmetics.Distribution[props.ItemType][props.ItemIndex]

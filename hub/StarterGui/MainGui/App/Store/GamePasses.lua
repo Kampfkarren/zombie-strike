@@ -1,6 +1,7 @@
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local AutomatedScrollingFrameComponent = require(script.Parent.Parent.AutomatedScrollingFrameComponent)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
@@ -17,6 +18,7 @@ local GamePassesMenu = Roact.PureComponent:extend("GamePassesMenu")
 
 local buyButtonCallback = Memoize(function(gamePassId)
 	return function()
+		SoundService.SFX.Purchase:Play()
 		MarketplaceService:PromptGamePassPurchase(LocalPlayer, gamePassId)
 	end
 end)

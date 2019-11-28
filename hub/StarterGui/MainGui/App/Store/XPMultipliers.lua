@@ -2,6 +2,7 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -27,6 +28,7 @@ function ProductCard:init()
 
 	self.activated = function()
 		self.tweens.buttonClick:Play()
+		SoundService.SFX.Purchase:Play()
 		MarketplaceService:PromptProductPurchase(LocalPlayer, self.props.Product)
 	end
 
