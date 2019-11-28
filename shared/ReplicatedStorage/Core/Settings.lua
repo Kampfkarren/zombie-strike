@@ -37,8 +37,8 @@ Settings.Settings = {
 			Color3.fromRGB(141, 85, 36),
 			Color3.fromRGB(75, 46, 21),
 			Color3.fromRGB(245, 208, 48),
-			Color3.fromRGB(40, 127, 71),
-			Color3.fromRGB(170, 0, 170),
+			Color3.fromRGB(138, 171, 133),
+			Color3.fromRGB(149, 87, 170),
 		},
 	},
 
