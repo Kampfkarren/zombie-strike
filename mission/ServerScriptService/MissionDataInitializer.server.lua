@@ -3,10 +3,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local UpdateEquipped = ReplicatedStorage.Remotes.UpdateEquipped
+
+local VIP_BONUS = 0.2
 
 local function numberValue(name, value, playerData)
 	local instance = Instance.new("NumberValue")
@@ -37,9 +41,16 @@ Players.PlayerAdded:connect(function(player)
 	numberValue("GoldScale", 1, playerData)
 
 	local xpScale = 1
+
 	if os.time() < Data.GetPlayerData(player, "XPExpires") then
-		xpScale = 2
+		xpScale = xpScale + 1
 	end
+
+	GamePasses.PlayerOwnsPassAsync(player, GamePassDictionary.VIP):andThen(function(vip)
+		if vip then
+			xpScale = xpScale + VIP_BONUS
+		end
+	end)
 
 	numberValue("XPScale", xpScale, playerData)
 
