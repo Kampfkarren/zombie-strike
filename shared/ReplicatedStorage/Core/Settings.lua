@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local Promise = require(ReplicatedStorage.Core.Promise)
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -55,6 +56,21 @@ Settings.Settings = {
 			0,
 		},
 	},
+
+	{
+		Name = "Gold Guns",
+		Default = 1,
+
+		Choices = {
+			"Off",
+			"On",
+		},
+
+		Values = {
+			false,
+			true,
+		},
+	},
 }
 
 function Settings.GetSettingIndex(settingName, player)
@@ -101,14 +117,20 @@ function Settings.HookSetting(settingName, callback, player)
 	local setting = Settings.GetSetting(settingName, player)
 	callback(setting)
 
-	spawn(function()
+	Settings.HookSettingAsync(settingName, callback, player)
+end
+
+function Settings.HookSettingAsync(settingName, callback, player)
+	player = player or LocalPlayer
+
+	return Promise.async(function()
 		player
 			:WaitForChild("PlayerData")
 			:WaitForChild("Settings")
 			:WaitForChild(settingName)
-			.Changed:connect(function()
-				callback(Settings.GetSetting(settingName, player))
-			end)
+				.Changed:connect(function(index)
+					callback(Settings.GetSetting(settingName, player), index)
+				end)
 	end)
 end
 

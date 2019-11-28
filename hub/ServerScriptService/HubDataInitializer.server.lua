@@ -130,6 +130,7 @@ Players.PlayerAdded:connect(function(player)
 		end
 	end)
 
+	Settings.HookSetting("Gold Guns", refreshCharacter, player)
 	Settings.HookSetting("Skin Tone", refreshCharacter, player)
 
 	local function updateEquipment(anUpdate)

@@ -112,6 +112,14 @@ function SettingsMenu:init()
 		table.insert(promises, Promise.promisify(function()
 			return setting.Choices[Settings.GetSettingIndex(setting.Name, LocalPlayer)]
 		end)())
+
+		Settings.HookSettingAsync(setting.Name, function(_, index)
+			local settings = copy(self.state.settings or {})
+			settings[setting.Name] = setting.Choices[index]
+			self:setState({
+				settings = settings,
+			})
+		end)
 	end
 
 	Promise.all(promises):andThen(function(values)
@@ -143,7 +151,7 @@ function SettingsMenu:init()
 end
 
 function SettingsMenu:SetSetting(settingName, value)
-	local settings = copy(self.state.settings)
+	local settings = copy(self.state.settings or {})
 
 	settings[settingName] = value
 
@@ -294,6 +302,39 @@ function SettingsMenu:render()
 							Position = UDim2.fromScale(0.5, 0.5),
 							Size = UDim2.fromScale(0.9, 0.9),
 							Text = self.state.settings["Skin Tone"],
+							TextColor3 = Color3.new(1, 1, 1),
+							TextScaled = true,
+						}),
+					}),
+				}),
+
+				GoldGuns = e(SettingsValue, {
+					LayoutOrder = 3,
+					Text = "GOLD GUNS",
+				}, {
+					Button = e("ImageButton", {
+						BackgroundTransparency = 1,
+						Image = IMAGE_BUTTON,
+						ImageColor3 = self.state.settings["Gold Guns"] == "On" and COLOR_GREEN or COLOR_RED,
+						Size = UDim2.fromScale(1, 1),
+
+						[Roact.Event.MouseButton1Click] = function()
+							if GamePasses.PlayerOwnsPass(LocalPlayer, GamePassDictionary.GoldGuns) then
+								self:SetSetting("Gold Guns", self.state.settings["Gold Guns"] == "On" and "Off" or "On")
+							else
+								MarketplaceService:PromptGamePassPurchase(LocalPlayer, GamePassDictionary.GoldGuns)
+							end
+						end,
+
+						[Roact.Ref] = self.skinToneButtonRef,
+					}, {
+						Label = e("TextLabel", {
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundTransparency = 1,
+							Font = Enum.Font.GothamBold,
+							Position = UDim2.fromScale(0.5, 0.5),
+							Size = UDim2.fromScale(0.9, 0.9),
+							Text = self.state.settings["Gold Guns"]:upper(),
 							TextColor3 = Color3.new(1, 1, 1),
 							TextScaled = true,
 						}),

@@ -7,6 +7,8 @@ local Config = require(ReplicatedStorage.RuddevModules.Config)
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
+local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
+local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local Settings = require(ReplicatedStorage.Core.Settings)
@@ -190,6 +192,7 @@ local function equipGun(player, character)
 			.. "/" .. tostring(cosmetics.Equipped.Particle)
 			.. "/" .. tostring(weapon.Upgrades)
 			.. "/" .. armorStable
+			.. "/" .. tostring(Settings.GetSetting("Gold Guns", player))
 	end), function()
 		return weapon:andThen(function(data)
 			return Promise.async(function(resolve)
@@ -209,6 +212,14 @@ local function equipGun(player, character)
 				weaponData.Parent = gun
 				gun.Ammo.Value = Config:GetConfig(gun).Magazine
 				gun.Parent = character
+
+				if GamePasses.PlayerOwnsPass(player, GamePassDictionary.GoldGuns)
+					and Settings.GetSetting("Gold Guns", player)
+				then
+					gun.PrimaryPart.TextureID = ""
+					gun.PrimaryPart.Color = Color3.new(1, 1, 0)
+					gun.PrimaryPart.Reflectance = 0.4
+				end
 
 				maid:GiveTask(gun)
 				Equip(gun)
