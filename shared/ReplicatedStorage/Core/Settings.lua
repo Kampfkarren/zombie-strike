@@ -79,7 +79,7 @@ function Settings.GetSettingIndex(settingName, player)
 			if setting.Name == settingName then
 				local value = Data.GetPlayerData(player, "Settings")[settingIndex]
 
-				if value then
+				if value ~= nil then
 					return value, false
 				elseif type(setting.Default) == "table" and setting.Default.Type == "Random" then
 					return Random.new(player.UserId):NextInteger(unpack(setting.Default.Range)), true

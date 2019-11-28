@@ -28,10 +28,13 @@ Players.PlayerAdded:connect(function(player)
 		settingObject.Parent = settingsFolder
 	end
 
-	settingsStore:OnUpdate(function(newSettings)
-		for settingIndex, setting in pairs(Settings.Settings) do
-			settingsFolder[setting.Name].Value = newSettings[settingIndex]
-		end
+	-- ?????????
+	spawn(function()
+		settingsStore:OnUpdate(function(newSettings)
+			for settingIndex, setting in pairs(Settings.Settings) do
+				settingsFolder[setting.Name].Value = newSettings[settingIndex]
+			end
+		end)
 	end)
 
 	settingsFolder.Parent = playerData
