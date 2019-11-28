@@ -230,7 +230,6 @@ local function startBoss(room)
 	DungeonState.CurrentSpawn = assert(room:FindFirstChild("RespawnPoint", true))
 
 	for _, player in pairs(Players:GetPlayers()) do
-		-- TODO: Does this spawn them on top of each other?
 		fastSpawn(function()
 			(player.Character or player.CharacterAdded:wait())
 				:MoveTo(DungeonState.CurrentSpawn.WorldPosition)

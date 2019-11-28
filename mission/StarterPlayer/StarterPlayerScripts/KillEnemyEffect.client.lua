@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -8,6 +9,7 @@ local fadeTween = {
 }
 
 ReplicatedStorage.Remotes.KillEnemy.OnClientEvent:connect(function(enemy)
+	if CollectionService:HasTag(enemy, "Boss") then return end
 	local head = enemy:FindFirstChild("Head")
 	if not head then return end
 

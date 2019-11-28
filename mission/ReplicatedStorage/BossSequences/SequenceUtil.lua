@@ -15,6 +15,7 @@ local Shake = ReplicatedStorage.RuddevEvents.Shake
 local SequenceUtil = {}
 
 local cameraAttachments = {}
+local loadedAnimations = {}
 local particleEmitters = {}
 
 function SequenceUtil.Init(boss)
@@ -145,7 +146,25 @@ function SequenceUtil.Animate(animation, getHumanoid)
 
 	return function(boss, camera)
 		if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
-			getHumanoid(boss):LoadAnimation(animation):Play()
+			if not loadedAnimations[animation] then
+				loadedAnimations[animation] = getHumanoid(boss):LoadAnimation(animation)
+			end
+
+			loadedAnimations[animation]:Play()
+		end
+
+		return boss, camera
+	end
+end
+
+function SequenceUtil.StopAnimate(animation, getHumanoid)
+	getHumanoid = getHumanoid or function(boss)
+		return boss.Humanoid
+	end
+
+	return function(boss, camera)
+		if RunService:IsClient() and not ReplicatedStorage.SkipBossSequence.Value then
+			loadedAnimations[animation]:Stop()
 		end
 
 		return boss, camera

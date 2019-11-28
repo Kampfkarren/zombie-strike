@@ -13,7 +13,11 @@ local BOSS_JUMP_HEIGHT = 100
 local yellAnimation = Instance.new("Animation")
 yellAnimation.AnimationId = "rbxassetid://3906229018"
 
+local airAnimation = Instance.new("Animation")
+airAnimation.AnimationId = "rbxassetid://3757463802"
+
 Sequence.Assets = {
+	Air = airAnimation,
 	Yell = yellAnimation,
 }
 
@@ -72,9 +76,11 @@ function Sequence.Start(boss)
 		:andThen(SequenceUtil.Animate(yellAnimation))
 		:andThen(SequenceUtil.Delay(3.3))
 		:andThen(SequenceUtil.Focus(focusCancel))
+		:andThen(SequenceUtil.Animate(airAnimation))
 		:andThen(Promise.promisify(animate))
 		:andThen(SequenceUtil.Shake(Vector3.new(100, 100, 30)))
 		:andThen(SequenceUtil.Emit("BossJumpEmitter", 20))
+		:andThen(SequenceUtil.StopAnimate(airAnimation))
 		:andThen(Promise.promisify(function(...)
 			focusCancel.cancel()
 			return ...

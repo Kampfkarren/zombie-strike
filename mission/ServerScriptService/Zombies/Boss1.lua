@@ -20,6 +20,8 @@ local HitByBoulder = Remotes.HitByBoulder
 local HitBySlam = Remotes.HitBySlam
 local ThrowBoulder = Remotes.ThrowBoulder
 
+local BOSS_DEATH_DELAY = 4.5
+
 local CityBoss = {}
 CityBoss.__index = CityBoss
 
@@ -74,6 +76,14 @@ function CityBoss:AfterDeath()
 			zombie:Die()
 		end)
 	end
+
+	self.instance.Humanoid:LoadAnimation(
+		ReplicatedStorage.Assets.Campaign.Campaign1.Boss.DeathAnimation
+	):Play()
+
+	wait(BOSS_DEATH_DELAY)
+
+	self:Destroy()
 end
 
 function CityBoss:AfterSpawn()
@@ -198,7 +208,7 @@ function CityBoss:SummonZombiesBegin()
 end
 
 function CityBoss:SummonZombies()
-	local amountToSummon = CityBoss.ZombieSummonScale[self.level]
+	local amountToSummon = CityBoss.SummonZombieScale[self.level]
 
 	local zombieSummon = self.bossRoom.ZombieSummon
 	local basePosition = zombieSummon.Position
