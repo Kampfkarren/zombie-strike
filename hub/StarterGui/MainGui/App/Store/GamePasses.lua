@@ -44,7 +44,7 @@ end
 function GamePass:render()
 	local productInfo = self.state.productInfo
 
-	if productInfo then
+	if productInfo and productInfo.PriceInRobux then
 		return e("Frame", {
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -131,6 +131,7 @@ function GamePassesMenu:render()
 		Padding = UDim.new(0.01, 0),
 		FillDirection = Enum.FillDirection.Vertical,
 		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+		SortOrder = Enum.SortOrder.LayoutOrder,
 		VerticalAlignment = Enum.VerticalAlignment.Center,
 	})
 

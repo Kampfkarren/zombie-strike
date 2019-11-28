@@ -1,15 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Promise = require(ReplicatedStorage.Core.Promise)
+local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 
 local DEFAULT_INVENTORY_SIZE = 30
-
-local inventorySpacePromises = {}
+local GAME_PASS_SIZE = 100
 
 return function(player)
-	if not inventorySpacePromises[player] then
-		inventorySpacePromises[player] = Promise.resolve(DEFAULT_INVENTORY_SIZE)
-	end
-
-	return inventorySpacePromises[player]
+	return GamePasses.PlayerOwnsPassAsync(player, GamePassDictionary.MoreItems)
+		:andThen(function(owns)
+			return owns and GAME_PASS_SIZE or DEFAULT_INVENTORY_SIZE
+		end)
 end

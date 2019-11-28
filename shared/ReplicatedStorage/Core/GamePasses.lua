@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local Promise = require(ReplicatedStorage.Core.Promise)
 local WeakInstanceTable = require(ReplicatedStorage.Core.WeakInstanceTable)
 
 local FreeGamePasses = ReplicatedStorage:FindFirstChild("FreeGamePasses")
@@ -55,6 +56,18 @@ function GamePasses.BoughtPassUpdated(player)
 		boughtPassUpdated[player] = event
 	end
 	return event
+end
+
+function GamePasses.PlayerOwnsPassAsync(player, gamePassId)
+	boughtGamePasses[player] = boughtGamePasses[player] or {}
+
+	return Promise.promisify(function()
+		while boughtGamePasses[player][gamePassId] == nil do
+			GamePasses.BoughtPassUpdated(player).Event:wait()
+		end
+
+		return GamePasses.PlayerOwnsPass(player, gamePassId)
+	end)()
 end
 
 return GamePasses

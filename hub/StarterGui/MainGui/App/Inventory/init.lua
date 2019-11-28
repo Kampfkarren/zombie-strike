@@ -4,6 +4,8 @@ local StarterGui = game:GetService("StarterGui")
 
 local Close = require(script.Parent.Close)
 local Equipped = require(script.Equipped)
+local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
+local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
 local InventoryContents = require(script.InventoryContents)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
@@ -50,6 +52,14 @@ function Inventory:init()
 		self:setState({
 			lootStack = lootStack,
 		})
+	end
+
+	self.resetInventorySpace = function()
+		InventorySpace(LocalPlayer):andThen(function(space)
+			self:setState({
+				space = space,
+			})
+		end)
 	end
 end
 
@@ -276,6 +286,11 @@ function Inventory:render()
 		}),
 
 		InventorySpace = inventorySpace,
+
+		GamePassConnection = e(EventConnection, {
+			callback = self.resetInventorySpace,
+			event = GamePasses.BoughtPassUpdated(LocalPlayer).Event,
+		}),
 	})
 end
 
