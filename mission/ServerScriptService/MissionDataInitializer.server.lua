@@ -38,7 +38,13 @@ Players.PlayerAdded:connect(function(player)
 	local xp = Data.GetPlayerData(player, "XP")
 	numberValue("XP", xp, playerData)
 
-	numberValue("GoldScale", 1, playerData)
+	local goldScale = 1
+
+	if GamePasses.PlayerOwnsPass(player, GamePassDictionary.DoubleGold) then
+		goldScale = goldScale + 1
+	end
+
+	numberValue("GoldScale", goldScale, playerData)
 
 	local xpScale = 1
 
