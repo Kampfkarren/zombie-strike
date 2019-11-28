@@ -85,7 +85,6 @@ for index, item in ipairs(Cosmetics.Cosmetics) do
 end
 
 Cosmetics.Distribution = {
-	-- Face = 2,
 	HighTier = {
 		788904610,
 	},

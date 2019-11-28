@@ -5,7 +5,9 @@ local Data = require(ReplicatedStorage.Core.Data)
 
 local UpdateCosmetics = ReplicatedStorage.Remotes.UpdateCosmetics
 
-return function(_, player)
+return function(context, player)
+	player = player or context.Executor
+
 	local data, dataStore = Data.GetPlayerData(player, "Cosmetics")
 	local newOwned = {}
 

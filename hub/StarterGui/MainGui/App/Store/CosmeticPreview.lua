@@ -79,7 +79,16 @@ local function getDummyFor(instance)
 			end
 		end
 
-		dummy.Humanoid:ReplaceBodyPartR15(Enum.BodyPartR15.Head, instance.Contents.Helmet:Clone())
+		local helmet = instance.Contents.Helmet:Clone()
+		if helmet:IsA("BasePart") then
+			dummy.Humanoid:ReplaceBodyPartR15(Enum.BodyPartR15.Head, helmet)
+		elseif helmet:IsA("Folder") then
+			for _, accessory in pairs(helmet:GetDescendants()) do
+				addAccessory(dummy, accessory)
+			end
+		else
+			addAccessory(dummy, helmet)
+		end
 
 		RunService.Heartbeat:wait()
 		dummy.Parent = nil
