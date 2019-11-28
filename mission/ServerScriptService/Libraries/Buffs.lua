@@ -53,12 +53,25 @@ function Buffs.DropBuff(position)
 
 			CurrentPowerup.Value = buff.Name .. "/" .. buff.Timer
 
+			local light = Instance.new("PointLight")
+			light.Color = buff.Part.Color
+			light.Brightness = 18
+			light.Range = 9
+
 			for _, player in pairs(Players:GetPlayers()) do
 				local speedMultiplier = player:WaitForChild("SpeedMultiplier")
 				speedMultiplier.Value = speedMultiplier.Value + BUFF_SPEED_INCREASE
 				delay(buff.Timer, function()
 					speedMultiplier.Value = speedMultiplier.Value - BUFF_SPEED_INCREASE
 				end)
+
+				local character = player.Character
+
+				if character then
+					local characterLight = light:Clone()
+					characterLight.Parent = character.PrimaryPart
+					Debris:AddItem(characterLight, buff.Timer)
+				end
 			end
 
 			delay(buff.Timer, function()
