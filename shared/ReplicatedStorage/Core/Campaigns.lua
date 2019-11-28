@@ -78,6 +78,7 @@ local campaignsType = t.array(t.strictInterface({
 	Name = t.string,
 	Image = t.string,
 	ZombieTypes = t.map(t.string, t.numberMin(1)),
+	LoadingColor = t.Color3,
 
 	Difficulties = t.array(t.strictInterface({
 		MinLevel = t.numberMin(1),
@@ -125,6 +126,7 @@ local Campaigns = {
 			Strong = 1,
 			Turret = 1,
 		},
+		LoadingColor = Color3.fromRGB(253, 166, 255),
 
 		Difficulties = {
 			{
@@ -286,6 +288,7 @@ local Campaigns = {
 			Turret = 1,
 			AoE = 1,
 		},
+		LoadingColor = Color3.fromRGB(206, 206, 206),
 
 		Difficulties = {
 			{
@@ -468,6 +471,7 @@ local Campaigns = {
 			Fast = 1,
 			AoE = 1,
 		},
+		LoadingColor = Color3.fromRGB(255, 121, 32),
 
 		Difficulties = {
 			{

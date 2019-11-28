@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
+local StarterGui = game:GetService("StarterGui")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
@@ -10,6 +11,7 @@ local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporte
 local GiveOutfit = require(ServerScriptService.Shared.GiveOutfit)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Settings = require(ReplicatedStorage.Core.Settings)
+local TeleportScreen = require(ReplicatedStorage.Libraries.TeleportScreen)
 
 local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
 local UpdateInventory = ReplicatedStorage.Remotes.UpdateInventory
@@ -103,12 +105,19 @@ Players.PlayerAdded:connect(function(player)
 		if played == 0 then
 			DungeonTeleporter.ReserveServer()
 				:andThen(function(accessCode, privateServerId)
-					return DungeonTeleporter.TeleportPlayers({
+					local gui = StarterGui.TeleportGui:Clone()
+					gui.Enabled = true
+
+					local lobby = {
 						Players = { player },
 						Campaign = 1,
 						Difficulty = 1,
 						Hardcore = false,
-					}, accessCode, privateServerId)
+					}
+
+					TeleportScreen(gui, lobby)
+
+					return DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId, gui)
 				end)
 				:catch(function(error)
 					warn("Couldn't teleport noob to the dungeon: " .. error)

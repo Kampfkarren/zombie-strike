@@ -19,7 +19,7 @@ function DungeonTeleporter.ReserveServer()
 	end)()
 end
 
-function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId)
+function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId, loadingScreen)
 	return Promise.promisify(function()
 		local playerIds = {}
 
@@ -39,7 +39,10 @@ function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId)
 		TeleportService:TeleportToPrivateServer(
 			DUNGEON_PLACE_ID,
 			accessCode,
-			lobby.Players
+			lobby.Players,
+			nil,
+			nil,
+			loadingScreen
 		)
 	end)()
 end
