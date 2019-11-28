@@ -1,6 +1,7 @@
 local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
 
 local Spectate = ReplicatedStorage.LocalEvents.Spectate
@@ -10,6 +11,8 @@ local SpectateGui = Players.LocalPlayer
 	:WaitForChild("MainGui")
 	:WaitForChild("Main")
 	:WaitForChild("Spectate")
+
+local HUB_PLACE = 3759927663
 
 local alivePlayers
 
@@ -45,6 +48,43 @@ local function spectate(player)
 	SpectateGui.Username.Text = player.Name
 end
 
+local function getCurrentIndex()
+	alivePlayers = filterOutPlayers()
+	local currentIndex
+
+	for index, player in pairs(alivePlayers) do
+		if player == currentPlayer then
+			currentIndex = index
+		end
+	end
+
+	return currentIndex or 0
+end
+
+local function spectateNext()
+	local currentIndex = getCurrentIndex()
+
+	if currentIndex == #alivePlayers then
+		currentIndex = 1
+	else
+		currentIndex = currentIndex + 1
+	end
+
+	spectate(alivePlayers[currentIndex])
+end
+
+local function spectatePrevious()
+	local currentIndex = getCurrentIndex()
+
+	if currentIndex == 1 then
+		currentIndex = #alivePlayers
+	else
+		currentIndex = currentIndex - 1
+	end
+
+	spectate(alivePlayers[currentIndex])
+end
+
 StartSpectate.Event:connect(function()
 	alivePlayers = getAlivePlayers()
 	if #alivePlayers > 0 then
@@ -55,34 +95,19 @@ StartSpectate.Event:connect(function()
 		UserInputService.InputBegan:connect(function(inputObject, processed)
 			if processed then return end
 
-			alivePlayers = filterOutPlayers()
-			local currentIndex
-
-			for index, player in pairs(alivePlayers) do
-				if player == currentPlayer then
-					currentIndex = index
-				end
-			end
-
-			if currentIndex == nil then
-				currentIndex = 0
-			end
-
 			if inputObject.KeyCode == Enum.KeyCode.Q then
-				if currentIndex == 1 then
-					currentIndex = #alivePlayers
-				else
-					currentIndex = currentIndex - 1
-				end
+				spectatePrevious()
 			elseif inputObject.KeyCode == Enum.KeyCode.E then
-				if currentIndex == #alivePlayers then
-					currentIndex = 1
-				else
-					currentIndex = currentIndex + 1
-				end
+				spectateNext()
 			end
-
-			spectate(alivePlayers[currentIndex])
 		end)
 	end
 end)
+
+SpectateGui.Leave.Activated:connect(function()
+	SpectateGui.Leave.Label.Text = "LEAVING..."
+	TeleportService:Teleport(HUB_PLACE)
+end)
+
+SpectateGui.Next.Activated:connect(spectateNext)
+SpectateGui.Previous.Activated:connect(spectatePrevious)
