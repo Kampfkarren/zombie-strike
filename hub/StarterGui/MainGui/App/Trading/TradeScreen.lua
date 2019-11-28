@@ -422,7 +422,7 @@ function TradeScreen.getDerivedStateFromProps(nextProps, lastState)
 	local itemButtonChildren = copy(lastState.itemButtonChildren or {})
 
 	for _, item in pairs(nextProps.trade.theirInventory) do
-		if not itemButtonChildren[item.UUID] then
+		if not itemButtonChildren[item.UUID] and not item.Equipped then
 			itemButtonChildren[item.UUID] = {
 				PingBackground = e(PingBackground, {
 					uuid = item.UUID,
@@ -432,7 +432,7 @@ function TradeScreen.getDerivedStateFromProps(nextProps, lastState)
 	end
 
 	for _, item in pairs(nextProps.inventory) do
-		if not itemButtonChildren[item.UUID] then
+		if not itemButtonChildren[item.UUID] and not item.Equipped then
 			itemButtonChildren[item.UUID] = {
 				PingBackground = e(PingBackground, {
 					uuid = item.UUID,

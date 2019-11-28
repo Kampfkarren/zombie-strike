@@ -95,6 +95,24 @@ function ItemButton:render()
 		})
 	end
 
+	local equippedText
+
+	if props.equipped then
+		equippedText =  e("TextLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamBold,
+			Position = UDim2.fromScale(0.5, 0.5),
+			Rotation = 20,
+			Size = UDim2.fromScale(0.95, 0.3),
+			Text = "EQUIPPED",
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+			TextStrokeTransparency = 0,
+			ZIndex = 2,
+		})
+	end
+
 	return e("ImageButton", {
 		BackgroundTransparency = 1,
 		Image = "http://www.roblox.com/asset/?id=3973353646",
@@ -105,6 +123,7 @@ function ItemButton:render()
 		[Roact.Event.MouseEnter] = self.mouseEnter,
 		[Roact.Event.MouseLeave] = self.mouseLeave,
 	}, assign({
+		EquippedText = equippedText,
 		FavoriteFrame = favoriteFrame,
 
 		ViewportFrame = e(ViewportFramePreviewComponent, {
