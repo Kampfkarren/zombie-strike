@@ -1,12 +1,12 @@
 local Upgrades = {}
 
-Upgrades.GoldBase = 7
+Upgrades.GoldBase = 3.5
 Upgrades.GoldScale = 1.262
 Upgrades.MaxUpgrades = 5
 Upgrades.UpgradeTax = 1.1
 
-Upgrades.ArmorBuff = 0.05
-Upgrades.DamageBuff = 0.05
+Upgrades.ArmorBuff = 0.06
+Upgrades.DamageBuff = 0.06
 
 function Upgrades.GetArmorBuff(base, upgrades)
 	return base * (Upgrades.ArmorBuff * upgrades)

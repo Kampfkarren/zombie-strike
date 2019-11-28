@@ -44,7 +44,15 @@ CityBoss.SlamDamageScale = {
 	[6] = 27,
 	[12] = 72,
 	[18] = 270,
-	[24] = 900,
+	[24] = 630,
+}
+
+CityBoss.SummonZombieScale = {
+	[1] = 3,
+	[6] = 5,
+	[12] = 7,
+	[18] = 8,
+	[24] = 9,
 }
 
 CityBoss.Name = "Giga Zombie"
@@ -190,7 +198,7 @@ function CityBoss:SummonZombiesBegin()
 end
 
 function CityBoss:SummonZombies()
-	local amountToSummon = 5 + math.floor(self.level / 6) * 2
+	local amountToSummon = CityBoss.ZombieSummonScale[self.level]
 
 	local zombieSummon = self.bossRoom.ZombieSummon
 	local basePosition = zombieSummon.Position

@@ -4,7 +4,7 @@ local Types = {
 	Pistol = {
 		Base = {
 			CritChance = 0.08,
-			Damage = 20,
+			Damage = 25,
 			FireRate = 5,
 			Magazine = 9,
 		},
@@ -20,7 +20,7 @@ local Types = {
 	Rifle = {
 		Base = {
 			CritChance = 0.01,
-			Damage = 12,
+			Damage = 14,
 			FireRate = 10,
 			Magazine = 24,
 		},
@@ -35,8 +35,8 @@ local Types = {
 
 	SMG = {
 		Base = {
-			CritChance = 0.03,
-			Damage = 8,
+			CritChance = 0.04,
+			Damage = 9,
 			FireRate = 12,
 			Magazine = 30,
 		},
@@ -52,7 +52,7 @@ local Types = {
 	Shotgun = {
 		Base = {
 			CritChance = 0.04,
-			Damage = 8,
+			Damage = 6.5,
 			FireRate = 2.5,
 			Magazine = 6,
 			PelletCount = 5,
@@ -70,7 +70,7 @@ local Types = {
 	Sniper = {
 		Base = {
 			CritChance = 0.15,
-			Damage = 42,
+			Damage = 44,
 			FireRate = 1.5,
 			Magazine = 6,
 		},
@@ -120,7 +120,7 @@ local RarityMultipliers = {
 	-- Legendary
 	{
 		CritChance = 1.5,
-		Damage = 2.5,
+		Damage = 2.8,
 		FireRate = 1.5,
 		Magazine = 1.5,
 	},

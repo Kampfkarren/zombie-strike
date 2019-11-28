@@ -139,7 +139,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.5,
 
 				BossStats = {
-					Health = 2250,
+					Health = 1350,
 				},
 			},
 
@@ -153,7 +153,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 4200,
+					Health = 2520,
 				},
 			},
 
@@ -167,7 +167,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 8400,
+					Health = 5040,
 				},
 			},
 
@@ -181,7 +181,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
-					Health = 30000,
+					Health = 18000,
 				},
 			},
 
@@ -195,7 +195,7 @@ local Campaigns = {
 				ZombieSpawnRate = 1,
 
 				BossStats = {
-					Health = 75000,
+					Health = 45000,
 				},
 			},
 		},
@@ -221,17 +221,17 @@ local Campaigns = {
 		Stats = {
 			Common = {
 				Health = {
-					Base = 70,
+					Base = 49,
 					Scale = 1.154,
 				},
 
 				Speed = {
-					Base = 14.5,
+					Base = 13.5,
 					Scale = 1.01,
 				},
 
 				Damage = {
-					Base = 25,
+					Base = 17.5,
 					Scale = 1.15,
 				},
 			},
@@ -250,6 +250,23 @@ local Campaigns = {
 				Damage = {
 					Base = 20,
 					Scale = 1.15,
+				},
+			},
+
+			Strong = {
+				Damage = {
+					Base = 33,
+					Scale = 1.15,
+				},
+
+				Health = {
+					Base = 113.75,
+					Scale = 1.01,
+				},
+
+				Speed = {
+					Base = 12.5,
+					Scale = 1.01,
 				},
 			},
 
@@ -484,7 +501,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 25000000,
+					Health = 15000000,
 				},
 			},
 
@@ -498,7 +515,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 45000000,
+					Health = 27000000,
 				},
 			},
 
@@ -512,7 +529,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.85,
 
 				BossStats = {
-					Health = 90000000,
+					Health = 54000000,
 				},
 			},
 
@@ -526,7 +543,7 @@ local Campaigns = {
 				ZombieSpawnRate = 1,
 
 				BossStats = {
-					Health = 180000000,
+					Health = 108000000,
 				},
 			},
 		},

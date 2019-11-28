@@ -21,7 +21,7 @@ local BossTimer = ReplicatedStorage.BossTimer
 local JoinTimer = ReplicatedStorage.JoinTimer
 local Rooms = ServerStorage.Rooms
 
-local SPEED_BONUS = 0.25
+local SPEED_BONUS = 0.33
 local SPEED_TIME = 3.5
 
 DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP", "DungeonsPlayed")
