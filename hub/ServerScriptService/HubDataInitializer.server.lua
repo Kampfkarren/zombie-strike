@@ -99,6 +99,11 @@ Players.PlayerAdded:connect(function(player)
 		updateOutfit:andThen(function(refresh)
 			refresh()
 		end)
+
+		character.Humanoid.Died:connect(function()
+			wait(1)
+			player:LoadCharacter()
+		end)
 	end)
 
 	Data.GetPlayerDataAsync(player, "DungeonsPlayed"):andThen(function(played)
