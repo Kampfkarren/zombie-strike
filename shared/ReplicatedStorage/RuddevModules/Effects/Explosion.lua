@@ -13,7 +13,7 @@ local EVENTS	= ReplicatedStorage:WaitForChild("RuddevEvents")
 
 -- functions
 
-return function(position, radius)
+return function(position, radius, better)
 	local explosion		= script.Explosion:Clone()
 		explosion.CFrame	= CFrame.new(position)
 		explosion.Parent	= EFFECTS
@@ -22,6 +22,12 @@ return function(position, radius)
 	explosion.FlashEmitter:Emit(3)
 
 	explosion.PointLight.Range	= radius
+
+	if better then
+		explosion.PointLight.Brightness = 5
+		explosion.PointLight.Color = Color3.new(0, 0, 1)
+	end
+
 	local lightInfo		= TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 	local lightTween	= TweenService:Create(explosion.PointLight, lightInfo, {Range = 0})
 	lightTween:Play()

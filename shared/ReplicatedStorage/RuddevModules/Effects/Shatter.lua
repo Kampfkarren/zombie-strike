@@ -1,22 +1,25 @@
 -- services
 
-local Debris		= game:GetService("Debris")
+local Debris = game:GetService("Debris")
 
 -- constants
 
 -- functions
 
-return function(character)
+return function(character, betterEquipment)
+	print(betterEquipment)
 	local boost = "Health"
-	local upperTorso	= character.UpperTorso
+	local upperTorso = character.UpperTorso
 
-	local icon		= script[boost].IconEmitter:Clone()
-		icon.Parent		= upperTorso
-	local spark		= script[boost].SparkEmitter:Clone()
-		spark.Parent	= upperTorso
+	local icon = script[boost].IconEmitter:Clone()
+	icon.Color = ColorSequence.new(Color3.new(1, 1, 0))
+	icon.Parent = upperTorso
 
-	--[[local sound		= script[boost .. "Sound"]:Clone()
-		sound.Parent	= upperTorso]]
+	local spark = script[boost].SparkEmitter:Clone()
+	spark.Parent = upperTorso
+
+	--[[local sound	 = script[boost .. "Sound"]:Clone()
+		sound.Parent = upperTorso]]
 
 	icon:Emit(10)
 	spark:Emit(25)

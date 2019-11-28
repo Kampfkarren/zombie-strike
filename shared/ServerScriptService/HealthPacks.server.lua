@@ -5,18 +5,25 @@ local SoundService = game:GetService("SoundService")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
+local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
+local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
 local HealthPackAnimation = ReplicatedStorage.Assets.Animations.HealthPackAnimation
 
 local COOLDOWN = 10
 local HEAL_AMOUNT = 0.3
+local HEAL_AMOUNT_BETTER = 0.6
 
 local healthPackCooldowns = {}
 
 ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 	local character = player.Character
 	if not character or character.Humanoid.Health <= 0 then return end
+
+	local better = GamePasses.PlayerOwnsPass(
+		player, GamePassDictionary.BetterEquipment
+	)
 
 	if tick() - (healthPackCooldowns[player] or 0) > COOLDOWN then
 		healthPackCooldowns[player] = tick()
@@ -50,11 +57,12 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 				healthPack:Destroy()
 
 				if humanoid.Health > 0 then
-					humanoid.Health = humanoid.Health + humanoid.MaxHealth * HEAL_AMOUNT
+					humanoid.Health = humanoid.Health + humanoid.MaxHealth
+						* (better and HEAL_AMOUNT_BETTER or HEAL_AMOUNT)
 					ReplicatedStorage.Remotes.HealthPack:FireClient(player)
 				end
 
-				Effect:FireAllClients("Shatter", character)
+				Effect:FireAllClients("Shatter", character, better)
 			end
 		end)
 

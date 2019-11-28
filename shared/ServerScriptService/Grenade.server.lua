@@ -7,10 +7,13 @@ local Workspace = game:GetService("Workspace")
 
 local Damage = require(ReplicatedStorage.RuddevModules.Damage)
 local Data = require(ReplicatedStorage.Core.Data)
+local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
+local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
 
 local BASE_DAMAGE = 65
+local BASE_DAMAGE_BETTER = 65 * 1.5
 local DAMAGE_SCALE = 1.13
 
 local COOLDOWN = 10
@@ -27,8 +30,8 @@ local PHYSICAL_PROPERTIES = PhysicalProperties.new(
 local PRIME = 1
 local SOUNDS = SoundService.SFX.Explosion:GetChildren()
 
-local function getDamage(level)
-	return BASE_DAMAGE * DAMAGE_SCALE ^ (level - 1)
+local function getDamage(better, level)
+	return (better and BASE_DAMAGE_BETTER or BASE_DAMAGE) * DAMAGE_SCALE ^ (level - 1)
 end
 
 local function lerp(a, b, t)
@@ -42,6 +45,10 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 	local character = player.Character
 	if not character or character.Humanoid.Health <= 0 then return end
 
+	local better = GamePasses.PlayerOwnsPass(
+		player, GamePassDictionary.BetterEquipment
+	)
+
 	if tick() - (grenadeCooldowns[player] or 0) > COOLDOWN then
 		grenadeCooldowns[player] = tick()
 
@@ -51,6 +58,11 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 				"EquippedGrenade"
 			)
 		]:Clone()
+
+		if better then
+			grenade.Trail.Color = ColorSequence.new(Color3.new(1, 1, 0))
+			grenade.Trail.WidthScale = NumberSequence.new(10)
+		end
 
 		PhysicsService:SetPartCollisionGroup(grenade, "Grenade")
 		grenade.CustomPhysicalProperties = PHYSICAL_PROPERTIES
@@ -72,7 +84,8 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 			Effect:FireAllClients(
 				"Explosion",
 				grenade.Position,
-				MAX_RANGE
+				MAX_RANGE,
+				better
 			)
 
 			local sound = SOUNDS[math.random(#SOUNDS)]:Clone()
@@ -88,7 +101,7 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 							or MAX_RANGE
 
 						if range <= maxRange then
-							local baseDamage = getDamage(level)
+							local baseDamage = getDamage(better, level)
 							local damage = lerp(baseDamage * DROPOFF, baseDamage, range / maxRange)
 
 							local humanoid = zombie.Humanoid

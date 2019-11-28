@@ -1,4 +1,5 @@
 return {
+	BetterEquipment = 7647881,
 	GoldGuns = 7647720,
 	MoreItems = 7646929,
 	MoreLegendaries = 7609153,
