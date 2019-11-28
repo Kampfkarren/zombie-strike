@@ -154,7 +154,8 @@ return RoactRodux.connect(function(state, props)
 
 	if state.equipment then
 		return {
-			equipped = state.equipment["equipped" .. lootType].UUID == props.Loot.UUID,
+			equipped = state.equipment["equipped" .. lootType].UUID == props.Loot.UUID
+				or table.find(state.trading.theirEquipment, props.Loot.UUID) ~= nil,
 		}
 	else
 		return {}

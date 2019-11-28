@@ -56,10 +56,11 @@ RequestTrade.OnClientEvent:connect(function(requester)
 	})
 end)
 
-StartTrade.OnClientEvent:connect(function(theirInventory)
+StartTrade.OnClientEvent:connect(function(theirInventory, theirEquipment)
 	State:dispatch({
 		type = "OpenNewTrade",
 		theirInventory = Loot.DeserializeTableWithBase(theirInventory),
+		theirEquipment = theirEquipment,
 	})
 end)
 

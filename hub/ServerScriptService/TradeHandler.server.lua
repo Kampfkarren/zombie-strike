@@ -32,6 +32,19 @@ local PING_COOLDOWN = 2
 local SAME_PLAYER_TESTING = false
 local REQUEST_TIMEOUT = 7
 
+local function getEquipment(player)
+	local equipment = {}
+	local inventory = Data.GetPlayerData(player, "Inventory")
+
+	for equippable in pairs(Data.Equippable) do
+		local index = Data.GetPlayerData(player, "Equipped" .. equippable)
+		local item = inventory[index]
+		table.insert(equipment, item.UUID)
+	end
+
+	return equipment
+end
+
 RequestTrade.OnServerEvent:connect(function(player, otherPlayer)
 	if not t.instanceOf("Player")(otherPlayer) then
 		warn("not a player")
@@ -112,14 +125,16 @@ RequestTrade.OnServerEvent:connect(function(player, otherPlayer)
 			player,
 			Loot.SerializeTable(
 				Data.GetPlayerData(otherPlayer, "Inventory")
-			)
+			),
+			getEquipment(otherPlayer)
 		)
 
 		StartTrade:FireClient(
 			otherPlayer,
 			Loot.SerializeTable(
 				Data.GetPlayerData(player, "Inventory")
-			)
+			),
+			getEquipment(player)
 		)
 	end):finally(function()
 		requesting[player][otherPlayer] = nil

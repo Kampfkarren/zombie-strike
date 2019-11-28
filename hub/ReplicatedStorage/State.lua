@@ -139,6 +139,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 
 	trading = Rodux.createReducer({
 		trading = false,
+		theirEquipment = {},
 		theirInventory = {},
 		theirOffer = {},
 		yourOffer = {},
@@ -146,6 +147,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		CloseTrade = function()
 			return {
 				trading = false,
+				theirEquipment = {},
 				theirInventory = {},
 				theirOffer = {},
 				yourOffer = {},
@@ -155,6 +157,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		OpenNewTrade = function(_, action)
 			return {
 				trading = true,
+				theirEquipment = action.theirEquipment,
 				theirInventory = action.theirInventory,
 				theirOffer = {},
 				yourOffer = {},
