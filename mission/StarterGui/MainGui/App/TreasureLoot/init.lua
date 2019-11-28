@@ -14,6 +14,9 @@ local LocalPlayer = Players.LocalPlayer
 
 local TreasureLoot = Roact.PureComponent:extend("TreasureLoot")
 
+local COLOR_EPIC = Color3.fromRGB(142, 68, 173)
+local COLOR_LEGENDARY = Color3.fromRGB(238, 90, 36)
+
 local PRODUCT_EPIC = 934232605
 local PRODUCT_LEGENDARY = 934232697
 
@@ -112,7 +115,7 @@ function TreasureLoot:render()
 	}, {
 		Inner = e("Frame", {
 			AnchorPoint = Vector2.new(0, 0.5),
-			BackgroundColor3 = Color3.fromRGB(142, 68, 173),
+			BackgroundColor3 = loot.Rarity == 5 and COLOR_LEGENDARY or COLOR_EPIC,
 			BackgroundTransparency = 0.35,
 			BorderSizePixel = 0,
 			Position = UDim2.fromScale(0.07, 0.5),
