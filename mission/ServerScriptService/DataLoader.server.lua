@@ -13,7 +13,9 @@ Players.PlayerAdded:connect(function(player)
 		player:LoadCharacter()
 
 		if spawnLocation == nil then
-			spawnLocation = Workspace:FindFirstChild("SpawnLocation", true)
+			spawnLocation = Workspace:WaitForChild("Rooms")
+				:WaitForChild("StartSection")
+				:FindFirstChild("SpawnLocation", true)
 		end
 
 		RunService.Heartbeat:wait()
