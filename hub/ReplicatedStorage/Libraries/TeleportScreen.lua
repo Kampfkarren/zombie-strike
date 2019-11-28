@@ -8,7 +8,7 @@ return function(gui, lobby)
 
 	local inner = gui.Background.Inner
 
-	inner.Background.ImageColor3 = campaign.LoadingColor
+	gui.Background.ImageColor3 = campaign.LoadingColor
 	inner.Cover.Image = campaign.Image
 	inner.Cover.CampaignName.Text = campaign.Name
 
