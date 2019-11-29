@@ -40,22 +40,16 @@ else
 		Sound = Instance.new("Sound"),
 	}
 
+	ambienceList.Metal = {
+		Footsteps = SoundService.Footsteps.Metal:GetChildren(),
+		Land = SoundService.Footsteps.Metal:GetChildren(),
+		Sound = SoundService.Ambience.Factory,
+	}
+
 	ambienceList.Firelands = {
 		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
 		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
 		Sound = SoundService.Ambience.Firelands,
-	}
-
-	ambienceList.RainIndoors = {
-		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
-		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
-		Sound = SoundService.Ambience.RainIndoors,
-	}
-
-	ambienceList.RainOutdoors = {
-		Footsteps = SoundService.Footsteps.Water:GetChildren(),
-		Land = SoundService.Footsteps.WaterLand:GetChildren(),
-		Sound = SoundService.Ambience.RainOutdoors,
 	}
 
 	ambienceList.Treasure = {
