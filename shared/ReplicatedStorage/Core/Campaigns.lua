@@ -272,7 +272,7 @@ local Campaigns = {
 
 			Bomber = {
 				Damage = {
-					Base = 55,
+					Base = 40,
 					Scale = 1.15,
 				},
 
@@ -293,7 +293,7 @@ local Campaigns = {
 			},
 		},
 
-		AIAggroRange = 90,
+		AIAggroRange = 180,
 	},
 
 	{
