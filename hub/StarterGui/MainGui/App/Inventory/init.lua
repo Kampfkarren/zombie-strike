@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 
+local Alert = require(ReplicatedStorage.Core.UI.Components.Alert)
 local Close = require(script.Parent.Close)
 local Equipped = require(script.Equipped)
 local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
@@ -29,6 +30,7 @@ end
 
 function Inventory:init()
 	self:setState({
+		levelWarningOpen = false,
 		lootStack = {},
 	})
 
@@ -60,6 +62,12 @@ function Inventory:init()
 				space = space,
 			})
 		end)
+	end
+
+	self.onCloseLevelWarning = function()
+		self:setState({
+			levelWarningOpen = false,
+		})
 	end
 end
 
@@ -263,10 +271,8 @@ function Inventory:render()
 
 			onClickInventoryUnequipped = function(loot, id)
 				if loot.Level > LocalPlayer.PlayerData.Level.Value then
-					StarterGui:SetCore("ChatMakeSystemMessage", {
-						Text = "You're not a high enough level to equip that!",
-						Color = Color3.fromRGB(252, 92, 101),
-						Font = Enum.Font.GothamSemibold,
+					self:setState({
+						levelWarningOpen = true,
 					})
 				else
 					UpdateEquipment:FireServer(id)
@@ -286,6 +292,12 @@ function Inventory:render()
 		}),
 
 		InventorySpace = inventorySpace,
+
+		LevelWarning = e(Alert, {
+			OnClose = self.onCloseLevelWarning,
+			Open = self.state.levelWarningOpen,
+			Text = "You're not a high enough level to equip that!",
+		}),
 
 		GamePassConnection = e(EventConnection, {
 			callback = self.resetInventorySpace,
