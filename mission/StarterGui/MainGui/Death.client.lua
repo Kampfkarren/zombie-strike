@@ -78,32 +78,35 @@ else
 	)
 
 	characterAdded = function(character)
-		character:WaitForChild("Humanoid").Died:connect(function()
-			tweenFadeOut:Play()
-			LocalPlayer.PlayerGui.RuddevGui.Enabled = false
+		local humanoid = character:WaitForChild("Humanoid")
+		while humanoid.Health > 0 do
+			humanoid.HealthChanged:wait()
+		end
 
-			wait(0.2)
-			tweenGoldLossIn:Play()
-			tweenGoldLossIn.Completed:wait()
-			wait(0.2)
+		tweenFadeOut:Play()
+		LocalPlayer.PlayerGui.RuddevGui.Enabled = false
 
-			if amount > MIN_COINS then
-				amount = amount - 10
-				GoldLoss.Text = amount .. "% G"
-				tweenGoldLossBounce:Play()
-			end
+		wait(0.2)
+		tweenGoldLossIn:Play()
+		tweenGoldLossIn.Completed:wait()
+		wait(0.2)
 
-			wait(1.5)
+		if amount > MIN_COINS then
+			amount = amount - 10
+			GoldLoss.Text = amount .. "% G"
+			tweenGoldLossBounce:Play()
+		end
 
-			RespawnMe:InvokeServer()
-			tweenGoldLossOut:Play()
+		wait(1.5)
 
-			tweenFadeIn:Play()
-			tweenFadeIn.Completed:wait()
-			RunService.Heartbeat:wait()
-			GoldLoss.Position = UDim2.new(-0.5, 0, 0.5, 0)
-			LocalPlayer.PlayerGui.RuddevGui.Enabled = true
-		end)
+		RespawnMe:InvokeServer()
+		tweenGoldLossOut:Play()
+
+		tweenFadeIn:Play()
+		tweenFadeIn.Completed:wait()
+		RunService.Heartbeat:wait()
+		GoldLoss.Position = UDim2.new(-0.5, 0, 0.5, 0)
+		LocalPlayer.PlayerGui.RuddevGui.Enabled = true
 	end
 end
 
