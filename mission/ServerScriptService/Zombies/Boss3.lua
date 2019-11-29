@@ -2,6 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
 local ChargeBigLaser = ReplicatedStorage.Remotes.FirelandsBoss.ChargeBigLaser
@@ -175,6 +176,10 @@ function FirelandsBoss:SummonZombies()
 
 		zombie:Spawn(part.Position)
 		zombie:Aggro()
+
+		local sound = SoundService.ZombieSounds["3"].Boss.Summon:Clone()
+		sound.Parent = part
+		sound:Play()
 
 		Debris:AddItem(part)
 		wait(SUMMON_INTERVAL)
