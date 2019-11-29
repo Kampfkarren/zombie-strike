@@ -117,7 +117,7 @@ function ShopkeeperGui:render()
 		local text, color, activated
 
 		if selected.equipped then
-			if loot.Upgrades > Upgrades.MaxUpgrades then
+			if loot.Upgrades >= Upgrades.MaxUpgrades then
 				color = DISABLED_COLOR
 				text = "MAX UPGRADE"
 			else
@@ -133,6 +133,12 @@ function ShopkeeperGui:render()
 
 				activated = function()
 					Upgrade:FireServer(loot.UUID)
+					self:setState({
+						selected = {
+							equipped = true,
+							loot = loot,
+						},
+					})
 				end
 			end
 		else

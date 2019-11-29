@@ -41,6 +41,7 @@ end
 function ViewportFramePreviewComponent:shouldUpdate(newProps)
 	local uuid1, uuid2 = getUuid(newProps.Model), getUuid(self.props.Model)
 	return uuid1 == nil or uuid1 ~= uuid2
+		or self.props[Roact.Children] ~= newProps[Roact.Children]
 end
 
 function ViewportFramePreviewComponent:render()
