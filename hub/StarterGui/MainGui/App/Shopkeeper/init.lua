@@ -273,7 +273,7 @@ function ShopkeeperGui:render()
 		[Roact.Ref] = self.ref,
 	}, {
 		e("UIAspectRatioConstraint", {
-			AspectRatio = 2.6,
+			AspectRatio = 2,
 			AspectType = Enum.AspectType.ScaleWithParentSize,
 			DominantAxis = Enum.DominantAxis.Height,
 		}),
