@@ -1,7 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
-local ServerStorage = game:GetService("ServerStorage")
 
 local CircleEffect = require(ReplicatedStorage.Libraries.CircleEffect)
 local Common = require(script.Parent.Common)

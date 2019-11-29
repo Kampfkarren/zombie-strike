@@ -124,7 +124,7 @@ local Campaigns = {
 			Common = 3,
 			Fast = 1,
 			Strong = 1,
-			Turret = 1,
+			Bomber = 1,
 		},
 		LoadingColor = Color3.fromRGB(253, 166, 255),
 
@@ -270,25 +270,25 @@ local Campaigns = {
 				},
 			},
 
-			Turret = {
+			Bomber = {
 				Damage = {
-					Base = 2.5,
+					Base = 55,
 					Scale = 1.15,
 				},
 
 				Health = {
-					Base = 45,
+					Base = 35,
 					Scale = 1.154,
 				},
 
-				RateOfFire = {
-					Base = 0.5,
-					Scale = 1.09,
+				Speed = {
+					Base = 22,
+					Scale = 1,
 				},
 
-				Speed = {
-					Base = 5,
-					Scale = 1,
+				Delay = {
+					Base = 1,
+					Scale = 0.99,
 				},
 			},
 		},
