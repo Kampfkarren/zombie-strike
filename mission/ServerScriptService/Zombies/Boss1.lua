@@ -251,6 +251,7 @@ end
 CityBoss.AttackSequence = {
 	CityBoss.RockTossBegin,
 	CityBoss.Slam,
+	CityBoss.RockTossBegin,
 	CityBoss.SummonZombiesBegin,
 }
 
