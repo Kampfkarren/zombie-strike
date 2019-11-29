@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
@@ -144,6 +145,11 @@ function CityBoss:InitializeBossAI(room)
 end
 
 function CityBoss:RockTossBegin()
+	local rockPickup = SoundService.ZombieSounds["1"].Boss.RockPickup:Clone()
+	rockPickup.PlayOnRemove = true
+	rockPickup.Parent = Workspace
+	rockPickup:Destroy()
+
 	local boulderModel = Instance.new("Model")
 
 	local boulder = Boulder:Clone()

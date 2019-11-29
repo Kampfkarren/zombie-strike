@@ -30,9 +30,11 @@ end
 function Bomber:Attack()
 	local position = self.instance.PrimaryPart.Position
 
+	self.bomb.PrimaryPart.Fuse:Play()
 	self.bomb:FindFirstChild("Fire", true).Enabled = true
-	print(self:GetScale("Delay"))
 	wait(self:GetScale("Delay"))
+	self.bomb.PrimaryPart.Explosion:Play()
+	self.bomb.PrimaryPart.Fuse:Stop()
 	BomberZombieEffect:FireAllClients(self.instance)
 	self:Die()
 

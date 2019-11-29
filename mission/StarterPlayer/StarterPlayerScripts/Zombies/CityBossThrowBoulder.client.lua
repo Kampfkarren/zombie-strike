@@ -60,6 +60,11 @@ ThrowBoulder.OnClientEvent:connect(function(boulderModel, position)
 		impact:Emit(30)
 		Debris:AddItem(attachment)
 
+		local rockImpact = SoundService.ZombieSounds["1"].Boss.RockImpact:Clone()
+		rockImpact.PlayOnRemove = true
+		rockImpact.Parent = boulder
+		rockImpact:Destroy()
+
 		boulder:Destroy()
 		warning:Destroy()
 
