@@ -120,7 +120,7 @@ local campaignsType = t.array(t.strictInterface({
 local Campaigns = {
 	{
 		Name = "The Retro City",
-		Image = "rbxassetid://4435346700",
+		Image = "rbxassetid://4473244330",
 		ZombieTypes = {
 			Common = 3,
 			Fast = 1,
@@ -300,7 +300,7 @@ local Campaigns = {
 
 	{
 		Name = "The Factory",
-		Image = "rbxassetid://69612219",
+		Image = "rbxassetid://4473244539",
 		ZombieTypes = {
 			Common = 3,
 			Fast = 1,
@@ -485,7 +485,7 @@ local Campaigns = {
 
 	{
 		Name = "The Firelands",
-		Image = "rbxassetid://15648392",
+		Image = "rbxassetid://4473242430",
 		ZombieTypes = {
 			Common = 3,
 			Fast = 1,
