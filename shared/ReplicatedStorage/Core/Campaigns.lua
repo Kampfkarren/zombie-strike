@@ -114,6 +114,7 @@ local campaignsType = t.array(t.strictInterface({
 	}))),
 
 	AIAggroRange = t.number,
+	CompletionBadge = t.number,
 }))
 
 local Campaigns = {
@@ -294,6 +295,7 @@ local Campaigns = {
 		},
 
 		AIAggroRange = 180,
+		CompletionBadge = 2124495354,
 	},
 
 	{
@@ -478,6 +480,7 @@ local Campaigns = {
 		},
 
 		AIAggroRange = 60,
+		CompletionBadge = 2124495355,
 	},
 
 	{
@@ -625,6 +628,7 @@ local Campaigns = {
 		},
 
 		AIAggroRange = 60,
+		CompletionBadge = 2124495356,
 	},
 }
 
