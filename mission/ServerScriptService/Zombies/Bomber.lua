@@ -33,9 +33,10 @@ function Bomber:Attack()
 	self.bomb.PrimaryPart.Fuse:Play()
 	self.bomb:FindFirstChild("Fire", true).Enabled = true
 	wait(self:GetScale("Delay"))
+	self.bomb.PrimaryPart.Fuse:Stop()
+	self.bomb:FindFirstChild("Fire", true).Enabled = false
 	if not self.alive then return end
 	self.bomb.PrimaryPart.Explosion:Play()
-	self.bomb.PrimaryPart.Fuse:Stop()
 	BomberZombieEffect:FireAllClients(self.instance)
 	self:Die()
 
