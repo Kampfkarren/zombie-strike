@@ -11,6 +11,8 @@ if math.random() > SPAWN_RATE then
 	return Promise.resolve(nil)
 end
 
+local rng = Random.new()
+
 return Promise.all({
 	Dungeon.GetDungeonDataAsync("CampaignInfo"),
 	Dungeon.GetDungeonDataAsync("Campaign"),
@@ -28,22 +30,24 @@ end):andThen(function(campaignInfo)
 	end
 
 	local gunType = GunScaling.RandomType()
-	local models, rarity
+	local models, rarity, bonus
 
-	if math.random() <= LEGENDARY_CHANCE then
+	if rng:NextNumber() <= LEGENDARY_CHANCE then
 		rarity = 5
 		models = campaignInfo.Loot[gunType].Legendary
+		bonus = rng:NextInteger(0, 34)
 	else
 		rarity = 4
 		models = campaignInfo.Loot[gunType].Epic
+		bonus = 35
 	end
 
 	return {
 		Type = gunType,
 		Level = 0,
 		Rarity = rarity,
-		Bonus = 35,
-		Model = models[math.random(#models)],
+		Bonus = bonus,
+		Model = models[rng:NextInteger(1, #models)],
 		Upgrades = 0,
 		Favorited = false,
 		UUID = "TREASURE_LOOT", -- Changed at runtime
