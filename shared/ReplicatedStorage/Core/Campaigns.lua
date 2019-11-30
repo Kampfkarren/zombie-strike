@@ -261,7 +261,7 @@ local Campaigns = {
 
 				Health = {
 					Base = 113.75,
-					Scale = 1.01,
+					Scale = 1.154,
 				},
 
 				Speed = {
@@ -272,12 +272,12 @@ local Campaigns = {
 
 			Bomber = {
 				Damage = {
-					Base = 40,
+					Base = 33,
 					Scale = 1.15,
 				},
 
 				Health = {
-					Base = 35,
+					Base = 25,
 					Scale = 1.154,
 				},
 
