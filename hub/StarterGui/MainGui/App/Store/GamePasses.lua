@@ -84,7 +84,7 @@ function GamePass:render()
 				Font = Enum.Font.GothamBold,
 				LayoutOrder = 1,
 				Position = UDim2.fromScale(0.5, 0.05),
-				Size = UDim2.fromScale(0.5, 0.25),
+				Size = UDim2.fromScale(0.5, 0.9),
 				Text = productInfo.Description,
 				TextColor3 = Color3.fromRGB(9, 132, 227),
 				TextScaled = true,
@@ -96,7 +96,7 @@ function GamePass:render()
 				Image = "rbxassetid://" .. productInfo.IconImageAssetId,
 				LayoutOrder = 0,
 				Position = UDim2.fromScale(0.02, 0.5),
-				Size = UDim2.fromScale(0.7, 0.7),
+				Size = UDim2.fromScale(0.7, 0.9),
 			}, {
 				e("UIAspectRatioConstraint"),
 			}),
