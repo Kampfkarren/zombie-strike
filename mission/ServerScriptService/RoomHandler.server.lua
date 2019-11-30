@@ -89,6 +89,7 @@ local function generateDungeon(roomModels, numRooms)
 	local nextRoom = base
 
 	local rooms = {}
+	local lastRoom = Workspace -- lol
 
 	local halfway = math.floor(numRooms / 2)
 
@@ -106,7 +107,15 @@ local function generateDungeon(roomModels, numRooms)
 		end
 
 		local zombies = roomTypes.enemy
-		nextRoom = createRoom(zombies[math.random(#zombies)], obbyParent, nextRoom)
+
+		local roomChoice
+		repeat
+			roomChoice = zombies[math.random(#zombies)]
+		until roomChoice.Name ~= lastRoom.Name
+
+		lastRoom = roomChoice
+		nextRoom = createRoom(roomChoice, obbyParent, nextRoom)
+
 		table.insert(rooms, nextRoom)
 	end
 
