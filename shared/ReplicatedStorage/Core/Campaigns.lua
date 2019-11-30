@@ -181,7 +181,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
-					Health = 18000,
+					Health = 15000,
 				},
 			},
 
@@ -195,7 +195,7 @@ local Campaigns = {
 				ZombieSpawnRate = 1,
 
 				BossStats = {
-					Health = 45000,
+					Health = 40000,
 				},
 			},
 		},
