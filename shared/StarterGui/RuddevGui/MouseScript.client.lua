@@ -27,7 +27,13 @@ local hubWorld = ReplicatedStorage.HubWorld.Value
 
 local currentReticle	= ""
 
+local MAX_OCTAVE = script.HitmarkerSound.PitchShiftSoundEffect.Octave
+
 MOUSE_GUI.Visible = true
+
+local function lerp(a, b, t)
+	return a + (b - a) * t
+end
 
 -- functions
 
@@ -39,7 +45,7 @@ local function UpdateReticle()
 	end
 end
 
-local function Hitmarker(headshot, position)
+local function Hitmarker(headshot, position, healthScale)
 	local hitmarker	= script.Hitmarker:Clone()
 	if UserInputService.MouseEnabled and not ReplicatedStorage.HubWorld.Value then
 		hitmarker.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -67,6 +73,7 @@ local function Hitmarker(headshot, position)
 	tweenB:Play()
 	Debris:AddItem(hitmarker, 0.1)
 
+	script.HitmarkerSound.PitchShiftSoundEffect.Octave = lerp(1, MAX_OCTAVE, 1 - healthScale)
 	script.HitmarkerSound:Play()
 
 	if headshot then

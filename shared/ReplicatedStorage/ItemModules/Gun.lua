@@ -203,7 +203,7 @@ function module.Create(_, item)
 			if hit and humanoid then
 				if DAMAGE:PlayerCanDamage(PLAYER, humanoid) then
 					-- local damage = DAMAGE:Calculate(item, hit, position)
-					EVENTS.Hitmarker:Fire(hit.Name == "Head", pos)
+					EVENTS.Hitmarker:Fire(hit.Name == "Head", pos, humanoid.Health / humanoid.MaxHealth)
 					-- REMOTES.Hit:FireServer(hit, i)
 					table.insert(hits, { hit, i })
 				end
