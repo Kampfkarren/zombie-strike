@@ -321,10 +321,10 @@ function ShopkeeperGui:render()
 		}),
 
 		Gold = e("TextLabel", {
-			AnchorPoint = Vector2.new(1, 1),
+			AnchorPoint = Vector2.new(1, 0),
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBold,
-			Position = UDim2.fromScale(0.69, 0),
+			Position = UDim2.fromScale(0.69, 1),
 			Size = UDim2.fromScale(0.3, 0.1),
 			Text = EnglishNumbers(self.props.gold) .. " G",
 			TextColor3 = GOLD_COLOR,
@@ -334,11 +334,11 @@ function ShopkeeperGui:render()
 		}),
 
 		SellAll = e("TextButton", {
-			AnchorPoint = Vector2.new(1, 1),
+			AnchorPoint = Vector2.new(1, 0),
 			BackgroundColor3 = SELL_COLOR,
 			BorderSizePixel = 0,
 			Font = Enum.Font.GothamBold,
-			Position = UDim2.fromScale(1, 0),
+			Position = UDim2.fromScale(1, 1),
 			Size = UDim2.fromScale(0.3, 0.1),
 			Text = "SELL ALL",
 			TextColor3 = Color3.new(1, 1, 1),
