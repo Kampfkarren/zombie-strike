@@ -22,7 +22,7 @@ CircleEffect.PresetOptions = {
 	},
 
 	[CircleEffect.Presets.TANK_BUFF] = {
-		Color = Color3.fromRGB(255, 124, 124),
+		Color = Color3.fromRGB(85, 128, 247),
 		Range = 25,
 	},
 
