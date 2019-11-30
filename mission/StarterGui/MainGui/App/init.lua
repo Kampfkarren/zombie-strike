@@ -5,6 +5,7 @@ local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
 
 local TreasureLoot = require(script.TreasureLoot)
+local TreasureNotification = require(script.TreasureNotification)
 
 local e = Roact.createElement
 
@@ -14,6 +15,7 @@ local function App()
 		Size = UDim2.new(1, 0, 1, 0),
 	}, {
 		TreasureLoot = e(TreasureLoot),
+		TreasureNotification = e(TreasureNotification),
 	})
 end
 

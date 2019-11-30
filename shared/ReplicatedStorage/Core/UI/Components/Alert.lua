@@ -9,15 +9,44 @@ local e = Roact.createElement
 
 local Alert = Roact.Component:extend("Alert")
 
+local function noop() end
+
 Alert.defaultProps = {
 	AlertTime = 2,
 	Color = Color3.fromRGB(255, 78, 78),
+	OnClose = noop,
 	Open = false,
 	Window = Players.LocalPlayer.PlayerGui.MainGui.Main,
 }
 
 function Alert:init()
-	self.fadeBinding, self.updateFadeBinding = Roact.createBinding(1)
+	self.fadeBinding, self.updateFadeBinding = Roact.createBinding(self.props.Open and 0 or 1)
+	if self.props.Open then
+		self:Open()
+	end
+end
+
+function Alert:Open()
+	if self.props.Text == "" then return end
+	local total = 0
+	self.animateConnection = RunService.Heartbeat:connect(function(delta)
+		total = total + delta
+		self.updateFadeBinding(TweenService:GetValue(
+			total / self.props.AlertTime,
+			Enum.EasingStyle.Cubic,
+			Enum.EasingDirection.In
+		))
+
+		if total >= self.props.AlertTime then
+			self:setState({
+				finished = true,
+			})
+
+			self.props.OnClose()
+
+			self.animateConnection:Disconnect()
+		end
+	end)
 end
 
 function Alert:didUpdate(previousProps)
@@ -25,26 +54,7 @@ function Alert:didUpdate(previousProps)
 		self.updateFadeBinding(self.props.Open and 0 or 1)
 
 		if self.props.Open then
-			if self.props.Text == "" then return end
-			local total = 0
-			self.animateConnection = RunService.Heartbeat:connect(function(delta)
-				total = total + delta
-				self.updateFadeBinding(TweenService:GetValue(
-					total / self.props.AlertTime,
-					Enum.EasingStyle.Cubic,
-					Enum.EasingDirection.In
-				))
-
-				if total >= self.props.AlertTime then
-					self:setState({
-						finished = true,
-					})
-
-					self.props.OnClose()
-
-					self.animateConnection:Disconnect()
-				end
-			end)
+			self:Open()
 		else
 			self.animateConnection:Disconnect()
 		end

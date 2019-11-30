@@ -43,15 +43,7 @@ function TreasureChestProduct.Activate(player, receiptInfo)
 			DataStore2.SaveAllAsync(player)
 		end
 
-		-- TODO: Remove
-		local message = Instance.new("Message")
-		message.Text = player.Name .. " just bought everyone the chest!"
-		message.Parent = workspace
-		delay(3, function()
-			message:Destroy()
-		end)
-
-		ReplicatedStorage.Remotes.TreasureBought:FireAllClients()
+		ReplicatedStorage.Remotes.TreasureBought:FireAllClients(player)
 
 		return Enum.ProductPurchaseDecision.PurchaseGranted
 	end

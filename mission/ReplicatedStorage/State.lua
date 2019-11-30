@@ -43,9 +43,10 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 			return state
 		end,
 
-		TreasureBought = function(state)
+		TreasureBought = function(state, action)
 			local state = copy(state)
 			state.bought = true
+			state.donor = action.donor
 			return state
 		end,
 	}),
@@ -58,9 +59,10 @@ ReplicatedStorage.LocalEvents.AmbienceChanged.Event:connect(function(ambienceNam
 	})
 end)
 
-ReplicatedStorage.Remotes.TreasureBought.OnClientEvent:connect(function()
+ReplicatedStorage.Remotes.TreasureBought.OnClientEvent:connect(function(donor)
 	Store:dispatch({
 		type = "TreasureBought",
+		donor = donor,
 	})
 end)
 
