@@ -91,7 +91,7 @@ local function aimAssist(cframe, range)
 			if not zombiesChecked[zombie] then
 				zombiesChecked[zombie] = true
 
-				if zombie.Humanoid.Health > 0 then
+				if zombie:WaitForChild("Humanoid").Health > 0 then
 					if LineOfSight(cframe.Position, zombie, range, { aimAssist }) then
 						local zombiePrimary = zombie.PrimaryPart
 						local dist = (zombiePrimary.Position - cframe.Position).Magnitude
