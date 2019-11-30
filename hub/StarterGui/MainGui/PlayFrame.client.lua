@@ -116,9 +116,11 @@ do
 
 			Create.Info.MapImage.TooLowLevel.Visible = true
 			Create.Info.MapImage.Hardcore.Visible = false
+			Create.Info.Create.ImageColor3 = Color3.fromRGB(107, 107, 107)
 		else
 			Create.Info.MapImage.TooLowLevel.Visible = false
 			Create.Info.MapImage.Hardcore.Visible = state.hardcore
+			Create.Info.Create.ImageColor3 = Color3.fromRGB(32, 187, 108)
 		end
 	end
 
