@@ -105,7 +105,7 @@ function ProductCard:render()
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		LayoutOrder = props.Cost,
-		Size = UDim2.fromScale(0.23, 1),
+		Size = UDim2.fromScale(0.9, 0.23),
 	}, {
 		e("ImageButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
@@ -125,26 +125,12 @@ function ProductCard:render()
 				[Roact.Ref] = self.uiScaleRef,
 			}),
 
-			e("UIListLayout", {
-				HorizontalAlignment = Enum.HorizontalAlignment.Center,
-				Padding = UDim.new(0.02, 0),
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				VerticalAlignment = Enum.VerticalAlignment.Center,
-			}),
-
-			Image = e("ImageLabel", {
-				BackgroundTransparency = 1,
-				Image = props.Image,
-				LayoutOrder = 0,
-				Size = UDim2.fromScale(0.9, 0.5),
-			}, {
-				e("UIAspectRatioConstraint"),
-			}),
-
 			Name = e("Frame", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundTransparency = 1,
 				LayoutOrder = 1,
-				Size = UDim2.fromScale(0.85, 0.15),
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(0.35, 0.9),
 			}, {
 				Label = e("TextLabel", {
 					BackgroundTransparency = 1,
@@ -159,10 +145,12 @@ function ProductCard:render()
 			}),
 
 			Cost = e("TextLabel", {
+				AnchorPoint = Vector2.new(1, 0.5),
 				BackgroundTransparency = 1,
 				Font = Enum.Font.GothamBold,
 				LayoutOrder = 2,
-				Size = UDim2.fromScale(0.7, 0.12),
+				Position = UDim2.fromScale(0.95, 0.5),
+				Size = UDim2.fromScale(0.2, 0.95),
 				Text = "R$" .. props.Cost,
 				TextColor3 = Color3.fromRGB(92, 255, 67),
 				TextScaled = true,
@@ -204,6 +192,19 @@ end
 function XPMultipliers:render()
 	local props = self.props
 
+	local products = {}
+	products.UIListLayout = e("UIListLayout", {
+		FillDirection = Enum.FillDirection.Vertical,
+		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+		Padding = UDim.new(0.02, 0),
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		VerticalAlignment = Enum.VerticalAlignment.Center,
+	})
+
+	for index, product in pairs(XPMultiplierDictionary) do
+		products["Product" .. index] = e(ProductCard, product)
+	end
+
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		LayoutOrder = 2,
@@ -213,17 +214,7 @@ function XPMultipliers:render()
 		Products = e("Frame", {
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, 0.8),
-		}, {
-			e("UIListLayout", {
-				FillDirection = Enum.FillDirection.Horizontal,
-				HorizontalAlignment = Enum.HorizontalAlignment.Center,
-				Padding = UDim.new(0.02, 0),
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				VerticalAlignment = Enum.VerticalAlignment.Center,
-			}),
-
-			One = e(ProductCard, XPMultiplierDictionary[1]),
-		}),
+		}, products),
 
 		Timer = e("TextLabel", {
 			AnchorPoint = Vector2.new(0, 1),
