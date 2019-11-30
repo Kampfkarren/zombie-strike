@@ -1,10 +1,12 @@
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local PlaySound = require(ReplicatedStorage.Core.PlaySound)
 
 local FloorLaser = ReplicatedStorage.Remotes.FactoryBoss.FloorLaser
 local LocalPlayer = Players.LocalPlayer
@@ -43,6 +45,8 @@ FloorLaser.OnClientEvent:connect(function()
 			TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
 			{ Size = Vector3.new(HEIGHT_BIG, RADIUS, RADIUS) }
 		):Play()
+
+		PlaySound(SoundService.SFX.Laser.Small, warning)
 
 		local function touch(part)
 			if touched then return end

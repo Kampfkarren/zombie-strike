@@ -2,9 +2,11 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local PlaySound = require(ReplicatedStorage.Core.PlaySound)
 
 local Assets = ReplicatedStorage.Assets.Campaign.Campaign2.Boss
 local LocalPlayer = Players.LocalPlayer
@@ -71,6 +73,7 @@ QuadLaser.OnClientEvent:connect(function(activeTimer)
 		delay(QUAD_LASER_TIME, function()
 			shooting = true
 			laser.Color = Color3.new(1, 0, 0)
+			PlaySound(SoundService.SFX.Laser.Big)
 			delay(activeTimer, function()
 				laserConnection:disconnect()
 				laser:Destroy()

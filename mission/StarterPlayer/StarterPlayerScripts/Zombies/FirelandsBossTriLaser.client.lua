@@ -2,10 +2,12 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local PlaySound = require(ReplicatedStorage.Core.PlaySound)
 
 local BossLaserTri = ReplicatedStorage.Assets.Campaign.Campaign3.Boss.BossLaserTri
 local TriLaserEvent = ReplicatedStorage.Remotes.FirelandsBoss.TriLaser
@@ -45,6 +47,8 @@ TriLaserEvent.OnClientEvent:connect(function(newActive)
 	for _, laser in pairs(lasers:GetChildren()) do
 		laser.Touched:connect(hurtByLaser)
 	end
+
+	PlaySound(SoundService.SFX.Laser.Big)
 
 	repeat
 		boss:SetPrimaryPartCFrame(
