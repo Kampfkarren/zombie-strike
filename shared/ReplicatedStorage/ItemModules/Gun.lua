@@ -306,6 +306,8 @@ function module.Create(_, item)
 					animations.Idle:Play()
 				end
 			end
+
+			character:WaitForChild("Head"):WaitForChild("Nametag").Enabled = not aiming
 		end))
 	end
 
