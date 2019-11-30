@@ -6,6 +6,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
+local StyledButton = require(ReplicatedStorage.Core.UI.Components.StyledButton)
 local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Components.ViewportFramePreviewComponent)
 
 local e = Roact.createElement
@@ -113,11 +114,11 @@ function ItemButton:render()
 		})
 	end
 
-	return e("ImageButton", {
+	return e(StyledButton, {
+		BackgroundColor3 = color,
 		BackgroundTransparency = 1,
-		Image = "http://www.roblox.com/asset/?id=3973353646",
-		ImageColor3 = color,
 		LayoutOrder = props.LayoutOrder,
+		Square = true,
 
 		[Roact.Event.Activated] = self.activated,
 		[Roact.Event.MouseEnter] = self.mouseEnter,

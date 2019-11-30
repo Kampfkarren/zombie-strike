@@ -56,8 +56,6 @@ local function toggle(newOpen)
 		if UserInputService.GamepadEnabled then
 			GuiService.SelectedObject = Inner.JoinCreate.Join
 		end
-
-		script.Parent.Main.CantSelect.Visible = false
 	else
 		tweens.Out:Play()
 		delay(TWEEN_TIME, function()

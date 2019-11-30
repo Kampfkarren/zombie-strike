@@ -8,6 +8,7 @@ local Modalifier = require(ReplicatedStorage.Core.UI.Components.Modalifier)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local SellCost = require(ReplicatedStorage.Libraries.SellCost)
+local StyledButton = require(ReplicatedStorage.Core.UI.Components.StyledButton)
 local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 
 local e = Roact.createElement
@@ -153,11 +154,10 @@ function ShopkeeperGui:render()
 		assert(text ~= nil)
 		assert(color ~= nil)
 
-		activeButton = e("ImageButton", {
+		activeButton = e(StyledButton, {
 			AnchorPoint = Vector2.new(0.5, 0),
+			BackgroundColor3 = color,
 			BackgroundTransparency = 1,
-			Image = "http://www.roblox.com/asset/?id=3973353234",
-			ImageColor3 = color,
 			Position = UDim2.fromScale(0.5, 0.05),
 			Size = UDim2.fromScale(0.95, 1),
 			[Roact.Event.Activated] = activated,

@@ -11,6 +11,7 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local Settings = require(ReplicatedStorage.Core.Settings)
+local StyledButton = require(ReplicatedStorage.Core.UI.Components.StyledButton)
 
 local e = Roact.createElement
 local LocalPlayer = Players.LocalPlayer
@@ -21,7 +22,6 @@ local SettingsMenu = Roact.PureComponent:extend("Settings")
 local COLOR_GREEN = Color3.fromRGB(0, 148, 50)
 local COLOR_RED = Color3.fromRGB(215, 90, 90)
 
-local IMAGE_BUTTON = "rbxassetid://3973353234"
 local IMAGE_LOCK = "rbxassetid://2826726111"
 
 local function copy(list)
@@ -253,10 +253,9 @@ function SettingsMenu:render()
 					LayoutOrder = 1,
 					Text = "MUSIC",
 				}, {
-					Button = e("ImageButton", {
+					Button = e(StyledButton, {
+						BackgroundColor3 = self.state.settings.Music == "On" and COLOR_GREEN or COLOR_RED,
 						BackgroundTransparency = 1,
-						Image = IMAGE_BUTTON,
-						ImageColor3 = self.state.settings.Music == "On" and COLOR_GREEN or COLOR_RED,
 						Size = UDim2.fromScale(1, 1),
 
 						[Roact.Event.MouseButton1Click] = function()
@@ -280,10 +279,9 @@ function SettingsMenu:render()
 					LayoutOrder = 2,
 					Text = "SKIN TONE",
 				}, {
-					Button = e("ImageButton", {
+					Button = e(StyledButton, {
+						BackgroundColor3 = Color3.new(0.5, 0.5, 0.5),
 						BackgroundTransparency = 1,
-						Image = IMAGE_BUTTON,
-						ImageColor3 = Color3.new(0.5, 0.5, 0.5),
 						Size = UDim2.fromScale(1, 1),
 
 						[Roact.Event.MouseButton1Click] = function()
@@ -311,10 +309,9 @@ function SettingsMenu:render()
 					LayoutOrder = 3,
 					Text = "GOLD GUNS",
 				}, {
-					Button = e("ImageButton", {
+					Button = e(StyledButton, {
+						BackgroundColor3 = self.state.settings["Gold Guns"] == "On" and COLOR_GREEN or COLOR_RED,
 						BackgroundTransparency = 1,
-						Image = IMAGE_BUTTON,
-						ImageColor3 = self.state.settings["Gold Guns"] == "On" and COLOR_GREEN or COLOR_RED,
 						Size = UDim2.fromScale(1, 1),
 
 						[Roact.Event.MouseButton1Click] = function()
