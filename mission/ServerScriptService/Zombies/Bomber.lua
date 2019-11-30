@@ -29,12 +29,13 @@ end
 
 function Bomber:Attack()
 	local position = self.instance.PrimaryPart.Position
+	local fire = self.bomb:FindFirstChild("Fire", true)
 
 	self.bomb.PrimaryPart.Fuse:Play()
-	self.bomb:FindFirstChild("Fire", true).Enabled = true
+	fire.Enabled = true
 	wait(self:GetScale("Delay"))
 	self.bomb.PrimaryPart.Fuse:Stop()
-	self.bomb:FindFirstChild("Fire", true).Enabled = false
+	fire.Enabled = false
 	if not self.alive then return end
 	self.bomb.PrimaryPart.Explosion:Play()
 	BomberZombieEffect:FireAllClients(self.instance)
