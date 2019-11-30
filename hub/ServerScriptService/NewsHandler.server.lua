@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
+local MockPlayer = require(ReplicatedStorage.Core.MockData.MockPlayer)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
@@ -11,6 +12,7 @@ local SendNews = ReplicatedStorage.Remotes.SendNews
 local DUNGEONS_UNTIL_UPGRADE = 3
 local INVENTORY_SPACE_TO_ALERT = 25 / 30
 
+local MOCK_PLAYER = MockPlayer()
 local NO_NEWS = newproxy(true)
 
 local function checkInventorySpace(player)
@@ -69,6 +71,31 @@ local function checkUnlockedContent(player)
 		end)
 end
 
+local function checkUseInventory(player)
+	return Data.GetPlayerDataAsync(player, "Inventory")
+		:andThen(function(inventory)
+			for equippable in pairs(Data.Equippable) do
+				local default = MOCK_PLAYER[equippable]
+				local equipped = Data.GetPlayerData(player, equippable)
+
+				for key, value in pairs(equipped) do
+					if key ~= "UUID" and default[key] ~= value then
+						-- They equipped something different
+						return NO_NEWS
+					end
+				end
+			end
+
+			-- All equipment is normal, but do they even have any other items?
+			if #inventory == 3 then
+				return NO_NEWS
+			end
+
+			-- They have items, but haven't equipped anything
+			return { { "UseInventory" } }
+		end)
+end
+
 local function checkUpgradeSomething(player)
 	return Data.GetPlayerDataAsync(player, "UpgradedSomething")
 		:andThen(function(upgradedSomething)
@@ -89,6 +116,7 @@ Players.PlayerAdded:connect(function(player)
 	Promise.all({
 		checkInventorySpace(player),
 		checkUnlockedContent(player),
+		checkUseInventory(player),
 		checkUpgradeSomething(player),
 	}):andThen(function(results)
 		local news = {}
