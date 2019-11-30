@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Alert = require(ReplicatedStorage.Core.UI.Components.Alert)
 local Close = require(script.Parent.Close)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
@@ -23,6 +24,10 @@ function Codes:init()
 	end
 
 	self.connection = ReplicatedStorage.Remotes.SendCode.OnClientEvent:connect(function(response)
+		self:setState({
+			alertOpen = true,
+		})
+
 		if type(response) == "number" then
 			self:setState({
 				response = {
@@ -46,6 +51,12 @@ function Codes:init()
 			error("unknown code response: " .. response)
 		end
 	end)
+
+	self.onCloseAlert = function()
+		self:setState({
+			alertOpen = false,
+		})
+	end
 end
 
 function Codes:willUnmount()
@@ -63,16 +74,25 @@ function Codes:render()
 		AspectRatio = 2,
 	})
 
-	local labelText = "Enter codes from the group!"
 	local response = self.state.response or {}
 
+	local alertText, alertColor
+
 	if response.type == "received" then
-		labelText = "SUCCESS! " .. response.gold .. "G received!"
+		alertText = "SUCCESS! " .. response.gold .. "G received!"
+		alertColor = Color3.fromRGB(32, 187, 108)
 	elseif response.type == "claimed" then
-		labelText = "Code already claimed..."
+		alertText = "Code already claimed..."
 	elseif response.type == "invalid" then
-		labelText = "Code does not exist."
+		alertText = "Code does not exist."
 	end
+
+	children.Alert = e(Alert, {
+		Color = alertColor,
+		OnClose = self.onCloseAlert,
+		Open = self.state.alertOpen,
+		Text = alertText,
+	})
 
 	children.Label = e("TextLabel", {
 		AnchorPoint = Vector2.new(0.5, 0),
@@ -80,7 +100,7 @@ function Codes:render()
 		Font = Enum.Font.GothamSemibold,
 		Position = UDim2.fromScale(0.5, 0.01),
 		Size = UDim2.fromScale(0.95, 0.2),
-		Text = labelText,
+		Text = "Enter codes from the group!",
 		TextColor3 = Color3.new(1, 1, 1),
 		TextScaled = true,
 		ZIndex = 0,

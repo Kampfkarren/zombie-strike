@@ -5,6 +5,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local DEFAULT_GOLD = 10000
 
 local CODES = {
+	evil = DEFAULT_GOLD,
 	goblin = DEFAULT_GOLD,
 	zombie = DEFAULT_GOLD,
 }

@@ -11,6 +11,7 @@ local Alert = Roact.Component:extend("Alert")
 
 Alert.defaultProps = {
 	AlertTime = 2,
+	Color = Color3.fromRGB(255, 78, 78),
 	Open = false,
 	Window = Players.LocalPlayer.PlayerGui.MainGui.Main,
 }
@@ -24,6 +25,7 @@ function Alert:didUpdate(previousProps)
 		self.updateFadeBinding(self.props.Open and 0 or 1)
 
 		if self.props.Open then
+			if self.props.Text == "" then return end
 			local total = 0
 			self.animateConnection = RunService.Heartbeat:connect(function(delta)
 				total = total + delta
@@ -68,7 +70,7 @@ function Alert:render()
 			Position = UDim2.fromScale(0.5, 0.01),
 			Size = UDim2.fromScale(0.8, 0.1),
 			Text = props.Text,
-			TextColor3 = Color3.fromRGB(255, 78, 78),
+			TextColor3 = props.Color,
 			TextScaled = true,
 			TextStrokeColor3 = Color3.new(0, 0, 0),
 			TextStrokeTransparency = self.fadeBinding,
