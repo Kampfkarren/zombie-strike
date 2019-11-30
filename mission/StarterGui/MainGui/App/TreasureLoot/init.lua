@@ -49,7 +49,7 @@ end
 function TreasureLoot:init()
 	self.buyHotkey = UserInputService.InputBegan:connect(function(inputObject, processed)
 		if processed then return end
-		if inputObject.KeyCode == Enum.KeyCode.B then
+		if inputObject.KeyCode == Enum.KeyCode.B and State:getState().treasureLoot.open then
 			buyLoot()
 		end
 	end)
