@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local CircleEffect = require(ReplicatedStorage.Libraries.CircleEffect)
+local Maid = require(ReplicatedStorage.Core.Maid)
 
 local CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect
 
@@ -11,10 +12,17 @@ local DAMAGE_INTERVAL = 1
 local DAMAGE_SCALE = 1.13
 
 local active = false
+local maid = Maid.new()
 
 ReplicatedStorage.CurrentPowerup.Changed:connect(function(powerup)
 	if powerup:match("Tank/") then
 		active = true
+
+		for _, player in pairs(Players:GetPlayers()) do
+			local forceField = Instance.new("ForceField")
+			forceField.Parent = player.Character
+			maid:GiveTask(forceField)
+		end
 
 		while active do
 			local zombies =  CollectionService:GetTagged("Zombie")
@@ -52,5 +60,6 @@ ReplicatedStorage.CurrentPowerup.Changed:connect(function(powerup)
 		end
 	elseif active then
 		active = false
+		maid:DoCleaning()
 	end
 end)
