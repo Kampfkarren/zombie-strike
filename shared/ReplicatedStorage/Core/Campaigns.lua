@@ -316,7 +316,7 @@ local Campaigns = {
 
 				Gold = 2500,
 				Rooms = 4,
-				XP = 29000,
+				XP = 21750,
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
@@ -358,7 +358,7 @@ local Campaigns = {
 
 				Gold = 50000,
 				Rooms = 10,
-				XP = 400000,
+				XP = 300000,
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
@@ -372,7 +372,7 @@ local Campaigns = {
 
 				Gold = 120000,
 				Rooms = 12,
-				XP = 1300000,
+				XP = 845000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
@@ -500,7 +500,7 @@ local Campaigns = {
 
 				Gold = 320000,
 				Rooms = 6,
-				XP = 2500000,
+				XP = 1500000,
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
@@ -514,7 +514,7 @@ local Campaigns = {
 
 				Gold = 640000,
 				Rooms = 8,
-				XP = 3100000,
+				XP = 1860000,
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
@@ -528,7 +528,7 @@ local Campaigns = {
 
 				Gold = 1280000,
 				Rooms = 10,
-				XP = 4500000,
+				XP = 2700000,
 				ZombieSpawnRate = 0.85,
 
 				BossStats = {
@@ -542,7 +542,7 @@ local Campaigns = {
 
 				Gold = 2560000,
 				Rooms = 12,
-				XP = 4500000,
+				XP = 2700000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
