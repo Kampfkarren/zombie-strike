@@ -18,7 +18,7 @@ local OSCILLATE_TIME = 0.1
 local QUAD_LASER_TIME = 3
 local ROTATE_RATE = 0.25
 
-local TUBES = 4
+local TUBES = 8
 
 if Dungeon.GetDungeonData("Campaign") ~= 2 then return end
 
