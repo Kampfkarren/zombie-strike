@@ -5,7 +5,7 @@ local Workspace = game:GetService("Workspace")
 
 local BUFF_DELAY = 90
 local BUFF_DROP_CHANCE = 0.05
-local BUFF_LIFETIME = 8
+local BUFF_LIFETIME = 16
 local BUFF_SPEED_INCREASE = 0.4
 
 local BuffModels = ReplicatedStorage.Buffs
@@ -19,19 +19,19 @@ Buffs.BuffTypes = {
 	{
 		Name = "Rage",
 		Part = BuffModels.Rage,
-		Timer = 10,
+		Timer = 16,
 	},
 
 	{
 		Name = "Tank",
 		Part = BuffModels.Tank,
-		Timer = 10,
+		Timer = 16,
 	},
 
 	{
 		Name = "Bulletstorm",
 		Part = BuffModels.Bulletstorm,
-		Timer = 12,
+		Timer = 16,
 	},
 }
 
