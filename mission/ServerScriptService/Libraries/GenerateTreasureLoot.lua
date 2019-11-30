@@ -5,7 +5,7 @@ local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local LEGENDARY_CHANCE = 0.1
-local SPAWN_RATE = 1
+local SPAWN_RATE = 0.33
 
 if math.random() > SPAWN_RATE then
 	return Promise.resolve(nil)
