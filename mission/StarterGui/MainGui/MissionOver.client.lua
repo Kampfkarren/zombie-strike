@@ -15,6 +15,7 @@ local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
+local OnDied = require(ReplicatedStorage.Core.OnDied)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
 local Blur = Lighting.Blur
@@ -115,6 +116,21 @@ end
 
 LootResults.Minor.Leave.MouseButton1Click:connect(leave)
 
+CollectionService:GetInstanceAddedSignal("Boss"):connect(function(boss)
+	OnDied(boss:WaitForChild("Humanoid")):connect(function()
+		print("ded")
+		for _, music in pairs(SoundService.Music:GetDescendants()) do
+			if music.Name ~= "MissionEnd" and music:IsA("Sound") then
+				TweenService:Create(
+					music,
+					musicTweenInfo,
+					{ Volume = 0 }
+				):Play()
+			end
+		end
+	end)
+end)
+
 ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, gold)
 	local clearTime = time()
 	LootResults.Minor.ClearTime.Text = ("%d:%02d"):format(math.floor(clearTime / 60), clearTime % 60)
@@ -142,12 +158,6 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	for _, music in pairs(SoundService.Music:GetDescendants()) do
 		if music.Name == "MissionEnd" then
 			music:Play()
-		elseif music:IsA("Sound") then
-			TweenService:Create(
-				music,
-				musicTweenInfo,
-				{ Volume = 0 }
-			):Play()
 		end
 	end
 
