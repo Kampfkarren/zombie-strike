@@ -1,4 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+
+local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 
 return function(instance, level)
 	local nametag = instance.Head:FindFirstChild("Nametag")
@@ -14,9 +17,9 @@ return function(instance, level)
 	end
 
 	local humanoid = instance.Humanoid
-	nametag.Health.HealthNumber.Text = ("%d/%d"):format(
-		math.ceil(humanoid.Health),
-		math.ceil(humanoid.MaxHealth)
+	nametag.Health.HealthNumber.Text = ("%s/%s"):format(
+		EnglishNumbers(math.ceil(humanoid.Health)),
+		EnglishNumbers(math.ceil(humanoid.MaxHealth))
 	)
 	nametag.Health.Fill.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
 
