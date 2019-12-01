@@ -50,6 +50,15 @@ local function value(parent, class, name, value)
 	object.Parent = parent
 end
 
+local function removeLobby(unique)
+	for index, lobby in pairs(lobbies) do
+		if lobby.Unique == unique then
+			table.remove(lobbies, index)
+			return
+		end
+	end
+end
+
 ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
 	player,
 	campaignIndex,
@@ -199,22 +208,28 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
 	return true
 end
 
-ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(function(player)
-	local lobby, lobbyIndex, spot = getPlayerLobby(player)
+local function leaveLobby(player, dontWarn)
+	local lobby, _, spot = getPlayerLobby(player)
 	if not lobby then
-		warn("LeaveLobby without a lobby")
+		if not dontWarn then
+			warn("LeaveLobby without a lobby")
+		end
+
 		return
 	end
 
 	if lobby.Teleporting then
-		warn("LeaveLobby while teleporting")
+		if not dontWarn then
+			warn("LeaveLobby while teleporting")
+		end
+
 		return
 	end
 
 	table.remove(lobby.Players, spot)
 
 	if #lobby.Players == 0 then
-		table.remove(lobbies, lobbyIndex)
+		removeLobby(lobby.Unique)
 		lobby.Instance:Destroy()
 	else
 		lobby.Instance.Players[player.UserId]:Destroy()
@@ -223,10 +238,12 @@ ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(function(player)
 			lobby.Promise:cancel()
 		end
 	end
-end)
+end
+
+ReplicatedStorage.Remotes.LeaveLobby.OnServerEvent:connect(leaveLobby)
 
 ReplicatedStorage.Remotes.KickFromLobby.OnServerEvent:connect(function(player, kickPlayer)
-	local lobby, lobbyIndex = getPlayerLobby(player)
+	local lobby = getPlayerLobby(player)
 	if not lobby then
 		warn("KickFromLobby without a lobby")
 		return
@@ -244,7 +261,7 @@ ReplicatedStorage.Remotes.KickFromLobby.OnServerEvent:connect(function(player, k
 			ReplicatedStorage.Remotes.KickFromLobby:FireClient(kickPlayer, lobby.Unique)
 
 			if #lobby.Players == 0 then
-				table.remove(lobbies, lobbyIndex)
+				removeLobby(lobby.Unique)
 				lobby.Instance:Destroy()
 			else
 				lobby.Instance.Players[kickPlayer.UserId]:Destroy()
@@ -255,7 +272,7 @@ ReplicatedStorage.Remotes.KickFromLobby.OnServerEvent:connect(function(player, k
 end)
 
 ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
-	local lobby, lobbyIndex = getPlayerLobby(player)
+	local lobby = getPlayerLobby(player)
 	if not lobby then
 		warn("PlayLobby without a lobby")
 		return
@@ -314,7 +331,7 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 
 			return DungeonTeleporter.TeleportPlayers(lobby, unpack(results[1]))
 		end):andThen(function()
-			table.remove(lobbies, lobbyIndex)
+			removeLobby(lobby.Unique)
 			lobby.Instance:Destroy()
 		end):catch(function(problem)
 			ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
@@ -334,4 +351,5 @@ end)
 
 Players.PlayerRemoving:connect(function(player)
 	teleporting[player] = nil
+	leaveLobby(player, true)
 end)
