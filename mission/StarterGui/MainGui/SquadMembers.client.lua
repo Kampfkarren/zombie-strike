@@ -11,8 +11,6 @@ local LocalPlayer = Players.LocalPlayer
 local SquadMembers = script.Parent.Main.SquadMembers
 
 local function squadMemberFrame(frame, player)
-	local Level = player:WaitForChild("PlayerData"):WaitForChild("Level")
-
 	local function setHealth()
 		local character = player.Character
 
@@ -29,12 +27,6 @@ local function squadMemberFrame(frame, player)
 		end
 	end
 
-	local function setLevel()
-		frame.Avatar.Level.Text = "LV. " .. Level.Value
-	end
-
-	Level.Changed:connect(setLevel)
-
 	if player == LocalPlayer then
 		local playerData = player:WaitForChild("PlayerData")
 		local levelValue = playerData:WaitForChild("Level")
@@ -49,6 +41,15 @@ local function squadMemberFrame(frame, player)
 
 		xpValue.Changed:connect(setXP)
 		setXP()
+
+		local Level = player:WaitForChild("PlayerData"):WaitForChild("Level")
+
+		local function setLevel()
+			frame.Avatar.Level.Text = "LV. " .. Level.Value
+		end
+
+		Level.Changed:connect(setLevel)
+		setLevel()
 	end
 
 	UserThumbnail(player):andThen(function(thumbnail)
@@ -71,7 +72,6 @@ local function squadMemberFrame(frame, player)
 	end
 
 	player.CharacterAdded:connect(characterAdded)
-	setLevel()
 
 	frame.Visible = true
 end

@@ -319,17 +319,15 @@ ReplicatedStorage.Remotes.PlayLobby.OnServerEvent:connect(function(player)
 		end):catch(function(problem)
 			ReplicatedStorage.Remotes.PlayLobby:FireClient(player, false, problem)
 		end):finally(function()
-			local countdown = lobby.Instance:FindFirstChild("Countdown")
-			if countdown then
-				countdown.Value = 0
-			end
+			if lobby.Instance:FindFirstChild("Countdown") then
+				lobby.Instance.Countdown.Value = 0
+				lobby.Teleporting = false
+				lobby.Promise = nil
 
-			lobby.Teleporting = false
-			lobby.Promise = nil
-
-			for _, player in pairs(lobby.Players) do
-				teleporting[player] = nil
-				ReplicatedStorage.Remotes.Teleporting:FireClient(player, false)
+				for _, player in pairs(lobby.Players) do
+					teleporting[player] = nil
+					ReplicatedStorage.Remotes.Teleporting:FireClient(player, false)
+				end
 			end
 		end)
 end)
