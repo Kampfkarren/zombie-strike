@@ -2,7 +2,7 @@ local SECONDS_IN_HOUR = 60 * 60
 
 return {
 	{
-		Cost = 1,
+		Cost = 99,
 		Name = "1 HOUR",
 
 		Product = 814932103,
@@ -10,7 +10,7 @@ return {
 	},
 
 	{
-		Cost = 65555555,
+		Cost = 149,
 		Name = "2 HOURS",
 
 		Product = 937201051,
@@ -18,7 +18,7 @@ return {
 	},
 
 	{
-		Cost = 4,
+		Cost = 249,
 		Name = "4 HOURS",
 
 		Product = 937201181,
@@ -26,7 +26,7 @@ return {
 	},
 
 	{
-		Cost = 42069,
+		Cost = 449,
 		Name = "8 HOURS",
 
 		Product = 937201317,
