@@ -206,6 +206,7 @@ AcceptTrade.OnServerEvent:connect(function(player)
 	local other = tradeState.otherState
 
 	if other.accepted then
+		tradeState.processing = true
 		local them = tradeState.tradingWith
 
 		local giving = {}
@@ -370,5 +371,6 @@ end)
 ServerStorage.EquipmentUpdated.Event:connect(function(player)
 	local tradeState = tradeStates[player]
 	if not tradeState then return end
+	if tradeState.processing then return end
 	cancelTrade(player, TradeConstants.Codes.RejectEquipYou, TradeConstants.Codes.RejectEquipThem)
 end)
