@@ -191,6 +191,28 @@ function TradeScreen:init()
 	end
 end
 
+function TradeScreen:didUpdate(prevProps)
+	local theirOfferDifferent = false
+
+	if #prevProps.trade.theirOffer == #self.props.trade.theirOffer then
+		for index, value in pairs(prevProps.trade.theirOffer) do
+			if self.props.trade.theirOffer[index].UUID ~= value.UUID then
+				theirOfferDifferent = true
+				break
+			end
+		end
+	else
+		theirOfferDifferent = true
+	end
+
+	if theirOfferDifferent then
+		self:setState({
+			theyAccept = false,
+			weAccept = false,
+		})
+	end
+end
+
 function TradeScreen:render()
 	local lootInfoThem, lootInfoUs
 	local _, hovered = next(self.state.lootStack)
