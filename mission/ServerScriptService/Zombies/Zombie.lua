@@ -378,7 +378,7 @@ end
 
 function Zombie:GetHealth()
 	local health = self:GetScale("Health")
-	health = health * (1 + (0.25 * (#Players:GetPlayers() - 1)))
+	health = health * (1 + (0.35 * (#Players:GetPlayers() - 1)))
 	return health
 end
 
