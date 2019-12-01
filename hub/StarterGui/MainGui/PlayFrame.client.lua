@@ -283,64 +283,66 @@ do
 		local unselect = true
 
 		for _, lobby in pairs(lobbies) do
-			local button = LobbyTemplate:Clone()
+			if lobby.Owner then
+				local button = LobbyTemplate:Clone()
 
-			local friends = Friends.IsFriendsWith(lobby.Owner)
+				local friends = Friends.IsFriendsWith(lobby.Owner)
 
-			if friends then
-				button.ImageColor3 = Color3.fromRGB(9, 132, 227)
-			end
+				if friends then
+					button.ImageColor3 = Color3.fromRGB(9, 132, 227)
+				end
 
-			local campaign = Campaigns[lobby.Campaign]
-			local difficulty = campaign.Difficulties[lobby.Difficulty]
+				local campaign = Campaigns[lobby.Campaign]
+				local difficulty = campaign.Difficulties[lobby.Difficulty]
 
-			local cantJoin = difficulty.MinLevel > level
-				or #lobby.Players == 4
-				or kickedFrom[lobby.Unique]
-				or (not lobby.Public and not friends)
+				local cantJoin = difficulty.MinLevel > level
+					or #lobby.Players == 4
+					or kickedFrom[lobby.Unique]
+					or (not lobby.Public and not friends)
 
-			if cantJoin then
-				button.ImageColor3 = Color3.fromRGB(252, 92, 101)
-			end
+				if cantJoin then
+					button.ImageColor3 = Color3.fromRGB(252, 92, 101)
+				end
 
-			UserThumbnail(lobby.Owner):andThen(function(avatar)
-				button.Inner.Avatar.Image = avatar
-			end)
+				UserThumbnail(lobby.Owner):andThen(function(avatar)
+					button.Inner.Avatar.Image = avatar
+				end)
 
-			button.Inner.Players.Text = #lobby.Players .. "/4"
+				button.Inner.Players.Text = #lobby.Players .. "/4"
 
-			local campaignName = campaign.Name .. " - " .. difficulty.Style.Name
+				local campaignName = campaign.Name .. " - " .. difficulty.Style.Name
 
-			if lobby.Hardcore then
-				campaignName = campaignName .. "💀"
-			end
+				if lobby.Hardcore then
+					campaignName = campaignName .. "💀"
+				end
 
-			if not lobby.Public then
-				campaignName = campaignName .. "🔒"
-			end
+				if not lobby.Public then
+					campaignName = campaignName .. "🔒"
+				end
 
-			button.Inner.Info.Campaign.Text = campaignName
-			button.Inner.Info.Username.Text = lobby.Owner.Name
+				button.Inner.Info.Campaign.Text = campaignName
+				button.Inner.Info.Username.Text = lobby.Owner.Name
 
-			button.MouseButton1Click:connect(function()
-				selectLobby(lobby)
-			end)
+				button.MouseButton1Click:connect(function()
+					selectLobby(lobby)
+				end)
 
-			button.SelectionGained:connect(function()
-				selectLobby(lobby)
-			end)
+				button.SelectionGained:connect(function()
+					selectLobby(lobby)
+				end)
 
-			table.insert(lobbyButtons, {
-				button = button,
-				cantJoin = cantJoin,
-				fallback = lobby.Unique,
-				friends = friends,
-				level = difficulty.MinLevel,
-			})
+				table.insert(lobbyButtons, {
+					button = button,
+					cantJoin = cantJoin,
+					fallback = lobby.Unique,
+					friends = friends,
+					level = difficulty.MinLevel,
+				})
 
-			if lobby.Unique == currentlySelected then
-				unselect = false
-				selectLobby(lobby)
+				if lobby.Unique == currentlySelected then
+					unselect = false
+					selectLobby(lobby)
+				end
 			end
 		end
 
