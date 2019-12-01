@@ -4,6 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
 
+local PlaceIds = require(ReplicatedStorage.Core.PlaceIds)
+
 local Spectate = ReplicatedStorage.LocalEvents.Spectate
 local StartSpectate = ReplicatedStorage.LocalEvents.StartSpectate
 local SpectateGui = Players.LocalPlayer
@@ -11,8 +13,6 @@ local SpectateGui = Players.LocalPlayer
 	:WaitForChild("MainGui")
 	:WaitForChild("Main")
 	:WaitForChild("Spectate")
-
-local HUB_PLACE = 3759927663
 
 local alivePlayers
 
@@ -106,7 +106,7 @@ end)
 
 SpectateGui.Leave.Activated:connect(function()
 	SpectateGui.Leave.Label.Text = "LEAVING..."
-	TeleportService:Teleport(HUB_PLACE)
+	TeleportService:Teleport(PlaceIds.GetHubPlace())
 end)
 
 SpectateGui.Next.Activated:connect(spectateNext)

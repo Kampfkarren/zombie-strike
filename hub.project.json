@@ -1,6 +1,6 @@
 {
   "name": "hub",
-  "servePlaceIds": [3759927663],
+  "servePlaceIds": [3759927663, 4479247072],
   "tree": {
     "$className": "DataModel",
     "ReplicatedFirst": {

@@ -15,6 +15,7 @@ local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfoButton = require(ReplicatedStorage.Core.UI.LootInfoButton)
+local PlaceIds = require(ReplicatedStorage.Core.PlaceIds)
 local OnDied = require(ReplicatedStorage.Core.OnDied)
 local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePreview)
 
@@ -31,7 +32,6 @@ local LootInfo = LootResults.LootInfo.Inner
 local FULL_TIME_ANIMATION = 1.5
 local FULL_TIME_GOLD = 250
 local FULL_TIME_XP = 2000
-local HUB_PLACE = 3759927663
 local REVEAL_ANIMATE_INTERVAL = 1
 
 local wordTweenIn = {
@@ -111,7 +111,7 @@ local function animate(label, amount, full)
 end
 
 local function leave()
-	TeleportService:Teleport(HUB_PLACE)
+	TeleportService:Teleport(PlaceIds.GetHubPlace())
 end
 
 LootResults.Minor.Leave.MouseButton1Click:connect(leave)

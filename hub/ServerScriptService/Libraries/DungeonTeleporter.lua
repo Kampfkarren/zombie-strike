@@ -2,18 +2,17 @@ local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
 
+local PlaceIds = require(ReplicatedStorage.Core.PlaceIds)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local dungeonDataStore = DataStoreService:GetDataStore("DungeonInfo")
-
-local DUNGEON_PLACE_ID = 3803533582
 
 local DungeonTeleporter = {}
 
 function DungeonTeleporter.ReserveServer()
 	return Promise.promisify(function()
 		local startTime = tick()
-		local accessCode, privateServerId = TeleportService:ReserveServer(DUNGEON_PLACE_ID)
+		local accessCode, privateServerId = TeleportService:ReserveServer(PlaceIds.GetMissionPlace())
 		print("🕴Reserve server took", tick() - startTime, "seconds")
 		return accessCode, privateServerId
 	end)()
@@ -37,7 +36,7 @@ function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId, l
 		print("🕴Setting dungeon data store took", tick() - startTime, "seconds")
 
 		TeleportService:TeleportToPrivateServer(
-			DUNGEON_PLACE_ID,
+			PlaceIds.GetMissionPlace(),
 			accessCode,
 			lobby.Players,
 			nil,

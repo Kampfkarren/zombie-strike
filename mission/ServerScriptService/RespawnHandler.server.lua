@@ -6,8 +6,7 @@ local TeleportService = game:GetService("TeleportService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
-
-local HUB_PLACE = 3759927663
+local PlaceIds = require(ReplicatedStorage.Core.PlaceIds)
 
 local goldScales = {}
 
@@ -63,7 +62,7 @@ Players.PlayerAdded:connect(function(player)
 
 				if not persist then
 					for _, player in pairs(Players:GetPlayers()) do
-						TeleportService:Teleport(HUB_PLACE, player)
+						TeleportService:Teleport(PlaceIds.GetHubPlace(), player)
 					end
 				end
 			end)
