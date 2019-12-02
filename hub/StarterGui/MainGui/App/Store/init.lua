@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local assign = require(ReplicatedStorage.Core.assign)
+local BuyBrains = require(script.BuyBrains)
 local Close = require(script.Parent.Close)
 local GamePasses = require(script.GamePasses)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -52,6 +53,7 @@ end)(CategoryButton)
 local Store = Roact.PureComponent:extend("Store")
 
 function Store:init()
+	self.buyBrainsRef = Roact.createRef()
 	self.gamePassesRef = Roact.createRef()
 	self.shopRef = Roact.createRef()
 	self.xpMultiplierRef = Roact.createRef()
@@ -68,6 +70,8 @@ function Store:UpdateCurrentPage()
 		page:JumpTo(self.xpMultiplierRef:getValue())
 	elseif self.props.page == "GamePasses" then
 		page:JumpTo(self.gamePassesRef:getValue())
+	elseif self.props.page == "BuyBrains" then
+		page:JumpTo(self.buyBrainsRef:getValue())
 	end
 end
 
@@ -120,22 +124,29 @@ function Store:render()
 			ShopButton = e(CategoryButton, {
 				Page = "Shop",
 				Text = "SHOP",
-				Size = UDim2.new(0.15, 0, 1, 0),
+				Size = UDim2.fromScale(0.15, 1),
 				LayoutOrder = 1,
 			}),
 
 			XPButton = e(CategoryButton, {
 				Page = "XP",
 				Text = "DOUBLE XP",
-				Size = UDim2.new(0.25, 0, 1, 0),
+				Size = UDim2.fromScale(0.25, 1),
 				LayoutOrder = 2,
 			}),
 
 			GamePasses = e(CategoryButton, {
 				Page = "GamePasses",
 				Text = "GAME PASSES",
-				Size = UDim2.new(0.3, 0, 1, 0),
+				Size = UDim2.fromScale(0.3, 1),
 				LayoutOrder = 3,
+			}),
+
+			BuyBrains = e(CategoryButton, {
+				Page = "BuyBrains",
+				Text = "BRAINS",
+				Size = UDim2.fromScale(0.2, 1),
+				LayoutOrder = 4,
 			}),
 		}),
 
@@ -172,6 +183,10 @@ function Store:render()
 
 			XPMultipliers = e(XPMultipliers, {
 				[Roact.Ref] = self.xpMultiplierRef,
+			}),
+
+			BuyBrains = e(BuyBrains, {
+				[Roact.Ref] = self.buyBrainsRef,
 			}),
 		}),
 	})

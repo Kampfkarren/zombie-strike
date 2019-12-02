@@ -36,5 +36,16 @@ local function updateBrains()
 	})
 end
 
+Brains.BuyButton.MouseButton1Click:connect(function()
+	State:dispatch({
+		type = "OpenStore",
+	})
+
+	State:dispatch({
+		type = "SetStorePage",
+		page = "BuyBrains",
+	})
+end)
+
 updateBrains()
 BrainsValue.Changed:connect(updateBrains)
