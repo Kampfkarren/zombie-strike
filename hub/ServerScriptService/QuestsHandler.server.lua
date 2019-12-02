@@ -17,7 +17,7 @@ local function pickArgument(argument)
 
 		if argument.RoundToNearest then
 			local near = argument.RoundToNearest
-			number = (number + near - 1) / near * near
+			number = math.floor((number + near / 2) / near) * near
 		end
 
 		return number
@@ -60,8 +60,11 @@ Players.PlayerAdded:connect(function(player)
 
 	if quests.Day ~= time.yday then
 		quests = getQuests()
-		questsStore:Set(quests)
+		questsStore:Set({
+			Day = time.yday,
+			Quests = quests,
+		})
 	end
 
-	UpdateQuests:FireClient(player, quests)
+	UpdateQuests:FireClient(player, quests.Quests)
 end)

@@ -306,6 +306,9 @@ function Zombie:Die()
 	self.instance.Humanoid.Health = 0
 	self.aliveMaid:DoCleaning()
 	ReplicatedStorage.Remotes.KillEnemy:FireAllClients(self.instance)
+	for _, player in pairs(Players:GetPlayers()) do
+		ServerStorage.Events.GiveQuest:Fire(player, "KillZombies", 1)
+	end
 	self:GiveXP()
 	self:PlayDeathSound()
 	self:MaybeDropBuff()

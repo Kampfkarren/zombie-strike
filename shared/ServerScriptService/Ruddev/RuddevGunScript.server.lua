@@ -2,6 +2,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local ServerStorage = game:GetService("ServerStorage")
 local Players = game:GetService("Players")
 
 -- constants
@@ -12,6 +13,8 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local DAMAGE = require(MODULES.Damage)
 
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+
+local GiveQuest = ServerStorage.Events.GiveQuest
 
 -- variables
 
@@ -118,6 +121,12 @@ local function hit(player, hit, index)
 												1, 1
 											).Damage
 										end
+									end
+
+									for _, player in pairs(Players:GetPlayers()) do
+										GiveQuest:Fire(player, "KillZombiesWeapon", 1, function(quest)
+											return quest.Args[2] == shot.Item.WeaponData.Type.Value
+										end)
 									end
 								end
 							end

@@ -1,7 +1,9 @@
 local CollectionService = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")
 local PhysicsService = game:GetService("PhysicsService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
@@ -11,6 +13,7 @@ local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
+local GiveQuest = ServerStorage.Events.GiveQuest
 
 local BASE_DAMAGE = 65
 local BASE_DAMAGE_BETTER = 65 * 1.5
@@ -107,6 +110,11 @@ ReplicatedStorage.Remotes.FireGrenade.OnServerInvoke = function(player)
 							local humanoid = zombie.Humanoid
 							if not ReplicatedStorage.HubWorld.Value then
 								humanoid:TakeDamage(damage)
+								if humanoid.Health <= 0 then
+									for _, player in pairs(Players:GetPlayers()) do
+										GiveQuest:Fire(player, "KillZombiesGrenade", 1)
+									end
+								end
 							end
 							ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
 							ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)

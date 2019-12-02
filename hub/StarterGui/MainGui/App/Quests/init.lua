@@ -7,7 +7,7 @@ local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
 local e = Roact.createElement
 
-local FILL_IMAGE = "rbxasset://custom/fill2.png"
+local FILL_IMAGE = "rbxassetid://4480314028"
 
 local COLOR_FILLED = Color3.fromRGB(204, 142, 53)
 local COLOR_UNFILLED = Color3.fromRGB(255, 177, 66)
@@ -22,7 +22,8 @@ local function Quest(props)
 			BackgroundTransparency = 1,
 			Font = Enum.Font.Gotham,
 			Size = UDim2.fromScale(1, 0.5),
-			Text = QuestsDictionary.Quests[props.Quest.Type].Text:format(unpack(props.Quest.Args)),
+			Text = QuestsDictionary.Quests[props.Quest.Type].Text:format(unpack(props.Quest.Args))
+				.. " - " .. QuestsDictionary.Reward .. "🧠",
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
 			TextXAlignment = Enum.TextXAlignment.Left,

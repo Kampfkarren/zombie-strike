@@ -20,9 +20,10 @@ local schema = t.values(t.strictInterface({
 }))
 
 local QuestsDictionary = {
+	Reward = 100,
 	Quests = {
 		KillZombies = {
-			Text = "Kill %d zombies",
+			Text = "Kill %d zombies as a team",
 			Args = {
 				{
 					Type = "Number",
@@ -33,7 +34,7 @@ local QuestsDictionary = {
 		},
 
 		KillZombiesWeapon = {
-			Text = "Kill %d zombies with a %s",
+			Text = "Kill %d zombies with a %s as a team",
 			Args = {
 				{
 					Type = "Number",
@@ -48,7 +49,7 @@ local QuestsDictionary = {
 		},
 
 		KillZombiesGrenade = {
-			Text = "Kill %d zombies with a grenade",
+			Text = "Kill %d zombies with a grenade as a team",
 			Args = {
 				{
 					Type = "Number",
