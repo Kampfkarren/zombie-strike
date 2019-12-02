@@ -6,6 +6,10 @@ return function()
 	MockPlayer.Version = 6
 
 	MockPlayer.CodesUsed = {}
+	MockPlayer.Quests = {
+		Day = 0,
+		Quests = {},
+	}
 
 	MockPlayer.UpgradedSomething = false
 

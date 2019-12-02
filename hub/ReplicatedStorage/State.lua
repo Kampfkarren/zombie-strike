@@ -100,6 +100,16 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		"Trading",
 	})),
 
+	quests = Rodux.createReducer({
+		quests = {},
+	}, {
+		SetQuests = function(_, action)
+			return {
+				quests = action.quests,
+			}
+		end,
+	}),
+
 	store = Rodux.createReducer({
 		contents = {},
 		equipped = {},
@@ -228,6 +238,13 @@ ReplicatedStorage.Remotes.UpdateInventory.OnClientEvent:connect(function(invento
 	Store:dispatch({
 		type = "UpdateInventory",
 		newInventory = loot,
+	})
+end)
+
+ReplicatedStorage.Remotes.UpdateQuests.OnClientEvent:connect(function(quests)
+	Store:dispatch({
+		type = "SetQuests",
+		quests = quests,
 	})
 end)
 
