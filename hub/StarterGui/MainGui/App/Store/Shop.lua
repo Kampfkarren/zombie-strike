@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local DayTimer = require(ReplicatedStorage.Core.UI.Components.DayTimer)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local StoreCard = require(script.Parent.StoreCard)
@@ -46,7 +47,7 @@ local function Shop(props)
 					ItemType = "Particle",
 
 					LayoutOrder = 1,
-					Price = 299,
+					Price = Cosmetics.Distribution.Particle.Cost,
 					Window = props[Roact.Ref],
 				}),
 
@@ -55,7 +56,7 @@ local function Shop(props)
 					ItemType = "Particle",
 
 					LayoutOrder = 2,
-					Price = 299,
+					Price = Cosmetics.Distribution.Particle.Cost,
 					Window = props[Roact.Ref],
 				}),
 
@@ -64,7 +65,7 @@ local function Shop(props)
 					ItemType = "Face",
 
 					LayoutOrder = 3,
-					Price = 99,
+					Price = Cosmetics.Distribution.Face.Cost,
 					Window = props[Roact.Ref],
 				}),
 
@@ -73,7 +74,7 @@ local function Shop(props)
 					ItemType = "Face",
 
 					LayoutOrder = 3,
-					Price = 99,
+					Price = Cosmetics.Distribution.Face.Cost,
 					Window = props[Roact.Ref],
 				}),
 			}),
@@ -96,7 +97,7 @@ local function Shop(props)
 					Size = UDim2.new(1, 0, 0.5, 0),
 
 					LayoutOrder = 1,
-					Price = 599,
+					Price = Cosmetics.Distribution.LowTier.Cost,
 					Window = props[Roact.Ref],
 				}),
 
@@ -106,7 +107,7 @@ local function Shop(props)
 					Size = UDim2.new(1, 0, 0.5, 0),
 
 					LayoutOrder = 2,
-					Price = 599,
+					Price = Cosmetics.Distribution.LowTier.Cost,
 					Window = props[Roact.Ref],
 				}),
 			}),
@@ -116,7 +117,7 @@ local function Shop(props)
 				ItemType = "HighTier",
 				Size = UDim2.new(0.3, 0, 1, 0),
 
-				Price = 799,
+				Price = Cosmetics.Distribution.HighTier.Cost,
 				Window = props[Roact.Ref],
 			}),
 		}),

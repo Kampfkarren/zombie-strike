@@ -20,6 +20,7 @@ ReplicatedStorage.Remotes.BuyCosmetic.OnServerEvent:connect(function(player, ite
 		return
 	end
 
+	local brains, brainsStore = Data.GetPlayerData(player, "Brains")
 	local cosmetics, cosmeticsStore = Data.GetPlayerData(player, "Cosmetics")
 
 	for _, owned in pairs(cosmetics.Owned) do
@@ -28,6 +29,14 @@ ReplicatedStorage.Remotes.BuyCosmetic.OnServerEvent:connect(function(player, ite
 			return
 		end
 	end
+
+	local cost = Cosmetics.Distribution[itemType].Cost
+	if brains < cost then
+		warn("BuyCosmetic: player doesn't have enough brains (you can say that again)")
+		return
+	end
+
+	brainsStore:Increment(-cost)
 
 	if item.Type == "LowTier" or item.Type == "HighTier" then
 		table.insert(cosmetics.Owned, item.Index + 1)
