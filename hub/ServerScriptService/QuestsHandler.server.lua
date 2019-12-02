@@ -74,11 +74,12 @@ Players.PlayerAdded:connect(function(player)
 	end
 
 	if quests.Day ~= time.yday then
-		quests = getQuests()
-		questsStore:Set({
+		quests = {
 			Day = time.yday,
-			Quests = quests,
-		})
+			Quests = getQuests(),
+		}
+
+		questsStore:Set(quests)
 	end
 
 	UpdateQuests:FireClient(player, quests.Quests)
