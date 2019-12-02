@@ -15,6 +15,14 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 
 local Modalifier = Roact.Component:extend("Modalifier")
 
+local function getWindow(window)
+	if typeof(window) == "Instance" then
+		return window
+	else
+		return window:getValue()
+	end
+end
+
 function Modalifier:init()
 	self.state = {
 		ContentAbsolutePosition = Vector2.new(0, 0),
@@ -47,7 +55,7 @@ function Modalifier:render()
 		Portal = Roact.createElement(Roact.Portal, {
 			-- Future redesign strongly suggested here:
 			-- https://jira.roblox.com/browse/CLILUACORE-287
-			target = self.props.Window,
+			target = getWindow(self.props.Window),
 		}, {
 			Curtain = Roact.createElement("TextButton", {
 				Size = UDim2.new(1, 0, 1, 0),

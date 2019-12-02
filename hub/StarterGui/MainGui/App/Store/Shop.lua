@@ -47,6 +47,7 @@ local function Shop(props)
 
 					LayoutOrder = 1,
 					Price = 299,
+					Window = props[Roact.Ref],
 				}),
 
 				Particle2 = e(StoreCard, {
@@ -55,6 +56,7 @@ local function Shop(props)
 
 					LayoutOrder = 2,
 					Price = 299,
+					Window = props[Roact.Ref],
 				}),
 
 				Face1 = e(StoreCard, {
@@ -63,6 +65,7 @@ local function Shop(props)
 
 					LayoutOrder = 3,
 					Price = 99,
+					Window = props[Roact.Ref],
 				}),
 
 				Face2 = e(StoreCard, {
@@ -71,6 +74,7 @@ local function Shop(props)
 
 					LayoutOrder = 3,
 					Price = 99,
+					Window = props[Roact.Ref],
 				}),
 			}),
 
@@ -93,6 +97,7 @@ local function Shop(props)
 
 					LayoutOrder = 1,
 					Price = 599,
+					Window = props[Roact.Ref],
 				}),
 
 				LowTier2 = e(StoreCard, {
@@ -102,6 +107,7 @@ local function Shop(props)
 
 					LayoutOrder = 2,
 					Price = 599,
+					Window = props[Roact.Ref],
 				}),
 			}),
 
@@ -111,6 +117,7 @@ local function Shop(props)
 				Size = UDim2.new(0.3, 0, 1, 0),
 
 				Price = 799,
+				Window = props[Roact.Ref],
 			}),
 		}),
 

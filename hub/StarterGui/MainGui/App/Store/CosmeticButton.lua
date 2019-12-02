@@ -50,7 +50,7 @@ function CosmeticButton:init()
 end
 
 function CosmeticButton:shouldUpdate(nextProps)
-	return self.props.Item ~= nextProps.Item
+	return self.props.Item ~= nextProps.Item or self.props[Roact.Children] ~= nextProps[Roact.Children]
 end
 
 function CosmeticButton:render()

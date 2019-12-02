@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local ConfirmPrompt = require(ReplicatedStorage.Core.UI.Components.ConfirmPrompt)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local InventoryContents = require(script.Parent.Inventory.InventoryContents)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
@@ -216,55 +217,11 @@ function ShopkeeperGui:render()
 	local sellAllDropdown
 
 	if self.state.selling then
-		sellAllDropdown = e(Modalifier, {
-			OnClosed = self.closeSellAll,
+		sellAllDropdown = e(ConfirmPrompt, {
 			Window = self.ref:getValue(),
-
-			Render = function()
-				return e("Frame", {
-					BackgroundTransparency = 0.5,
-					BackgroundColor3 = Color3.new(0, 0, 0),
-					BorderSizePixel = 0,
-					Size = UDim2.fromScale(1, 1),
-				}, {
-					Label = e("TextLabel", {
-						AnchorPoint = Vector2.new(0.5, 0.5),
-						BackgroundTransparency = 1,
-						Font = Enum.Font.GothamBold,
-						Position = UDim2.fromScale(0.5, 0.4),
-						Size = UDim2.fromScale(0.6, 0.4),
-						Text = "Are you sure you want to sell ALL unequipped and unfavorited items?",
-						TextColor3 = Color3.new(1, 1, 1),
-						TextScaled = true,
-					}),
-
-					Yes = e("TextButton", {
-						AnchorPoint = Vector2.new(0.5, 1),
-						BackgroundColor3 = UPGRADE_COLOR,
-						BorderSizePixel = 0,
-						Font = Enum.Font.GothamBold,
-						Position = UDim2.fromScale(0.3, 0.9),
-						Size = UDim2.fromScale(0.3, 0.1),
-						Text = "YES",
-						TextColor3 = Color3.new(1, 1, 1),
-						TextScaled = true,
-						[Roact.Event.Activated] = self.trulySellAll,
-					}),
-
-					No = e("TextButton", {
-						AnchorPoint = Vector2.new(0.5, 1),
-						BackgroundColor3 = SELL_COLOR,
-						BorderSizePixel = 0,
-						Font = Enum.Font.GothamBold,
-						Position = UDim2.fromScale(0.7, 0.9),
-						Size = UDim2.fromScale(0.3, 0.1),
-						Text = "NO",
-						TextColor3 = Color3.new(1, 1, 1),
-						TextScaled = true,
-						[Roact.Event.Activated] = self.closeSellAll,
-					}),
-				})
-			end,
+			Text = "Are you sure you want to sell ALL unequipped and unfavorited items?",
+			Yes = self.trulySellAll,
+			No = self.closeSellAll,
 		})
 	end
 

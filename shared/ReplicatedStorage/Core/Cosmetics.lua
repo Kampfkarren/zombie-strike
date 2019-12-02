@@ -85,24 +85,10 @@ for index, item in ipairs(Cosmetics.Cosmetics) do
 end
 
 Cosmetics.Distribution = {
-	HighTier = {
-		788904610,
-	},
-
-	LowTier = {
-		789065538,
-		789073931,
-	},
-
-	Face = {
-		789066394,
-		789260022,
-	},
-
-	Particle = {
-		789066975,
-		789248766,
-	},
+	HighTier = 1,
+	LowTier = 2,
+	Face = 2,
+	Particle = 2,
 }
 
 function Cosmetics.GetStoreItems()
@@ -126,7 +112,7 @@ function Cosmetics.GetStoreItems()
 	for key, passes in pairs(Cosmetics.Distribution) do
 		local products = {}
 
-		for _ = 1, #passes do
+		for _ = 1, passes do
 			table.insert(products, table.remove(collated[key], rng:NextInteger(1, #collated[key])))
 		end
 

@@ -1,8 +1,8 @@
-local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 
+local BrainsPurchase = require(ReplicatedStorage.Core.UI.Components.BrainsPurchase)
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local CosmeticButton = require(script.Parent.CosmeticButton)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -29,11 +29,20 @@ function StoreCard:init()
 
 		if not props.owned then
 			SoundService.SFX.Purchase:Play()
-			MarketplaceService:PromptProductPurchase(
-				LocalPlayer,
-				Cosmetics.Distribution[props.ItemType][props.ItemIndex]
-			)
+			self:setState({
+				buyingProduct = true,
+			})
 		end
+	end
+
+	self.closeBuyingProduct = function()
+		self:setState({
+			buyingProduct = false,
+		})
+	end
+
+	self.finishBuyProduct = function()
+		ReplicatedStorage.Remotes.BuyCosmetic:FireServer(self.props.ItemType, self.props.ItemIndex)
 	end
 end
 
@@ -58,7 +67,7 @@ function StoreCard:render()
 			Font = Enum.Font.GothamBold,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			Size = UDim2.new(0.95, 0, 0.9, 0),
-			Text = "R$" .. self.props.Price,
+			Text = self.props.Price .. "🧠",
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
 		}),
@@ -112,6 +121,17 @@ function StoreCard:render()
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 			}),
+		})
+	end
+
+	if self.state.buyingProduct then
+		children.Purchase = e(BrainsPurchase, {
+			Cost = self.props.Price,
+			Name = item.Name,
+			Window = self.props.Window,
+
+			OnBuy = self.finishBuyProduct,
+			OnClose = self.closeBuyingProduct,
 		})
 	end
 
