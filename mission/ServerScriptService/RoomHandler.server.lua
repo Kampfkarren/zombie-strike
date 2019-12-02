@@ -195,14 +195,12 @@ local function endMission()
 				end)
 			end),
 		}):andThen(function(data)
-			for _, player in pairs(Players:GetPlayers()) do
-				if Dungeon.GetDungeonData("Hardcore") then
-					GiveQuest:Fire(player, "BeatHardcoreMissions", 1)
-				end
+			if Dungeon.GetDungeonData("Hardcore") then
+				GiveQuest:Fire(player, "BeatHardcoreMissions", 1)
+			end
 
-				if not damagedByBoss[player] then
-					GiveQuest:Fire(player, "DefeatBossWithoutDamage", 1)
-				end
+			if not damagedByBoss[player] then
+				GiveQuest:Fire(player, "DefeatBossWithoutDamage", 1)
 			end
 
 			DataStore2.SaveAllAsync(player)

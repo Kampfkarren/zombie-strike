@@ -16,6 +16,7 @@ Players.PlayerAdded:connect(function(player)
 				and not playedWithFriend[player]
 			then
 				playedWithFriend[player] = true
+				GiveQuest:Fire(player, "PlayMissionWithFriend", 1)
 
 				if not playedWithFriend[otherPlayer] then
 					playedWithFriend[otherPlayer] = true
