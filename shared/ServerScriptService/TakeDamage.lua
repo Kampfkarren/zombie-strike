@@ -1,4 +1,6 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 
 local BULLETSTORM_BUFF = 0.75
 local DEATH_BUFF_INTERVAL = 0.075
@@ -31,6 +33,10 @@ return function(player, damage)
 		damage = damage * BULLETSTORM_BUFF
 	elseif ReplicatedStorage.CurrentPowerup.Value:match("Tank/") then
 		return
+	end
+
+	if CollectionService:GetTagged("Boss")[1] ~= nil then
+		ServerStorage.Events.DamagedByBoss:Fire(player)
 	end
 
 	character.Humanoid:TakeDamage(damage)

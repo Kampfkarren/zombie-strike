@@ -58,6 +58,36 @@ local QuestsDictionary = {
 				},
 			},
 		},
+
+		BeatHardcoreMissions = {
+			Text = "Beat %d hardcore missions",
+			Args = {
+				{
+					Type = "Number",
+					Range = { 5, 7 },
+				},
+			},
+		},
+
+		PlayMissionWithFriend = {
+			Text = "Play %d mission with a friend",
+			Args = {
+				{
+					Type = "Number",
+					Range = { 1, 1 },
+				},
+			},
+		},
+
+		DefeatBossWithoutDamage = {
+			Text = "Defeat %d boss without taking any damage",
+			Args = {
+				{
+					Type = "Number",
+					Range = { 1, 1 },
+				},
+			}
+		},
 	},
 }
 

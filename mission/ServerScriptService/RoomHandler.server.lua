@@ -18,6 +18,7 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 local Zombie = require(Zombies.Zombie)
 
 local BossTimer = ReplicatedStorage.BossTimer
+local GiveQuest = ServerStorage.Events.GiveQuest
 local JoinTimer = ReplicatedStorage.JoinTimer
 local Rooms = ServerStorage.Rooms
 
@@ -25,6 +26,12 @@ local SPEED_BONUS = 0.33
 local SPEED_TIME = 3.5
 
 DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP", "DungeonsPlayed")
+
+local damagedByBoss = {}
+
+ServerStorage.Events.DamagedByBoss.Event:connect(function(player)
+	damagedByBoss[player] = true
+end)
 
 local difficultyInfo
 
@@ -188,6 +195,16 @@ local function endMission()
 				end)
 			end),
 		}):andThen(function(data)
+			for _, player in pairs(Players:GetPlayers()) do
+				if Dungeon.GetDungeonData("Hardcore") then
+					GiveQuest:Fire(player, "BeatHardcoreMissions", 1)
+				end
+
+				if not damagedByBoss[player] then
+					GiveQuest:Fire(player, "DefeatBossWithoutDamage", 1)
+				end
+			end
+
 			DataStore2.SaveAllAsync(player)
 
 			local loot, xp, gold = data[1], data[2][1], data[2][2]
