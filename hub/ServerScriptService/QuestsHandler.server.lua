@@ -56,7 +56,22 @@ end
 
 Players.PlayerAdded:connect(function(player)
 	local time = os.date("!*t")
+	local _, brainsStore = Data.GetPlayerData(player, "Brains")
 	local quests, questsStore = Data.GetPlayerData(player, "Quests")
+
+	local modifiedQuests = false
+
+	for _, quest in ipairs(quests.Quests) do
+		if not quest.Finished and quest.Progress >= quest.Args[1] then
+			quest.Finished = true
+			brainsStore:Increment(QuestsDictionary.Reward, 0)
+			modifiedQuests = true
+		end
+	end
+
+	if modifiedQuests then
+		questsStore:Set(quests)
+	end
 
 	if quests.Day ~= time.yday then
 		quests = getQuests()

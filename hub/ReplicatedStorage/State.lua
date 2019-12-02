@@ -51,6 +51,12 @@ local function pageReducer(pages)
 end
 
 Store = Rodux.Store.new(Rodux.combineReducers({
+	brains = Rodux.createReducer(0, {
+		UpdateBrains = function(_, action)
+			return action.brains
+		end,
+	}),
+
 	equipment = Rodux.createReducer(nil, {
 		UpdateEquipment = function(_, action)
 			local armor, helmet, weapon = action.newArmor, action.newHelmet, action.newWeapon

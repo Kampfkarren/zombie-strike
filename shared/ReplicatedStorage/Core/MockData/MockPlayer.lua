@@ -21,6 +21,7 @@ return function()
 	MockPlayer.Level = 1
 	MockPlayer.XP = 0
 	MockPlayer.Gold = 0
+	MockPlayer.Brains = 0
 
 	MockPlayer.Weapon = {
 		Type = "Pistol",

@@ -13,6 +13,18 @@ local COLOR_FILLED = Color3.fromRGB(204, 142, 53)
 local COLOR_UNFILLED = Color3.fromRGB(255, 177, 66)
 
 local function Quest(props)
+	local progress = props.Quest.Progress
+	local goal = props.Quest.Args[1]
+
+	local text = QuestsDictionary.Quests[props.Quest.Type].Text:format(unpack(props.Quest.Args))
+		.. " - " .. QuestsDictionary.Reward .. "🧠"
+	local progressText = math.min(goal, progress) .. "/" .. goal
+
+	if progress / goal >= 1 then
+		text = QuestsDictionary.Reward .. "🧠✅"
+		progressText = "Finished!"
+	end
+
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		LayoutOrder = props.LayoutOrder,
@@ -22,8 +34,7 @@ local function Quest(props)
 			BackgroundTransparency = 1,
 			Font = Enum.Font.Gotham,
 			Size = UDim2.fromScale(1, 0.5),
-			Text = QuestsDictionary.Quests[props.Quest.Type].Text:format(unpack(props.Quest.Args))
-				.. " - " .. QuestsDictionary.Reward .. "🧠",
+			Text = text,
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
 			TextXAlignment = Enum.TextXAlignment.Left,
@@ -41,7 +52,7 @@ local function Quest(props)
 				BackgroundTransparency = 1,
 				Image = FILL_IMAGE,
 				ImageColor3 = COLOR_FILLED,
-				Size = UDim2.fromScale(props.Quest.Progress / props.Quest.Args[1], 1),
+				Size = UDim2.fromScale(math.min(1, progress / goal), 1),
 			}),
 
 			ProgressText = e("TextLabel", {
@@ -50,7 +61,7 @@ local function Quest(props)
 				Font = Enum.Font.Gotham,
 				Position = UDim2.fromScale(1, 0),
 				Size = UDim2.fromScale(0.95, 1),
-				Text = props.Quest.Progress .. "/" .. props.Quest.Args[1],
+				Text = progressText,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextXAlignment = Enum.TextXAlignment.Left,

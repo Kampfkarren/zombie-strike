@@ -68,6 +68,7 @@ Players.PlayerAdded:connect(function(player)
 	initStat(player, "Level", playerData)
 	initStat(player, "XP", playerData)
 	initStat(player, "Gold", playerData)
+	initStat(player, "Brains", playerData)
 	initStat(player, "DungeonsPlayed", playerData)
 
 	playerData.Parent = player
