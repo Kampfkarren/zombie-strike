@@ -10,6 +10,7 @@ local Inventory = require(script.Inventory)
 local Quests = require(script.Quests)
 local Settings = require(script.Settings)
 local Shopkeeper = require(script.Shopkeeper)
+local SoftShutdownAlert = require(script.SoftShutdownAlert)
 local Store = require(script.Store)
 local Trading = require(script.Trading)
 
@@ -26,6 +27,7 @@ local function App()
 		Quests = e(Quests),
 		Settings = e(Settings),
 		Shopkeeper = e(Shopkeeper),
+		SoftShutdownAlert = e(SoftShutdownAlert),
 		Store = e(Store),
 		Trading = e(Trading),
 	})
