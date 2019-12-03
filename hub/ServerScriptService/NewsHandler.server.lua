@@ -33,7 +33,7 @@ local function checkNewUpdate(player)
 	return Data.GetPlayerDataAsync(player, "GameVersion")
 		:andThen(function(version, versionStore)
 			if version < LAST_GAME_UPDATE then
-				versionStore:Set(version)
+				versionStore:Set(LAST_GAME_UPDATE)
 				return { { "NewUpdate" } }
 			else
 				return NO_NEWS
