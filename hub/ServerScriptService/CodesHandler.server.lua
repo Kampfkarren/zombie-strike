@@ -8,6 +8,12 @@ local CODES = {
 	evil = DEFAULT_GOLD,
 	goblin = DEFAULT_GOLD,
 	zombie = DEFAULT_GOLD,
+	million = DEFAULT_GOLD,
+	prize = DEFAULT_GOLD,
+	strike = DEFAULT_GOLD,
+	loot = DEFAULT_GOLD,
+	cool = DEFAULT_GOLD,
+	rainway = DEFAULT_GOLD,
 }
 
 local SendCode = ReplicatedStorage.Remotes.SendCode
