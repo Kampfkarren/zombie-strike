@@ -5,7 +5,6 @@ local ConfirmPrompt = require(ReplicatedStorage.Core.UI.Components.ConfirmPrompt
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local InventoryContents = require(script.Parent.Inventory.InventoryContents)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
-local Modalifier = require(ReplicatedStorage.Core.UI.Components.Modalifier)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local SellCost = require(ReplicatedStorage.Libraries.SellCost)
@@ -134,13 +133,15 @@ function ShopkeeperGui:render()
 				text = "UPGRADE (" .. EnglishNumbers(upgradeCost) .. " G)"
 
 				activated = function()
-					Upgrade:FireServer(loot.UUID)
-					self:setState({
-						selected = {
-							equipped = true,
-							loot = loot,
-						},
-					})
+					if self.props.gold >= upgradeCost then
+						Upgrade:FireServer(loot.UUID)
+						self:setState({
+							selected = {
+								equipped = true,
+								loot = loot,
+							},
+						})
+					end
 				end
 			end
 		else
