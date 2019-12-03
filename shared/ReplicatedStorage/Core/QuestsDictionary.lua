@@ -27,7 +27,7 @@ local QuestsDictionary = {
 			Args = {
 				{
 					Type = "Number",
-					Range = { 60, 100 },
+					Range = { 100, 150 },
 					RoundToNearest = 5,
 				},
 			},
@@ -38,7 +38,7 @@ local QuestsDictionary = {
 			Args = {
 				{
 					Type = "Number",
-					Range = { 50, 80 },
+					Range = { 70, 100 },
 					RoundToNearest = 5,
 				},
 
@@ -53,7 +53,7 @@ local QuestsDictionary = {
 			Args = {
 				{
 					Type = "Number",
-					Range = { 50, 80 },
+					Range = { 70, 100 },
 					RoundToNearest = 5,
 				},
 			},
@@ -70,21 +70,21 @@ local QuestsDictionary = {
 		},
 
 		PlayMissionWithFriend = {
-			Text = "Play %d mission with a friend",
+			Text = "Play %d missions with a friend",
 			Args = {
 				{
 					Type = "Number",
-					Range = { 1, 1 },
+					Range = { 2, 3 },
 				},
 			},
 		},
 
 		DefeatBossWithoutDamage = {
-			Text = "Defeat %d boss without taking any damage",
+			Text = "Defeat %d bosses without taking any damage",
 			Args = {
 				{
 					Type = "Number",
-					Range = { 1, 1 },
+					Range = { 3, 3 },
 				},
 			}
 		},
