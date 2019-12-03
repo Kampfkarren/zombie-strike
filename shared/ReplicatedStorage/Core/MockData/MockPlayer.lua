@@ -4,6 +4,7 @@ return function()
 	local MockPlayer = {}
 
 	MockPlayer.Version = 6
+	MockPlayer.GameVersion = 1
 
 	MockPlayer.CodesUsed = {}
 	MockPlayer.Quests = {

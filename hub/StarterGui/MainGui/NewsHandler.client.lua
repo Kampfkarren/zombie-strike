@@ -54,7 +54,7 @@ SendNews.OnClientEvent:connect(function(news)
 		if newsRead == #news then
 			News.Visible = false
 		else
-			News.Inner.Image.UIPageLayout:NextPage()
+			News.Inner.Image.UIPageLayout:Next()
 		end
 	end)
 

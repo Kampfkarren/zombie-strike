@@ -11,6 +11,7 @@ local SendNews = ReplicatedStorage.Remotes.SendNews
 
 local DUNGEONS_UNTIL_UPGRADE = 3
 local INVENTORY_SPACE_TO_ALERT = 25 / 30
+local LAST_GAME_UPDATE = 2
 
 local MOCK_PLAYER = MockPlayer()
 local NO_NEWS = newproxy(true)
@@ -25,6 +26,18 @@ local function checkInventorySpace(player)
 
 				return NO_NEWS
 			end)
+		end)
+end
+
+local function checkNewUpdate(player)
+	return Data.GetPlayerDataAsync(player, "GameVersion")
+		:andThen(function(version, versionStore)
+			if version < LAST_GAME_UPDATE then
+				versionStore:Set(version)
+				return { { "NewUpdate" } }
+			else
+				return NO_NEWS
+			end
 		end)
 end
 
@@ -115,6 +128,7 @@ end
 Players.PlayerAdded:connect(function(player)
 	Promise.all({
 		checkInventorySpace(player),
+		checkNewUpdate(player),
 		checkUnlockedContent(player),
 		checkUseInventory(player),
 		checkUpgradeSomething(player),
