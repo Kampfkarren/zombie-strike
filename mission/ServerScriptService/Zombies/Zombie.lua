@@ -302,6 +302,7 @@ function Zombie:CheckAttack()
 end
 
 function Zombie:Die()
+	if not self.alive then return end
 	self.alive = false
 	self.instance.Humanoid.Health = 0
 	self.aliveMaid:DoCleaning()
