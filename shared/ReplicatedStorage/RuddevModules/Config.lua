@@ -10,7 +10,7 @@ Bases.Pistol = {
 	Type = "Gun",
 	Size = "Light",
 
-	Recoil = 30,
+	Recoil = 25,
 	Range = 500,
 	ShotSize = 1,
 	Spread = 2,
@@ -38,7 +38,7 @@ Bases.Shotgun = {
 	Type = "Gun",
 	Size = "Shotgun",
 
-	Recoil = 50,
+	Recoil = 30,
 	Range = 150,
 	Spread = 8,
 	Zoom = 10,
@@ -66,7 +66,7 @@ Bases.Sniper = {
 	Type = "Gun",
 	Size = "Heavy",
 
-	Recoil = 60,
+	Recoil = 30,
 	Range = 1300,
 	ShotSize = 1,
 	Spread = 0,
