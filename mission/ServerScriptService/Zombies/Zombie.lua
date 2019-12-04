@@ -45,6 +45,13 @@ function Zombie:Spawn(position)
 	self.instance.Name = self:GetName()
 	self.instance.Parent = Workspace.Zombies
 
+	local primaryPart = self.instance.PrimaryPart
+	primaryPart.AncestryChanged:connect(function()
+		if not primaryPart:IsDescendantOf(game) then
+			self:Die()
+		end
+	end)
+
 	self.aliveMaid:GiveTask(ReplicatedStorage.RuddevEvents.Damaged.Event:connect(function(humanoid)
 		if humanoid == self.instance.Humanoid then
 			self:UpdateNametag()
@@ -318,7 +325,10 @@ function Zombie:Die()
 end
 
 function Zombie:MaybeDropBuff()
-	Buffs.MaybeDropBuff(self.instance.PrimaryPart.Position)
+	local primaryPart = self.instance.PrimaryPart
+	if primaryPart then
+		Buffs.MaybeDropBuff(primaryPart.Position)
+	end
 end
 
 function Zombie:LoadAnimation(animation)
@@ -347,11 +357,14 @@ function Zombie:GiveXP()
 					xp.Value = xp.Value + xpGain
 				end
 
-				ReplicatedStorage.Remotes.XPGain:FireClient(
-					player,
-					self.instance.PrimaryPart.Position,
-					math.floor(xpGain)
-				)
+				local primaryPart = self.instance.PrimaryPart
+				if primaryPart then
+					ReplicatedStorage.Remotes.XPGain:FireClient(
+						player,
+						primaryPart.Position,
+						math.floor(xpGain)
+					)
+				end
 			end
 		end
 	end
