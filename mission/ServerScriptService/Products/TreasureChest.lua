@@ -35,7 +35,10 @@ function TreasureChestProduct.Activate(player, receiptInfo)
 			loot.UUID = HttpService:GenerateGUID(false):gsub("-", "")
 
 			DataStore2("Inventory", player):Update(function(inventory)
-				if #inventory >= inventorySpace then return end
+				if #inventory >= inventorySpace then
+					return inventory
+				end
+
 				table.insert(inventory, loot)
 				return inventory
 			end)
