@@ -38,13 +38,13 @@ Players.PlayerAdded:connect(function(player)
 	local xp = Data.GetPlayerData(player, "XP")
 	numberValue("XP", xp, playerData)
 
-	local goldScale = 1
+	local goldValue = numberValue("GoldScale", 1, playerData)
 
-	if GamePasses.PlayerOwnsPass(player, GamePassDictionary.DoubleGold) then
-		goldScale = goldScale + 1
-	end
-
-	numberValue("GoldScale", goldScale, playerData)
+	GamePasses.PlayerOwnsPassAsync(player, GamePassDictionary.DoubleGold):andThen(function(owns)
+		if owns then
+			goldValue.Value = goldValue.Value + 1
+		end
+	end)
 
 	local xpScale = 1
 
@@ -52,13 +52,13 @@ Players.PlayerAdded:connect(function(player)
 		xpScale = xpScale + 1
 	end
 
+	local xpValue = numberValue("XPScale", xpScale, playerData)
+
 	GamePasses.PlayerOwnsPassAsync(player, GamePassDictionary.VIP):andThen(function(vip)
 		if vip then
-			xpScale = xpScale + VIP_BONUS
+			xpValue.Value = xpValue.Value + VIP_BONUS
 		end
 	end)
-
-	numberValue("XPScale", xpScale, playerData)
 
 	playerData.Parent = player
 end)
