@@ -102,6 +102,7 @@ function ShopkeeperGui:render()
 
 	if selected ~= nil then
 		local loot = selected.loot
+		local originalIsMaxed = loot.Upgrades >= Upgrades.MaxUpgrades
 		if selected.equipped and loot.Upgrades < Upgrades.MaxUpgrades then
 			loot = copy(loot)
 			loot.Upgrades = loot.Upgrades + 1
@@ -118,7 +119,7 @@ function ShopkeeperGui:render()
 		local text, color, activated
 
 		if selected.equipped then
-			if loot.Upgrades >= Upgrades.MaxUpgrades then
+			if originalIsMaxed then
 				color = DISABLED_COLOR
 				text = "MAX UPGRADE"
 			else
