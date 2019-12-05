@@ -36,7 +36,9 @@ end
 local function countdown(lobby, number)
 	return function()
 		return Promise.new(function(resolve)
-			lobby.Instance.Countdown.Value = number
+			if lobby.Instance:FindFirstChild("Countdown") then
+				lobby.Instance.Countdown.Value = number
+			end
 
 			delay(1, resolve)
 		end)
