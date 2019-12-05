@@ -7,8 +7,10 @@ local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Nametag = require(ServerScriptService.Shared.Nametag)
 
 local function makeVip(nametag)
-	nametag.EnemyName.Text = "[VIP] " .. nametag.EnemyName.Text
-	nametag.EnemyName.TextColor3 = Color3.new(1, 1, 0.5)
+	if not nametag.EnemyName.Text:match("[VIP]") then
+		nametag.EnemyName.Text = "[VIP] " .. nametag.EnemyName.Text
+		nametag.EnemyName.TextColor3 = Color3.new(1, 1, 0.5)
+	end
 end
 
 local function maybeVip(player, nametag)
