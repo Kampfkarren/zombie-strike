@@ -11,6 +11,7 @@ TradeConstants.Codes = {
 	RejectCloseThem = 6,
 	RejectEquipYou = 7,
 	RejectEquipThem = 8,
+	RejectDuped = 9,
 }
 
 TradeConstants.Messages = {
@@ -24,6 +25,7 @@ TradeConstants.Messages = {
 	[TradeConstants.Codes.SuccessfulTrade] = "Trade successful!",
 	[TradeConstants.Codes.RejectEquipYou] = "You changed your inventory, so the trade was cancelled.",
 	[TradeConstants.Codes.RejectEquipThem] = "%s changed their inventory, so the trade was cancelled.",
+	[TradeConstants.Codes.RejectDuped] = "Your inventory has duplicated items, so you are not allowed to trade.",
 }
 
 return TradeConstants

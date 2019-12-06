@@ -45,6 +45,20 @@ local function getEquipment(player)
 	return equipment
 end
 
+local function legitInventory(inventory)
+	local items = {}
+
+	for _, item in pairs(inventory) do
+		if items[item.UUID] then
+			return false
+		else
+			items[item.UUID] = true
+		end
+	end
+
+	return true
+end
+
 RequestTrade.OnServerEvent:connect(function(player, otherPlayer)
 	if not t.instanceOf("Player")(otherPlayer) then
 		warn("not a player")
@@ -54,6 +68,13 @@ RequestTrade.OnServerEvent:connect(function(player, otherPlayer)
 	if not otherPlayer:IsDescendantOf(game) then
 		warn("player already left")
 		CancelTrade:FireClient(player, otherPlayer)
+		return
+	end
+
+	local inventory = Data.GetPlayerData(player, "Inventory")
+	if not legitInventory(inventory) then
+		warn("duped inventory")
+		CancelTrade:FireClient(player, otherPlayer, TradeConstants.Codes.RejectDuped)
 		return
 	end
 
