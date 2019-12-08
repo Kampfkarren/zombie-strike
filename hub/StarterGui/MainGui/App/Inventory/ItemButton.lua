@@ -16,10 +16,22 @@ local ItemButton = Roact.PureComponent:extend("ItemButton")
 local ICON_FAVORITED = "rbxassetid://4462267516"
 local ICON_UNFAVORITED = "rbxassetid://4462267332"
 
+local function isAurora(loot)
+	return loot.Type ~= "Helmet" and loot.Type ~= "Armor"
+		and (loot.Model >= 6 and loot.Model <= 10)
+end
+
 function ItemButton:init()
+	local model = Data.GetModel(self.props.Loot)
+
+	if isAurora(self.props.Loot) then
+		model.PrimaryPart.Material = Enum.Material.Ice
+		model.PrimaryPart.TextureID = ""
+	end
+
 	self:setState({
 		hovered = false,
-		model = Data.GetModel(self.props.Loot),
+		model = model,
 	})
 
 	self.mouseEnter = function()

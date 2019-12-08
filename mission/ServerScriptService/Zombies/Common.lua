@@ -35,7 +35,7 @@ function BasicZombie:Attack()
 				self.AttackRange,
 				{ Workspace.Zombies }
 			) then
-				TakeDamage(player, self:GetScale("Damage"))
+				TakeDamage(player, self:GetDamageAgainst(player))
 			end
 		end
 	end)

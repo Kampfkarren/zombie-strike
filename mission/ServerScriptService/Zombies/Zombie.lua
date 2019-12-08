@@ -393,10 +393,37 @@ function Zombie:GetScale(key)
 	return scale.Base * scale.Scale ^ (self.level - campaignInfo.Difficulties[1].MinLevel)
 end
 
+function Zombie:GetScaleSafe(key)
+	local success, scale = pcall(function()
+		return self:GetScale(key)
+	end)
+
+	return success and scale
+end
+
 function Zombie:GetHealth()
 	local health = self:GetScale("Health")
 	health = health * (1 + (0.35 * (#Players:GetPlayers() - 1)))
 	return health
+end
+
+function Zombie:GetDamageAgainst(player)
+	return self:GetDamageAgainstConstant(
+		player,
+		self:GetScale("Damage"),
+		self:GetScaleSafe("MaxHealthDamage")
+	)
+end
+
+function Zombie.GetDamageAgainstConstant(_, player, damage, maxHpDamage)
+	if maxHpDamage then
+		local character = player.Character
+		if character then
+			damage = damage + character.Humanoid.MaxHealth * (maxHpDamage / 100)
+		end
+	end
+
+	return damage
 end
 
 function Zombie:GetSpeed()
@@ -407,6 +434,14 @@ end
 function Zombie:GetName()
 	return self.Name
 		or self:GetModel().ZombieName.Value
+end
+
+function Zombie:GetAsset(assetName)
+	return ReplicatedStorage
+		.Assets
+		.Campaign["Campaign" .. Dungeon.GetDungeonData("Campaign")]
+		[self.Model]
+		[assetName]
 end
 
 function Zombie:UpdateNametag()

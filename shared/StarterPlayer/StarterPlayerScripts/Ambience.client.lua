@@ -26,8 +26,8 @@ end)
 
 if HubWorld then
 	currentAmbience = {
-		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
-		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
+		Footsteps = SoundService.Footsteps.Snow:GetChildren(),
+		Land = SoundService.Footsteps.Snow:GetChildren(),
 	}
 else
 	local Rooms = Workspace:WaitForChild("Rooms")
@@ -38,6 +38,12 @@ else
 		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
 		Land = SoundService.Footsteps.ConcreteLand:GetChildren(),
 		Sound = Instance.new("Sound"),
+	}
+
+	ambienceList.Snow = {
+		Footsteps = SoundService.Footsteps.Snow:GetChildren(),
+		Land = SoundService.Footsteps.Snow:GetChildren(),
+		Sound = SoundService.Ambience.Frostlands,
 	}
 
 	ambienceList.Metal = {

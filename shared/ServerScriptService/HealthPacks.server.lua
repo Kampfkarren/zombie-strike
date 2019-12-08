@@ -7,6 +7,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
 local HealthPackAnimation = ReplicatedStorage.Assets.Animations.HealthPackAnimation
@@ -51,6 +52,8 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 		healthUse.Parent = character.PrimaryPart
 		Debris:AddItem(healthUse)
 
+		local healed = false
+
 		animation.KeyframeReached:connect(function(name)
 			if name == "Heal" then
 				healthUse:Play()
@@ -59,7 +62,11 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 				if humanoid.Health > 0 then
 					humanoid.Health = humanoid.Health + humanoid.MaxHealth
 						* (better and HEAL_AMOUNT_BETTER or HEAL_AMOUNT)
-					ReplicatedStorage.Remotes.HealthPack:FireClient(player)
+
+					if not healed then
+						healed = true
+						ReplicatedStorage.Remotes.HealthPack:FireClient(player)
+					end
 				end
 
 				Effect:FireAllClients("Shatter", character, better)
@@ -67,5 +74,11 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 		end)
 
 		animation:Play()
+		RealDelay(3, function()
+			if not healed then
+				healed = true
+				ReplicatedStorage.Remotes.HealthPack:FireClient(player)
+			end
+		end)
 	end
 end)

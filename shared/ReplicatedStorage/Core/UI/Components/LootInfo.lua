@@ -25,6 +25,21 @@ local function formatNumber(format, number)
 	end
 end
 
+local function isAurora(loot)
+	return loot.Type ~= "Helmet" and loot.Type ~= "Armor"
+		and (loot.Model >= 6 and loot.Model <= 10)
+end
+
+local function getRarityText(loot, rarity)
+	local infix = " "
+
+	if isAurora(loot) then
+		infix = " Aurora "
+	end
+
+	return rarity.Name .. infix .. loot.Type
+end
+
 local function Stat(props)
 	local diffProps = {
 		BackgroundTransparency = 1,
@@ -235,7 +250,7 @@ function LootInfo:render()
 			Font = Enum.Font.GothamBold,
 			LayoutOrder = 1,
 			Size = UDim2.new(0.9, 0, 0.06, 0),
-			Text = rarity.Name .. " " .. loot.Type,
+			Text = getRarityText(loot, rarity),
 			TextColor3 = Color3.fromRGB(227, 227, 227),
 			TextScaled = true,
 		}),
@@ -290,8 +305,15 @@ function LootInfo:didUpdate(oldProps)
 end
 
 function LootInfo:UpdateModelState()
+	local model = Data.GetModel(self.props.Loot)
+
+	if isAurora(self.props.Loot) then
+		model.PrimaryPart.Material = Enum.Material.Ice
+		model.PrimaryPart.TextureID = ""
+	end
+
 	self:setState({
-		Model = Data.GetModel(self.props.Loot),
+		Model = model,
 	})
 end
 

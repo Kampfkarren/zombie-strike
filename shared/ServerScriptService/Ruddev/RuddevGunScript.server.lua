@@ -34,9 +34,9 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 		local config = CONFIG:GetConfig(item)
 		local itemAmmo = item.Ammo
 
-		if cancels[item] then
-			cancels[item] = nil
-		end
+		local ourTick = (cancels[item] or 0) + 1
+		cancels[item] = ourTick
+
 		local magazine = config.Magazine
 
 		for _, p in pairs(Players:GetPlayers()) do
@@ -45,22 +45,20 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 			end
 		end
 
-		local needed = magazine - itemAmmo.Value
 		local start = tick()
 		local elapsed
 
 		repeat
 			elapsed = tick() - start
 			RunService.Stepped:wait()
-		until elapsed >= config.ReloadTime or cancels[item]
+		until elapsed >= config.ReloadTime or cancels[item] ~= ourTick
 
+		local needed = magazine - itemAmmo.Value
 		if elapsed >= config.ReloadTime then
 			itemAmmo.Value = itemAmmo.Value + needed
 		end
 
-		if cancels[item] then
-			cancels[item] = nil
-		end
+		cancels[item] = cancels[item] + 1
 	end
 end)
 
@@ -172,7 +170,7 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 				}
 
 				shots[player] = shot
-				cancels[item] = true
+				cancels[item] = (cancels[item] or 0) + 1
 
 				for _, other in pairs(Players:GetPlayers()) do
 					if other ~= player then

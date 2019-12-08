@@ -11,6 +11,7 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
@@ -114,11 +115,15 @@ local function leave()
 	TeleportService:Teleport(PlaceIds.GetHubPlace())
 end
 
+local function isAurora(loot)
+	return loot.Type ~= "Helmet" and loot.Type ~= "Armor"
+		and (loot.Model >= 6 and loot.Model <= 10)
+end
+
 LootResults.Minor.Leave.MouseButton1Click:connect(leave)
 
 CollectionService:GetInstanceAddedSignal("Boss"):connect(function(boss)
 	OnDied(boss:WaitForChild("Humanoid")):connect(function()
-		print("ded")
 		for _, music in pairs(SoundService.Music:GetDescendants()) do
 			if music.Name ~= "MissionEnd" and music:IsA("Sound") then
 				TweenService:Create(
@@ -209,7 +214,13 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 				end
 			end
 
-			ViewportFramePreview(lootButton.ViewportFrame, Data.GetModel(loot))
+			local model = Data.GetModel(loot)
+			if isAurora(loot) then
+				model.PrimaryPart.Material = Enum.Material.Ice
+				model.PrimaryPart.TextureID = ""
+			end
+
+			ViewportFramePreview(lootButton.ViewportFrame, model)
 			local _, hover = LootInfoButton(lootButton, LootInfo, loot)
 
 			if index == 1 and UserInputService.GamepadEnabled then

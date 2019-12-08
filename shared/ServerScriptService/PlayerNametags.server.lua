@@ -34,11 +34,11 @@ Players.PlayerAdded:connect(function(player)
 		end
 
 		character.Humanoid.HealthChanged:connect(function()
-			makeVip(Nametag(character, level.Value))
+			maybeVip(Nametag(character, level.Value))
 		end)
 
 		level.Changed:connect(function()
-			makeVip(Nametag(character, level.Value))
+			maybeVip(Nametag(character, level.Value))
 		end)
 	end
 

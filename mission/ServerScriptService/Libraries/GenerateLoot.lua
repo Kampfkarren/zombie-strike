@@ -1,5 +1,6 @@
 local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerStorage = game:GetService("ServerStorage")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
@@ -70,6 +71,10 @@ end
 local takenAdvantageOfFreeLoot = {}
 
 local function getLootRarity(player)
+	if ServerStorage.ForceRarity.Value > 0 then
+		return ServerStorage.ForceRarity.Value
+	end
+
 	if Data.GetPlayerData(player, "DungeonsPlayed") == FREE_EPIC_AFTER
 		and not takenAdvantageOfFreeLoot[player]
 	then

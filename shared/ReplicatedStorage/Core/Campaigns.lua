@@ -32,6 +32,11 @@ local Insane = {
 	Color = Color3.fromRGB(141, 30, 30),
 }
 
+local Impossible = {
+	Name = "Impossible",
+	Color = Color3.fromRGB(121, 3, 3),
+}
+
 local function range(start, finish)
 	local range = {}
 
@@ -42,13 +47,13 @@ local function range(start, finish)
 	return range
 end
 
-local function classicGuns(loot)
+local function fullGuns(baseNumber, loot)
 	local models = {
-		Common = { 1 },
-		Uncommon = { 2 },
-		Rare = { 3 },
-		Epic = { 4 },
-		Legendary = { 5 },
+		Common = { baseNumber + 1 },
+		Uncommon = { baseNumber + 2 },
+		Rare = { baseNumber + 3 },
+		Epic = { baseNumber + 4 },
+		Legendary = { baseNumber + 5 },
 	}
 
 	local total = {
@@ -64,6 +69,10 @@ local function classicGuns(loot)
 	end
 
 	return total
+end
+
+local function classicGuns(loot)
+	return fullGuns(0, loot)
 end
 
 local lootRewardType = t.strictInterface({
@@ -542,7 +551,7 @@ local Campaigns = {
 
 				Gold = 2560000,
 				Rooms = 12,
-				XP = 2700000,
+				XP = 3600000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
@@ -629,6 +638,224 @@ local Campaigns = {
 
 		AIAggroRange = 60,
 		CompletionBadge = 2124495356,
+	},
+
+	{
+		Name = "The Frostlands",
+		Image = "rbxassetid://4494569889",
+		ZombieTypes = {
+			Common = 3,
+			Fast = 1,
+			Strong = 1,
+			AoE = 1,
+			Projectile = 1,
+		},
+		LoadingColor = Color3.new(1, 1, 1),
+
+		Difficulties = {
+			{
+				MinLevel = 77,
+				Style = Hard,
+
+				Gold = 4270000,
+				Rooms = 7,
+				XP = 20000000,
+				ZombieSpawnRate = 0.6,
+
+				BossStats = {
+					Health = 252000000,
+				},
+			},
+
+			{
+				MinLevel = 83,
+				Style = VeryHard,
+
+				Gold = (4 * 4270000),
+				Rooms = 8,
+				XP = 42000000,
+				ZombieSpawnRate = 0.7,
+
+				BossStats = {
+					Health = 716800000,
+				},
+			},
+
+			{
+				MinLevel = 89,
+				Style = Extreme,
+
+				Gold = (8 * 4270000),
+				Rooms = 9,
+				XP = 110000000,
+				ZombieSpawnRate = 0.8,
+
+				BossStats = {
+					Health = 2032800000,
+				},
+			},
+
+			{
+				MinLevel = 95,
+				Style = Insane,
+
+				Gold = (16 * 4270000),
+				Rooms = 10,
+				XP = 260000000,
+				ZombieSpawnRate = 0.9,
+
+				BossStats = {
+					Health = 5600000000,
+				},
+			},
+
+			{
+				MinLevel = 101,
+				Style = Impossible,
+
+				Gold = (32 * 4270000),
+				Rooms = 12,
+				XP = 300000000.00,
+				ZombieSpawnRate = 1.0,
+
+				BossStats = {
+					Health = 16800000000,
+				},
+			},
+		},
+
+		Loot = fullGuns(5, {
+			Armor = {
+				Common = { 27 },
+				Uncommon = { 28 },
+				Rare = { 29 },
+				Epic = { 30 },
+				Legendary = { 31 },
+			},
+
+			Helmet = {
+				Common = { 16 },
+				Uncommon = { 17 },
+				Rare = { 18 },
+				Epic = { 19 },
+				Legendary = { 20 },
+			},
+		}),
+
+		Stats = {
+			Common = {
+				Health = {
+					Base = 3600000,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 17,
+					Scale = 1.0045,
+				},
+
+				Damage = {
+					Base = 2000000,
+					Scale = 1.12,
+				},
+
+				MaxHealthDamage = {
+					Base = 8,
+					Scale = 1.01,
+				},
+			},
+
+			Fast = {
+				Health = {
+					Base = 2800000,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 20,
+					Scale = 1.0045,
+				},
+
+				Damage = {
+					Base = 1800000,
+					Scale = 1.12,
+				},
+
+				MaxHealthDamage = {
+					Base = 6,
+					Scale = 1.01,
+				},
+			},
+
+			Strong = {
+				Health = {
+					Base = 4600000,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 15,
+					Scale = 1.0045,
+				},
+
+				Damage = {
+					Base = 2500000,
+					Scale = 1.12,
+				},
+
+				MaxHealthDamage = {
+					Base = 11,
+					Scale = 1.01,
+				},
+			},
+
+			AoE = {
+				Health = {
+					Base = 4256000,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 14,
+					Scale = 1.0045,
+				},
+
+				Damage = {
+					Base = 1600000,
+					Scale = 1.12,
+				},
+
+				Range = {
+					Base = 25,
+					Scale = 1,
+				},
+			},
+
+			Projectile = {
+				Health = {
+					Base = 2240000,
+					Scale = 1.19,
+				},
+
+				Speed = {
+					Base = 9,
+					Scale = 1.0045,
+				},
+
+				Damage = {
+					Base = 1600000,
+					Scale = 1.12,
+				},
+
+				MaxHealthDamage = {
+					Base = 6.5,
+					Scale = 1.01,
+				},
+			},
+		},
+
+		AIAggroRange = 60,
+		CompletionBadge = 0,
 	},
 }
 
