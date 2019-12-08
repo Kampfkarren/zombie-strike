@@ -8,6 +8,7 @@ local Players = game:GetService("Players")
 local EVENTS = ReplicatedStorage:WaitForChild("RuddevEvents")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES:WaitForChild("Config"))
+local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 
 local CRIT_MULTIPLIER = 2
 local DAMAGE = {}
@@ -18,7 +19,7 @@ function DAMAGE.Calculate(_, item, hit, origin)
 	local config = CONFIG:GetConfig(item)
 	local damage = config.Damage
 
-	damage = damage * (1 + config.Upgrades / 100)
+	damage = damage + Upgrades.GetDamageBuff(damage, config.Upgrades)
 
 	if hit.Name == "Head" then
 		damage = damage * 1.2
