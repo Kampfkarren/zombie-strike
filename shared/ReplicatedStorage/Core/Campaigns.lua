@@ -551,7 +551,7 @@ local Campaigns = {
 
 				Gold = 2560000,
 				Rooms = 12,
-				XP = 3600000,
+				XP = 5400000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
@@ -691,7 +691,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.8,
 
 				BossStats = {
-					Health = 2032800000,
+					Health = 1270500000,
 				},
 			},
 
@@ -705,7 +705,7 @@ local Campaigns = {
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
-					Health = 5600000000,
+					Health = 3500000000,
 				},
 			},
 
@@ -719,7 +719,7 @@ local Campaigns = {
 				ZombieSpawnRate = 1.0,
 
 				BossStats = {
-					Health = 16800000000,
+					Health = 10500000000,
 				},
 			},
 		},
@@ -746,7 +746,7 @@ local Campaigns = {
 			Common = {
 				Health = {
 					Base = 3600000,
-					Scale = 1.19,
+					Scale = 1.18,
 				},
 
 				Speed = {
@@ -768,7 +768,7 @@ local Campaigns = {
 			Fast = {
 				Health = {
 					Base = 2800000,
-					Scale = 1.19,
+					Scale = 1.18,
 				},
 
 				Speed = {
@@ -790,7 +790,7 @@ local Campaigns = {
 			Strong = {
 				Health = {
 					Base = 4600000,
-					Scale = 1.19,
+					Scale = 1.18,
 				},
 
 				Speed = {
@@ -812,7 +812,7 @@ local Campaigns = {
 			AoE = {
 				Health = {
 					Base = 4256000,
-					Scale = 1.19,
+					Scale = 1.18,
 				},
 
 				Speed = {
@@ -834,7 +834,7 @@ local Campaigns = {
 			Projectile = {
 				Health = {
 					Base = 2240000,
-					Scale = 1.19,
+					Scale = 1.18,
 				},
 
 				Speed = {
