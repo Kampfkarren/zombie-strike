@@ -537,7 +537,7 @@ local Campaigns = {
 
 				Gold = 1280000,
 				Rooms = 10,
-				XP = 2700000,
+				XP = 3000000,
 				ZombieSpawnRate = 0.85,
 
 				BossStats = {
@@ -551,7 +551,7 @@ local Campaigns = {
 
 				Gold = 2560000,
 				Rooms = 12,
-				XP = 5400000,
+				XP = 6600000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
@@ -701,7 +701,7 @@ local Campaigns = {
 
 				Gold = (16 * 4270000),
 				Rooms = 10,
-				XP = 260000000,
+				XP = 299000000,
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
@@ -715,7 +715,7 @@ local Campaigns = {
 
 				Gold = (32 * 4270000),
 				Rooms = 12,
-				XP = 300000000.00,
+				XP = 360000000,
 				ZombieSpawnRate = 1.0,
 
 				BossStats = {
@@ -746,7 +746,7 @@ local Campaigns = {
 			Common = {
 				Health = {
 					Base = 3600000,
-					Scale = 1.18,
+					Scale = 1.17,
 				},
 
 				Speed = {
@@ -756,7 +756,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 2000000,
-					Scale = 1.12,
+					Scale = 1.115,
 				},
 
 				MaxHealthDamage = {
@@ -768,7 +768,7 @@ local Campaigns = {
 			Fast = {
 				Health = {
 					Base = 2800000,
-					Scale = 1.18,
+					Scale = 1.17,
 				},
 
 				Speed = {
@@ -778,7 +778,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1800000,
-					Scale = 1.12,
+					Scale = 1.115,
 				},
 
 				MaxHealthDamage = {
@@ -790,7 +790,7 @@ local Campaigns = {
 			Strong = {
 				Health = {
 					Base = 4600000,
-					Scale = 1.18,
+					Scale = 1.17,
 				},
 
 				Speed = {
@@ -800,7 +800,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 2500000,
-					Scale = 1.12,
+					Scale = 1.115,
 				},
 
 				MaxHealthDamage = {
@@ -812,7 +812,7 @@ local Campaigns = {
 			AoE = {
 				Health = {
 					Base = 4256000,
-					Scale = 1.18,
+					Scale = 1.17,
 				},
 
 				Speed = {
@@ -822,7 +822,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1600000,
-					Scale = 1.12,
+					Scale = 1.115,
 				},
 
 				Range = {
@@ -834,7 +834,7 @@ local Campaigns = {
 			Projectile = {
 				Health = {
 					Base = 2240000,
-					Scale = 1.18,
+					Scale = 1.17,
 				},
 
 				Speed = {
@@ -844,7 +844,7 @@ local Campaigns = {
 
 				Damage = {
 					Base = 1600000,
-					Scale = 1.12,
+					Scale = 1.115,
 				},
 
 				MaxHealthDamage = {
@@ -855,7 +855,7 @@ local Campaigns = {
 		},
 
 		AIAggroRange = 60,
-		CompletionBadge = 0,
+		CompletionBadge = 2124497452,
 	},
 }
 

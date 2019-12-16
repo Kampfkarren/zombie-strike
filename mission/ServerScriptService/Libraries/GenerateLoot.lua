@@ -12,6 +12,8 @@ local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
+local Equipment = ReplicatedStorage.Equipment
+
 local FREE_EPIC_AFTER = 0
 local WEAPON_DROP_RATE = 0.67
 
@@ -59,6 +61,10 @@ local function nextDungeonLevel()
 end
 
 local function getLootLevel(player)
+	if Dungeon.GetDungeonData("Gamemode") == "Arena" then
+		return 1
+	end
+
 	local playerLevel = Data.GetPlayerData(player, "Level")
 
 	local dungeonLevelMin = Dungeon.GetDungeonData("DifficultyInfo").MinLevel
@@ -82,16 +88,18 @@ local function getLootRarity(player)
 		return 4
 	end
 
-	local legendaryBonus, legendaryBonusStore = Data.GetPlayerData(player, "LegendaryBonus")
 	local moreLegendaries = GamePasses.PlayerOwnsPass(player, GamePassDictionary.MoreLegendaries)
+	if Dungeon.GetDungeonData("Gamemode") == "Mission" then
+		local legendaryBonus, legendaryBonusStore = Data.GetPlayerData(player, "LegendaryBonus")
 
-	if not legendaryBonus
-		and not takenAdvantageOfFreeLoot[player]
-		and moreLegendaries
-	then
-		takenAdvantageOfFreeLoot[player] = true
-		legendaryBonusStore:Set(true)
-		return 5
+		if not legendaryBonus
+			and not takenAdvantageOfFreeLoot[player]
+			and moreLegendaries
+		then
+			takenAdvantageOfFreeLoot[player] = true
+			legendaryBonusStore:Set(true)
+			return 5
+		end
 	end
 
 	local rng = Random.new()
@@ -199,4 +207,31 @@ local function generateLoot(player)
 	end)
 end
 
-return generateLoot
+local function generateEquipment(player)
+	return Data.GetPlayerDataAsync(player, "Equipment"):andThen(function(equipment)
+		local chances = {}
+
+		for _, equipmentType in pairs({ "Grenade", "HealthPack" }) do
+			for index in pairs(Equipment[equipmentType]:GetChildren()) do
+				if not table.find(equipment[equipmentType], index) then
+					table.insert(chances, {
+						Type = equipmentType,
+						Index = index,
+					})
+				end
+			end
+		end
+
+		if #chances == 0 then
+			return nil
+		else
+			return chances[math.random(#chances)]
+		end
+	end)
+end
+
+return {
+	GenerateEquipment = generateEquipment,
+	GenerateOne = generateLootItem,
+	GenerateSet = generateLoot,
+}

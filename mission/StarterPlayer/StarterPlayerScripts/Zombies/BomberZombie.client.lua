@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local CircleEffect = require(ReplicatedStorage.Libraries.CircleEffect)
+local CircleEffect = require(ReplicatedStorage.Core.CircleEffect)
 local Explosion = require(ReplicatedStorage.RuddevModules.Effects.Explosion)
 
 local BomberZombieEffect = ReplicatedStorage.Remotes.Zombies.BomberZombieEffect

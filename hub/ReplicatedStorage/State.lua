@@ -94,10 +94,17 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	inventoryEquipment = Rodux.createReducer(nil, {
+		UpdateEquipmentInventory = function(_, action)
+			return action.newInventory
+		end,
+	}),
+
 	page = Rodux.createReducer({
 		current = nil,
 	}, pageReducer({
 		"Codes",
+		"Equipment",
 		"Feedback",
 		"Inventory",
 		"Settings",
@@ -235,6 +242,13 @@ ReplicatedStorage.Remotes.UpdateXPExpiration.OnClientEvent:connect(function(expi
 	Store:dispatch({
 		type = "UpdateXPExpiration",
 		expiration = expiration,
+	})
+end)
+
+ReplicatedStorage.Remotes.UpdateEquipmentInventory.OnClientEvent:connect(function(equipment)
+	Store:dispatch({
+		type = "UpdateEquipmentInventory",
+		newInventory = equipment,
 	})
 end)
 

@@ -12,6 +12,7 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES.Config)
 	local DAMAGE = require(MODULES.Damage)
 
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 
 local GiveQuest = ServerStorage.Events.GiveQuest
@@ -63,7 +64,7 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 end)
 
 local function hit(player, hit, index)
-	spawn(function() -- spawn to avoid race conditions
+	FastSpawn(function() -- spawn to avoid race conditions
 		local shot = shots[player]
 
 		if shot then

@@ -20,6 +20,7 @@ function DAMAGE.Calculate(_, item, hit, origin)
 	local damage = config.Damage
 
 	damage = damage + Upgrades.GetDamageBuff(damage, config.Upgrades)
+	damage = damage * (1 + config.Bonus / 100)
 
 	if hit.Name == "Head" then
 		damage = damage * 1.2

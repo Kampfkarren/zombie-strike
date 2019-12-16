@@ -2,6 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+
+if Dungeon.GetDungeonData("Gamemode") ~= "Mission" then return end
+
 local GenerateTreasureLoot = require(ServerScriptService.Libraries.GenerateTreasureLoot)
 local Loot = require(ReplicatedStorage.Core.Loot)
 

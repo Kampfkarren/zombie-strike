@@ -2,7 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local CircleEffect = require(ReplicatedStorage.Libraries.CircleEffect)
+local CircleEffect = require(ReplicatedStorage.Core.CircleEffect)
 local Maid = require(ReplicatedStorage.Core.Maid)
 
 local CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect

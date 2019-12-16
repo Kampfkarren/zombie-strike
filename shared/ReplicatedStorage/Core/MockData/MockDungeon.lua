@@ -1,6 +1,16 @@
+-- ARENA
 return {
-	Campaign = 3,
-	Difficulty = 1,
-	Hardcore = false,
+	Campaign = 4,
+	ArenaLevel = 1,
+	Gamemode = "Arena",
 	Members = { 56140227 },
 }
+
+-- DUNGEON
+-- return {
+-- 	Campaign = 4,
+-- 	Difficulty = 1,
+-- 	Gamemode = "Mission",
+-- 	Hardcore = true,
+-- 	Members = { 56140227 },
+-- }

@@ -6,9 +6,11 @@ local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
+local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
 local AutomatedScrollingFrame = require(ReplicatedStorage.Core.UI.AutomatedScrollingFrame)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
+local Roact = require(ReplicatedStorage.Vendor.Roact)
 local UserThumbnail = require(ReplicatedStorage.Core.UI.UserThumbnail)
 
 local Lobbies = ReplicatedStorage.Lobbies
@@ -84,133 +86,22 @@ end)
 do
 	local Create = Inner.Create
 
-	local CreateMapTemplate = cloneAndDestroy(Create.Map.Template)
-
-	local state = {}
-
-	local level = Players.LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
-
-	local function updateState(patch)
-		for key, value in pairs(patch) do
-			state[key] = value
-		end
-
-		local difficulty = state.campaign.Difficulties[state.difficulty]
-
-		Create.Info.MapImage.Image = state.campaign.Image
-		Create.Info.MapName.Text = state.campaign.Name
-
-		Create.Info.Difficulty.DifficultyText.Text = difficulty.Style.Name
-		Create.Info.Difficulty.DifficultyText.TextStrokeColor3 = difficulty.Style.Color
-
-		Create.Info.Public.Button.Label.Text = state.public and "X" or ""
-		Create.Info.Hardcore.Button.Label.Text = state.hardcore and "X" or ""
-
-		if difficulty.MinLevel > level then
-			Create.Info.MapImage.TooLowLevel.Text = ("You must be level %d to play on %s."):format(
-				difficulty.MinLevel,
-				difficulty.Style.Name
-			)
-
-			Create.Info.MapImage.TooLowLevel.Visible = true
-			Create.Info.MapImage.Hardcore.Visible = false
-			Create.Info.Create.ImageColor3 = Color3.fromRGB(107, 107, 107)
-		else
-			Create.Info.MapImage.TooLowLevel.Visible = false
-			Create.Info.MapImage.Hardcore.Visible = state.hardcore
-			Create.Info.Create.ImageColor3 = Color3.fromRGB(32, 187, 108)
-		end
-	end
-
-	local function selectCampaign(campaignIndex)
-		local latestDifficulty
-
-		for index, difficulty in ipairs(Campaigns[campaignIndex].Difficulties) do
-			if level >= difficulty.MinLevel then
-				latestDifficulty = index
-			else
-				break
-			end
-		end
-
-		updateState({
-			campaign = Campaigns[campaignIndex],
-			campaignIndex = campaignIndex,
-			difficulty = latestDifficulty,
-			hardcore = false,
-			public = true,
-		})
-	end
-
-	local latestCampaign
-
-	for campaignIndex, campaign in ipairs(Campaigns) do
-		-- Create a map button for every campaign
-		local button = CreateMapTemplate:Clone()
-		button.Label.Text = campaign.Name
-
-		if level < campaign.Difficulties[1].MinLevel then
-			button.ImageColor3 = Color3.fromRGB(107, 107, 107)
-		else
-			latestCampaign = campaignIndex
-		end
-
-		button.MouseButton1Click:connect(function()
-			selectCampaign(campaignIndex)
-		end)
-
-		button.Parent = Create.Map
-	end
-
-	selectCampaign(latestCampaign)
-
-	Create.Info.Difficulty.Next.MouseButton1Click:connect(function()
-		updateState({
-			difficulty = (state.difficulty % #state.campaign.Difficulties) + 1
-		})
-	end)
-
-	Create.Info.Difficulty.Previous.MouseButton1Click:connect(function()
-		updateState({
-			difficulty = state.difficulty == 1 and #state.campaign.Difficulties or state.difficulty - 1,
-		})
-	end)
-
-	Create.Info.Hardcore.Button.MouseButton1Click:connect(function()
-		updateState({
-			hardcore = not state.hardcore,
-		})
-	end)
-
-	Create.Info.Public.Button.MouseButton1Click:connect(function()
-		updateState({
-			public = not state.public,
-		})
-	end)
-
 	local creating = false
 
-	Create.Info.Create.MouseButton1Click:connect(function()
-		local difficulty = state.campaign.Difficulties[state.difficulty]
-		if level >= difficulty.MinLevel and not creating then
-			creating = true
+	Roact.mount(Roact.createElement(require(script.Create), {
+		OnSubmit = function(state)
+			if not creating then
+				creating = true
+				local success = ReplicatedStorage.Remotes.CreateLobby:InvokeServer(state)
 
-			local success = ReplicatedStorage.Remotes.CreateLobby:InvokeServer(
-				state.campaignIndex,
-				state.difficulty,
-				state.public,
-				state.hardcore
-			)
+				if success then
+					pageLayout:JumpTo(Inner.Lobby)
+				end
 
-			if success then
-				pageLayout:JumpTo(Inner.Lobby)
+				creating = false
 			end
-
-			creating = false
-		end
-	end)
-
-	AutomatedScrollingFrame(Create.Map)
+		end,
+	}), Create)
 end
 
 local lobbiesUpdated = Instance.new("BindableEvent")
@@ -230,7 +121,9 @@ do
 		local level = Players.LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
 
 		local campaign = assert(Campaigns[lobby.Campaign])
-		local difficulty = assert(campaign.Difficulties[lobby.Difficulty])
+		local difficulty = lobby.Gamemode == "Arena"
+			and ArenaDifficulty(lobby.ArenaLevel)
+			or assert(campaign.Difficulties[lobby.Difficulty])
 
 		currentlySelected = lobby.Unique
 
@@ -253,8 +146,8 @@ do
 		lobbyInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
 		lobbyInfo.Info.Players.Text = #lobby.Players .. "/4"
 
-		lobbyInfo.Info.Difficulty.Text = difficulty.Style.Name
-		lobbyInfo.Info.Difficulty.TextColor3 = difficulty.Style.Color
+		lobbyInfo.Info.Difficulty.Text = lobby.Gamemode == "Arena" and "THE ARENA" or difficulty.Style.Name
+		lobbyInfo.Info.Difficulty.TextStrokeColor3 = difficulty.Style.Color
 
 		if difficulty.MinLevel > level or #lobby.Players == 4 or kickedFrom[lobby.Unique] then
 			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(234, 32, 39)
@@ -293,7 +186,10 @@ do
 				end
 
 				local campaign = Campaigns[lobby.Campaign]
-				local difficulty = campaign.Difficulties[lobby.Difficulty]
+
+				local difficulty = lobby.Gamemode == "Arena"
+					and ArenaDifficulty(lobby.ArenaLevel)
+					or campaign.Difficulties[lobby.Difficulty]
 
 				local cantJoin = difficulty.MinLevel > level
 					or #lobby.Players == 4
@@ -311,6 +207,10 @@ do
 				button.Inner.Players.Text = #lobby.Players .. "/4"
 
 				local campaignName = campaign.Name .. " - " .. difficulty.Style.Name
+
+				if lobby.Gamemode == "Arena" then
+					campaignName = campaignName .. "⚔"
+				end
 
 				if lobby.Hardcore then
 					campaignName = campaignName .. "💀"
@@ -431,16 +331,22 @@ do
 		-- Map info
 		local MapInfo = Lobby.Info.MapInfo
 		local campaign = Campaigns[current.Campaign]
-		local difficulty = campaign.Difficulties[current.Difficulty]
 
 		MapInfo.Campaign.Text = campaign.Name
-		MapInfo.MapImage.Image = campaign.Image
-		MapInfo.MapImage.Hardcore.Visible = current.Hardcore
+			MapInfo.MapImage.Image = campaign.Image
+			MapInfo.MapImage.Hardcore.Visible = current.Hardcore
 
-		MapInfo.Info.Difficulty.Text = difficulty.Style.Name
-		MapInfo.Info.Difficulty.TextColor3 = difficulty.Style.Color
+		if current.Gamemode == "Arena" then
+			MapInfo.Info.Difficulty.Text = "THE ARENA"
+			MapInfo.Info.Difficulty.TextColor3 = Color3.new(1, 1, 1)
+			MapInfo.Info.Level.Text = "LV. " .. current.ArenaLevel .. "+"
+		else
+			local difficulty = campaign.Difficulties[current.Difficulty]
+			MapInfo.Info.Difficulty.Text = difficulty.Style.Name
+			MapInfo.Info.Difficulty.TextColor3 = difficulty.Style.Color
+			MapInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
+		end
 
-		MapInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
 
 		-- Player panel
 
@@ -523,11 +429,11 @@ local function updateLobbies()
 	currentLobby = nil
 	local lobbies = {}
 
-	for _, lobby in pairs(Lobbies:GetChildren()) do
+	for _, lobbyInstance in pairs(Lobbies:GetChildren()) do
 		local players = {}
 		local ours = false
 
-		for _, player in pairs(lobby:WaitForChild("Players"):GetChildren()) do
+		for _, player in pairs(lobbyInstance:WaitForChild("Players"):GetChildren()) do
 			if tonumber(player.Name) == LocalPlayer.UserId then
 				ours = true
 			end
@@ -536,15 +442,21 @@ local function updateLobbies()
 		end
 
 		local lobby = {
-			Campaign = lobby.Campaign.Value,
-			Difficulty = lobby.Difficulty.Value,
-			Hardcore = lobby.Hardcore.Value,
+			Campaign = lobbyInstance.Campaign.Value,
+			Gamemode = lobbyInstance.Gamemode.Value,
 			Players = players,
-			Public = lobby.Public.Value,
-			Owner = lobby.Owner.Value,
-			Unique = lobby.Unique.Value,
-			Instance = lobby,
+			Public = lobbyInstance.Public.Value,
+			Owner = lobbyInstance.Owner.Value,
+			Unique = lobbyInstance.Unique.Value,
+			Instance = lobbyInstance,
 		}
+
+		if lobby.Gamemode == "Arena" then
+			lobby.ArenaLevel = lobbyInstance.Level.Value
+		elseif lobby.Gamemode == "Mission" then
+			lobby.Difficulty = lobbyInstance.Difficulty.Value
+			lobby.Hardcore = lobbyInstance.Hardcore.Value
+		end
 
 		if ours then
 			currentLobby = lobby

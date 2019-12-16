@@ -16,6 +16,7 @@ local CODES = {
 	rainway = DEFAULT_GOLD,
 	tanqr = DEFAULT_GOLD,
 	transrights = DEFAULT_GOLD,
+	arena = DEFAULT_GOLD,
 }
 
 local SendCode = ReplicatedStorage.Remotes.SendCode

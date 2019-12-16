@@ -3,38 +3,45 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
 
-local Data = require(ReplicatedStorage.Core.Data)
-local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local Promise = require(ReplicatedStorage.Core.Promise)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
 local HealthPackAnimation = ReplicatedStorage.Assets.Animations.HealthPackAnimation
 
-local COOLDOWN = 10
 local HEAL_AMOUNT = 0.3
 local HEAL_AMOUNT_BETTER = 0.6
 
-local healthPackCooldowns = {}
+local Basic = {}
 
-ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
-	local character = player.Character
-	if not character or character.Humanoid.Health <= 0 then return end
+Basic.Index = 1
+Basic.Name = "Health Pack"
+Basic.Icon = "http://www.roblox.com/asset/?id=4462345167"
+Basic.Cooldown = 10
 
-	local better = GamePasses.PlayerOwnsPass(
-		player, GamePassDictionary.BetterEquipment
-	)
+function Basic.CanUse(player)
+	if not ReplicatedStorage.HubWorld.Value then
+		local humanoid = player.Character.Humanoid
+		if humanoid.Health == humanoid.MaxHealth then
+			return false
+		end
+	end
 
-	if tick() - (healthPackCooldowns[player] or 0) > COOLDOWN then
-		healthPackCooldowns[player] = tick()
+	return true
+end
 
-		local healthPack = ReplicatedStorage.Items[
-			"HealthPack" .. Data.GetPlayerData(
-				player,
-				"EquippedHealthPack"
-			)
-		]:Clone()
+function Basic.ServerEffect(player)
+	local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
+
+	return Promise.new(function(resolve)
+		local character = player.Character
+		local better = GamePasses.PlayerOwnsPass(
+			player, GamePassDictionary.BetterEquipment
+		)
+
+		local healthPack = ReplicatedStorage.Items.HealthPack1:Clone()
 
 		healthPack.Parent = character
 		Equip(healthPack, character.LeftHand)
@@ -65,7 +72,7 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 
 					if not healed then
 						healed = true
-						ReplicatedStorage.Remotes.HealthPack:FireClient(player)
+						resolve()
 					end
 				end
 
@@ -77,8 +84,10 @@ ReplicatedStorage.Remotes.HealthPack.OnServerEvent:connect(function(player)
 		RealDelay(3, function()
 			if not healed then
 				healed = true
-				ReplicatedStorage.Remotes.HealthPack:FireClient(player)
+				resolve()
 			end
 		end)
-	end
-end)
+	end)
+end
+
+return Basic

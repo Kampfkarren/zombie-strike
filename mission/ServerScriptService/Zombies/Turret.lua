@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local Raycast = require(ReplicatedStorage.Libraries.Raycast)
+local Raycast = require(ReplicatedStorage.Core.Raycast)
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
 local TURRET_RANGE = 35

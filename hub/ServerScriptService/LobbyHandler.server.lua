@@ -1,15 +1,23 @@
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
+local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporter)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
+local inspect = require(ReplicatedStorage.Core.inspect)
 local Promise = require(ReplicatedStorage.Core.Promise)
+local t = require(ReplicatedStorage.Vendor.t)
 
 local Lobbies = ReplicatedStorage.Lobbies
+
+local HACKER_FAIL_URL = "CENSORED URL
 
 local lobbies = {}
 local teleporting = {}
@@ -61,49 +69,120 @@ local function removeLobby(unique)
 	end
 end
 
-ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
-	player,
-	campaignIndex,
-	difficultyIndex,
-	public,
-	hardcore
+local validateLobby = t.intersection(
+	t.interface({
+		Campaign = t.intersection(t.integer, t.numberConstrained(1, #Campaigns)),
+		Public = t.boolean,
+	}),
+
+	t.union(
+		t.interface({
+			Gamemode = t.literal("Arena"),
+			Level = t.intersection(t.integer, function(level)
+				return level == 1
+					or level % ArenaConstants.LevelStep == 0
+					and level <= ArenaConstants.MaxLevel
+					and level > 0
+			end),
+		}),
+
+		t.interface({
+			Gamemode = t.literal("Mission"),
+			Difficulty = t.integer, -- We can't constrain this here
+			Hardcore = t.boolean,
+		})
+	)
 )
-	local campaign = Campaigns[campaignIndex]
+
+ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
+	local success, problem = validateLobby(info)
+	if not success then
+		warn("CreateLobby: validation error: " .. problem .. " / " .. inspect(info))
+
+		local epicFails, epicFailsStore = Data.GetPlayerData(player, "EpicFails")
+		if not epicFails.CreateLobby then
+			local oldValue = typeof(info) == "number"
+
+			epicFails.CreateLobby = oldValue and 1 or 2
+			epicFailsStore:Set(epicFails)
+
+			FastSpawn(function()
+				local message = ("**%s** just tried to create a hacked lobby! FAIL! %s"):format(player.Name, problem)
+
+				if oldValue then
+					message = message .. "\nAND it was a number, the old system! DOUBLE FAIL! " .. info
+				end
+
+				HttpService:PostAsync(
+					HACKER_FAIL_URL,
+					HttpService:JSONEncode({
+						content = message,
+					})
+				)
+			end)
+		end
+
+		return
+	end
+
+	local campaign = Campaigns[info.Campaign]
 	if not campaign then
-		warn("invalid campaign", campaignIndex)
+		warn("CreateLobby: invalid campaign (should be unreachable?)", info.Campaign)
 		return
 	end
 
-	local difficulty = campaign.Difficulties[difficultyIndex]
-	if not difficulty then
-		warn("invalid difficulty", difficultyIndex)
-		return
+	local lobbyInstance = Instance.new("Folder")
+	value(lobbyInstance, "StringValue", "Gamemode", info.Gamemode)
+	value(lobbyInstance, "NumberValue", "Campaign", info.Campaign)
+	value(lobbyInstance, "BoolValue", "Public", info.Public)
+	value(lobbyInstance, "BoolValue", "Hardcore", info.Hardcore)
+
+	local lobby = {
+		Players = { player },
+		Campaign = info.Campaign,
+		Gamemode = info.Gamemode,
+		Public = info.Public,
+		Kicked = {},
+		Instance = lobbyInstance,
+	}
+
+	local playerLevel = Data.GetPlayerData(player, "Level")
+
+	if info.Gamemode == "Mission" then
+		local difficulty = campaign.Difficulties[info.Difficulty]
+		if not difficulty then
+			warn("CreateLobby: invalid difficulty", info.Difficulty)
+			return
+		end
+
+		if playerLevel < difficulty.MinLevel then
+			warn("CreateLobby: too low level for difficulty")
+			return
+		end
+
+		lobby.Difficulty = info.Difficulty
+		value(lobbyInstance, "NumberValue", "Difficulty", info.Difficulty)
+
+		lobby.Hardcore = info.Hardcore
+		value(lobbyInstance, "BoolValue", "Hardcore", info.Hardcore)
+	elseif info.Gamemode == "Arena" then
+		lobby.ArenaLevel = info.Level
+		value(lobbyInstance, "NumberValue", "Level", info.Level)
 	end
 
-	local level = Data.GetPlayerData(player, "Level")
-	if level < difficulty.MinLevel then
-		warn("too low level for difficulty")
-		return
-	end
-
-	local lobby = getPlayerLobby(player)
-	if lobby then
-		warn("player already in lobby")
+	if getPlayerLobby(player) then
+		warn("CreateLobby: player already in lobby")
 		return
 	end
 
 	if teleporting[player] then
-		warn("player already teleporting")
+		warn("CreateLobby: player already teleporting")
 		return
 	end
 
 	unique = unique + 1
+	lobby.Unique = unique
 
-	local lobbyInstance = Instance.new("Folder")
-	value(lobbyInstance, "NumberValue", "Campaign", campaignIndex)
-	value(lobbyInstance, "NumberValue", "Difficulty", difficultyIndex)
-	value(lobbyInstance, "BoolValue", "Public", public == true)
-	value(lobbyInstance, "BoolValue", "Hardcore", hardcore == true)
 	value(lobbyInstance, "NumberValue", "Unique", unique)
 	value(lobbyInstance, "ObjectValue", "Owner", player)
 	value(lobbyInstance, "NumberValue", "Countdown", 0)
@@ -118,17 +197,6 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(
 
 	players.Parent = lobbyInstance
 	lobbyInstance.Parent = Lobbies
-
-	local lobby = {
-		Players = { player },
-		Campaign = campaignIndex,
-		Difficulty = difficultyIndex,
-		Public = public == true,
-		Hardcore = hardcore == true,
-		Unique = unique,
-		Kicked = {},
-		Instance = lobbyInstance,
-	}
 
 	table.insert(lobbies, lobby)
 
@@ -191,7 +259,9 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
 	end
 
 	local campaign = assert(Campaigns[lobby.Campaign])
-	local difficulty = assert(campaign.Difficulties[lobby.Difficulty])
+	local difficulty = lobby.Gamemode == "Arena"
+		and ArenaDifficulty(lobby.ArenaLevel)
+		or assert(campaign.Difficulties[lobby.Difficulty])
 
 	local playerLevel = Data.GetPlayerData(player, "Level")
 

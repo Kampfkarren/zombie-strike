@@ -6,19 +6,33 @@ local TeleportService = game:GetService("TeleportService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
+local OnDied = require(ReplicatedStorage.Core.OnDied)
 local PlaceIds = require(ReplicatedStorage.Core.PlaceIds)
 
 local goldScales = {}
 
+local function noRespawns()
+	local gamemode = Dungeon.GetDungeonData("Gamemode")
+	return (gamemode == "Mission" and Dungeon.GetDungeonData("Hardcore"))
+		or (gamemode == "Arena" and ReplicatedStorage:WaitForChild("ArenaLives").Value == 0)
+end
+
 ReplicatedStorage.Remotes.RespawnMe.OnServerInvoke = function(player)
-	if Dungeon.GetDungeonData("Hardcore") then return end
+	if noRespawns() then return end
 
 	local character = player.Character
 	if character and character.Humanoid.Health == 0 then
 		coroutine.wrap(function()
 			local character = player.CharacterAdded:wait()
 			RunService.Heartbeat:wait()
-			character:MoveTo(DungeonState.CurrentSpawn.WorldPosition)
+
+			local currentSpawn = DungeonState.CurrentSpawn
+
+			if currentSpawn:IsA("SpawnLocation") then
+				character:MoveTo(currentSpawn.Position)
+			else
+				character:MoveTo(currentSpawn.WorldPosition)
+			end
 		end)()
 
 		spawn(function()
@@ -46,10 +60,9 @@ end
 
 Players.PlayerAdded:connect(function(player)
 	player.CharacterAdded:connect(function(character)
-		if Dungeon.GetDungeonData("Hardcore") then
-			character.Humanoid.Died:connect(function()
-				wait(2.5)
-
+		OnDied(character.Humanoid):connect(function()
+			wait(2.5)
+			if noRespawns() then
 				local persist = false
 
 				for _, otherPlayer in pairs(Players:GetPlayers()) do
@@ -65,7 +78,7 @@ Players.PlayerAdded:connect(function(player)
 						TeleportService:Teleport(PlaceIds.GetHubPlace(), player)
 					end
 				end
-			end)
-		end
+			end
+		end)
 	end)
 end)

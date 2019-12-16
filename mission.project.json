@@ -13,6 +13,9 @@
       "Core": {
         "$path": "shared/ReplicatedStorage/Core"
       },
+      "Equipment": {
+        "$path": "shared/ReplicatedStorage/Equipment"
+      },
       "ItemModules": {
         "$path": "shared/ReplicatedStorage/ItemModules"
       },

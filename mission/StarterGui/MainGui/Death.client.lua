@@ -5,6 +5,9 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
+local LivesText = require(ReplicatedStorage.Libraries.LivesText)
+local OnDied = require(ReplicatedStorage.Core.OnDied)
 
 local DeathFade = Lighting.DeathFade
 local GoldLoss = script.Parent.Main.GoldLoss
@@ -16,97 +19,128 @@ local START_SPECTATE_TIME = 1
 local MIN_COINS = 50
 
 local characterAdded
+local gamemode = Dungeon.GetDungeonData("Gamemode")
 
-if Dungeon.GetDungeonData("Hardcore") then
-	characterAdded = function(character)
-		local humanoid = character:WaitForChild("Humanoid")
-		while humanoid.Health > 0 do
-			humanoid.HealthChanged:wait()
-		end
+local function hardcoreDeath()
+	local total = 0
 
-		local total = 0
+	repeat
+		total = math.min(
+			HARDCORE_TIME,
+			total + RunService.RenderStepped:wait()
+		)
 
-		repeat
-			total = math.min(
-				HARDCORE_TIME,
-				total + RunService.RenderStepped:wait()
-			)
+		local tint = (HARDCORE_TIME - total) / 1.5
 
-			local tint = (HARDCORE_TIME - total) / 1.5
+		DeathFade.TintColor = Color3.new(1, tint, tint)
+	until total >= HARDCORE_TIME
 
-			DeathFade.TintColor = Color3.new(1, tint, tint)
-		until total >= HARDCORE_TIME
+	wait(START_SPECTATE_TIME)
 
-		wait(START_SPECTATE_TIME)
+	LocalPlayer.PlayerGui.MainGui.Main.Abilities.Visible = false
+	LocalPlayer.PlayerGui.MainGui.Main.Ammo.Visible = false
 
-		LocalPlayer.PlayerGui.MainGui.Main.Abilities.Visible = false
-		LocalPlayer.PlayerGui.MainGui.Main.Ammo.Visible = false
+	ReplicatedStorage.LocalEvents.StartSpectate:Fire()
+end
 
-		ReplicatedStorage.LocalEvents.StartSpectate:Fire()
+local tweenFadeOut = TweenService:Create(
+	DeathFade,
+	TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+	{ Brightness = -1 }
+)
+
+local tweenFadeIn = TweenService:Create(
+	DeathFade,
+	TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+	{ Brightness = 0 }
+)
+
+local tweenGoldLossIn = TweenService:Create(
+	GoldLoss,
+	TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In),
+	{ Position = UDim2.new(0.5, 0, 0.5, 0) }
+)
+
+local tweenGoldLossOut = TweenService:Create(
+	GoldLoss,
+	TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In),
+	{ Position = UDim2.new(1.5, 0, 0.5, 0) }
+)
+
+local tweenGoldLossBounce = TweenService:Create(
+	GoldLoss,
+	TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, 0, true),
+	{ TextSize = 100 }
+)
+
+local function respawningDeath(shiftAmount)
+	tweenFadeOut:Play()
+	LocalPlayer.PlayerGui.RuddevGui.Enabled = false
+
+	wait(0.2)
+	tweenGoldLossIn:Play()
+	tweenGoldLossIn.Completed:wait()
+	wait(0.2)
+
+	if shiftAmount() then
+		tweenGoldLossBounce:Play()
 	end
-else
-	local amount = 100
 
-	local tweenFadeOut = TweenService:Create(
-		DeathFade,
-		TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-		{ Brightness = -1 }
-	)
+	wait(1.5)
 
-	local tweenFadeIn = TweenService:Create(
-		DeathFade,
-		TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-		{ Brightness = 0 }
-	)
+	RespawnMe:InvokeServer()
+	tweenGoldLossOut:Play()
 
-	local tweenGoldLossIn = TweenService:Create(
-		GoldLoss,
-		TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In),
-		{ Position = UDim2.new(0.5, 0, 0.5, 0) }
-	)
+	tweenFadeIn:Play()
+	tweenFadeIn.Completed:wait()
+	RunService.Heartbeat:wait()
+	GoldLoss.Position = UDim2.new(-0.5, 0, 0.5, 0)
+	LocalPlayer.PlayerGui.RuddevGui.Enabled = true
+end
 
-	local tweenGoldLossOut = TweenService:Create(
-		GoldLoss,
-		TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In),
-		{ Position = UDim2.new(1.5, 0, 0.5, 0) }
-	)
+if gamemode == "Mission" then
+	if Dungeon.GetDungeonData("Hardcore") then
+		characterAdded = function(character)
+			OnDied(character:WaitForChild("Humanoid")):wait()
+			hardcoreDeath()
+		end
+	else
+		local amount = 100
 
-	local tweenGoldLossBounce = TweenService:Create(
-		GoldLoss,
-		TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out, 0, true),
-		{ TextSize = 100 }
-	)
+		characterAdded = function(character)
+			OnDied(character:WaitForChild("Humanoid")):connect(function()
+				respawningDeath(function()
+					if amount > MIN_COINS then
+						amount = amount - 10
+						GoldLoss.Text = amount .. "% G"
+						return true
+					end
+				end)
+			end)
+		end
+	end
+elseif gamemode == "Arena" then
+	local arenaLives = ReplicatedStorage.ArenaLives
 
 	characterAdded = function(character)
-		local humanoid = character:WaitForChild("Humanoid")
-		while humanoid.Health > 0 do
-			humanoid.HealthChanged:wait()
-		end
+		OnDied(character:WaitForChild("Humanoid")):connect(function()
+			if arenaLives.Value == 0 then
+				hardcoreDeath()
+			else
+				GoldLoss.TextColor3 = Color3.new(1, 0.6, 1)
+				GoldLoss.Text = LivesText(arenaLives.Value)
 
-		tweenFadeOut:Play()
-		LocalPlayer.PlayerGui.RuddevGui.Enabled = false
+				respawningDeath(function()
+					GoldLoss.Text = LivesText(arenaLives.Value)
 
-		wait(0.2)
-		tweenGoldLossIn:Play()
-		tweenGoldLossIn.Completed:wait()
-		wait(0.2)
+					if arenaLives.Value == 0 then
+						FastSpawn(hardcoreDeath)
+					end
 
-		if amount > MIN_COINS then
-			amount = amount - 10
-			GoldLoss.Text = amount .. "% G"
-			tweenGoldLossBounce:Play()
-		end
-
-		wait(1.5)
-
-		RespawnMe:InvokeServer()
-		tweenGoldLossOut:Play()
-
-		tweenFadeIn:Play()
-		tweenFadeIn.Completed:wait()
-		RunService.Heartbeat:wait()
-		GoldLoss.Position = UDim2.new(-0.5, 0, 0.5, 0)
-		LocalPlayer.PlayerGui.RuddevGui.Enabled = true
+					return true
+				end)
+			end
+		end)
 	end
 end
 

@@ -8,15 +8,22 @@ local ServerStorage = game:GetService("ServerStorage")
 local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
+local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
 local Buffs = require(ServerScriptService.Libraries.Buffs)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
+local ExperienceUtil = require(ServerScriptService.Libraries.ExperienceUtil)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Maid = require(ReplicatedStorage.Core.Maid)
+local MapNumbers = require(ReplicatedStorage.Core.MapNumbers)
 local Nametag = require(ServerScriptService.Shared.Nametag)
+local OnDied = require(ReplicatedStorage.Core.OnDied)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 local XP = require(ReplicatedStorage.Core.XP)
 
 local AMOUNT_FOR_NOT_BOSS = 0.7
 local DEBUG = true
+local LIFETIME = 4
 
 local Zombie = {}
 Zombie.__index = Zombie
@@ -88,7 +95,7 @@ function Zombie:SetupHumanoid()
 	humanoid.MaxHealth = health
 	humanoid.Health = health
 
-	humanoid.Died:connect(function()
+	OnDied(humanoid):connect(function()
 		self:UpdateNametag()
 		self:Die()
 	end)
@@ -180,6 +187,70 @@ function Zombie:Wander()
 end
 
 -- AGGRO
+function Zombie:SmartAI()
+	local pathing = PathfindingService:CreatePath()
+
+	local waypoints = {}
+	local lastRecalculate = 0
+
+	local humanoid = self.instance.Humanoid
+	local ourTick = self.aggroTick
+
+	while self.alive
+		and self.aggroTick == ourTick
+		and self.aggroFocus:IsDescendantOf(game)
+		and self.aggroFocus.Humanoid.Health > 0
+	do
+		repeat
+			if tick() - lastRecalculate > 0.25 then
+				pathing:ComputeAsync(self.instance.PrimaryPart.Position, self.aggroFocus.PrimaryPart.Position)
+
+				if not (self.alive
+					and self.aggroTick == ourTick
+					and self.aggroFocus:IsDescendantOf(game)
+					and self.aggroFocus.Humanoid.Health > 0
+				) then
+					break -- continue
+				end
+
+				waypoints = pathing:GetWaypoints()
+				lastRecalculate = tick()
+			end
+
+			local waypoint = table.remove(waypoints, 1)
+			if waypoint then
+				if waypoint.Action == Enum.PathWaypointAction.Jump then
+					humanoid.Jump = true
+				elseif waypoint.Action == Enum.PathWaypointAction.Walk then
+					local diff = waypoint.Position - self.instance.PrimaryPart.Position
+					local angle = math.atan2(diff.X, diff.Z)
+
+					if (math.abs(math.deg(angle)) < 120 and diff.Magnitude > 5) or #waypoints == 0 then
+						humanoid:MoveTo(waypoint.Position, self.aggroFocus.PrimaryPart)
+						humanoid.MoveToFinished:wait()
+					end
+				end
+			else
+				wait(0.15)
+			end
+		until true
+	end
+end
+
+function Zombie:StupidAI()
+	local humanoid = self.instance.Humanoid
+	local ourTick = self.aggroTick
+
+	while self.alive
+		and self.aggroTick == ourTick
+		and self.aggroFocus:IsDescendantOf(game)
+		and self.aggroFocus.Humanoid.Health > 0
+	do
+		humanoid:MoveTo(self.aggroFocus.PrimaryPart.Position, self.aggroFocus.PrimaryPart)
+		humanoid.MoveToFinished:wait()
+	end
+end
+
 function Zombie:Aggro(focus)
 	if not self.defaultAiInitialized then return end
 	local humanoid = self.instance.Humanoid
@@ -194,51 +265,8 @@ function Zombie:Aggro(focus)
 	local ourTick = self.aggroTick + 1
 	self.aggroTick = ourTick
 
-	local pathing = PathfindingService:CreatePath()
-
-	spawn(function()
-		local waypoints = {}
-		local lastRecalculate = 0
-
-		while self.alive
-			and self.aggroTick == ourTick
-			and self.aggroFocus:IsDescendantOf(game)
-			and self.aggroFocus.Humanoid.Health > 0
-		do
-			repeat
-				if tick() - lastRecalculate > 0.25 then
-					pathing:ComputeAsync(self.instance.PrimaryPart.Position, focus.PrimaryPart.Position)
-
-					if not (self.alive
-						and self.aggroTick == ourTick
-						and self.aggroFocus:IsDescendantOf(game)
-						and self.aggroFocus.Humanoid.Health > 0
-					) then
-						break -- continue
-					end
-
-					waypoints = pathing:GetWaypoints()
-					lastRecalculate = tick()
-				end
-
-				local waypoint = table.remove(waypoints, 1)
-				if waypoint then
-					if waypoint.Action == Enum.PathWaypointAction.Jump then
-						humanoid.Jump = true
-					elseif waypoint.Action == Enum.PathWaypointAction.Walk then
-						local diff = waypoint.Position - self.instance.PrimaryPart.Position
-						local angle = math.atan2(diff.X, diff.Z)
-
-						if (math.abs(math.deg(angle)) < 120 and diff.Magnitude > 5) or #waypoints == 0 then
-							humanoid:MoveTo(waypoint.Position, self.aggroFocus.PrimaryPart)
-							humanoid.MoveToFinished:wait()
-						end
-					end
-				else
-					wait(0.15)
-				end
-			until true
-		end
+	FastSpawn(function()
+		self:StupidAI()
 	end)
 
 	spawn(function()
@@ -322,6 +350,10 @@ function Zombie:Die()
 	self:MaybeDropBuff()
 	self:AfterDeath()
 	self.diedEvent:Fire()
+
+	RealDelay(LIFETIME, function()
+		self:Destroy()
+	end)
 end
 
 function Zombie:MaybeDropBuff()
@@ -341,31 +373,7 @@ function Zombie:GiveXP()
 
 	if xpGain > 0 then
 		for _, player in pairs(Players:GetPlayers()) do
-			local playerData = player:FindFirstChild("PlayerData")
-
-			if playerData then
-				local level = playerData.Level
-				local xp = playerData.XP
-				local xpGain = xpGain * playerData.XPScale.Value
-
-				local xpNeeded = XP.XPNeededForNextLevel(level.Value)
-				if xp.Value + xpGain >= xpNeeded then
-					level.Value = level.Value + 1
-					xp.Value = 0
-					ReplicatedStorage.Remotes.LevelUp:FireAllClients(player)
-				else
-					xp.Value = xp.Value + xpGain
-				end
-
-				local primaryPart = self.instance.PrimaryPart
-				if primaryPart then
-					ReplicatedStorage.Remotes.XPGain:FireClient(
-						player,
-						primaryPart.Position,
-						math.floor(xpGain)
-					)
-				end
-			end
+			ExperienceUtil.GivePlayerXP(player, xpGain, self.instance.PrimaryPart)
 		end
 	end
 end
@@ -382,15 +390,48 @@ function Zombie:GetScaling()
 end
 
 function Zombie:GetScale(key)
-	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+	local gamemode = Dungeon.GetDungeonData("Gamemode")
 
-	local scale = assert(
-		(self.Scaling or self:GetScaling())[key]
-			or self:CustomScale(key),
-		"no scale for " .. key
-	)
+	if gamemode == "Arena" then
+		local zombieData = assert(
+			ArenaConstants.Zombies[self.zombieType],
+			"Zombie constants not found for " .. self.zombieType
+		)
 
-	return scale.Base * scale.Scale ^ (self.level - campaignInfo.Difficulties[1].MinLevel)
+		if key == "Damage" then
+			key = "Health" -- Health matches damage for arena
+		end
+
+		local stat = assert(zombieData[key], self.zombieType .. " did not have stat " .. key)
+		if typeof(stat) == "number" then
+			return stat
+		else
+			local floor
+			for index, step in ipairs(stat) do
+				if step.Step <= self.level then
+					floor = { index, step }
+				else
+					break
+				end
+			end
+
+			local ceilStat = stat[floor[1] + 1]
+			local ceil = ceilStat or { Step = 0, Number = 0 }
+			floor = floor[2]
+
+			return MapNumbers(floor.Step, floor.Number, ceil.Step, ceil.Number, self.level)
+		end
+	else
+		local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+
+		local scale = assert(
+			(self.Scaling or self:GetScaling())[key]
+				or self:CustomScale(key),
+			"no scale for " .. key
+		)
+
+		return scale.Base * scale.Scale ^ (self.level - campaignInfo.Difficulties[1].MinLevel)
+	end
 end
 
 function Zombie:GetScaleSafe(key)

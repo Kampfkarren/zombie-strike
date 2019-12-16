@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
-local Raycast = require(ReplicatedStorage.Libraries.Raycast)
+local Raycast = require(ReplicatedStorage.Core.Raycast)
 
 local WarningRange = ReplicatedStorage.WarningRange
 

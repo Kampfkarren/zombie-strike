@@ -5,6 +5,7 @@ local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
 
 local Codes = require(script.Codes)
+local Equipment = require(script.Equipment)
 local Feedback = require(script.Feedback)
 local Inventory = require(script.Inventory)
 local Quests = require(script.Quests)
@@ -22,6 +23,7 @@ local function App()
 		Size = UDim2.new(1, 0, 1, 0),
 	}, {
 		Codes = e(Codes),
+		Equipment = e(Equipment),
 		Feedback = e(Feedback),
 		Inventory = e(Inventory),
 		Quests = e(Quests),

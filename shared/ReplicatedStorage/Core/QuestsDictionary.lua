@@ -86,7 +86,18 @@ local QuestsDictionary = {
 					Type = "Number",
 					Range = { 3, 3 },
 				},
-			}
+			},
+		},
+
+		ArenaWaves = {
+			Text = "Defeat %d hordes in the arena",
+			Args = {
+				{
+					Type = "Number",
+					Range = { 10, 50 },
+					RoundToNearest = 5,
+				},
+			},
 		},
 	},
 }

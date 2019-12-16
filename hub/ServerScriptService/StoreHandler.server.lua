@@ -52,3 +52,7 @@ ReplicatedStorage.Remotes.UpdateStoreLastSeen.OnServerEvent:connect(function(pla
 	data.LastSeen = os.date("!*t").yday
 	dataStore:Set(data)
 end)
+
+ReplicatedStorage.Remotes.GetServerDateStamp.OnServerInvoke = function()
+	return os.date("!*t").year + os.date("!*t").yday
+end

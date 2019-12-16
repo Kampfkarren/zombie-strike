@@ -80,12 +80,11 @@ function Dungeon.GetDungeonData(key)
 		return Campaigns[Dungeon.GetDungeonData("Campaign")]
 	elseif key == "DifficultyInfo" then
 		return Dungeon.GetDungeonData("CampaignInfo").Difficulties[Dungeon.GetDungeonData("Difficulty")]
-	elseif MockDungeon[key] ~= nil then
+	else
 		local success, result = Dungeon.GetDungeonTable():await()
 		assert(success, result)
+		assert(result ~= nil, "dungeon key does not exist: " .. key)
 		return result[key]
-	else
-		error("dungeon key does not exist: " .. key)
 	end
 end
 

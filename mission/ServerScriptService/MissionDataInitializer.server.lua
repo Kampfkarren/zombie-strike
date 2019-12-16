@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
@@ -20,6 +21,10 @@ local function numberValue(name, value, playerData)
 	return instance
 end
 
+local function dataValue(player, name, playerData)
+	numberValue(name, Data.GetPlayerData(player, name), playerData)
+end
+
 Players.PlayerAdded:connect(function(player)
 	Promise.all({
 		Data.GetPlayerDataAsync(player, "Armor"):andThen(Loot.Serialize),
@@ -32,11 +37,10 @@ Players.PlayerAdded:connect(function(player)
 	local playerData = Instance.new("Folder")
 	playerData.Name = "PlayerData"
 
-	local level = Data.GetPlayerData(player, "Level")
-	numberValue("Level", level, playerData)
-
-	local xp = Data.GetPlayerData(player, "XP")
-	numberValue("XP", xp, playerData)
+	dataValue(player, "Level", playerData)
+	dataValue(player, "XP", playerData)
+	dataValue(player, "EquippedHealthPack", playerData)
+	dataValue(player, "EquippedGrenade", playerData)
 
 	local goldValue = numberValue("GoldScale", 1, playerData)
 
@@ -75,4 +79,9 @@ end
 
 clientDungeonKey("Members")(#Dungeon.GetDungeonData("Members"))
 clientDungeonKey("Campaign")(Dungeon.GetDungeonData("Campaign"))
-clientDungeonKey("Hardcore", "BoolValue")(Dungeon.GetDungeonData("Hardcore"))
+
+local gamemode = Dungeon.GetDungeonData("Gamemode")
+clientDungeonKey("Gamemode", "StringValue")(gamemode)
+if gamemode == "Mission" then
+	clientDungeonKey("Hardcore", "BoolValue")(Dungeon.GetDungeonData("Hardcore"))
+end

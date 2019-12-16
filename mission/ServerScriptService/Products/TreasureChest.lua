@@ -3,6 +3,14 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+
+if Dungeon.GetDungeonData("Gamemode") ~= "Mission" then
+	return {
+		Activate = function() end
+	}
+end
+
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local GenerateTreasureLoot = require(ServerScriptService.Libraries.GenerateTreasureLoot)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)

@@ -13,6 +13,7 @@ CircleEffect.Presets = {
 	BIG_ROBO_ZOMBIE = 1,
 	TANK_BUFF = 2,
 	BOMBER_ZOMBIE = 3,
+	KATANA = 4,
 }
 
 CircleEffect.PresetOptions = {
@@ -29,6 +30,11 @@ CircleEffect.PresetOptions = {
 	[CircleEffect.Presets.BOMBER_ZOMBIE] = {
 		Color = Color3.fromRGB(255, 143, 79),
 		Range = 30,
+	},
+
+	[CircleEffect.Presets.KATANA] = {
+		Color = Color3.new(0.7, 0.7, 0.7),
+		Range = 25,
 	},
 }
 

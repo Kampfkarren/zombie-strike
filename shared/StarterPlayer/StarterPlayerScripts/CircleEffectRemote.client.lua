@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local CircleEffect = require(ReplicatedStorage.Libraries.CircleEffect)
+local CircleEffect = require(ReplicatedStorage.Core.CircleEffect)
 
 local CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect
 

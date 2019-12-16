@@ -4,6 +4,7 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
 
+local Arena = require(script.Arena)
 local TreasureLoot = require(script.TreasureLoot)
 local TreasureNotification = require(script.TreasureNotification)
 
@@ -14,6 +15,7 @@ local function App()
 		BackgroundTransparency = 1,
 		Size = UDim2.new(1, 0, 1, 0),
 	}, {
+		Arena = e(Arena),
 		TreasureLoot = e(TreasureLoot),
 		TreasureNotification = e(TreasureNotification),
 	})

@@ -80,8 +80,15 @@ return function()
 		LastSeen = 0,
 	}
 
+	MockPlayer.Equipment = {
+		HealthPack = { 1 },
+		Grenade = { 1 },
+	}
+
 	MockPlayer.Settings = {}
 	MockPlayer.XPExpires = 0
+
+	MockPlayer.EpicFails = {}
 
 	return MockPlayer
 end

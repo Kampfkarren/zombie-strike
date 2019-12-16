@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Raycast = require(ReplicatedStorage.Libraries.Raycast)
+local Raycast = require(ReplicatedStorage.Core.Raycast)
 
 local DEBUG = false
 DEBUG = DEBUG and RunService:IsStudio()

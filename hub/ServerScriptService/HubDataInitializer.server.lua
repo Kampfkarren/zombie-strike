@@ -70,6 +70,8 @@ Players.PlayerAdded:connect(function(player)
 	initStat(player, "Gold", playerData)
 	initStat(player, "Brains", playerData)
 	initStat(player, "DungeonsPlayed", playerData)
+	initStat(player, "EquippedGrenade", playerData)
+	initStat(player, "EquippedHealthPack", playerData)
 
 	playerData.Parent = player
 
@@ -115,6 +117,7 @@ Players.PlayerAdded:connect(function(player)
 					gui.Enabled = true
 
 					local lobby = {
+						Gamemode = "Mission",
 						Players = { player },
 						Campaign = 1,
 						Difficulty = 1,

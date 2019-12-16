@@ -2,20 +2,24 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
 
-local Mouse = require(ReplicatedStorage.RuddevModules.Mouse)
+local EquipmentUtil = require(ReplicatedStorage.Core.EquipmentUtil)
+local Promise = require(ReplicatedStorage.Core.Promise)
 
 local Abilities = script.Parent.Main.Abilities
 local LocalPlayer = Players.LocalPlayer
 
-local COOLDOWN = 10
 local COOLDOWN_TEXT = "%.1fs"
-local GRENADE_SPEED = 50
 
-local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadName, frame, remote, callback)
+local function alwaysTrue()
+	return true
+end
+
+local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadName, frame, remote, getEquipment, equipmentName)
 	local cooldown = frame.Cooldown
 	local label = frame.Tooltip
+
+	local cooldownPromise
 
 	local using = false
 
@@ -30,29 +34,48 @@ local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadNam
 		end
 	end
 
+	local function startCooldown(itemCooldown)
+		return Promise.async(function(resolve)
+			local dt = itemCooldown
+
+			while dt > 0 do
+				cooldown.Text = COOLDOWN_TEXT:format(dt)
+				dt = dt - RunService.Heartbeat:wait()
+			end
+
+			resolve()
+		end):finally(function()
+			cooldown.Text = ""
+			using = false
+		end)
+	end
+
+	local function updateIcon()
+		local equipped = getEquipment()
+		frame.Icon.Image = equipped.Icon
+	end
+
 	local function use()
 		local character = LocalPlayer.Character
 
 		if not character or character.Humanoid.Health <= 0 then return end
 		if using then return end
 
+		local equipment = getEquipment()
+
 		using = true
-		if callback() == false then
+		if (equipment.CanUse or alwaysTrue)(LocalPlayer) then
+			local output = remote:InvokeServer()
+
+			if equipment.ClientEffect then
+				equipment.ClientEffect(output)
+			end
+
+			startCooldown(equipment.Cooldown)
+		else
 			using = false
 		end
 	end
-
-	remote.OnClientEvent:connect(function()
-		local dt = COOLDOWN
-
-		while dt > 0 do
-			cooldown.Text = COOLDOWN_TEXT:format(dt)
-			dt = dt - RunService.Heartbeat:wait()
-		end
-
-		cooldown.Text = ""
-		using = false
-	end)
 
 	frame.MouseButton1Click:connect(use)
 
@@ -67,6 +90,14 @@ local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadNam
 	UserInputService.LastInputTypeChanged:connect(updateLabel)
 
 	updateLabel()
+	updateIcon()
+
+	LocalPlayer
+		:WaitForChild("PlayerData")
+		:WaitForChild("Equipped" .. equipmentName)
+		.Changed:connect(function()
+			updateIcon()
+		end)
 end
 
 abilityButton(
@@ -75,17 +106,9 @@ abilityButton(
 	Enum.KeyCode.ButtonL1,
 	"L1",
 	Abilities.Q,
-	ReplicatedStorage.Remotes.HealthPack,
-	function()
-		if not ReplicatedStorage.HubWorld.Value then
-			local humanoid = LocalPlayer.Character.Humanoid
-			if humanoid.Health == humanoid.MaxHealth then
-				return false
-			end
-		end
-
-		ReplicatedStorage.Remotes.HealthPack:FireServer()
-	end
+	ReplicatedStorage.Remotes.UseHealthPack,
+	EquipmentUtil.GetHealthPack,
+	"HealthPack"
 )
 
 abilityButton(
@@ -94,25 +117,7 @@ abilityButton(
 	Enum.KeyCode.ButtonR1,
 	"R1",
 	Abilities.E,
-	ReplicatedStorage.Remotes.GrenadeCooldown,
-	function()
-		local grenade = ReplicatedStorage.Remotes.FireGrenade:InvokeServer()
-		if not grenade then
-			warn("no grenade")
-			return false
-		end
-
-		local primaryCFrame = LocalPlayer.Character.PrimaryPart.CFrame
-		grenade.CFrame = primaryCFrame + primaryCFrame.RightVector
-
-		local unit
-
-		if UserInputService.MouseEnabled then
-			unit = (Mouse.WorldPosition - LocalPlayer.Character.PrimaryPart.Position).Unit
-		else
-			unit = Workspace.CurrentCamera.CFrame.LookVector
-		end
-
-		grenade.Velocity = unit * GRENADE_SPEED + Vector3.new(0, 30, 0)
-	end
+	ReplicatedStorage.Remotes.UseGrenade,
+	EquipmentUtil.GetGrenade,
+	"Grenade"
 )

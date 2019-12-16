@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local EquipmentUtil = require(ReplicatedStorage.Core.EquipmentUtil)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local QualityDictionary = require(ReplicatedStorage.Core.QualityDictionary)
 local t = require(ReplicatedStorage.Vendor.t)
@@ -156,10 +157,14 @@ function Loot.SerializeTable(loot)
 end
 
 function Loot.GetLootName(loot)
+	if Loot.IsEquipment(loot) then
+		return EquipmentUtil.FromIndex(loot.Type, loot.Index).Name
+	end
+
 	local model = ReplicatedStorage.Items[loot.Type .. loot.Model]
 	local qualityName = ""
 
-	if loot.Type ~= "Armor" and loot.Type ~= "Helmet" then
+	if Loot.IsWeapon(loot) then
 		for _, quality in ipairs(QualityDictionary) do
 			if loot.Bonus <= quality[1] then
 				qualityName = quality[2] .. " "
@@ -171,6 +176,18 @@ function Loot.GetLootName(loot)
 	end
 
 	return qualityName .. model.ItemName.Value
+end
+
+function Loot.IsWearable(loot)
+	return loot.Type == "Armor" or loot.Type == "Helmet"
+end
+
+function Loot.IsWeapon(loot)
+	return not Loot.IsWearable(loot) and not Loot.IsEquipment(loot)
+end
+
+function Loot.IsEquipment(loot)
+	return loot.Type == "Grenade" or loot.Type == "HealthPack"
 end
 
 return Loot

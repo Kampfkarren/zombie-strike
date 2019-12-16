@@ -27,12 +27,20 @@ function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId, l
 		end
 
 		local startTime = tick()
-		dungeonDataStore:SetAsync(privateServerId, {
+		local data = {
 			Campaign = lobby.Campaign,
-			Difficulty = lobby.Difficulty,
-			Hardcore = lobby.Hardcore,
+			Gamemode = lobby.Gamemode,
 			Members = playerIds,
-		})
+		}
+
+		if lobby.Gamemode == "Arena" then
+			data.ArenaLevel = lobby.ArenaLevel
+		else
+			data.Difficulty = lobby.Difficulty
+			data.Hardcore = lobby.Hardcore
+		end
+
+		dungeonDataStore:SetAsync(privateServerId, data)
 		print("🕴Setting dungeon data store took", tick() - startTime, "seconds")
 
 		TeleportService:TeleportToPrivateServer(

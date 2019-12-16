@@ -26,8 +26,7 @@ local function formatNumber(format, number)
 end
 
 local function isAurora(loot)
-	return loot.Type ~= "Helmet" and loot.Type ~= "Armor"
-		and (loot.Model >= 6 and loot.Model <= 10)
+	return Loot.IsWeapon(loot) and (loot.Model >= 6 and loot.Model <= 10)
 end
 
 local function getRarityText(loot, rarity)
@@ -124,7 +123,7 @@ function LootInfo:render()
 
 	local stats = {}
 
-	if loot.Type == "Helmet" or loot.Type == "Armor" then
+	if Loot.IsWearable(loot) then
 		local healthFunction = ArmorScaling[loot.Type .. "Health"]
 
 		local currentItem = self.props.equipment["equipped" .. loot.Type]
@@ -163,7 +162,7 @@ function LootInfo:render()
 			Stat = lootRegen,
 			StatName = "HEAL",
 		})
-	else
+	elseif Loot.IsWeapon(loot) then
 		local currentGunItem = self.props.equipment.equippedWeapon
 		local currentGun = GunScaling.BaseStats(
 			currentGunItem.Type,
@@ -225,6 +224,8 @@ function LootInfo:render()
 			Stat = loot.Magazine,
 			StatName = "AMMO",
 		})
+	else
+		error("unreachable code! invalid loot type: " .. loot.Type)
 	end
 
 	return e("Frame", frameProps, {

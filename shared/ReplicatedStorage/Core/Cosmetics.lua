@@ -1,7 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local CosmeticsDictionary = require(ReplicatedStorage.Core.CosmeticsDictionary)
 local t = require(ReplicatedStorage.Vendor.t)
+
+local dateStamp
+
+if RunService:IsClient() then
+	dateStamp = ReplicatedStorage.Remotes.GetServerDateStamp:InvokeServer()
+end
 
 local cosmeticType = t.array(t.union(
 	t.strictInterface({
@@ -107,8 +114,14 @@ Cosmetics.Distribution = {
 }
 
 function Cosmetics.GetStoreItems()
-	local date = os.date("!*t")
-	local rng = Random.new(date.year + date.yday)
+	local rng
+
+	if RunService:IsServer() then
+		local date = os.date("!*t")
+		rng = Random.new(date.year + date.yday)
+	else
+		rng = Random.new(dateStamp)
+	end
 
 	local collated = {}
 

@@ -1,7 +1,7 @@
 local Upgrades = {}
 
 Upgrades.GoldBase = 3.5
-Upgrades.GoldScale = 1.262
+Upgrades.GoldScale = 1.242
 Upgrades.MaxUpgrades = 5
 Upgrades.UpgradeTax = 1.1
 
