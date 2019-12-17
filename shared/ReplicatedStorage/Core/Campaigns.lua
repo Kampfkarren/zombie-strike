@@ -855,7 +855,7 @@ local Campaigns = {
 		},
 
 		AIAggroRange = 60,
-		CompletionBadge = 2124497452,
+		CompletionBadge = 2124497453,
 	},
 }
 

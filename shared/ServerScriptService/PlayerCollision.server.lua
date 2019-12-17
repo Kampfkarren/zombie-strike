@@ -6,6 +6,7 @@ PhysicsService:CreateCollisionGroup("Players")
 PhysicsService:CreateCollisionGroup("Zombies")
 
 PhysicsService:CollisionGroupSetCollidable("Players", "Players", false)
+PhysicsService:CollisionGroupSetCollidable("Zombies", "Zombies", false)
 
 PhysicsService:CreateCollisionGroup("Grenade")
 PhysicsService:CollisionGroupSetCollidable("Grenade", "Players", false)

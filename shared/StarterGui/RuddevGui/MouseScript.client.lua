@@ -115,7 +115,7 @@ RunService:BindToRenderStep("Mouse", 5, function()
 
 	-- MOUSE_GUI.Position	= UDim2.new(0.5, 0, 0.5, 0)
 
-	local ignore	= {EFFECTS}
+	local ignore	= {EFFECTS, Workspace.Zombies}
 	if PLAYER.Character then
 		table.insert(ignore, PLAYER.Character)
 	end
