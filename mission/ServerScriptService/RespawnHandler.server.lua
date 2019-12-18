@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local TeleportService = game:GetService("TeleportService")
 
+local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local OnDied = require(ReplicatedStorage.Core.OnDied)
@@ -75,7 +76,9 @@ Players.PlayerAdded:connect(function(player)
 
 				if not persist then
 					for _, player in pairs(Players:GetPlayers()) do
-						TeleportService:Teleport(PlaceIds.GetHubPlace(), player)
+						DataStore2.SaveAllAsync(player):andThen(function()
+							TeleportService:Teleport(PlaceIds.GetHubPlace(), player)
+						end)
 					end
 				end
 			end
