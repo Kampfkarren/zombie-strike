@@ -88,6 +88,16 @@ local function getLootRarity(player)
 		return 4
 	end
 
+	-- Hackers only get commons and uncommons ;)
+	local epicFails = Data.GetPlayerData(player, "EpicFails")
+	if epicFails.CreateLobby >= 1 then
+		if math.random() >= 0.7 then
+			return 1
+		else
+			return 2
+		end
+	end
+
 	local moreLegendaries = GamePasses.PlayerOwnsPass(player, GamePassDictionary.MoreLegendaries)
 	if Dungeon.GetDungeonData("Gamemode") == "Mission" then
 		local legendaryBonus, legendaryBonusStore = Data.GetPlayerData(player, "LegendaryBonus")
