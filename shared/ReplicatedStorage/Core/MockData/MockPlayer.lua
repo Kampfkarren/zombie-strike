@@ -7,6 +7,10 @@ return function()
 	MockPlayer.GameVersion = 1
 
 	MockPlayer.CodesUsed = {}
+	MockPlayer.Dailies = {
+		Time = 0,
+		Streak = 1,
+	}
 	MockPlayer.Quests = {
 		Day = 0,
 		Quests = {},
