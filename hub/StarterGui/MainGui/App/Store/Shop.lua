@@ -47,7 +47,7 @@ local function Shop(props)
 					ItemType = "Particle",
 
 					LayoutOrder = 1,
-					Price = Cosmetics.Distribution.Particle.Cost,
+					Prices = Cosmetics.Distribution.Particle,
 					Window = props[Roact.Ref],
 				}),
 
@@ -56,7 +56,7 @@ local function Shop(props)
 					ItemType = "Particle",
 
 					LayoutOrder = 2,
-					Price = Cosmetics.Distribution.Particle.Cost,
+					Prices = Cosmetics.Distribution.Particle,
 					Window = props[Roact.Ref],
 				}),
 
@@ -65,7 +65,7 @@ local function Shop(props)
 					ItemType = "Face",
 
 					LayoutOrder = 3,
-					Price = Cosmetics.Distribution.Face.Cost,
+					Prices = Cosmetics.Distribution.Face,
 					Window = props[Roact.Ref],
 				}),
 
@@ -74,7 +74,7 @@ local function Shop(props)
 					ItemType = "Face",
 
 					LayoutOrder = 3,
-					Price = Cosmetics.Distribution.Face.Cost,
+					Prices = Cosmetics.Distribution.Face,
 					Window = props[Roact.Ref],
 				}),
 			}),
@@ -97,7 +97,7 @@ local function Shop(props)
 					Size = UDim2.new(1, 0, 0.5, 0),
 
 					LayoutOrder = 1,
-					Price = Cosmetics.Distribution.LowTier.Cost,
+					Prices = Cosmetics.Distribution.LowTier,
 					Window = props[Roact.Ref],
 				}),
 
@@ -107,7 +107,7 @@ local function Shop(props)
 					Size = UDim2.new(1, 0, 0.5, 0),
 
 					LayoutOrder = 2,
-					Price = Cosmetics.Distribution.LowTier.Cost,
+					Prices = Cosmetics.Distribution.LowTier,
 					Window = props[Roact.Ref],
 				}),
 			}),
@@ -117,7 +117,7 @@ local function Shop(props)
 				ItemType = "HighTier",
 				Size = UDim2.new(0.3, 0, 1, 0),
 
-				Price = Cosmetics.Distribution.HighTier.Cost,
+				Prices = Cosmetics.Distribution.HighTier,
 				Window = props[Roact.Ref],
 			}),
 		}),

@@ -94,22 +94,26 @@ end
 Cosmetics.Distribution = {
 	HighTier = {
 		Count = 1,
-		Cost = 4400,
+		Cost = 3199,
+		UsualCost = 4400,
 	},
 
 	LowTier = {
 		Count = 2,
-		Cost = 1800,
+		Cost = 1399,
+		UsualCost = 1800,
 	},
 
 	Face = {
 		Count = 2,
-		Cost = 250,
+		Cost = 199,
+		UsualCost = 250,
 	},
 
 	Particle = {
 		Count = 2,
-		Cost = 900,
+		Cost = 199,
+		UsualCost = 900,
 	},
 }
 

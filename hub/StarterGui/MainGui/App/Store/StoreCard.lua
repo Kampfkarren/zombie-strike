@@ -1,4 +1,3 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 
@@ -9,7 +8,6 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
 local e = Roact.createElement
-local LocalPlayer = Players.LocalPlayer
 local StoreCard = Roact.PureComponent:extend("StoreCard")
 
 local COSMETIC_TYPE_NAMES = {
@@ -18,6 +16,20 @@ local COSMETIC_TYPE_NAMES = {
 	LowTier = "Bundle",
 	HighTier = "LIMITED Bundle",
 }
+
+local function PriceText(props)
+	return e("TextLabel", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		AutoLocalize = false,
+		BackgroundTransparency = 1,
+		Font = props.Font or Enum.Font.GothamBold,
+		Position = UDim2.new(0.5, 0, 0.5, 0),
+		Size = props.Size or UDim2.new(0.95, 0, 0.9, 0),
+		Text = props.Price .. "🧠",
+		TextColor3 = Color3.new(1, 1, 1),
+		TextScaled = true,
+	}, props[Roact.Children])
+end
 
 function StoreCard:GetItem()
 	return Cosmetics.GetStoreItems()[self.props.ItemType][self.props.ItemIndex]
@@ -51,6 +63,41 @@ function StoreCard:render()
 
 	local item = self:GetItem()
 
+	local buyCostChildren = {}
+
+	if self.props.Prices.UsualCost then
+		buyCostChildren.UIListLayout = e("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			Padding = UDim.new(0.01, 0),
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+		})
+
+		buyCostChildren.UsualCost = e(PriceText, {
+			Price = self.props.Prices.UsualCost,
+			Font = Enum.Font.Gotham,
+			Size = UDim2.fromScale(0.4, 0.9),
+		}, {
+			Strikethrough = e("Frame", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				BorderSizePixel = 0,
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(0.98, 0.05),
+			}),
+		})
+
+		buyCostChildren.Cost = e(PriceText, {
+			Price = self.props.Prices.Cost,
+			Size = UDim2.fromScale(0.4, 0.9),
+		})
+	else
+		buyCostChildren.Cost = e(PriceText, {
+			Price = self.props.Prices.Cost,
+		})
+	end
+
 	children.BuyCost = e("Frame", {
 		AnchorPoint = Vector2.new(0, 1),
 		BackgroundColor3 = Color3.fromRGB(46, 204, 113),
@@ -59,19 +106,7 @@ function StoreCard:render()
 		Position = UDim2.new(0, 0, 1, 0),
 		Size = UDim2.new(1, 0, 0.2, 0),
 		ZIndex = 2,
-	}, {
-		Cost = e("TextLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			AutoLocalize = false,
-			BackgroundTransparency = 1,
-			Font = Enum.Font.GothamBold,
-			Position = UDim2.new(0.5, 0, 0.5, 0),
-			Size = UDim2.new(0.95, 0, 0.9, 0),
-			Text = self.props.Price .. "🧠",
-			TextColor3 = Color3.new(1, 1, 1),
-			TextScaled = true,
-		}),
-	})
+	}, buyCostChildren)
 
 	children.ItemInfo = e("Frame", {
 		BackgroundColor3 = Color3.new(),
@@ -126,7 +161,7 @@ function StoreCard:render()
 
 	if self.state.buyingProduct then
 		children.Purchase = e(BrainsPurchase, {
-			Cost = self.props.Price,
+			Cost = self.props.Prices.Cost,
 			Name = item.Name,
 			Window = self.props.Window,
 
