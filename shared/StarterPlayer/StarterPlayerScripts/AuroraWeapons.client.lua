@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 local Collection = require(ReplicatedStorage.Core.Collection)
 local Color3Lerp = require(ReplicatedStorage.Core.Color3Lerp)
@@ -12,6 +13,12 @@ local COLORS = {
 local RATE = 0.5
 
 local auroraGuns = {}
+
+local function isMobile()
+	return not UserInputService.MouseEnabled
+		and not UserInputService.GamepadEnabled
+		and not UserInputService.KeyboardEnabled
+end
 
 RunService.Heartbeat:connect(function(delta)
 	for gun, info in pairs(auroraGuns) do
@@ -47,5 +54,9 @@ Collection("AuroraGun", function(gun)
 		primaryPart = gun.PrimaryPart
 	end
 
-	auroraGuns[gun.PrimaryPart] = { math.random(1, 3), math.random() }
+	if isMobile() then
+		primaryPart.Material = Enum.Material.Ice
+	end
+
+	auroraGuns[primaryPart] = { math.random(1, 3), math.random() }
 end)
