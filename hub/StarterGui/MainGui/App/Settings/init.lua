@@ -24,6 +24,12 @@ local COLOR_RED = Color3.fromRGB(215, 90, 90)
 
 local IMAGE_LOCK = "rbxassetid://2826726111"
 
+local TRADE_REQUEST_COLORS = {
+	["Allow"] = COLOR_GREEN,
+	["Allow near level"] = Color3.fromRGB(177, 143, 23),
+	["Off"] = COLOR_RED,
+}
+
 local function copy(list)
 	local copy = {}
 	for index, value in pairs(list) do
@@ -138,6 +144,24 @@ function SettingsMenu:init()
 		self:setState({
 			skinToneDropdownPosition = Roact.None,
 		})
+	end
+
+	self.goldGunsToggle = function()
+		if GamePasses.PlayerOwnsPass(LocalPlayer, GamePassDictionary.GoldGuns) then
+			self:SetSetting("Gold Guns", self.state.settings["Gold Guns"] == "On" and "Off" or "On")
+		else
+			MarketplaceService:PromptGamePassPurchase(LocalPlayer, GamePassDictionary.GoldGuns)
+		end
+	end
+
+	self.setTradeRequests = function()
+		local choices = Settings.Settings[4].Choices
+		local newIndex = (table.find(choices, self.state.settings["Trade Requests"]) % #choices) + 1
+
+		self:SetSetting(
+			"Trade Requests",
+			choices[newIndex]
+		)
 	end
 
 	GamePasses.BoughtPassUpdated(LocalPlayer).Event:connect(function()
@@ -314,14 +338,7 @@ function SettingsMenu:render()
 						BackgroundTransparency = 1,
 						Size = UDim2.fromScale(1, 1),
 
-						[Roact.Event.MouseButton1Click] = function()
-							if GamePasses.PlayerOwnsPass(LocalPlayer, GamePassDictionary.GoldGuns) then
-								self:SetSetting("Gold Guns", self.state.settings["Gold Guns"] == "On" and "Off" or "On")
-							else
-								MarketplaceService:PromptGamePassPurchase(LocalPlayer, GamePassDictionary.GoldGuns)
-							end
-						end,
-
+						[Roact.Event.MouseButton1Click] = self.goldGunsToggle,
 						[Roact.Ref] = self.skinToneButtonRef,
 					}, {
 						Label = e("TextLabel", {
@@ -331,6 +348,31 @@ function SettingsMenu:render()
 							Position = UDim2.fromScale(0.5, 0.5),
 							Size = UDim2.fromScale(0.9, 0.9),
 							Text = self.state.settings["Gold Guns"]:upper(),
+							TextColor3 = Color3.new(1, 1, 1),
+							TextScaled = true,
+						}),
+					}),
+				}),
+
+				TradeRequests = e(SettingsValue, {
+					LayoutOrder = 4,
+					Text = "TRADE REQUESTS",
+				}, {
+					Button = e(StyledButton, {
+						BackgroundColor3 = TRADE_REQUEST_COLORS[self.state.settings["Trade Requests"]],
+						BackgroundTransparency = 1,
+						Size = UDim2.fromScale(1, 1),
+
+						[Roact.Event.MouseButton1Click] = self.setTradeRequests,
+						[Roact.Ref] = self.skinToneButtonRef,
+					}, {
+						Label = e("TextLabel", {
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundTransparency = 1,
+							Font = Enum.Font.GothamBold,
+							Position = UDim2.fromScale(0.5, 0.5),
+							Size = UDim2.fromScale(0.9, 0.9),
+							Text = self.state.settings["Trade Requests"]:upper(),
 							TextColor3 = Color3.new(1, 1, 1),
 							TextScaled = true,
 						}),

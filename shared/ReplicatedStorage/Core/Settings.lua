@@ -71,6 +71,23 @@ Settings.Settings = {
 			true,
 		},
 	},
+
+	{
+		Name = "Trade Requests",
+		Default = 1,
+
+		Choices = {
+			"Allow",
+			"Allow near level",
+			"Off",
+		},
+
+		Values = {
+			1,
+			2,
+			3,
+		},
+	},
 }
 
 function Settings.GetSettingIndex(settingName, player)

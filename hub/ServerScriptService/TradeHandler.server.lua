@@ -9,6 +9,7 @@ local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local InventoryUtil = require(ServerScriptService.Libraries.InventoryUtil)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
+local Settings = require(ReplicatedStorage.Core.Settings)
 local t = require(ReplicatedStorage.Vendor.t)
 local TradeConstants = require(ReplicatedStorage.TradeConstants)
 
@@ -28,6 +29,7 @@ local tradeStates = {}
 local pings = {}
 
 local MAX_ITEMS = 10
+local NEAR_LEVEL = 8
 local PING_COOLDOWN = 2
 local SAME_PLAYER_TESTING = false
 local REQUEST_TIMEOUT = 7
@@ -100,6 +102,21 @@ RequestTrade.OnServerEvent:connect(function(player, otherPlayer)
 			resolve(true)
 			return
 		end
+	end
+
+	local tradeRequestSetting = Settings.GetSettingIndex("Trade Requests", otherPlayer)
+	local settingsCancel = false
+	if tradeRequestSetting == 2 then
+		local ourLevel, theirLevel = Data.GetPlayerData(player, "Level"), Data.GetPlayerData(otherPlayer, "Level")
+		settingsCancel = math.abs(ourLevel - theirLevel) > NEAR_LEVEL
+	elseif tradeRequestSetting == 3 then
+		settingsCancel = true
+	end
+
+	if settingsCancel then
+		warn("settings disallow")
+		CancelTrade:FireClient(player, otherPlayer, TradeConstants.Codes.RejectSettings)
+		return
 	end
 
 	RequestTrade:FireClient(otherPlayer, player)
