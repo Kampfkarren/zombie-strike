@@ -8,8 +8,6 @@ local AutomatedScrollingFrameComponent = require(ReplicatedStorage.Core.UI.Compo
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
-local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
-local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local StyledButton = require(ReplicatedStorage.Core.UI.Components.StyledButton)
@@ -137,11 +135,6 @@ local function roundArenaLevel(level)
 	end
 end
 
-local function canCreateArenaCampaign(campaignIndex)
-	return GamePasses.PlayerOwnsPass(LocalPlayer, GamePassDictionary.SeasonPass)
-		or campaignIndex == 1
-end
-
 function Create:init()
 	self:setState({
 		hardcore = false,
@@ -231,18 +224,7 @@ function Create:init()
 
 	self.selectGamemode = Memoize(function(gamemode)
 		return function()
-			local newCampaign, newCampaignIndex
-
-			if gamemode == "Arena"
-				and not GamePasses.PlayerOwnsPass(LocalPlayer, GamePassDictionary.SeasonPass)
-			then
-				newCampaign = Campaigns[1]
-				newCampaignIndex = 1
-			end
-
 			self:setState({
-				campaign = newCampaign,
-				campaignIndex = newCampaignIndex,
 				gamemode = gamemode,
 			})
 		end
@@ -264,20 +246,6 @@ function Create:init()
 		end
 
 		self.props.OnSubmit(properties)
-	end
-
-	self.buySeasonPass = function()
-		MarketplaceService:PromptGamePassPurchase(LocalPlayer, GamePassDictionary.SeasonPass)
-	end
-
-	self.checkGamePass = function()
-		if not self.state.seasonPassBought then
-			if GamePasses.PlayerOwnsPass(LocalPlayer, GamePassDictionary.SeasonPass) then
-				self:setState({
-					seasonPassBought = true,
-				})
-			end
-		end
 	end
 end
 
@@ -321,10 +289,7 @@ function Create:render()
 	for campaignIndex, campaign in ipairs(Campaigns) do
 		local campaignDisabled
 
-		if isArena then
-			campaignDisabled = not GamePasses.PlayerOwnsPass(LocalPlayer, GamePassDictionary.SeasonPass)
-				and campaignIndex ~= 1
-		else
+		if not isArena then
 			campaignDisabled = self.state.level < campaign.Difficulties[1].MinLevel
 		end
 
@@ -359,7 +324,6 @@ function Create:render()
 	difficultyTextProps.TextStrokeColor3 = difficulty.Style.Color
 
 	local disabled = self.state.level < difficulty.MinLevel
-		or (isArena and not canCreateArenaCampaign(self.state.campaignIndex))
 	local difficultyText = e("TextLabel", difficultyTextProps)
 
 	local hardcoreCheckbox
@@ -392,42 +356,6 @@ function Create:render()
 			TextColor3 = Color3.fromRGB(194, 54, 22),
 			TextScaled = true,
 			TextStrokeTransparency = 0.2,
-		})
-	elseif isArena and not canCreateArenaCampaign(self.state.campaignIndex) then
-		warning = e("Frame", {
-			BackgroundTransparency = 1,
-			Size = UDim2.fromScale(1, 1),
-		}, {
-			Message = e("TextLabel", {
-				AnchorPoint = Vector2.new(0, 0),
-				BackgroundTransparency = 1,
-				Font = Enum.Font.Gotham,
-				Position = UDim2.fromScale(0, 0.05),
-				Size = UDim2.fromScale(1, 0.7),
-				Text = "You or a friend need the Season Pass to play other arenas, but they will unlock soon!",
-				TextColor3 = Color3.fromRGB(220, 221, 225),
-				TextScaled = true,
-				TextStrokeTransparency = 0.2,
-			}),
-
-			BuyButton = e(StyledButton, {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = Color3.fromRGB(32, 146, 81),
-				Position = UDim2.fromScale(0.5, 0.8),
-				Size = UDim2.fromScale(0.7, 0.2),
-				[Roact.Event.Activated] = self.buySeasonPass,
-			}, {
-				Label = e("TextLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundTransparency = 1,
-					Font = Enum.Font.GothamBold,
-					Position = UDim2.fromScale(0.5, 0.5),
-					Size = UDim2.fromScale(0.9, 0.75),
-					Text = "BUY (R$599)",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-			}),
 		})
 	elseif disabled then
 		warning = e("TextLabel", {
@@ -577,11 +505,6 @@ function Create:render()
 			LayoutOrder = 3,
 			Size = UDim2.fromScale(0.3, 0.95),
 		}, mapsChildren),
-
-		GamePassEvent = e(EventConnection, {
-			event = GamePasses.BoughtPassUpdated(LocalPlayer).Event,
-			callback = self.checkGamePass,
-		}),
 	})
 end
 
