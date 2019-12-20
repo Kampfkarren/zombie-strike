@@ -14,10 +14,11 @@ local function makeVip(nametag)
 end
 
 local function maybeVip(player, nametag)
-	if GamePasses.PlayerOwnsPass(player, GamePassDictionary.VIP) then
-		makeVip(nametag)
-		return true
-	end
+	GamePasses.PlayerOwnsPassAsync(player, GamePassDictionary.VIP):andThen(function(bought)
+		if bought then
+			makeVip(nametag)
+		end
+	end)
 end
 
 Players.PlayerAdded:connect(function(player)
@@ -27,11 +28,11 @@ Players.PlayerAdded:connect(function(player)
 	local function characterAdded(character)
 		local nametag = Nametag(character, level.Value)
 
-		if not maybeVip(player, nametag) then
-			GamePasses.BoughtPassUpdated(player).Event:connect(function()
-				maybeVip(player, nametag)
-			end)
-		end
+		maybeVip(player, nametag)
+
+		GamePasses.BoughtPassUpdated(player).Event:connect(function()
+			maybeVip(player, nametag)
+		end)
 
 		character.Humanoid.HealthChanged:connect(function()
 			maybeVip(player, Nametag(character, level.Value))
