@@ -310,11 +310,20 @@ INPUT.ActionEnded:connect(function(action, processed)
 end)
 
 local function isMobileInput(inputObject)
-	local activeController = ControlModule:GetActiveController()
+	local success, problem = pcall(function()
+		local activeController = ControlModule:GetActiveController()
 
-	if activeController then
-		return activeController.moveTouchObject == inputObject
-			or activeController.touchObject == inputObject
+		if activeController then
+			return activeController.moveTouchObject == inputObject
+				or activeController.touchObject == inputObject
+		end
+	end)
+
+	if success then
+		return problem
+	else
+		warn("isMobileInput error: " .. problem)
+		return false
 	end
 end
 
