@@ -107,10 +107,17 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 			epicFailsStore:Set(epicFails)
 
 			FastSpawn(function()
-				local message = ("**%s** just tried to create a hacked lobby! FAIL! %s"):format(player.Name, problem)
+				local message = ("**%s** just tried to create a hacked lobby! FAIL! %s"):format(
+					player.Name,
+					problem
+				)
+
+				local messageWithContent = message .. "\n" .. require(ReplicatedStorage.Core.inspect)(info)
 
 				if oldValue then
 					message = message .. "\nAND it was a number, the old system! DOUBLE FAIL! " .. info
+				elseif #messageWithContent <= 2000 then
+					message = messageWithContent
 				end
 
 				HttpService:PostAsync(
