@@ -112,7 +112,7 @@ Cosmetics.Distribution = {
 
 	Particle = {
 		Count = 2,
-		Cost = 199,
+		Cost = 499,
 		UsualCost = 900,
 	},
 }
