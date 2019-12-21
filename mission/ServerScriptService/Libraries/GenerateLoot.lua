@@ -90,7 +90,7 @@ local function getLootRarity(player)
 
 	-- Hackers only get commons and uncommons ;)
 	local epicFails = Data.GetPlayerData(player, "EpicFails")
-	if epicFails.CreateLobby >= 1 then
+	if (epicFails.CreateLobby or 0) >= 1 then
 		if math.random() >= 0.7 then
 			return 1
 		else

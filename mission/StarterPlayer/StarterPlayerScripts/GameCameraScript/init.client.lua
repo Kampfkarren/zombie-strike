@@ -14,14 +14,14 @@ local PLAYER = Players.LocalPlayer
 
 local EVENTS = ReplicatedStorage.RuddevEvents
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
+local Settings = require(ReplicatedStorage.Core.Settings)
 local SPRING = require(MODULES:WaitForChild("Spring"))
 local INPUT = require(MODULES:WaitForChild("Input"))
 
-local DynamicThumbstick = require(
+local ControlModule = require(
 	PLAYER.PlayerScripts
-	:WaitForChild("ControlScript")
-	:WaitForChild("MasterControl")
-	:WaitForChild("DynamicThumbstick")
+	:WaitForChild("PlayerModule")
+	:WaitForChild("ControlModule")
 )
 
 local MIN_Y, MAX_Y = -1.4, 1.4
@@ -163,9 +163,25 @@ end
 
 Modal("Initialize")
 
-CAMERA.CameraType = Enum.CameraType.Scriptable
+local function isFirstPerson()
+	return Settings.GetSetting("First Person", PLAYER)
+		and mode == "Default"
+end
+
+local function visible(part)
+	if part then
+		part.LocalTransparencyModifier = 0
+	end
+end
 
 RunService:BindToRenderStep("Camera", 4, function(deltaTime)
+	if isFirstPerson() then
+		CAMERA.CameraType = Enum.CameraType.Custom
+		PLAYER.CameraMode = Enum.CameraMode.LockFirstPerson
+	else
+		CAMERA.CameraType = Enum.CameraType.Scriptable
+	end
+
 	UserInputService.MouseBehavior = modalStack == 0 and Enum.MouseBehavior.LockCenter or Enum.MouseBehavior.Default
 
 	for _, inputObject in pairs(UserInputService:GetGamepadState(Enum.UserInputType.Gamepad1)) do
@@ -183,35 +199,50 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 		local position, rotation
 
 		if mode == "Default" and character then
-			CAMERA.FieldOfView = Lerp(CAMERA.FieldOfView, 70 - (zooming and targetZoom or 0), math.min(deltaTime * 10, 1))
+			if isFirstPerson() then
+				if character then
+					local gun = character:FindFirstChild("Gun")
+					visible(gun and gun.PrimaryPart)
 
-			local center = rootPart.Position + CENTER_OFFSET
-			local cframe = CFrame.new(center)
-				* CFrame.Angles(0, x, 0)
-				* CFrame.Angles(y, 0, 0)
-				* CFrame.new(
-					shoulder,
-					height,
-					zoom - 10 * (1 - (CAMERA.FieldOfView / 70))
-				)
-			rotation = cframe - cframe.p
+					visible(character:FindFirstChild("RightUpperArm"))
+					visible(character:FindFirstChild("RightLowerArm"))
+					visible(character:FindFirstChild("RightHand"))
 
-			local ray = Ray.new(center, cframe.p - center)
-			local hit, _position, normal = Raycast(ray)
-			position = _position
+					visible(character:FindFirstChild("LeftUpperArm"))
+					visible(character:FindFirstChild("LeftLowerArm"))
+					visible(character:FindFirstChild("LeftHand"))
+				end
+			else
+				CAMERA.FieldOfView = Lerp(CAMERA.FieldOfView, 70 - (zooming and targetZoom or 0), math.min(deltaTime * 10, 1))
 
-			if hit then
-				position = position + normal * 0.2
-			end
+				local center = rootPart.Position + CENTER_OFFSET
+				local cframe = CFrame.new(center)
+					* CFrame.Angles(0, x, 0)
+					* CFrame.Angles(y, 0, 0)
+					* CFrame.new(
+						shoulder,
+						height,
+						zoom - 10 * (1 - (CAMERA.FieldOfView / 70))
+					)
+				rotation = cframe - cframe.p
 
-			local distance = (center - position).Magnitude
-			local transparency = 0
-			if distance < 5 then
-				transparency = (5 - distance) / 5
-			end
+				local ray = Ray.new(center, cframe.p - center)
+				local hit, _position, normal = Raycast(ray)
+				position = _position
 
-			for _, v in pairs(parts) do
-				v.LocalTransparencyModifier = transparency
+				if hit then
+					position = position + normal * 0.2
+				end
+
+				local distance = (center - position).Magnitude
+				local transparency = 0
+				if distance < 5 then
+					transparency = (5 - distance) / 5
+				end
+
+				for _, v in pairs(parts) do
+					v.LocalTransparencyModifier = transparency
+				end
 			end
 		elseif mode == "Sequence" then
 			position = CAMERA.CFrame.Position
@@ -278,6 +309,15 @@ INPUT.ActionEnded:connect(function(action, processed)
 	end
 end)
 
+local function isMobileInput(inputObject)
+	local activeController = ControlModule:GetActiveController()
+
+	if activeController then
+		return activeController.moveTouchObject == inputObject
+			or activeController.touchObject == inputObject
+	end
+end
+
 UserInputService.InputChanged:connect(function(inputObject, processed)
 	if not processed then
 		if inputObject.UserInputType == Enum.UserInputType.MouseMovement then
@@ -286,7 +326,7 @@ UserInputService.InputChanged:connect(function(inputObject, processed)
 
 			-- EVENTS.Sway:Fire(Vector3.new(-inputObject.Delta.X, -inputObject.Delta.Y, 0))
 		elseif inputObject.UserInputType == Enum.UserInputType.Touch then
-			if DynamicThumbstick:GetInputObject() ~= inputObject then
+			if not isMobileInput(inputObject) then
 				x = (x - inputObject.Delta.X * TOUCH_SENSITIVITY.X * ZoomSensitivity()) % (math.pi * 2)
 				y = math.clamp(y - inputObject.Delta.Y * TOUCH_SENSITIVITY.Y * ZoomSensitivity(), MIN_Y, MAX_Y)
 			end

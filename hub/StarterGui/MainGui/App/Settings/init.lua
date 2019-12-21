@@ -273,6 +273,35 @@ function SettingsMenu:render()
 					SortOrder = Enum.SortOrder.LayoutOrder,
 				}),
 
+				FirstPerson = e(SettingsValue, {
+					LayoutOrder = 0,
+					Text = "FIRST PERSON",
+				}, {
+					Button = e(StyledButton, {
+						BackgroundColor3 = self.state.settings["First Person"] == "On" and COLOR_GREEN or COLOR_RED,
+						BackgroundTransparency = 1,
+						Size = UDim2.fromScale(1, 1),
+
+						[Roact.Event.MouseButton1Click] = function()
+							self:SetSetting(
+								"First Person",
+								self.state.settings["First Person"] == "On" and "Off" or "On"
+							)
+						end,
+					}, {
+						Label = e("TextLabel", {
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundTransparency = 1,
+							Font = Enum.Font.GothamBold,
+							Position = UDim2.fromScale(0.5, 0.5),
+							Size = UDim2.fromScale(0.95, 0.95),
+							Text = self.state.settings["First Person"]:upper(),
+							TextColor3 = Color3.new(1, 1, 1),
+							TextScaled = true,
+						}),
+					}),
+				}),
+
 				Music = e(SettingsValue, {
 					LayoutOrder = 1,
 					Text = "MUSIC",

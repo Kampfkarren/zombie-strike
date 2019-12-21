@@ -88,6 +88,21 @@ Settings.Settings = {
 			3,
 		},
 	},
+
+	{
+		Name = "First Person",
+		Default = 1,
+
+		Choices = {
+			"Off",
+			"On",
+		},
+
+		Values = {
+			false,
+			true,
+		}
+	},
 }
 
 function Settings.GetSettingIndex(settingName, player)
