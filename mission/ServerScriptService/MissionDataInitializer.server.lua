@@ -50,7 +50,7 @@ Players.PlayerAdded:connect(function(player)
 		end
 	end)
 
-	local xpScale = 1
+	local xpScale = 1.2
 
 	if os.time() < Data.GetPlayerData(player, "XPExpires") then
 		xpScale = xpScale + 1
