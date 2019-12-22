@@ -17,6 +17,7 @@ local CODES = {
 	tanqr = DEFAULT_GOLD,
 	transrights = DEFAULT_GOLD,
 	arena = DEFAULT_GOLD,
+	xmas = DEFAULT_GOLD,
 }
 
 local SendCode = ReplicatedStorage.Remotes.SendCode
