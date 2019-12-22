@@ -56,6 +56,7 @@ Collection("AuroraGun", function(gun)
 
 	if isMobile() then
 		primaryPart.Material = Enum.Material.Ice
+		primaryPart.TextureID = ""
 	end
 
 	auroraGuns[primaryPart] = { math.random(1, 3), math.random() }
