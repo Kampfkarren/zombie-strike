@@ -74,6 +74,8 @@ local function getDummyFor(instance)
 		for _, bodyPart in pairs(instance.Contents.Armor:GetChildren()) do
 			if bodyPart:IsA("BasePart") then
 				dummy.Humanoid:ReplaceBodyPartR15(bodyPart.Name, bodyPart:Clone())
+			elseif bodyPart:IsA("CharacterAppearance") then
+				bodyPart:Clone().Parent = dummy
 			elseif bodyPart:IsA("Accessory") then
 				addAccessory(dummy, bodyPart)
 			end

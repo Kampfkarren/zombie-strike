@@ -124,11 +124,13 @@ local function Quests(props)
 		BackgroundTransparency = 1,
 		Position = UDim2.fromScale(0.01, 0.4),
 		Size = UDim2.fromScale(0.1, 0.6),
+		Visible = props.page == nil,
 	}, children)
 end
 
 return RoactRodux.connect(function(state)
 	return {
+		page = state.page.current,
 		quests = state.quests.quests,
 	}
 end)(Quests)

@@ -3,8 +3,6 @@ local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-
 PhysicsService:CreateCollisionGroup("Players")
 PhysicsService:CreateCollisionGroup("Zombies")
 
@@ -12,6 +10,7 @@ PhysicsService:CollisionGroupSetCollidable("Players", "Players", false)
 PhysicsService:CollisionGroupSetCollidable("Zombies", "Zombies", false)
 
 if not ReplicatedStorage.HubWorld.Value then
+	local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 	if Dungeon.GetDungeonData("Gamemode") == "Arena" then
 		PhysicsService:CollisionGroupSetCollidable("Players", "Zombies", false)
 	end

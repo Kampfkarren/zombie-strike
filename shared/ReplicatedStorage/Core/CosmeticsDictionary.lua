@@ -87,4 +87,7 @@ return {
 	particle("Rings"),
 	particle("Electric"),
 	particle("Plasma"),
+	highTier("Santa"),
+	lowTier("Mrs. Claus", "SantaGirl"),
+	lowTier("Penguin"),
 }

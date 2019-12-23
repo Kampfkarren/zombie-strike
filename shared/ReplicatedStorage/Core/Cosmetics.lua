@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local CosmeticsDictionary = require(ReplicatedStorage.Core.CosmeticsDictionary)
+local CosmeticsStore = require(ReplicatedStorage.Core.CosmeticsStore)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local dateStamp
@@ -118,15 +119,16 @@ Cosmetics.Distribution = {
 }
 
 function Cosmetics.GetStoreItems()
-	local rng
+	local stamp
 
 	if RunService:IsServer() then
 		local date = os.date("!*t")
-		rng = Random.new(date.year + date.yday)
+		stamp = date.year + date.yday
 	else
-		rng = Random.new(dateStamp)
+		stamp = dateStamp
 	end
 
+	local rng = Random.new(stamp)
 	local collated = {}
 
 	for _, cosmetic in ipairs(Cosmetics.Cosmetics) do
@@ -149,6 +151,24 @@ function Cosmetics.GetStoreItems()
 		end
 
 		contents[key] = products
+	end
+
+	-- Apply explicit store patch
+	local storePatch = CosmeticsStore[stamp]
+	if storePatch then
+		for key, stuff in pairs(storePatch) do
+			local patchedContents = {}
+			for _, item in ipairs(CosmeticsDictionary) do
+				if item.Type == key then
+					local needed = table.find(stuff, item.Name)
+					if needed then
+						patchedContents[needed] = item
+					end
+				end
+			end
+			assert(#patchedContents == #contents[key])
+			contents[key] = patchedContents
+		end
 	end
 
 	return contents
