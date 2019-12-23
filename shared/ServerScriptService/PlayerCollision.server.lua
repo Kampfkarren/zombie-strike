@@ -1,12 +1,21 @@
 local CollectionService = game:GetService("CollectionService")
 local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 
 PhysicsService:CreateCollisionGroup("Players")
 PhysicsService:CreateCollisionGroup("Zombies")
 
 PhysicsService:CollisionGroupSetCollidable("Players", "Players", false)
 PhysicsService:CollisionGroupSetCollidable("Zombies", "Zombies", false)
+
+if not ReplicatedStorage.HubWorld.Value then
+	if Dungeon.GetDungeonData("Gamemode") == "Arena" then
+		PhysicsService:CollisionGroupSetCollidable("Players", "Zombies", false)
+	end
+end
 
 PhysicsService:CreateCollisionGroup("Grenade")
 PhysicsService:CollisionGroupSetCollidable("Grenade", "Players", false)
@@ -39,8 +48,14 @@ CollectionService:GetInstanceAddedSignal("Zombie"):connect(function(zombie)
 	end)
 end)
 
-Players.PlayerAdded:connect(function(player)
+local function playerAdded(player)
 	player.CharacterAdded:connect(function(character)
 		collideCharacter(character, "Players")
 	end)
-end)
+end
+
+for _, player in pairs(Players:GetPlayers()) do
+	playerAdded(player)
+end
+
+Players.PlayerAdded:connect(playerAdded)
