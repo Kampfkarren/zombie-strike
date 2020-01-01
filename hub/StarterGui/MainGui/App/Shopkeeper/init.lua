@@ -104,14 +104,6 @@ function ShopkeeperGui:render()
 	if selected ~= nil then
 		local loot = selected.loot
 
-		lootInfo = e(LootInfo, {
-			Native = {
-				Size = UDim2.fromScale(1, 0.8),
-			},
-
-			Loot = loot,
-		})
-
 		local text, color, activated
 
 		if selected.equipped and not Loot.IsAttachment(selected.loot) then
@@ -155,6 +147,14 @@ function ShopkeeperGui:render()
 				Sell:FireServer(loot.UUID)
 			end
 		end
+
+		lootInfo = e(LootInfo, {
+			Native = {
+				Size = UDim2.fromScale(1, 0.8),
+			},
+
+			Loot = loot,
+		})
 
 		assert(text ~= nil)
 		assert(color ~= nil)
