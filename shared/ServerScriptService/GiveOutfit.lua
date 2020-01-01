@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -184,15 +185,19 @@ local function equipGun(player, character)
 
 	local cosmetics = Data.GetPlayerDataAsync(player, "Cosmetics")
 	local weapon = Data.GetPlayerDataAsync(player, "Weapon")
+
 	local armorStable = equipArmor(player, character)
 
 	return Promise.all({ weapon, cosmetics, armorStable }):andThen(function(results)
 		local weapon, cosmetics, armorStable = unpack(results)
-		return weapon.UUID
-			.. "/" .. tostring(cosmetics.Equipped.Particle)
-			.. "/" .. tostring(weapon.Upgrades)
-			.. "/" .. armorStable
-			.. "/" .. tostring(Settings.GetSetting("Gold Guns", player))
+		return HttpService:JSONEncode({
+			UUID = weapon.UUID,
+			Particle = tostring(cosmetics.Equipped.Particle),
+			Upgrades = tostring(weapon.Upgrades),
+			Attachment = tostring(weapon.Attachment and weapon.Attachment.UUID),
+			Armor = armorStable,
+			GoldGuns = tostring(Settings.GetSetting("Gold Guns", player)),
+		})
 	end), function()
 		return weapon:andThen(function(data)
 			return Promise.async(function(resolve)
@@ -203,10 +208,12 @@ local function equipGun(player, character)
 				weaponData.Name = "WeaponData"
 
 				for statName, stat in pairs(data) do
-					local statValue = Instance.new(valueClass(type(stat)) .. "Value")
-					statValue.Name = statName
-					statValue.Value = stat
-					statValue.Parent = weaponData
+					if statName ~= "Attachment" then
+						local statValue = Instance.new(valueClass(type(stat)) .. "Value")
+						statValue.Name = statName
+						statValue.Value = stat
+						statValue.Parent = weaponData
+					end
 				end
 
 				weaponData.Parent = gun

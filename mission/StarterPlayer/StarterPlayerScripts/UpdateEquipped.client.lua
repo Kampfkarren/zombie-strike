@@ -15,7 +15,7 @@ UpdateEquipped.OnClientEvent:connect(function(armor, helmet, weapon)
 	}) do
 		local item = Loot.Deserialize(value)
 
-		if item.Type ~= "Helmet" and item.Type ~= "Armor" then
+		if Loot.IsWeapon(item) then
 			for key, value in pairs(GunScaling.BaseStats(item.Type, item.Level, item.Rarity)) do
 				if item[key] == nil then
 					item[key] = value

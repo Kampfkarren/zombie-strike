@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local assign = require(ReplicatedStorage.Core.assign)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local UserThumbnailPromise = require(ReplicatedStorage.Core.UI.UserThumbnail)
 

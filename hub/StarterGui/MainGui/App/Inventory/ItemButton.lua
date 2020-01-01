@@ -16,15 +16,10 @@ local ItemButton = Roact.PureComponent:extend("ItemButton")
 local ICON_FAVORITED = "rbxassetid://4462267516"
 local ICON_UNFAVORITED = "rbxassetid://4462267332"
 
-local function isAurora(loot)
-	return loot.Type ~= "Helmet" and loot.Type ~= "Armor"
-		and (loot.Model >= 6 and loot.Model <= 10)
-end
-
 function ItemButton:init()
 	local model = Data.GetModel(self.props.Loot)
 
-	if isAurora(self.props.Loot) then
+	if Loot.IsAurora(self.props.Loot) then
 		model.PrimaryPart.Material = Enum.Material.Ice
 		model.PrimaryPart.TextureID = ""
 	end
@@ -161,16 +156,22 @@ end
 return RoactRodux.connect(function(state, props)
 	local lootType = props.Loot.Type
 
-	if lootType ~= "Helmet" and lootType ~= "Armor" then
+	if Loot.IsWeapon(props.Loot) then
 		lootType = "Weapon"
+	elseif Loot.IsAttachment(props.Loot) then
+		lootType = "Attachment"
 	end
 
 	if state.equipment then
-		return {
-			equipped = state.equipment["equipped" .. lootType].UUID == props.Loot.UUID
-				or table.find(state.trading.theirEquipment, props.Loot.UUID) ~= nil,
-		}
-	else
-		return {}
+		local equipped = state.equipment["equipped" .. lootType]
+
+		if equipped then
+			return {
+				equipped = equipped.UUID == props.Loot.UUID
+					or table.find(state.trading.theirEquipment, props.Loot.UUID) ~= nil,
+			}
+		end
 	end
+
+	return {}
 end)(ItemButton)

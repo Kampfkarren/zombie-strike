@@ -82,7 +82,9 @@ function Boss:SummonGoon(callback)
 	zombie:Spawn(position)
 	zombie:Aggro()
 
-	callback(zombie)
+	if callback then
+		callback(zombie)
+	end
 end
 
 return Boss

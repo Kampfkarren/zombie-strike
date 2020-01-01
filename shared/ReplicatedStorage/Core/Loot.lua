@@ -16,6 +16,7 @@ local gunMap = {
 	"Upgrades",
 	"Favorited",
 	"UUID",
+	"Attachment", -- Should be last since it can be nil
 }
 
 local armorMap = {
@@ -55,6 +56,18 @@ Loot.Rarities = {
 	},
 }
 
+Loot.Attachments = {
+	"Magazine",
+	"Laser",
+	"Silencer",
+}
+
+local attachmentType = t.union(
+	t.literal("Magazine"),
+	t.literal("Laser"),
+	t.literal("Silencer")
+)
+
 local serializeStruct = t.union(
 	t.strictInterface({
 		Level = t.number,
@@ -65,6 +78,15 @@ local serializeStruct = t.union(
 			t.literal("SMG"),
 			t.literal("Shotgun"),
 			t.literal("Sniper")
+		),
+
+		Attachment = t.optional(
+			t.strictInterface({
+				Type = attachmentType,
+				Model = t.number,
+				Rarity = t.numberConstrained(1, #Loot.Rarities),
+				UUID = t.string,
+			})
 		),
 
 		Bonus = t.number,
@@ -84,6 +106,16 @@ local serializeStruct = t.union(
 		),
 
 		Upgrades = t.number,
+		Favorited = t.boolean,
+
+		Model = t.number,
+		UUID = t.string,
+	}),
+
+	t.interface({
+		Rarity = t.numberConstrained(1, #Loot.Rarities),
+		Type = attachmentType,
+
 		Favorited = t.boolean,
 
 		Model = t.number,
@@ -119,7 +151,7 @@ function Loot.DeserializeTableWithBase(loot)
 	local loot = Loot.DeserializeTable(loot)
 
 	for _, item in pairs(loot) do
-		if item.Type ~= "Helmet" and item.Type ~= "Armor" then
+		if Loot.IsWeapon(item) then
 			for key, value in pairs(GunScaling.BaseStats(item.Type, item.Level, item.Rarity)) do
 				if item[key] == nil then
 					item[key] = value
@@ -137,7 +169,7 @@ function Loot.Serialize(data)
 	local loot = {}
 	local map = gunMap
 
-	if data.Type == "Armor" or data.Type == "Helmet" then
+	if Loot.IsWearable(data) then
 		map = armorMap
 	end
 
@@ -183,11 +215,31 @@ function Loot.IsWearable(loot)
 end
 
 function Loot.IsWeapon(loot)
-	return not Loot.IsWearable(loot) and not Loot.IsEquipment(loot)
+	return not Loot.IsWearable(loot)
+		and not Loot.IsEquipment(loot)
+		and not Loot.IsAttachment(loot)
 end
 
 function Loot.IsEquipment(loot)
 	return loot.Type == "Grenade" or loot.Type == "HealthPack"
+end
+
+function Loot.IsAttachment(loot)
+	return table.find(Loot.Attachments, loot.Type) ~= nil
+end
+
+function Loot.IsAurora(loot)
+	return Loot.IsWeapon(loot)
+		and (loot.Model >= 6 and loot.Model <= 10)
+end
+
+function Loot.IsRevolver(loot)
+	return loot.Type == "Pistol"
+		and (loot.Model >= 11 and loot.Model <= 15)
+end
+
+function Loot.RandomAttachment()
+	return Loot.Attachments[math.random(#Loot.Attachments)]
 end
 
 return Loot

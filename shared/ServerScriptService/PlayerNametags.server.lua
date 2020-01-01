@@ -5,6 +5,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Nametag = require(ServerScriptService.Shared.Nametag)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local function makeVip(nametag)
 	if not nametag.EnemyName.Text:match("[VIP]") then
@@ -14,11 +15,9 @@ local function makeVip(nametag)
 end
 
 local function maybeVip(player, nametag)
-	GamePasses.PlayerOwnsPassAsync(player, GamePassDictionary.VIP):andThen(function(bought)
-		if bought then
-			makeVip(nametag)
-		end
-	end)
+	if GamePasses.PlayerOwnsPass(player, GamePassDictionary.VIP) then
+		makeVip(nametag)
+	end
 end
 
 Players.PlayerAdded:connect(function(player)
@@ -28,7 +27,9 @@ Players.PlayerAdded:connect(function(player)
 	local function characterAdded(character)
 		local nametag = Nametag(character, level.Value)
 
-		maybeVip(player, nametag)
+		RealDelay(0.03, function()
+			maybeVip(player, nametag)
+		end)
 
 		GamePasses.BoughtPassUpdated(player).Event:connect(function()
 			maybeVip(player, nametag)

@@ -91,9 +91,22 @@ end
 
 function Zombie:SetupHumanoid()
 	local humanoid = self.instance.Humanoid
+
 	local health = self:GetHealth()
 	humanoid.MaxHealth = health
 	humanoid.Health = health
+
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, false)
+	humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, false)
 
 	OnDied(humanoid):connect(function()
 		self:UpdateNametag()
@@ -273,7 +286,7 @@ function Zombie:Aggro(focus)
 		wait(math.random(40, 60) / 100)
 		while self.aggroTick == ourTick do
 			if self:CheckAttack() then
-				wait(self.AttackCooldown)
+				wait(self:GetAttackCooldown())
 			else
 				wait(self.AttackCheckInterval)
 			end
@@ -465,6 +478,10 @@ function Zombie.GetDamageAgainstConstant(_, player, damage, maxHpDamage)
 	end
 
 	return damage
+end
+
+function Zombie:GetAttackCooldown()
+	return self.AttackCooldown
 end
 
 function Zombie:GetSpeed()

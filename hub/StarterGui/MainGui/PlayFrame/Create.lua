@@ -1,4 +1,3 @@
-local MarketplaceService = game:GetService("MarketplaceService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
@@ -6,7 +5,6 @@ local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
 local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
 local AutomatedScrollingFrameComponent = require(ReplicatedStorage.Core.UI.Components.AutomatedScrollingFrameComponent)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
-local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -289,7 +287,9 @@ function Create:render()
 	for campaignIndex, campaign in ipairs(Campaigns) do
 		local campaignDisabled
 
-		if not isArena then
+		if isArena then
+			campaignDisabled = campaign.LockedArena
+		else
 			campaignDisabled = self.state.level < campaign.Difficulties[1].MinLevel
 		end
 
@@ -323,7 +323,7 @@ function Create:render()
 	difficultyTextProps.Text = difficulty.Style.Name
 	difficultyTextProps.TextStrokeColor3 = difficulty.Style.Color
 
-	local disabled = self.state.level < difficulty.MinLevel
+	local disabled = self.state.level < difficulty.MinLevel or (isArena and self.state.campaign.LockedArena)
 	local difficultyText = e("TextLabel", difficultyTextProps)
 
 	local hardcoreCheckbox
@@ -358,16 +358,24 @@ function Create:render()
 			TextStrokeTransparency = 0.2,
 		})
 	elseif disabled then
+		local text
+
+		if isArena then
+			text = "Coming Soon!"
+		else
+			text = ("You must be level %d to play on %s."):format(
+				difficulty.MinLevel,
+				difficulty.Style.Name
+			)
+		end
+
 		warning = e("TextLabel", {
 			AnchorPoint = Vector2.new(0, 0.5),
 			BackgroundTransparency = 1,
 			Font = Enum.Font.Gotham,
 			Position = UDim2.fromScale(0, 0.5),
 			Size = UDim2.fromScale(1, 0.4),
-			Text = ("You must be level %d to play on %s."):format(
-				difficulty.MinLevel,
-				difficulty.Style.Name
-			),
+			Text = text,
 			TextColor3 = Color3.fromRGB(220, 221, 225),
 			TextScaled = true,
 			TextStrokeTransparency = 0.2,

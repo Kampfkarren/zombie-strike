@@ -7,6 +7,7 @@ local State = require(ReplicatedStorage.State)
 local Codes = require(script.Codes)
 local Equipment = require(script.Equipment)
 local Feedback = require(script.Feedback)
+local Friends = require(script.Friends)
 local Inventory = require(script.Inventory)
 local Quests = require(script.Quests)
 local Settings = require(script.Settings)
@@ -25,6 +26,7 @@ local function App()
 		Codes = e(Codes),
 		Equipment = e(Equipment),
 		Feedback = e(Feedback),
+		Friends = e(Friends),
 		Inventory = e(Inventory),
 		Quests = e(Quests),
 		Settings = e(Settings),

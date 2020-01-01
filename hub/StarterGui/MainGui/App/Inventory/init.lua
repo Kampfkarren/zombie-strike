@@ -1,12 +1,13 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterGui = game:GetService("StarterGui")
 
 local Alert = require(ReplicatedStorage.Core.UI.Components.Alert)
 local Close = require(script.Parent.Close)
+local ConfirmPrompt = require(ReplicatedStorage.Core.UI.Components.ConfirmPrompt)
 local Equipped = require(script.Equipped)
 local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
 local InventoryContents = require(script.InventoryContents)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
@@ -69,6 +70,22 @@ function Inventory:init()
 			levelWarningOpen = false,
 		})
 	end
+
+	self.equipAttachment = function()
+		UpdateEquipment:FireServer(self.state.equipAttachmentId)
+
+		self:setState({
+			equipAttachment = Roact.None,
+		})
+	end
+
+	self.closeAttachmentConfirm = function()
+		self:setState({
+			equipAttachment = Roact.None,
+		})
+	end
+
+	self.ref = Roact.createRef()
 end
 
 function Inventory:render()
@@ -108,6 +125,20 @@ function Inventory:render()
 		})
 	end
 
+	local attachmentConfirm
+
+	if self.state.equipAttachment then
+		attachmentConfirm = e(ConfirmPrompt, {
+			Window = self.ref:getValue(),
+			Text = string.format(
+				"Are you sure you want to equip '%s'? It can not be removed from your gun later!",
+				Loot.GetLootName(self.state.equipAttachment)
+			),
+			Yes = self.equipAttachment,
+			No = self.closeAttachmentConfirm,
+		})
+	end
+
 	return e("Frame", {
 		Active = true,
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -118,6 +149,7 @@ function Inventory:render()
 		Size = UDim2.fromScale(0.6, 0.7),
 		Visible = self.props.open,
 		ZIndex = 2,
+		[Roact.Ref] = self.ref,
 	}, {
 		e("UIAspectRatioConstraint", {
 			AspectRatio = 2.3,
@@ -242,11 +274,35 @@ function Inventory:render()
 					Name = "WEAPON",
 				}),
 
-				e(Equipped, {
+				Sidebar = e("Frame", {
+					BackgroundTransparency = 1,
 					LayoutOrder = 2,
-					Cosmetic = true,
-					Key = "Particle",
-					Name = "EFFECT",
+					Size = UDim2.fromScale(0.5, 0.95),
+				}, {
+					e("UIListLayout", {
+						FillDirection = Enum.FillDirection.Vertical,
+						HorizontalAlignment = Enum.HorizontalAlignment.Center,
+						Padding = UDim.new(0.01, 0),
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						VerticalAlignment = Enum.VerticalAlignment.Center,
+					}),
+
+					e(Equipped, {
+						LayoutOrder = 1,
+						Cosmetic = true,
+						Key = "Particle",
+						Name = "EFFECT",
+						AspectRatio = 2,
+						Rectangle = true,
+					}),
+
+					e(Equipped, {
+						LayoutOrder = 2,
+						Key = "Attachment",
+						Name = "ATTACHMENT",
+						AspectRatio = 2,
+						Rectangle = true,
+					}),
 				}),
 			}),
 		}),
@@ -270,12 +326,19 @@ function Inventory:render()
 			end,
 
 			onClickInventoryUnequipped = function(loot, id)
-				if loot.Level > LocalPlayer.PlayerData.Level.Value then
+				if loot.Level and loot.Level > LocalPlayer.PlayerData.Level.Value then
 					self:setState({
 						levelWarningOpen = true,
 					})
 				else
-					UpdateEquipment:FireServer(id)
+					if Loot.IsAttachment(loot) then
+						self:setState({
+							equipAttachment = loot,
+							equipAttachmentId = id,
+						})
+					else
+						UpdateEquipment:FireServer(id)
+					end
 				end
 			end,
 		}),
@@ -292,6 +355,8 @@ function Inventory:render()
 		}),
 
 		InventorySpace = inventorySpace,
+
+		AttachmentConfirm = attachmentConfirm,
 
 		LevelWarning = e(Alert, {
 			OnClose = self.onCloseLevelWarning,

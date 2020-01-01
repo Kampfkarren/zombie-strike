@@ -1,7 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
@@ -50,7 +49,7 @@ Players.PlayerAdded:connect(function(player)
 		end
 	end)
 
-	local xpScale = 1.2
+	local xpScale = 1
 
 	if os.time() < Data.GetPlayerData(player, "XPExpires") then
 		xpScale = xpScale + 1

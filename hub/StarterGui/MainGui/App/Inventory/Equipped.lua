@@ -76,8 +76,11 @@ function Equipped:render()
 			LayoutOrder = props.LayoutOrder,
 			Square = true,
 			Size = UDim2.fromScale(0.95, 0.9),
+			Square = not props.Rectangle,
 		}, {
-			e("UIAspectRatioConstraint"),
+			UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
+				AspectRatio = props.AspectRatio,
+			}),
 
 			Preview = preview,
 			Label = label,
@@ -101,7 +104,10 @@ function Equipped:render()
 				end,
 			},
 		}, {
-			e("UIAspectRatioConstraint"),
+			UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
+				AspectRatio = props.AspectRatio,
+			}),
+
 			Label = label,
 		})
 	end

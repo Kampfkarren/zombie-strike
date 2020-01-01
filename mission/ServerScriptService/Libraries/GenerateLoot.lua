@@ -14,8 +14,9 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 
 local Equipment = ReplicatedStorage.Equipment
 
+local ATTACHMENT_DROP_RATE = 0
 local FREE_EPIC_AFTER = 0
-local WEAPON_DROP_RATE = 0.67
+local WEAPON_DROP_RATE = 0.6
 
 local RARITY_PERCENTAGES = {
 	{ 0.5, 5 },
@@ -34,9 +35,13 @@ local RARITY_PERCENTAGES_LEGENDARY = {
 }
 
 local function getModel(type, rarity)
-	local loot = Dungeon.GetDungeonData("CampaignInfo").Loot
-	local models = assert(loot[type], "No loot for " .. type)[Loot.Rarities[rarity].Name]
-	return models[math.random(#models)]
+	if table.find(Loot.Attachments, type) then
+		return rarity
+	else
+		local loot = Dungeon.GetDungeonData("CampaignInfo").Loot
+		local models = assert(loot[type], "No loot for " .. type)[Loot.Rarities[rarity].Name]
+		return models[math.random(#models)]
+	end
 end
 
 local function nextDungeonLevel()
@@ -155,25 +160,26 @@ local function generateLootItem(player)
 
 		return loot
 	else
-		local type
-
-		if rng:NextNumber() >= 0.5 then
-			type = "Armor"
-		else
-			type = "Helmet"
-		end
-
 		local loot = {
-			Level = level,
-			Rarity = rarity,
-			Type = type,
-
-			Upgrades = 0,
 			Favorited = false,
-
-			Model = getModel(type, rarity),
+			Rarity = rarity,
 			UUID = uuid,
 		}
+
+		if rng:NextNumber() <= ATTACHMENT_DROP_RATE then
+			loot.Type = Loot.RandomAttachment()
+		else
+			loot.Level = level
+			loot.Upgrades = 0
+
+			if rng:NextNumber() >= 0.5 then
+				loot.Type = "Armor"
+			else
+				loot.Type = "Helmet"
+			end
+		end
+
+		loot.Model = getModel(loot.Type, rarity)
 
 		return loot
 	end

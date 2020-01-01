@@ -3,6 +3,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Components.ViewportFramePreviewComponent)
@@ -147,6 +148,7 @@ return function(props)
 			BackgroundTransparency = 1,
 			Image = (cosmetic.Image or cosmetic.Instance).Texture,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
+			ScaleType = Enum.ScaleType.Crop,
 			Size = props.size,
 		}, {
 			UIScale = e("UIScale", {
@@ -160,7 +162,7 @@ return function(props)
 			size = props.size,
 			updateSet = props.updateSet,
 		})
-	elseif cosmetic.Type == "Helmet" or cosmetic.Type == "Armor" then
+	elseif Loot.IsWearable(cosmetic) then
 		cosmetic.UUID = cosmetic.Instance:GetFullName()
 
 		return e(ViewportFrameCosmeticPreview, {

@@ -53,7 +53,7 @@ function Data.GetPlayerData(player, key)
 		local inventory = Data.GetPlayerData(player, "Inventory")
 		local equipped = Data.GetPlayerData(player, "Equipped" .. key)
 
-		return assert(inventory[equipped], "no equipped " .. key)
+		return inventory[equipped]
 	elseif baseMockPlayer[key] ~= nil then
 		DataStore2.Combine("DATA", key)
 
@@ -76,7 +76,13 @@ function Data.GetPlayerData(player, key)
 			-- dataStore:BeforeSave(Loot.SerializeTable)
 		-- end
 
-		return dataStore:Get(MockPlayer()[key]), dataStore
+		local mockPlayer = MockPlayer()
+		local default = mockPlayer[key]
+		if default == mockPlayer.None then
+			default = nil
+		end
+
+		return dataStore:Get(default), dataStore
 	else
 		error("unknown data key " .. key)
 	end

@@ -75,6 +75,14 @@ local function classicGuns(loot)
 	return fullGuns(0, loot)
 end
 
+local function classicGunsPatched(loot, patch)
+	local guns = fullGuns(0, loot)
+	for key, value in pairs(patch) do
+		guns[key] = value
+	end
+	return guns
+end
+
 local lootRewardType = t.strictInterface({
 	Common = t.array(t.number),
 	Uncommon = t.array(t.number),
@@ -88,6 +96,7 @@ local campaignsType = t.array(t.strictInterface({
 	Image = t.string,
 	ZombieTypes = t.map(t.string, t.numberMin(1)),
 	LoadingColor = t.Color3,
+	LockedArena = t.optional(t.boolean),
 
 	Difficulties = t.array(t.strictInterface({
 		MinLevel = t.numberMin(1),
@@ -509,7 +518,7 @@ local Campaigns = {
 
 				Gold = 320000,
 				Rooms = 6,
-				XP = 1500000,
+				XP = 1875000,
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
@@ -523,7 +532,7 @@ local Campaigns = {
 
 				Gold = 640000,
 				Rooms = 8,
-				XP = 1860000,
+				XP = 2325000,
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
@@ -537,7 +546,7 @@ local Campaigns = {
 
 				Gold = 1280000,
 				Rooms = 10,
-				XP = 3000000,
+				XP = 3825000,
 				ZombieSpawnRate = 0.85,
 
 				BossStats = {
@@ -551,7 +560,7 @@ local Campaigns = {
 
 				Gold = 2560000,
 				Rooms = 12,
-				XP = 6600000,
+				XP = 9350000,
 				ZombieSpawnRate = 1,
 
 				BossStats = {
@@ -659,7 +668,7 @@ local Campaigns = {
 
 				Gold = 4270000,
 				Rooms = 7,
-				XP = 20000000,
+				XP = 24000000,
 				ZombieSpawnRate = 0.6,
 
 				BossStats = {
@@ -673,7 +682,7 @@ local Campaigns = {
 
 				Gold = (4 * 4270000),
 				Rooms = 8,
-				XP = 42000000,
+				XP = 50000000,
 				ZombieSpawnRate = 0.7,
 
 				BossStats = {
@@ -687,7 +696,7 @@ local Campaigns = {
 
 				Gold = (8 * 4270000),
 				Rooms = 9,
-				XP = 110000000,
+				XP = 143000000,
 				ZombieSpawnRate = 0.8,
 
 				BossStats = {
@@ -701,7 +710,7 @@ local Campaigns = {
 
 				Gold = (16 * 4270000),
 				Rooms = 10,
-				XP = 299000000,
+				XP = 364000000,
 				ZombieSpawnRate = 0.9,
 
 				BossStats = {
@@ -715,7 +724,7 @@ local Campaigns = {
 
 				Gold = (32 * 4270000),
 				Rooms = 12,
-				XP = 360000000,
+				XP = 900000000,
 				ZombieSpawnRate = 1.0,
 
 				BossStats = {
@@ -856,6 +865,197 @@ local Campaigns = {
 
 		AIAggroRange = 60,
 		CompletionBadge = 2124497453,
+	},
+
+	{
+		Name = "The Wild Wild West",
+		Image = "rbxassetid://4556892743",
+		ZombieTypes = {
+			Common = 3,
+			Gunslinger = 1,
+			Shotgun = 1,
+		},
+		LoadingColor = Color3.fromRGB(255, 194, 96),
+		LockedArena = true,
+
+		Difficulties = {
+			{
+				MinLevel = 106,
+				Style = Hard,
+
+				Gold = 5120000,
+				Rooms = 7,
+				XP = 5400000000,
+				ZombieSpawnRate = 0.6,
+
+				BossStats = {
+					Health = 10000000000,
+				},
+			},
+
+			{
+				MinLevel = 112,
+				Style = VeryHard,
+
+				Gold = 10240000,
+				Rooms = 8,
+				XP = 9000000000,
+				ZombieSpawnRate = 0.7,
+
+				BossStats = {
+					Health = 23100000000,
+				},
+			},
+
+			{
+				MinLevel = 118,
+				Style = Extreme,
+
+				Gold = 20480000,
+				Rooms = 9,
+				XP = 27000000000,
+				ZombieSpawnRate = 0.8,
+
+				BossStats = {
+					Health = 53500000000,
+				},
+			},
+
+			{
+				MinLevel = 124,
+				Style = Insane,
+
+				Gold = 40960000,
+				Rooms = 10,
+				XP = 67500000000,
+				ZombieSpawnRate = 0.9,
+
+				BossStats = {
+					Health = 123754536100,
+				},
+			},
+
+			{
+				MinLevel = 130,
+				Style = Impossible,
+
+				Gold = 81920000,
+				Rooms = 11,
+				XP = 90000000000,
+				ZombieSpawnRate = 1,
+
+				BossStats = {
+					Health = 286251761900,
+				},
+			},
+		},
+
+		Loot = classicGunsPatched({
+			Armor = {
+				Common = { 32 },
+				Uncommon = { 33 },
+				Rare = { 34 },
+				Epic = { 35 },
+				Legendary = { 36 },
+			},
+
+			Helmet = {
+				Common = { 21 },
+				Uncommon = { 22 },
+				Rare = { 23 },
+				Epic = { 24 },
+				Legendary = { 25 },
+			},
+		}, {
+			Pistol = {
+				Common = { 11 },
+				Uncommon = { 12 },
+				Rare = { 13 },
+				Epic = { 14 },
+				Legendary = { 15 },
+			},
+		}),
+
+		Stats = {
+			Common = {
+				Health = {
+					Base = 170000000,
+					Scale = 1.15,
+				},
+
+				Speed = {
+					Base = 17,
+					Scale = 1.0025,
+				},
+
+				Damage = {
+					Base = 25000000,
+					Scale = 1.105,
+				},
+
+				MaxHealthDamage = {
+					Base = 8,
+					Scale = 1.01,
+				},
+			},
+
+			Gunslinger = {
+				Health = {
+					Base = 150000000,
+					Scale = 1.15,
+				},
+
+				Speed = {
+					Base = 9,
+					Scale = 1.0025,
+				},
+
+				Damage = {
+					Base = 15000000,
+					Scale = 1.105,
+				},
+
+				MaxHealthDamage = {
+					Base = 7,
+					Scale = 1.01,
+				},
+
+				ActivationTime = {
+					Base = 0.7,
+					Scale = 1,
+				},
+			},
+
+			Shotgun = {
+				Health = {
+					Base = 140000000,
+					Scale = 1.15,
+				},
+
+				Speed = {
+					Base = 11,
+					Scale = 1.0025,
+				},
+
+				Damage = {
+					Base = 13000000,
+					Scale = 1.105,
+				},
+
+				MaxHealthDamage = {
+					Base = 6.5,
+					Scale = 1.01,
+				},
+
+				ActivationTime = {
+					Base = 0.7,
+					Scale = 1,
+				},
+			},
+		},
+
+		AIAggroRange = 90,
+		CompletionBadge = 2124500479,
 	},
 }
 

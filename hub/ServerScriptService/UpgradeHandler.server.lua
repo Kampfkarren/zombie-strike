@@ -3,6 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local InventoryUtil = require(ServerScriptService.Libraries.InventoryUtil)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 
 ReplicatedStorage.Remotes.Upgrade.OnServerEvent:connect(function(player, uuid)
@@ -11,6 +12,11 @@ ReplicatedStorage.Remotes.Upgrade.OnServerEvent:connect(function(player, uuid)
 	local item = InventoryUtil.FindByUuid(inventory, uuid)
 	if item == nil then
 		warn("player tried to upgrade non existent item!")
+		return
+	end
+
+	if Loot.IsAttachment(item) then
+		warn("upgrading attachment")
 		return
 	end
 

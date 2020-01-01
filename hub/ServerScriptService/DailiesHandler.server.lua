@@ -28,7 +28,7 @@ Players.PlayerAdded:connect(function(player)
 		dailies.Streak = 1
 	end
 
-	DataStore2("Brains", player):Increment(DailiesDictionary[dailies.Streak])
+	DataStore2("Brains", player):Increment(DailiesDictionary[dailies.Streak], 0)
 
 	Dailies:FireClient(player, dailies.Streak)
 	dailies.Time = os.time()

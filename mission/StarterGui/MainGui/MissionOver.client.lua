@@ -115,11 +115,6 @@ local function leave()
 	TeleportService:Teleport(PlaceIds.GetHubPlace())
 end
 
-local function isAurora(loot)
-	return loot.Type ~= "Helmet" and loot.Type ~= "Armor"
-		and (loot.Model >= 6 and loot.Model <= 10)
-end
-
 LootResults.Minor.Leave.MouseButton1Click:connect(leave)
 
 CollectionService:GetInstanceAddedSignal("Boss"):connect(function(boss)
@@ -206,7 +201,7 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 			lootButton.GunName.Text = Loot.GetLootName(loot)
 			lootButton.Rarity.Text = rarity.Name
 
-			if loot.Type ~= "Helmet" and loot.Type ~= "Armor" then
+			if Loot.IsWeapon(loot) then
 				for key, value in pairs(GunScaling.BaseStats(loot.Type, loot.Level, loot.Rarity)) do
 					if loot[key] == nil then
 						loot[key] = value
@@ -215,7 +210,7 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 			end
 
 			local model = Data.GetModel(loot)
-			if isAurora(loot) then
+			if Loot.IsAurora(loot) then
 				model.PrimaryPart.Material = Enum.Material.Ice
 				model.PrimaryPart.TextureID = ""
 			end

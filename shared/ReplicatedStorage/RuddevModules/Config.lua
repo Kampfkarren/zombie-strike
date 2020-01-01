@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local AttachmentsConstants = require(ReplicatedStorage.Core.AttachmentsConstants)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 
 local Config = {}
@@ -103,6 +104,18 @@ function Config.GetConfig(_, item)
 
 	if config.Size == "Shotgun" then
 		config.ShotSize = Config.GetShotgunShotSize(config.Level)
+	end
+
+	local attachment = item:FindFirstChild("GunAttachment")
+	if attachment then
+		if attachment.ItemType.Value == "Magazine" then
+			config.Magazine = math.ceil(config.Magazine * (1 + AttachmentsConstants.Magazine[attachment.Rarity.Value] / 100))
+		elseif attachment.ItemType.Value == "Laser" then
+			config.CritChance = config.CritChance * (1 + AttachmentsConstants.LaserSightCritChance[attachment.Rarity.Value] / 100)
+			config.Recoil = config.Recoil * (1 + AttachmentsConstants.LaserSightRecoil[attachment.Rarity.Value] / 100)
+		elseif attachment.ItemType.Value == "Silencer" then
+			config.Damage = math.ceil(config.Damage * (1 + AttachmentsConstants.SilencerDamage[attachment.Rarity.Value] / 100))
+		end
 	end
 
 	return config

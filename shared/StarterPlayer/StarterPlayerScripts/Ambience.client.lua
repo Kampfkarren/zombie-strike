@@ -26,8 +26,8 @@ end)
 
 if HubWorld then
 	currentAmbience = {
-		Footsteps = SoundService.Footsteps.Snow:GetChildren(),
-		Land = SoundService.Footsteps.Snow:GetChildren(),
+		Footsteps = SoundService.Footsteps.Concrete:GetChildren(),
+		Land = SoundService.Footsteps.Concrete:GetChildren(),
 	}
 else
 	local Rooms = Workspace:WaitForChild("Rooms")

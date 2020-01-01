@@ -38,6 +38,19 @@ local function addAccessory(character, accessory)
 	weld.Parent = accessory.Handle
 end
 
+local function addAttachment(item, attachment)
+	local attachName = require(attachment.Config).Attach
+
+	local weld = Instance.new("Weld")
+	weld.Part0 = item.PrimaryPart
+	weld.Part1 = attachment.PrimaryPart
+	weld.C0	= item.PrimaryPart[attachName .. "Attach"].CFrame
+	weld.C1	= attachment.PrimaryPart.Attach.CFrame
+	weld.Parent = attachment.PrimaryPart
+	attachment.PrimaryPart.CFrame = item.PrimaryPart[attachName .. "Attach"].WorldCFrame
+	attachment.Parent = item
+end
+
 function CoreData.GetModel(data)
 	local itemType = data.Type
 
@@ -110,6 +123,22 @@ function CoreData.GetModel(data)
 		end
 	else
 		local model = ReplicatedStorage.Items[data.Type .. data.Model]:Clone()
+
+		local attachment = data.Attachment
+		if attachment then
+			local attachmentModel = ReplicatedStorage.Items[attachment.Type .. attachment.Model]:Clone()
+			attachmentModel.Name = "GunAttachment"
+			attachmentModel.PrimaryPart.Anchored = false
+
+			local rarityValue = Instance.new("NumberValue")
+			rarityValue.Name = "Rarity"
+			rarityValue.Value = attachment.Rarity
+			rarityValue.Parent = attachmentModel
+
+			addAttachment(model, attachmentModel)
+			uuid.Value = uuid.Value .. "/" .. attachment.UUID
+		end
+
 		uuid.Parent = model
 		return model
 	end

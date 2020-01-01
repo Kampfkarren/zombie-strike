@@ -3,6 +3,8 @@ local HttpService = game:GetService("HttpService")
 return function()
 	local MockPlayer = {}
 
+	MockPlayer.None = newproxy(true)
+
 	MockPlayer.Version = 6
 	MockPlayer.GameVersion = 1
 

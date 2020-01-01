@@ -9,6 +9,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporter)
 local GiveOutfit = require(ServerScriptService.Shared.GiveOutfit)
+local InventoryUtil = require(ServerScriptService.Libraries.InventoryUtil)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Settings = require(ReplicatedStorage.Core.Settings)
 local TeleportScreen = require(ReplicatedStorage.Libraries.TeleportScreen)
@@ -25,7 +26,7 @@ local UpdateInventory = ReplicatedStorage.Remotes.UpdateInventory
 -- )
 
 UpdateEquipment.OnServerEvent:connect(function(player, equip)
-	local inventory = Data.GetPlayerData(player, "Inventory")
+	local inventory, inventoryStore = Data.GetPlayerData(player, "Inventory")
 
 	local toEquip = inventory[equip]
 	if not toEquip then
@@ -33,16 +34,30 @@ UpdateEquipment.OnServerEvent:connect(function(player, equip)
 		return
 	end
 
-	if toEquip.Level > Data.GetPlayerData(player, "Level") then
-		warn("equipping item with too high level")
+	local equipType
+	if Loot.IsWearable(toEquip) then
+		equipType = "Equipped" .. toEquip.Type
+	elseif Loot.IsWeapon(toEquip) then
+		equipType = "EquippedWeapon"
+	elseif Loot.IsAttachment(toEquip) then
+		local weapon = Data.GetPlayerData(player, "Weapon")
+		weapon.Attachment = {
+			Type = toEquip.Type,
+			Model = toEquip.Model,
+			Rarity = toEquip.Rarity,
+			UUID = toEquip.UUID,
+		}
+
+		inventory[Data.GetPlayerData(player, "EquippedWeapon")] = weapon
+		inventoryStore:Set(inventory)
+		InventoryUtil.RemoveItems(player, { equip })
+
 		return
 	end
 
-	local equipType
-	if toEquip.Type == "Helmet" or toEquip.Type == "Armor" then
-		equipType = "Equipped" .. toEquip.Type
-	else
-		equipType = "EquippedWeapon"
+	if toEquip.Level > Data.GetPlayerData(player, "Level") then
+		warn("equipping item with too high level")
+		return
 	end
 
 	DataStore2(equipType, player):Set(equip)

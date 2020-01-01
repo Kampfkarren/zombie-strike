@@ -19,11 +19,12 @@ local TEST_CASES = {
 	[123456] = "123.5K",
 	[1000000] = "1.0M",
 	[1234567] = "1.2M",
-	[1234567890] = "1234.6M",
+	[1234567890] = "1.2B",
+	[1234567890000] = "1234.6B",
 	[-1000] = "-1.0K",
 }
 
-local units = { "K", "M" }
+local units = { "K", "M", "B" }
 
 local function EnglishNumbers(number, roundDown)
 	local negative = number < 0

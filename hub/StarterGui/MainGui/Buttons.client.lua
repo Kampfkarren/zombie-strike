@@ -38,6 +38,12 @@ Buttons.Small.Feedback.MouseButton1Click:connect(function()
 	})
 end)
 
+Buttons.Small.Friends.MouseButton1Click:connect(function()
+	State:dispatch({
+		type = "ToggleFriends",
+	})
+end)
+
 Buttons.Small.Settings.MouseButton1Click:connect(function()
 	State:dispatch({
 		type = "ToggleSettings",

@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ConfirmPrompt = require(ReplicatedStorage.Core.UI.Components.ConfirmPrompt)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local InventoryContents = require(script.Parent.Inventory.InventoryContents)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
@@ -102,11 +103,6 @@ function ShopkeeperGui:render()
 
 	if selected ~= nil then
 		local loot = selected.loot
-		local originalIsMaxed = loot.Upgrades >= Upgrades.MaxUpgrades
-		if selected.equipped and loot.Upgrades < Upgrades.MaxUpgrades then
-			loot = copy(loot)
-			loot.Upgrades = loot.Upgrades + 1
-		end
 
 		lootInfo = e(LootInfo, {
 			Native = {
@@ -118,7 +114,13 @@ function ShopkeeperGui:render()
 
 		local text, color, activated
 
-		if selected.equipped then
+		if selected.equipped and not Loot.IsAttachment(selected.loot) then
+			local originalIsMaxed = loot.Upgrades >= Upgrades.MaxUpgrades
+			if selected.equipped and loot.Upgrades < Upgrades.MaxUpgrades then
+				loot = copy(loot)
+				loot.Upgrades = loot.Upgrades + 1
+			end
+
 			if originalIsMaxed then
 				color = DISABLED_COLOR
 				text = "MAX UPGRADE"

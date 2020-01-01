@@ -19,11 +19,17 @@ end
 Store = Rodux.Store.new(Rodux.combineReducers({
 	equipment = Rodux.createReducer(nil, {
 		RefreshEquipment = function()
-			return {
+			local equipment = {
 				equippedArmor = Data.GetLocalPlayerData("Armor"),
 				equippedHelmet = Data.GetLocalPlayerData("Helmet"),
 				equippedWeapon = Data.GetLocalPlayerData("Weapon"),
 			}
+
+			if ReplicatedStorage.HubWorld.Value then
+				equipment.equippedAttachment = Data.GetLocalPlayerData("Attachment")
+			end
+
+			return equipment
 		end,
 	}),
 

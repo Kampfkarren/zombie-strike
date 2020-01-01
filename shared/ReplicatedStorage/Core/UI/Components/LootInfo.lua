@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ArmorScaling = require(ReplicatedStorage.Core.ArmorScaling)
+local AttachmentsConstants = require(ReplicatedStorage.Core.AttachmentsConstants)
 local assign = require(ReplicatedStorage.Core.assign)
 local Data = require(ReplicatedStorage.Core.Data)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
@@ -25,18 +26,21 @@ local function formatNumber(format, number)
 	end
 end
 
-local function isAurora(loot)
-	return Loot.IsWeapon(loot) and (loot.Model >= 6 and loot.Model <= 10)
-end
-
 local function getRarityText(loot, rarity)
+	local lootType = loot.Type
 	local infix = " "
 
-	if isAurora(loot) then
+	if Loot.IsAurora(loot) then
 		infix = " Aurora "
 	end
 
-	return rarity.Name .. infix .. loot.Type
+	if Loot.IsAttachment(loot) then
+		lootType = "Attachment"
+	elseif Loot.IsRevolver(loot) then
+		lootType = "Revolver"
+	end
+
+	return rarity.Name .. infix .. lootType
 end
 
 local function Stat(props)
@@ -117,7 +121,7 @@ function LootInfo:render()
 
 	local levelTextColor3 = Color3.fromRGB(227, 227, 227)
 
-	if LocalPlayer.PlayerData.Level.Value < loot.Level then
+	if loot.Level and LocalPlayer.PlayerData.Level.Value < loot.Level then
 		levelTextColor3 = Color3.fromRGB(214, 48, 49)
 	end
 
@@ -224,6 +228,79 @@ function LootInfo:render()
 			Stat = loot.Magazine,
 			StatName = "AMMO",
 		})
+	elseif Loot.IsAttachment(loot) then
+		local statName, statNumber
+
+		-- this sucks, should just be used in Stat :/
+		local function BasicStat(props)
+			return e("Frame", {
+				BackgroundTransparency = 1,
+				LayoutOrder = props.LayoutOrder,
+				Size = UDim2.fromScale(1, 1),
+			}, {
+				e("UIListLayout", {
+					FillDirection = Enum.FillDirection.Horizontal,
+					HorizontalAlignment = Enum.HorizontalAlignment.Center,
+					Padding = UDim.new(0.04, 0),
+					SortOrder = Enum.SortOrder.LayoutOrder,
+					VerticalAlignment = Enum.VerticalAlignment.Center,
+				}),
+
+				Label = e("TextLabel", {
+					BackgroundTransparency = 1,
+					Font = Enum.Font.GothamBlack,
+					LayoutOrder = 0,
+					Size = UDim2.new(0.4, 0, 1, 0),
+					Text = props.StatName,
+					TextColor3 = Color3.new(1, 1, 1),
+					TextScaled = true,
+				}),
+
+				Current = e("TextLabel", {
+					BackgroundTransparency = 1,
+					Font = Enum.Font.GothamSemibold,
+					LayoutOrder = 1,
+					Size = UDim2.new(0.25, 0, 0.5, 0),
+					Text = props.StatNumber,
+					TextColor3 = Color3.new(1, 1, 1),
+					TextScaled = true,
+				}),
+			})
+		end
+
+		if loot.Type == "Magazine" then
+			statName = "AMMO+"
+			statNumber = AttachmentsConstants.Magazine[loot.Rarity] .. "%"
+		elseif loot.Type == "Laser" then
+			stats.UIGridLayout = e("UIGridLayout", {
+				CellPadding = UDim2.new(0.1, 0, 0.02, 0),
+				CellSize = UDim2.new(0.9, 0, 0.48, 0),
+				FillDirection = Enum.FillDirection.Horizontal,
+				HorizontalAlignment = Enum.HorizontalAlignment.Center,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+			})
+
+			stats.CritChance = e(BasicStat, {
+				StatName = "CRITx",
+				StatNumber = ("1.%dx"):format(AttachmentsConstants.LaserSightCritChance[loot.Rarity]),
+			})
+
+			stats.Recoil = e(BasicStat, {
+				LayoutOrder = 2,
+				StatName = "RECOIL",
+				StatNumber = AttachmentsConstants.LaserSightCritChance[loot.Rarity] .. "%",
+			})
+		elseif loot.Type == "Silencer" then
+			statName = "DMGx"
+			statNumber = ("1.%02dx"):format(AttachmentsConstants.SilencerDamage[loot.Rarity])
+		end
+
+		if statName then
+			stats.Stat = e(BasicStat, {
+				StatName = statName,
+				StatNumber = statNumber,
+			})
+		end
 	else
 		error("unreachable code! invalid loot type: " .. loot.Type)
 	end
@@ -241,9 +318,10 @@ function LootInfo:render()
 			Font = Enum.Font.GothamBold,
 			LayoutOrder = 0,
 			Size = UDim2.new(0.9, 0, 0.06, 0),
-			Text = "Level " .. loot.Level,
+			Text = "Level " .. (loot.Level or "oops"),
 			TextColor3 = levelTextColor3,
 			TextScaled = true,
+			Visible = loot.Level ~= nil,
 		}),
 
 		Rarity = e("TextLabel", {
@@ -284,7 +362,7 @@ function LootInfo:render()
 				Font = Enum.Font.GothamBold,
 				Position = UDim2.new(0.01, 0, 1, 0),
 				Size = UDim2.new(0.9, 0, 0.2, 0),
-				Text = string.rep("⭐", loot.Upgrades),
+				Text = string.rep("⭐", (loot.Upgrades or 0)),
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 				TextXAlignment = Enum.TextXAlignment.Left,
@@ -308,7 +386,7 @@ end
 function LootInfo:UpdateModelState()
 	local model = Data.GetModel(self.props.Loot)
 
-	if isAurora(self.props.Loot) then
+	if Loot.IsAurora(self.props.Loot) then
 		model.PrimaryPart.Material = Enum.Material.Ice
 		model.PrimaryPart.TextureID = ""
 	end

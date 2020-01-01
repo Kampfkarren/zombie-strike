@@ -18,6 +18,7 @@ local CODES = {
 	transrights = DEFAULT_GOLD,
 	arena = DEFAULT_GOLD,
 	xmas = DEFAULT_GOLD,
+	cowboy = DEFAULT_GOLD,
 }
 
 local SendCode = ReplicatedStorage.Remotes.SendCode

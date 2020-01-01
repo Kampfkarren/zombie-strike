@@ -12,6 +12,7 @@ local gates = {
 	require(script.Factory),
 	require(script.Firelands),
 	require(script.Frostlands),
+	require(script.West),
 }
 
 ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room)
@@ -20,13 +21,15 @@ ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room)
 	local campaign = Dungeon.GetDungeonData("Campaign")
 	local gateModule = assert(gates[campaign], "No gate for campaign " .. campaign)
 
-	if not CollectionService:HasTag(gate, "LocallyCreated") then
-		gate.Parent = nil
-	end
+	if not gateModule.DontClone then
+		if not CollectionService:HasTag(gate, "LocallyCreated") then
+			gate.Parent = nil
+		end
 
-	local gate = gate:Clone()
-	CollectionService:AddTag(gate, "LocallyCreated")
-	gate.Parent = Workspace
+		gate = gate:Clone()
+		CollectionService:AddTag(gate, "LocallyCreated")
+		gate.Parent = Workspace
+	end
 
 	local direction = Camera.CFrame:VectorToObjectSpace(
 		(Camera.CFrame.Position - gateModule.Open(gate).PrimaryPart.Position).Unit
