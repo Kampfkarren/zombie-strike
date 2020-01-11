@@ -218,6 +218,7 @@ function Loot.IsWeapon(loot)
 	return not Loot.IsWearable(loot)
 		and not Loot.IsEquipment(loot)
 		and not Loot.IsAttachment(loot)
+		and not Loot.IsCosmetic(loot)
 end
 
 function Loot.IsEquipment(loot)
@@ -236,6 +237,14 @@ end
 function Loot.IsRevolver(loot)
 	return loot.Type == "Pistol"
 		and (loot.Model >= 11 and loot.Model <= 15)
+end
+
+function Loot.IsCosmetic(loot)
+	return loot.Type == "Face"
+		or loot.Type == "Particle"
+		or loot.Type == "LowTier"
+		or loot.Type == "HighTier"
+		or loot.Type == "Spray"
 end
 
 function Loot.RandomAttachment()

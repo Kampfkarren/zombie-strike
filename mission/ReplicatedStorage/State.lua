@@ -33,6 +33,14 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	sprays = Rodux.createReducer({}, {
+		SetEquippedSpray = function(_, action)
+			return {
+				equipped = action.equipped,
+			}
+		end,
+	}),
+
 	treasureLoot = Rodux.createReducer({
 		bought = false,
 		open = false,
@@ -62,6 +70,13 @@ ReplicatedStorage.LocalEvents.AmbienceChanged.Event:connect(function(ambienceNam
 	Store:dispatch({
 		type = "SetTreasureLootOpen",
 		open = ambienceName == "Treasure",
+	})
+end)
+
+ReplicatedStorage.Remotes.UseSpray.OnClientEvent:connect(function(equipped)
+	Store:dispatch({
+		type = "SetEquippedSpray",
+		equipped = equipped,
 	})
 end)
 

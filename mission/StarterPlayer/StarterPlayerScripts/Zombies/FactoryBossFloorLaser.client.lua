@@ -1,4 +1,3 @@
-local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
@@ -7,6 +6,7 @@ local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local PlaySound = require(ReplicatedStorage.Core.PlaySound)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local FloorLaser = ReplicatedStorage.Remotes.FactoryBoss.FloorLaser
 local LocalPlayer = Players.LocalPlayer
@@ -66,6 +66,8 @@ FloorLaser.OnClientEvent:connect(function()
 			warning.CanCollide = false
 		end
 
-		Debris:AddItem(warning, LIFETIME)
+		RealDelay(LIFETIME, function()
+			warning:Destroy()
+		end)
 	end
 end)

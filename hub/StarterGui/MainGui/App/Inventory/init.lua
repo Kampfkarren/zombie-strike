@@ -1,38 +1,60 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Alert = require(ReplicatedStorage.Core.UI.Components.Alert)
 local Close = require(script.Parent.Close)
 local ConfirmPrompt = require(ReplicatedStorage.Core.UI.Components.ConfirmPrompt)
-local Equipped = require(script.Equipped)
 local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Loot = require(ReplicatedStorage.Core.Loot)
-local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
-local InventoryContents = require(script.InventoryContents)
+local InventoryPage = require(script.InventoryPage)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
+local Memoize = require(ReplicatedStorage.Core.Memoize)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
+local TitlesPage = require(script.TitlesPage)
 
 local e = Roact.createElement
 local LocalPlayer = Players.LocalPlayer
-local UpdateCosmetics = ReplicatedStorage.Remotes.UpdateCosmetics
 local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
 
-local Inventory = Roact.PureComponent:extend("Inventory")
+local Inventory = Roact.Component:extend("Inventory")
 
-local function copy(list)
-	local copy = {}
-	for index, value in pairs(list) do
-		copy[index] = value
-	end
-	return copy
+local function Tab(props)
+	return e("TextButton", {
+		BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+		BackgroundTransparency = 0.2,
+		BorderSizePixel = 0,
+		LayoutOrder = props.LayoutOrder,
+		Size = UDim2.fromScale(0.25, 1),
+		Text = "",
+
+		[Roact.Event.Activated] = props.Activate,
+		[Roact.Ref] = function(instance)
+			if instance ~= nil then
+				-- :/
+				CollectionService:AddTag(instance, "UIClick")
+			end
+		end,
+	}, {
+		Text = e("TextLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Font = props.Active and Enum.Font.GothamBold or Enum.Font.Gotham,
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromScale(0.95, 0.95),
+			Text = props.Text,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+		}),
+	})
 end
 
 function Inventory:init()
 	self:setState({
 		levelWarningOpen = false,
-		lootStack = {},
+		tab = "inventory",
 	})
 
 	InventorySpace(LocalPlayer):andThen(function(space)
@@ -40,22 +62,6 @@ function Inventory:init()
 			space = space,
 		})
 	end)
-
-	self.onHover = function(loot)
-		local lootStack = copy(self.state.lootStack)
-		lootStack[loot.UUID] = loot
-		self:setState({
-			lootStack = lootStack,
-		})
-	end
-
-	self.onUnhover = function(loot)
-		local lootStack = copy(self.state.lootStack)
-		lootStack[loot.UUID] = nil
-		self:setState({
-			lootStack = lootStack,
-		})
-	end
 
 	self.resetInventorySpace = function()
 		InventorySpace(LocalPlayer):andThen(function(space)
@@ -85,45 +91,32 @@ function Inventory:init()
 		})
 	end
 
+	self.openLevelWarning = function()
+		self:setState({
+			levelWarningOpen = true,
+		})
+	end
+
+	self.openAttachmentPrompt = function(loot, id)
+		self:setState({
+			equipAttachment = loot,
+			equipAttachmentId = id,
+		})
+	end
+
+	self.switchTab = Memoize(function(tab)
+		return function()
+			self:setState({
+				tab = tab,
+			})
+		end
+	end)
+
 	self.ref = Roact.createRef()
 end
 
 function Inventory:render()
 	local props = self.props
-
-	local lootInfo
-
-	local _, hovered = next(self.state.lootStack)
-
-	if hovered then
-		lootInfo = e(LootInfo, {
-			Native = {
-				Size = UDim2.fromScale(1, 1),
-			},
-
-			Loot = hovered,
-		})
-	end
-
-	local inventorySpace
-
-	if self.state.space and props.inventory then
-		inventorySpace = e("TextLabel", {
-			AnchorPoint = Vector2.new(1, 0),
-			AutoLocalize = false,
-			BackgroundTransparency = 1,
-			Font = Enum.Font.Gotham,
-			Position = UDim2.fromScale(0.97, 0.01),
-			Size = UDim2.fromScale(0.23, 0.08),
-			Text = ("%d/%d"):format(#props.inventory, self.state.space),
-			TextColor3 = #props.inventory == self.state.space
-				and Color3.fromRGB(252, 92, 101)
-				or Color3.new(1, 1, 1),
-			TextScaled = true,
-			TextXAlignment = Enum.TextXAlignment.Right,
-			ZIndex = 2,
-		})
-	end
 
 	local attachmentConfirm
 
@@ -162,199 +155,27 @@ function Inventory:render()
 			ZIndex = 2,
 		}),
 
-		Loadout = e("Frame", {
-			BackgroundColor3 = Color3.fromRGB(18, 18, 18),
-			BackgroundTransparency = 0.5,
-			BorderSizePixel = 0,
-			Size = UDim2.fromScale(0.25, 1),
+		InventoryPageFrame = e("Frame", {
+			BackgroundTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			Visible = self.state.tab == "inventory",
 		}, {
-			e("UIListLayout", {
-				HorizontalAlignment = Enum.HorizontalAlignment.Center,
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				VerticalAlignment = Enum.VerticalAlignment.Center,
-			}),
+			InventoryPage = e(InventoryPage, {
+				inventory = props.inventory,
+				space = self.state.space,
 
-			Face = e("Frame", {
-				BackgroundTransparency = 1,
-				LayoutOrder = 0,
-				Size = UDim2.fromScale(0.9, 0.25),
-			}, {
-				e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.05, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-				}),
-
-				e(Equipped, {
-					LayoutOrder = 1,
-					Cosmetic = true,
-					Key = "Face",
-					Name = "FACE",
-
-					Default = {
-						ParentType = "Face",
-						Type = "Face",
-						Image = ReplicatedStorage.Dummy.Head.face,
-					},
-				}),
-			}),
-
-			Armor = e("Frame", {
-				BackgroundTransparency = 1,
-				LayoutOrder = 2,
-				Size = UDim2.fromScale(0.9, 0.25),
-			}, {
-				e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.05, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-				}),
-
-				e(Equipped, {
-					LayoutOrder = 1,
-					Key = "Armor",
-					Name = "ARMOR",
-				}),
-
-				e(Equipped, {
-					LayoutOrder = 2,
-					Cosmetic = true,
-					Key = "Armor",
-					Name = "COSMETIC",
-				}),
-			}),
-
-			Helmet = e("Frame", {
-				BackgroundTransparency = 1,
-				LayoutOrder = 1,
-				Size = UDim2.fromScale(0.9, 0.25),
-			}, {
-				e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.05, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-				}),
-
-				e(Equipped, {
-					LayoutOrder = 1,
-					Key = "Helmet",
-					Name = "HELMET",
-				}),
-
-				e(Equipped, {
-					LayoutOrder = 2,
-					Cosmetic = true,
-					Key = "Helmet",
-					Name = "COSMETIC",
-				}),
-			}),
-
-			Weapon = e("Frame", {
-				BackgroundTransparency = 1,
-				LayoutOrder = 3,
-				Size = UDim2.fromScale(0.9, 0.25),
-			}, {
-				e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.05, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-				}),
-
-				e(Equipped, {
-					LayoutOrder = 1,
-					Key = "Weapon",
-					Name = "WEAPON",
-				}),
-
-				Sidebar = e("Frame", {
-					BackgroundTransparency = 1,
-					LayoutOrder = 2,
-					Size = UDim2.fromScale(0.5, 0.95),
-				}, {
-					e("UIListLayout", {
-						FillDirection = Enum.FillDirection.Vertical,
-						HorizontalAlignment = Enum.HorizontalAlignment.Center,
-						Padding = UDim.new(0.01, 0),
-						SortOrder = Enum.SortOrder.LayoutOrder,
-						VerticalAlignment = Enum.VerticalAlignment.Center,
-					}),
-
-					e(Equipped, {
-						LayoutOrder = 1,
-						Cosmetic = true,
-						Key = "Particle",
-						Name = "EFFECT",
-						AspectRatio = 2,
-						Rectangle = true,
-					}),
-
-					e(Equipped, {
-						LayoutOrder = 2,
-						Key = "Attachment",
-						Name = "ATTACHMENT",
-						AspectRatio = 2,
-						Rectangle = true,
-					}),
-				}),
+				openLevelWarning = self.openLevelWarning,
+				equipAttachment = self.openAttachmentPrompt,
 			}),
 		}),
 
-		Contents = e(InventoryContents, {
-			Native = {
-				AnchorPoint = Vector2.new(0, 1),
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-				Position = UDim2.fromScale(0.25, 1),
-				ScrollBarThickness = 4,
-				Size = UDim2.fromScale(0.45, 0.95),
-			},
-
-			showCosmetics = true,
-			onHover = self.onHover,
-			onUnhover = self.onUnhover,
-
-			onClickCosmetic = function(item)
-				UpdateCosmetics:FireServer(item)
-			end,
-
-			onClickInventoryUnequipped = function(loot, id)
-				if loot.Level and loot.Level > LocalPlayer.PlayerData.Level.Value then
-					self:setState({
-						levelWarningOpen = true,
-					})
-				else
-					if Loot.IsAttachment(loot) then
-						self:setState({
-							equipAttachment = loot,
-							equipAttachmentId = id,
-						})
-					else
-						UpdateEquipment:FireServer(id)
-					end
-				end
-			end,
-		}),
-
-		LootInfo = e("Frame", {
-			AnchorPoint = Vector2.new(1, 0),
-			BackgroundColor3 = Color3.new(0, 0, 0),
-			BackgroundTransparency = 0.7,
-			BorderSizePixel = 0,
-			Position = UDim2.fromScale(1, 0),
-			Size = UDim2.fromScale(0.3, 1),
+		TitlesPageFrame = e("Frame", {
+			BackgroundTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			Visible = self.state.tab == "titles",
 		}, {
-			Inner = lootInfo,
+			TitlesPage = e(TitlesPage),
 		}),
-
-		InventorySpace = inventorySpace,
 
 		AttachmentConfirm = attachmentConfirm,
 
@@ -367,6 +188,32 @@ function Inventory:render()
 		GamePassConnection = e(EventConnection, {
 			callback = self.resetInventorySpace,
 			event = GamePasses.BoughtPassUpdated(LocalPlayer).Event,
+		}),
+
+		Tabs = e("Frame", {
+			BackgroundTransparency = 1,
+			Position = UDim2.fromScale(0, 1),
+			Size = UDim2.fromScale(1, 0.1),
+		}, {
+			UIListLayout = e("UIListLayout", {
+				FillDirection = Enum.FillDirection.Horizontal,
+				Padding = UDim.new(0.01, 0),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+			}),
+
+			TabInventory = e(Tab, {
+				Active = self.state.tab == "inventory",
+				Activate = self.switchTab("inventory"),
+				LayoutOrder = 1,
+				Text = "Inventory",
+			}),
+
+			TabTitles = e(Tab, {
+				Active = self.state.tab == "titles",
+				Activate = self.switchTab("titles"),
+				LayoutOrder = 2,
+				Text = "Titles",
+			}),
 		}),
 	})
 end

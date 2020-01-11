@@ -17,6 +17,7 @@ local cosmeticType = t.array(t.union(
 		Name = t.string,
 		Type = t.literal("Face"),
 		Instance = t.instanceIsA("Decal"),
+		DontSellMe = t.optional(t.boolean),
 	}),
 
 	t.strictInterface({
@@ -25,6 +26,7 @@ local cosmeticType = t.array(t.union(
 		Type = t.literal("Particle"),
 		Instance = t.instanceIsA("Folder"),
 		Image = t.instanceIsA("Decal"),
+		DontSellMe = t.optional(t.boolean),
 	}),
 
 	t.strictInterface({
@@ -35,6 +37,7 @@ local cosmeticType = t.array(t.union(
 			t.literal("HighTier")
 		),
 		Instance = t.instanceIsA("Folder"),
+		DontSellMe = t.optional(t.boolean),
 	}),
 
 	t.strictInterface({
@@ -46,6 +49,7 @@ local cosmeticType = t.array(t.union(
 			t.literal("LowTier"),
 			t.literal("HighTier")
 		),
+		DontSellMe = t.optional(t.boolean),
 	}),
 
 	t.strictInterface({
@@ -61,6 +65,7 @@ local cosmeticType = t.array(t.union(
 			t.literal("LowTier"),
 			t.literal("HighTier")
 		),
+		DontSellMe = t.optional(t.boolean),
 	})
 ))
 
@@ -128,7 +133,7 @@ function Cosmetics.GetStoreItems()
 	local collated = {}
 
 	for _, cosmetic in ipairs(Cosmetics.Cosmetics) do
-		if Cosmetics.Distribution[cosmetic.Type] then
+		if Cosmetics.Distribution[cosmetic.Type] and not cosmetic.DontSellMe then
 			if collated[cosmetic.Type] then
 				table.insert(collated[cosmetic.Type], cosmetic)
 			else

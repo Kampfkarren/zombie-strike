@@ -1,11 +1,11 @@
 local CollectionService = game:GetService("CollectionService")
-local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local BossLaserBig = ReplicatedStorage.Assets.Campaign.Campaign3.Boss.BossLaserBig
 local ChargeBigLaser = ReplicatedStorage.Remotes.FirelandsBoss.ChargeBigLaser
@@ -64,5 +64,7 @@ ChargeBigLaser.OnClientEvent:connect(function(newActive)
 		end
 	end
 
-	Debris:AddItem(bigLaser, LASER_LIFETIME)
+	RealDelay(LASER_LIFETIME, function()
+		bigLaser:Destroy()
+	end)
 end)

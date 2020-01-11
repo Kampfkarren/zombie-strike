@@ -14,7 +14,7 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 
 local Equipment = ReplicatedStorage.Equipment
 
-local ATTACHMENT_DROP_RATE = 0
+local ATTACHMENT_DROP_RATE = 0.2
 local FREE_EPIC_AFTER = 0
 local WEAPON_DROP_RATE = 0.6
 

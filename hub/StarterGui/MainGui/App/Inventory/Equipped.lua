@@ -6,6 +6,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
+local SpraysDictionary = require(ReplicatedStorage.Core.SpraysDictionary)
 local StyledButton = require(ReplicatedStorage.Core.UI.Components.StyledButton)
 local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Components.ViewportFramePreviewComponent)
 
@@ -16,6 +17,12 @@ local Equipped = Roact.PureComponent:extend("Equipped")
 
 function Equipped:init()
 	self:ResetModel()
+
+	self.unequip = self.props.Unequip or function()
+		if self.props.Cosmetic and self.props.equipped ~= nil then
+			UpdateCosmetics:FireServer(self.props.Key)
+		end
+	end
 end
 
 function Equipped:didUpdate(oldProps)
@@ -97,11 +104,7 @@ function Equipped:render()
 				LayoutOrder = props.LayoutOrder,
 				Size = UDim2.fromScale(0.95, 0.9),
 
-				[Roact.Event.Activated] = function()
-					if props.equipped ~= nil then
-						UpdateCosmetics:FireServer(props.Key)
-					end
-				end,
+				[Roact.Event.Activated] = self.unequip,
 			},
 		}, {
 			UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
@@ -115,9 +118,16 @@ end
 
 return RoactRodux.connect(function(state, props)
 	if props.Cosmetic then
-		return {
-			equipped = Cosmetics.Cosmetics[state.store.equipped[props.Key]],
-		}
+		if props.Key == "Spray" then
+			local equippedSpray = state.sprays.equipped
+			return equippedSpray and {
+				equipped = SpraysDictionary[equippedSpray],
+			}
+		else
+			return {
+				equipped = Cosmetics.Cosmetics[state.store.equipped[props.Key]],
+			}
+		end
 	else
 		return {
 			equipped = (state.equipment or {})["equipped" .. props.Key],

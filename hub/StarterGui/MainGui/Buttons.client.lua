@@ -26,6 +26,12 @@ Buttons.Store.MouseButton1Click:connect(function()
 	})
 end)
 
+Buttons.ZombiePass.MouseButton1Click:connect(function()
+	State:dispatch({
+		type = "ToggleZombiePass",
+	})
+end)
+
 Buttons.Small.Codes.MouseButton1Click:connect(function()
 	State:dispatch({
 		type = "ToggleCodes",

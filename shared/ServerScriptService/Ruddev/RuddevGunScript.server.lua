@@ -64,69 +64,66 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 end)
 
 local function hit(player, hit, index)
-	FastSpawn(function() -- spawn to avoid race conditions
-		local shot = shots[player]
+	local shot = shots[player]
 
-		if shot then
-			local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
-			if humanoid then
-				if DAMAGE:PlayerCanDamage(player, humanoid) then
-					local position = shot.Position
-					local direction = shot.Directions[index]
-					local config = shot.Config
+	if shot then
+		local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
+		if humanoid then
+			if DAMAGE:PlayerCanDamage(player, humanoid) then
+				local position = shot.Position
+				local direction = shot.Directions[index]
+				local config = shot.Config
 
-					if direction then
-						local distance = (hit.Position - position).Magnitude
-						local ignore = {}
+				if direction then
+					local distance = (hit.Position - position).Magnitude
+					local ignore = {}
 
-						for _, p in pairs(Players:GetPlayers()) do
-							if p.Character then
-								table.insert(ignore, p.Character)
-							end
+					for _, p in ipairs(Players:GetPlayers()) do
+						if p.Character then
+							table.insert(ignore, p.Character)
 						end
+					end
 
-						--local h = Raycast(position, direction.Unit * distance, ignore)
-						if distance <= config.Range then --and (not h) then
-							if humanoid.Health > 0 then
+					--local h = Raycast(position, direction.Unit * distance, ignore)
+					if distance <= config.Range then --and (not h) then
+						if humanoid.Health > 0 then
+							shot.Directions[index] = nil
+							local numDir = 0
+							for _, v in pairs(shot.Directions) do
+								if v then
+									numDir = numDir + 1
+								end
+							end
+							if numDir == 0 then
+								shots[player] = nil
+							end
 
-								shot.Directions[index] = nil
-								local numDir = 0
-								for _, v in pairs(shot.Directions) do
-									if v then
-										numDir = numDir + 1
+							local damage = DAMAGE:Calculate(shot.Item, hit, position)
+							DAMAGE:Damage(humanoid, damage, player, config.CritChance)
+
+							local otherPlayer = Players:GetPlayerFromCharacter(humanoid.Parent)
+							if otherPlayer then
+								REMOTES.HitIndicator:FireClient(otherPlayer, direction, damage)
+							end
+
+							if humanoid.Health <= 0 then
+								if hit.Name == "Head" then
+									humanoid.Parent.Head.Transparency = 1
+								end
+
+								for _, part in ipairs(humanoid.Parent:GetChildren()) do
+									if part:IsA("BasePart") then
+										part.Velocity = direction * GunScaling.BaseStats(
+											shot.Item.WeaponData.Type.Value,
+											1, 1
+										).Damage
 									end
 								end
-								if numDir == 0 then
-									shots[player] = nil
-								end
 
-								local damage = DAMAGE:Calculate(shot.Item, hit, position)
-								DAMAGE:Damage(humanoid, damage, player, config.CritChance)
-
-								local otherPlayer = Players:GetPlayerFromCharacter(humanoid.Parent)
-								if otherPlayer then
-									REMOTES.HitIndicator:FireClient(otherPlayer, direction, damage)
-								end
-
-								if humanoid.Health <= 0 then
-									if hit.Name == "Head" then
-										humanoid.Parent.Head.Transparency = 1
-									end
-
-									for _, part in pairs(humanoid.Parent:GetChildren()) do
-										if part:IsA("BasePart") then
-											part.Velocity = direction * GunScaling.BaseStats(
-												shot.Item.WeaponData.Type.Value,
-												1, 1
-											).Damage
-										end
-									end
-
-									for _, player in pairs(Players:GetPlayers()) do
-										GiveQuest:Fire(player, "KillZombiesWeapon", 1, function(quest)
-											return quest.Args[2] == shot.Item.WeaponData.Type.Value
-										end)
-									end
+								for _, player in ipairs(Players:GetPlayers()) do
+									GiveQuest:Fire(player, "KillZombiesWeapon", 1, function(quest)
+										return quest.Args[2] == shot.Item.WeaponData.Type.Value
+									end)
 								end
 							end
 						end
@@ -134,7 +131,7 @@ local function hit(player, hit, index)
 				end
 			end
 		end
-	end)
+	end
 end
 
 -- REMOTES.Hit.OnServerEvent:connect(hit)

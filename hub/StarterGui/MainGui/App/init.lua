@@ -4,6 +4,7 @@ local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
 
+local BattlePass = require(script.BattlePass)
 local Codes = require(script.Codes)
 local Equipment = require(script.Equipment)
 local Feedback = require(script.Feedback)
@@ -23,6 +24,7 @@ local function App()
 		BackgroundTransparency = 1,
 		Size = UDim2.new(1, 0, 1, 0),
 	}, {
+		BattlePass = e(BattlePass),
 		Codes = e(Codes),
 		Equipment = e(Equipment),
 		Feedback = e(Feedback),

@@ -13,6 +13,7 @@ local COSMETIC_COLORS = {
 	Particle = Color3.fromRGB(46, 204, 113),
 	LowTier = Color3.fromRGB(9, 132, 227),
 	HighTier = Color3.fromRGB(238, 82, 83),
+	Spray = Color3.fromRGB(72, 219, 251),
 }
 
 function CosmeticButton:init()

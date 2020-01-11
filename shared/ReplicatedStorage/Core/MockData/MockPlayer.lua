@@ -93,6 +93,27 @@ return function()
 		Grenade = { 1 },
 	}
 
+	MockPlayer.Sprays = {
+		Owned = {},
+		Equipped = nil,
+	}
+
+	MockPlayer.Fonts = {
+		Owned = {},
+		Equipped = nil,
+	}
+
+	MockPlayer.Titles = {
+		Owned = {},
+		Equipped = nil,
+	}
+
+	MockPlayer.ZombiePass = {
+		Level = 1,
+		XP = 0,
+		Premium = false,
+	}
+
 	MockPlayer.Settings = {}
 	MockPlayer.XPExpires = 0
 

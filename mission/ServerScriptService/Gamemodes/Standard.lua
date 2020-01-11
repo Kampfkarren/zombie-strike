@@ -6,6 +6,8 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
+local Campaigns = require(ReplicatedStorage.Core.Campaigns)
+local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
@@ -165,6 +167,26 @@ local function endMission()
 					resolve({ xp, gold })
 				end)
 			end),
+
+			Promise.async(function(resolve)
+				local zombiePass, zombiePassStore = Data.GetPlayerData(player, "ZombiePass")
+
+				local level = DataStore2("Level", player):Get(1)
+				local hardestCampaign = 1
+
+				for campaignIndex, campaign in ipairs(Campaigns) do
+					if campaign.Difficulties[1].MinLevel <= level then
+						hardestCampaign = campaignIndex
+					else
+						break
+					end
+				end
+
+				zombiePass.XP = zombiePass.XP + Dungeon.GetDungeonData("Campaign") / hardestCampaign
+				zombiePassStore:Set(zombiePass)
+
+				resolve()
+			end)
 		}):andThen(function(data)
 			if Dungeon.GetDungeonData("Hardcore") then
 				GiveQuest:Fire(player, "BeatHardcoreMissions", 1)

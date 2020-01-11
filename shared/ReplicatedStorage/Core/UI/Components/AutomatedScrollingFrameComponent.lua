@@ -15,17 +15,24 @@ local function copy(list)
 end
 
 function AutomatedScrollingFrameComponent:init()
-	self.ref = Roact.createRef()
+	self.ref = self.props[Roact.Ref] or Roact.createRef()
 end
 
 function AutomatedScrollingFrameComponent:render()
 	local props = copy(self.props)
+	props.Layout = nil
 	props[Roact.Ref] = self.ref
 	return e("ScrollingFrame", props)
 end
 
 function AutomatedScrollingFrameComponent:didMount()
-	AutomatedScrollingFrame(self.ref:getValue())
+	local layout
+
+	if self.props.Layout then
+		layout = self.props.Layout:getValue()
+	end
+
+	AutomatedScrollingFrame(self.ref:getValue(), layout)
 end
 
 return AutomatedScrollingFrameComponent

@@ -4,7 +4,7 @@ local Types = {
 	Pistol = {
 		Base = {
 			CritChance = 0.08,
-			Damage = 25,
+			Damage = 32,
 			FireRate = 5,
 			Magazine = 9,
 		},
@@ -20,7 +20,7 @@ local Types = {
 	Rifle = {
 		Base = {
 			CritChance = 0.01,
-			Damage = 14,
+			Damage = 19,
 			FireRate = 10,
 			Magazine = 24,
 		},
@@ -36,7 +36,7 @@ local Types = {
 	SMG = {
 		Base = {
 			CritChance = 0.04,
-			Damage = 9,
+			Damage = 12,
 			FireRate = 12,
 			Magazine = 30,
 		},
@@ -70,7 +70,7 @@ local Types = {
 	Sniper = {
 		Base = {
 			CritChance = 0.15,
-			Damage = 44,
+			Damage = 47,
 			FireRate = 1.5,
 			Magazine = 6,
 		},

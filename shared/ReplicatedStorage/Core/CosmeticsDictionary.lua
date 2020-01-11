@@ -19,6 +19,11 @@ local function quick(type, instanceType, patch)
 	end
 end
 
+local function dontSellMe(thing)
+	thing.DontSellMe = true
+	return thing
+end
+
 local face = quick("Face", "Face", function(data, item)
 	data.Instance = item.Face
 end)
@@ -87,9 +92,9 @@ return {
 	particle("Rings"),
 	particle("Electric"),
 	particle("Plasma"),
-	highTier("Santa"),
-	lowTier("Mrs. Claus", "SantaGirl"),
-	lowTier("Penguin"),
+	dontSellMe(highTier("Santa")),
+	dontSellMe(lowTier("Mrs. Claus", "SantaGirl")),
+	dontSellMe(lowTier("Penguin")),
 	highTier("Dark Age Apprentice", "DarkAgeApprentice"),
 	lowTier("Little Ms. Rich", "LittleMsRich"),
 	lowTier("Rockstar"),
@@ -102,4 +107,15 @@ return {
 	highTier("The Dark God", "TheDarkGod"),
 	lowTier("Codebreaker"),
 	highTier("Swanky"),
+	dontSellMe(lowTier("The Noble", "Noble")),
+	dontSellMe(lowTier("The Quirky", "Quirky")),
+	dontSellMe(lowTier("Athlete")),
+	dontSellMe(lowTier("Biker")),
+	dontSellMe(lowTier("Photographer")),
+	dontSellMe(lowTier("Sleepy")),
+	dontSellMe(lowTier("The Comedian", "Comedian")),
+	dontSellMe(lowTier("The Leader", "Leader")),
+	dontSellMe(lowTier("The Noble", "Noble")),
+	dontSellMe(lowTier("The Quirky", "Quirky")),
+	particle("Red Lights", "RedLights"),
 }

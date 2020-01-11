@@ -115,6 +115,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		"Shopkeeper",
 		"Store",
 		"Trading",
+		"ZombiePass",
 	})),
 
 	quests = Rodux.createReducer({
@@ -124,6 +125,22 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 			return {
 				quests = action.quests,
 			}
+		end,
+	}),
+
+	sprays = Rodux.createReducer({
+		owned = {},
+	}, {
+		UpdateSprays = function(state, action)
+			local state = copy(state)
+
+			-- network optimization: owned is nil when just an equipped update
+			if action.owned then
+				state.owned = action.owned
+			end
+
+			state.equipped = action.equipped
+			return state
 		end,
 	}),
 
@@ -223,6 +240,33 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 			return state
 		end,
 	}),
+
+	zombiePass = Rodux.createReducer({
+		level = nil,
+		premium = nil,
+		rewards = {},
+		xp = nil,
+	}, {
+		SetRewards = function(state, action)
+			local state = copy(state)
+			state.rewards = action.rewards
+			return state
+		end,
+
+		SetZombiePass = function(state, action)
+			local state = copy(state)
+
+			state.level = action.level
+			state.premium = action.premium
+			state.xp = action.xp
+
+			if action.rewards then
+				state.rewards = action.rewards
+			end
+
+			return state
+		end,
+	}),
 }))
 
 ReplicatedStorage.Remotes.UpdateCosmetics.OnClientEvent:connect(function(contents, equipped)
@@ -270,6 +314,24 @@ ReplicatedStorage.Remotes.UpdateQuests.OnClientEvent:connect(function(quests)
 	Store:dispatch({
 		type = "SetQuests",
 		quests = quests,
+	})
+end)
+
+ReplicatedStorage.Remotes.UpdateSprays.OnClientEvent:connect(function(equipped, owned)
+	Store:dispatch({
+		type = "UpdateSprays",
+		equipped = equipped,
+		owned = owned,
+	})
+end)
+
+ReplicatedStorage.Remotes.ZombiePass.OnClientEvent:connect(function(level, xp, premium, rewards)
+	Store:dispatch({
+		type = "SetZombiePass",
+		level = level,
+		premium = premium,
+		rewards = rewards,
+		xp = xp,
 	})
 end)
 

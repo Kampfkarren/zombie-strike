@@ -85,6 +85,7 @@ function Zombie:Spawn(position)
 	self:UpdateNametag()
 	self:InitializeAI()
 	self:AfterSpawn()
+	self:TurnOffShadowCasting()
 
 	return self.instance
 end
@@ -112,6 +113,14 @@ function Zombie:SetupHumanoid()
 		self:UpdateNametag()
 		self:Die()
 	end)
+end
+
+function Zombie:TurnOffShadowCasting()
+	for _, part in pairs(self.instance:GetDescendants()) do
+		if part:IsA("BasePart") then
+			part.CastShadow = false
+		end
+	end
 end
 
 function Zombie:InitializeAI()
@@ -200,67 +209,25 @@ function Zombie:Wander()
 end
 
 -- AGGRO
-function Zombie:SmartAI()
-	local pathing = PathfindingService:CreatePath()
-
-	local waypoints = {}
-	local lastRecalculate = 0
-
-	local humanoid = self.instance.Humanoid
-	local ourTick = self.aggroTick
-
-	while self.alive
+function Zombie:AIShouldMove(ourTick)
+	return self.alive
 		and self.aggroTick == ourTick
 		and self.aggroFocus:IsDescendantOf(game)
 		and self.aggroFocus.Humanoid.Health > 0
-	do
-		repeat
-			if tick() - lastRecalculate > 0.25 then
-				pathing:ComputeAsync(self.instance.PrimaryPart.Position, self.aggroFocus.PrimaryPart.Position)
-
-				if not (self.alive
-					and self.aggroTick == ourTick
-					and self.aggroFocus:IsDescendantOf(game)
-					and self.aggroFocus.Humanoid.Health > 0
-				) then
-					break -- continue
-				end
-
-				waypoints = pathing:GetWaypoints()
-				lastRecalculate = tick()
-			end
-
-			local waypoint = table.remove(waypoints, 1)
-			if waypoint then
-				if waypoint.Action == Enum.PathWaypointAction.Jump then
-					humanoid.Jump = true
-				elseif waypoint.Action == Enum.PathWaypointAction.Walk then
-					local diff = waypoint.Position - self.instance.PrimaryPart.Position
-					local angle = math.atan2(diff.X, diff.Z)
-
-					if (math.abs(math.deg(angle)) < 120 and diff.Magnitude > 5) or #waypoints == 0 then
-						humanoid:MoveTo(waypoint.Position, self.aggroFocus.PrimaryPart)
-						humanoid.MoveToFinished:wait()
-					end
-				end
-			else
-				wait(0.15)
-			end
-		until true
-	end
 end
 
 function Zombie:StupidAI()
 	local humanoid = self.instance.Humanoid
 	local ourTick = self.aggroTick
 
-	while self.alive
-		and self.aggroTick == ourTick
-		and self.aggroFocus:IsDescendantOf(game)
-		and self.aggroFocus.Humanoid.Health > 0
-	do
+	self.aliveMaid:GiveTask(humanoid.MoveToFinished:connect(function()
+		if self:AIShouldMove(ourTick) then
+			humanoid:MoveTo(self.aggroFocus.PrimaryPart.Position, self.aggroFocus.PrimaryPart)
+		end
+	end))
+
+	if self:AIShouldMove(ourTick) then
 		humanoid:MoveTo(self.aggroFocus.PrimaryPart.Position, self.aggroFocus.PrimaryPart)
-		humanoid.MoveToFinished:wait()
 	end
 end
 
@@ -278,9 +245,7 @@ function Zombie:Aggro(focus)
 	local ourTick = self.aggroTick + 1
 	self.aggroTick = ourTick
 
-	FastSpawn(function()
-		self:StupidAI()
-	end)
+	self:StupidAI()
 
 	spawn(function()
 		wait(math.random(40, 60) / 100)

@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
@@ -7,6 +8,7 @@ local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
+local ZombiePassRewards = require(ServerScriptService.Shared.ZombiePassRewards)
 
 local UpdateEquipped = ReplicatedStorage.Remotes.UpdateEquipped
 
@@ -53,6 +55,19 @@ Players.PlayerAdded:connect(function(player)
 
 	if os.time() < Data.GetPlayerData(player, "XPExpires") then
 		xpScale = xpScale + 1
+	end
+
+	local zombiePass = Data.GetPlayerData(player, "ZombiePass")
+
+	for level = zombiePass.Level, 1, -1 do
+		for _, reward in pairs(ZombiePassRewards.GetLootForLevel(
+			level,
+			zombiePass.Premium
+		)) do
+			if reward.Type == "XP" then
+				xpScale = xpScale + (reward.XP / 100)
+			end
+		end
 	end
 
 	local xpValue = numberValue("XPScale", xpScale, playerData)

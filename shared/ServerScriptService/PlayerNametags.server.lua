@@ -2,10 +2,13 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+local Data = require(ReplicatedStorage.Core.Data)
+local FontsDictionary = require(ReplicatedStorage.Core.FontsDictionary)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Nametag = require(ServerScriptService.Shared.Nametag)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
+local TitlesDictionary = require(ReplicatedStorage.Core.TitlesDictionary)
 
 local function makeVip(nametag)
 	if not nametag.EnemyName.Text:match("[VIP]") then
@@ -20,12 +23,42 @@ local function maybeVip(player, nametag)
 	end
 end
 
+local function setupFont(player, nametag)
+	local fonts, fontsStore = Data.GetPlayerData(player, "Fonts")
+	local font = FontsDictionary[fonts.Equipped]
+	font = font and font.Font or Enum.Font.GothamBold
+
+	nametag.EnemyName.Font = font
+	nametag.Level.Font = font
+	nametag.Title.Font = font
+
+	return fontsStore
+end
+
+local function setupTitle(player, nametag)
+	local titles, titlesStore = Data.GetPlayerData(player, "Titles")
+	local title = TitlesDictionary[titles.Equipped]
+
+	if not title then
+		nametag.Title.Visible = false
+		return titlesStore
+	end
+
+	nametag.Title.Text = "[" .. title .. "]"
+	nametag.Title.Visible = true
+
+	return titlesStore
+end
+
 Players.PlayerAdded:connect(function(player)
 	local playerData = player:WaitForChild("PlayerData")
 	local level = playerData:WaitForChild("Level")
 
+	local updateConnected
+	local nametag
+
 	local function characterAdded(character)
-		local nametag = Nametag(character, level.Value)
+		nametag = Nametag(character, level.Value)
 
 		RealDelay(0.03, function()
 			maybeVip(player, nametag)
@@ -42,6 +75,21 @@ Players.PlayerAdded:connect(function(player)
 		level.Changed:connect(function()
 			maybeVip(player, Nametag(character, level.Value))
 		end)
+
+		local fontsStore = setupFont(player, nametag)
+		local titlesStore = setupTitle(player, nametag)
+
+		if not updateConnected then
+			updateConnected = true
+
+			fontsStore:OnUpdate(function()
+				setupFont(player, nametag)
+			end)
+
+			titlesStore:OnUpdate(function()
+				setupTitle(player, nametag)
+			end)
+		end
 	end
 
 	if player.Character then
