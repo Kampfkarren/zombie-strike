@@ -12,7 +12,6 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES.Config)
 	local DAMAGE = require(MODULES.Damage)
 
-local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 
 local GiveQuest = ServerStorage.Events.GiveQuest
