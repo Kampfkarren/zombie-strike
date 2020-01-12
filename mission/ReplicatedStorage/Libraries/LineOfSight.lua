@@ -2,9 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Raycast = require(ReplicatedStorage.Core.Raycast)
 
-local LineOfSight = {}
-
-function LineOfSight.__call(_, origin, character, range, blacklist)
+local function LineOfSight(origin, character, range, blacklist)
 	if typeof(origin) == "Instance" then
 		if origin.Position:isClose(character.PrimaryPart.Position) then
 			return origin, origin.Position
@@ -34,4 +32,4 @@ function LineOfSight.__call(_, origin, character, range, blacklist)
 	return hit and hit:IsDescendantOf(character), point
 end
 
-return setmetatable(LineOfSight, LineOfSight)
+return LineOfSight

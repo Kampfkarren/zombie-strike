@@ -108,7 +108,7 @@ return function()
 		Equipped = nil,
 	}
 
-	MockPlayer.Pets = { {}, 1 }
+	MockPlayer.Pets = { {}, 1, 1 }
 
 	MockPlayer.ZombiePass = {
 		Level = 1,
