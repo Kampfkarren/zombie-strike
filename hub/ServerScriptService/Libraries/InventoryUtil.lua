@@ -19,7 +19,9 @@ function InventoryUtil.RemoveItems(player, indexes, dontSet)
 
 	for equippable in pairs(Data.Equippable) do
 		local item = Data.GetPlayerData(player, equippable)
-		equipped[equippable] = item.UUID
+		if item then
+			equipped[equippable] = item.UUID
+		end
 	end
 
 	local indexSet = {}

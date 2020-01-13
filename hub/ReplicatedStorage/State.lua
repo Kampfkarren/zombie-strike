@@ -59,13 +59,14 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 
 	equipment = Rodux.createReducer(nil, {
 		UpdateEquipment = function(_, action)
-			local armor, helmet, weapon, attachment
-				= action.newArmor, action.newHelmet, action.newWeapon, action.newAttachment
+			local armor, helmet, weapon, pet
+				= action.newArmor, action.newHelmet, action.newWeapon, action.newPet
 			local currentInventory = assert(Store:getState().inventory)
 
 			Data.SetLocalPlayerData("EquippedArmor", armor)
 			Data.SetLocalPlayerData("EquippedHelmet", helmet)
 			Data.SetLocalPlayerData("EquippedWeapon", weapon)
+			Data.SetLocalPlayerData("EquippedPet", pet)
 
 			Data.SetLocalPlayerData("Armor", currentInventory[armor])
 			Data.SetLocalPlayerData("Helmet", currentInventory[helmet])
@@ -75,10 +76,10 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 				armor = armor,
 				helmet = helmet,
 				weapon = weapon,
-				attachment = attachment,
 
 				equippedArmor = currentInventory[armor],
 				equippedHelmet = currentInventory[helmet],
+				equippedPet = currentInventory[pet],
 				equippedWeapon = currentInventory[weapon],
 				equippedAttachment = currentInventory[weapon].Attachment,
 			}
@@ -111,6 +112,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		"Equipment",
 		"Feedback",
 		"Inventory",
+		"PetShop",
 		"Settings",
 		"Shopkeeper",
 		"Store",
@@ -277,13 +279,13 @@ ReplicatedStorage.Remotes.UpdateCosmetics.OnClientEvent:connect(function(content
 	})
 end)
 
-ReplicatedStorage.Remotes.UpdateEquipment.OnClientEvent:connect(function(armor, helmet, weapon, attachment)
+ReplicatedStorage.Remotes.UpdateEquipment.OnClientEvent:connect(function(armor, helmet, weapon, pet)
 	Store:dispatch({
 		type = "UpdateEquipment",
 		newArmor = armor,
 		newHelmet = helmet,
 		newWeapon = weapon,
-		newAttachment = attachment,
+		newPet = pet,
 	})
 end)
 

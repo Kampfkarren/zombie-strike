@@ -16,6 +16,7 @@ Data.Equippable = {
 	Armor = true,
 	Helmet = true,
 	Weapon = true,
+	Pet = true,
 }
 
 local baseMockPlayer = MockPlayer()

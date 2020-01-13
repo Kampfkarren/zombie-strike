@@ -39,6 +39,8 @@ UpdateEquipment.OnServerEvent:connect(function(player, equip)
 		equipType = "Equipped" .. toEquip.Type
 	elseif Loot.IsWeapon(toEquip) then
 		equipType = "EquippedWeapon"
+	elseif Loot.IsPet(toEquip) then
+		equipType = "EquippedPet"
 	elseif Loot.IsAttachment(toEquip) then
 		local weapon = Data.GetPlayerData(player, "Weapon")
 		weapon.Attachment = {
@@ -55,7 +57,7 @@ UpdateEquipment.OnServerEvent:connect(function(player, equip)
 		return
 	end
 
-	if toEquip.Level > Data.GetPlayerData(player, "Level") then
+	if (toEquip.Level and toEquip.Level or 0) > Data.GetPlayerData(player, "Level") then
 		warn("equipping item with too high level")
 		return
 	end
@@ -161,12 +163,14 @@ Players.PlayerAdded:connect(function(player)
 		local equippedArmor = Data.GetPlayerData(player, "EquippedArmor")
 		local equippedHelmet = Data.GetPlayerData(player, "EquippedHelmet")
 		local equippedWeapon = Data.GetPlayerData(player, "EquippedWeapon")
+		local equippedPet = Data.GetPlayerData(player, "EquippedPet")
 
 		UpdateEquipment:FireClient(
 			player,
 			equippedArmor,
 			equippedHelmet,
-			equippedWeapon
+			equippedWeapon,
+			equippedPet
 		)
 
 		if anUpdate then

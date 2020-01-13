@@ -37,6 +37,10 @@ local function filtered(item, filters)
 		return true
 	end
 
+	if Loot.IsPet(item) and filters.Pets == false then
+		return true
+	end
+
 	if item.Rarity and filters[Loot.Rarities[item.Rarity].Name] == false then
 		return true
 	end

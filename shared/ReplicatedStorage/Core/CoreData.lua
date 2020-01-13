@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local inspect = require(ReplicatedStorage.Core.inspect)
+local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 
 local CoreData = {}
 
@@ -121,6 +122,13 @@ function CoreData.GetModel(data)
 		else
 			error("don't know how to handle " .. inspect(data))
 		end
+	elseif itemType == "Pet" then
+		local model = Instance.new("Model")
+		local pet = PetsDictionary.Pets[data.Model].Model:Clone()
+		pet.Parent = model
+		uuid.Parent = model
+		model.PrimaryPart = pet
+		return model
 	else
 		local model = ReplicatedStorage.Items[data.Type .. data.Model]:Clone()
 

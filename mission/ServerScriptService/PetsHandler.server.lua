@@ -4,20 +4,35 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Damage = require(ReplicatedStorage.RuddevModules.Damage)
 local Data = require(ReplicatedStorage.Core.Data)
+local Interval = require(ReplicatedStorage.Core.Interval)
 local LineOfSight = require(ReplicatedStorage.Libraries.LineOfSight)
-local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 
 local PetFire = ReplicatedStorage.Remotes.PetFire
 
+local BOSS_DAMAGE_SCALE = 1 / 15
+local COINS_PER_INTERVAL = 5
+local COINS_INTERVAL = 10
 local PET_RANGE = 90
 
-Players.PlayerAdded:connect(function(player)
-	local pets = Data.GetPlayerData(player, "Pets")
-	local petIndex = pets[2]
-	local rarityIndex = pets[3]
+local boss
 
-	if not petIndex then return end
+CollectionService:GetInstanceAddedSignal("Boss"):connect(function(newBoss)
+	boss = newBoss
+end)
+
+Interval(COINS_INTERVAL, function()
+	for _, player in ipairs(Players:GetPlayers()) do
+		local _, petCoinsStore = Data.GetPlayerData(player, "PetCoins")
+		petCoinsStore:Increment(COINS_PER_INTERVAL)
+	end
+end)
+
+Players.PlayerAdded:connect(function(player)
+	local pet = Data.GetPlayerData(player, "Pet")
+	if not pet then return end
+
+	local rarityIndex = pet.Rarity
 
 	local rarity = assert(PetsDictionary.Rarities[rarityIndex], "rarity does not exist")
 
@@ -30,28 +45,36 @@ Players.PlayerAdded:connect(function(player)
 			local rootPosition = character.PrimaryPart.Position
 
 			for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
-				local zombieRoot = zombie.PrimaryPart
-				local dist = (zombieRoot.Position - rootPosition).Magnitude
+				if zombie ~= boss then
+					local zombieRoot = zombie.PrimaryPart
+					local dist = (zombieRoot.Position - rootPosition).Magnitude
 
-				if dist <= closest[2]
-					and Damage:PlayerCanDamage(player, zombie.Humanoid)
-					and LineOfSight(
-						rootPosition,
-						zombie,
-						PET_RANGE,
-						{ character }
-					)
-				then
-					closest = { zombie, dist }
+					if dist <= closest[2]
+						and Damage:PlayerCanDamage(player, zombie.Humanoid)
+						and LineOfSight(
+							rootPosition,
+							zombie,
+							PET_RANGE,
+							{ character }
+						)
+					then
+						closest = { zombie, dist }
+					end
 				end
 			end
 
-			if closest[1] then
-				local zombie = closest[1]
+			local zombie = closest[1]
+			local damageScale = 1
 
+			if not zombie and boss and not boss.Humanoid:FindFirstChild("NoKill") then
+				zombie = boss
+				damageScale = BOSS_DAMAGE_SCALE
+			end
+
+			if zombie then
 				Damage:Damage(
 					zombie.Humanoid,
-					zombie.Humanoid.MaxHealth * rarity.Damage,
+					zombie.Humanoid.MaxHealth * rarity.Damage * damageScale,
 					player,
 					0
 				)
@@ -60,10 +83,10 @@ Players.PlayerAdded:connect(function(player)
 			end
 		end
 
-		if player:IsDescendantOf(game) then
-			RealDelay(rarity.FireRate, tryFire)
+		if not player:IsDescendantOf(game) then
+			return false
 		end
 	end
 
-	RealDelay(rarity.FireRate, tryFire)
+	Interval(1 / rarity.FireRate, tryFire)
 end)

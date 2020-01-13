@@ -136,6 +136,7 @@ function InventoryFilter:render()
 			ShowWeapons = makeCheckbox("Weapons"),
 			ShowAttachments = makeCheckbox("Attachments"),
 			ShowCosmetics = makeCheckbox("Cosmetics"),
+			ShowPets = makeCheckbox("Pets"),
 
 			BreakLine = e(BreakLine, {
 				LayoutOrder = nextLayoutOrder(),
@@ -157,6 +158,7 @@ local function createStateBinding()
 		Weapons = true,
 		Attachments = true,
 		Cosmetics = true,
+		Pets = true,
 
 		Common = true,
 		Uncommon = true,

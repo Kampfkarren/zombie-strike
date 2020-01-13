@@ -14,12 +14,13 @@ Players.PlayerAdded:connect(function(player)
 	petRarityValue.Name = "PetRarity"
 	petRarityValue.Parent = playerData
 
-	local function updatePets(data)
-		petValue.Value = data[2] or 0
-		petRarityValue.Value = data[3] or 0
+	local function updatePets()
+		local pet = Data.GetPlayerData(player, "Pet")
+		petValue.Value = pet and pet.Model or 0
+		petRarityValue.Value = pet and pet.Rarity or 0
 	end
 
-	local pets, petsStore = Data.GetPlayerData(player, "Pets")
+	local _, petsStore = Data.GetPlayerData(player, "EquippedPet")
 	petsStore:OnUpdate(updatePets)
-	updatePets(pets)
+	updatePets()
 end)

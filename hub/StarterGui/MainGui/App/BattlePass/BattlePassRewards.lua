@@ -96,7 +96,7 @@ function BattlePassRewards:PlaySound()
 		table.insert(lootRarities, LOOT_RARITIES[loot.Type])
 	end
 
-	SoundService.ImportantSFX.ZombiePass["Unlock" .. math.max(unpack(lootRarities))]:Play()
+	SoundService.ImportantSFX.ZombiePass["Unlock" .. math.max(1, unpack(lootRarities))]:Play()
 end
 
 function BattlePassRewards:didMount()

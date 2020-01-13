@@ -1,12 +1,14 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
+local PlaySound = require(ReplicatedStorage.Core.PlaySound)
 local WeakInstanceTable = require(ReplicatedStorage.Core.WeakInstanceTable)
 
 local PET_OFFSET = 3.5
@@ -28,7 +30,9 @@ local function playerAdded(player)
 
 	local lastPet
 
-	local function updatePet(petIndex)
+	local function updatePet()
+		local petIndex = petValue.Value
+
 		if lastPet then
 			lastPet:Destroy()
 			activePets[player] = nil
@@ -37,25 +41,24 @@ local function playerAdded(player)
 		if petIndex == 0 then return end
 
 		local character = player.Character
-		if character and character.PrimaryPart then
-			local pet = assert(PetsDictionary.Pets[petIndex], "pet not found")
+		local pet = assert(PetsDictionary.Pets[petIndex], "pet not found")
 
-			local model = pet.Model:Clone()
-			model.Parent = character
+		local model = pet.Model:Clone()
+		model.Parent = character
 
-			lastPet = model
-			activePets[player] = {
-				Model = model,
-				Offset = math.random(),
-				Rarity = petRarityValue.Value,
-			}
+		lastPet = model
+		activePets[player] = {
+			Model = model,
+			Offset = math.random(),
+			Rarity = petRarityValue.Value,
+		}
 
-			updatePetPosition(model, character.PrimaryPart, 0)
-		end
+		updatePetPosition(model, character:WaitForChild("HumanoidRootPart"), 0)
 	end
 
-	updatePet(petValue.Value)
 	petValue.Changed:connect(updatePet)
+	player.CharacterAdded:connect(updatePet)
+	updatePet()
 end
 
 if not ReplicatedStorage.HubWorld.Value then
@@ -70,6 +73,8 @@ if not ReplicatedStorage.HubWorld.Value then
 			* CFrame.Angles(0, math.pi / 2, 0)
 		projectile.Color = PetsDictionary.Rarities[pet.Rarity].Style.Color
 		projectile.Parent = Workspace
+
+		PlaySound(SoundService.SFX.PetShoot, pet.Model)
 
 		local tween = TweenService:Create(projectile, projectileTweenInfo, {
 			Position = target.PrimaryPart.Position,

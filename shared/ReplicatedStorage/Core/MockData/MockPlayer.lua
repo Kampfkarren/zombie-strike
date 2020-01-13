@@ -31,6 +31,7 @@ return function()
 	MockPlayer.XP = 0
 	MockPlayer.Gold = 0
 	MockPlayer.Brains = 0
+	MockPlayer.PetCoins = 1000
 
 	MockPlayer.Weapon = {
 		Type = "Pistol",
@@ -72,6 +73,7 @@ return function()
 	MockPlayer.EquippedWeapon = 1
 	MockPlayer.EquippedArmor = 2
 	MockPlayer.EquippedHelmet = 3
+	MockPlayer.EquippedPet = MockPlayer.None
 
 	MockPlayer.EquippedHealthPack = 1
 	MockPlayer.EquippedGrenade = 1
@@ -107,8 +109,6 @@ return function()
 		Owned = {},
 		Equipped = nil,
 	}
-
-	MockPlayer.Pets = { {}, 1, 1 }
 
 	MockPlayer.ZombiePass = {
 		Level = 1,

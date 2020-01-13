@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local EquipmentUtil = require(ReplicatedStorage.Core.EquipmentUtil)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+local LootStyles = require(ReplicatedStorage.Core.LootStyles)
+local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local QualityDictionary = require(ReplicatedStorage.Core.QualityDictionary)
 local t = require(ReplicatedStorage.Vendor.t)
 
@@ -29,32 +31,7 @@ local armorMap = {
 	"UUID",
 }
 
-Loot.Rarities = {
-	{
-		Name = "Common",
-		Color = Color3.fromRGB(219, 219, 219),
-	},
-
-	{
-		Name = "Uncommon",
-		Color = Color3.fromRGB(0, 189, 50),
-	},
-
-	{
-		Name = "Rare",
-		Color = Color3.fromRGB(3, 52, 143),
-	},
-
-	{
-		Name = "Epic",
-		Color = Color3.fromRGB(162, 155, 254),
-	},
-
-	{
-		Name = "Legendary",
-		Color = Color3.fromRGB(253, 150, 68),
-	},
-}
+Loot.Rarities = LootStyles
 
 Loot.Attachments = {
 	"Magazine",
@@ -119,6 +96,16 @@ local serializeStruct = t.union(
 		Favorited = t.boolean,
 
 		Model = t.number,
+		UUID = t.string,
+	}),
+
+	t.interface({
+		Rarity = t.numberConstrained(1, #PetsDictionary.Rarities),
+		Type = t.literal("Pet"),
+
+		Favorited = t.boolean,
+
+		Model = t.numberConstrained(1, #PetsDictionary.Pets),
 		UUID = t.string,
 	})
 )
@@ -191,6 +178,8 @@ end
 function Loot.GetLootName(loot)
 	if Loot.IsEquipment(loot) then
 		return EquipmentUtil.FromIndex(loot.Type, loot.Index).Name
+	elseif Loot.IsPet(loot) then
+		return PetsDictionary.Pets[loot.Model].Name
 	end
 
 	local model = ReplicatedStorage.Items[loot.Type .. loot.Model]
@@ -219,6 +208,7 @@ function Loot.IsWeapon(loot)
 		and not Loot.IsEquipment(loot)
 		and not Loot.IsAttachment(loot)
 		and not Loot.IsCosmetic(loot)
+		and not Loot.IsPet(loot)
 end
 
 function Loot.IsEquipment(loot)
@@ -239,12 +229,17 @@ function Loot.IsRevolver(loot)
 		and (loot.Model >= 11 and loot.Model <= 15)
 end
 
+function Loot.IsPet(loot)
+	return loot.Type == "Pet"
+end
+
 function Loot.IsCosmetic(loot)
 	return loot.Type == "Face"
 		or loot.Type == "Particle"
 		or loot.Type == "LowTier"
 		or loot.Type == "HighTier"
 		or loot.Type == "Spray"
+		or loot.ParentType ~= nil
 end
 
 function Loot.RandomAttachment()

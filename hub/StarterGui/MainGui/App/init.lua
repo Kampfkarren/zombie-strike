@@ -10,6 +10,7 @@ local Equipment = require(script.Equipment)
 local Feedback = require(script.Feedback)
 local Friends = require(script.Friends)
 local Inventory = require(script.Inventory)
+local Pets = require(script.Pets)
 local Quests = require(script.Quests)
 local Settings = require(script.Settings)
 local Shopkeeper = require(script.Shopkeeper)
@@ -30,6 +31,7 @@ local function App()
 		Feedback = e(Feedback),
 		Friends = e(Friends),
 		Inventory = e(Inventory),
+		Pets = e(Pets),
 		Quests = e(Quests),
 		Settings = e(Settings),
 		Shopkeeper = e(Shopkeeper),

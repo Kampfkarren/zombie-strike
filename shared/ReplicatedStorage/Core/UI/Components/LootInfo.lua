@@ -8,6 +8,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
+local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local RuddevConfig = require(ReplicatedStorage.RuddevModules.Config)
@@ -103,6 +104,43 @@ local function Stat(props)
 		}),
 
 		Diff = e("TextLabel", diffProps),
+	})
+end
+
+-- this sucks, should just be used in Stat :/
+local function BasicStat(props)
+	return e("Frame", {
+		BackgroundTransparency = 1,
+		LayoutOrder = props.LayoutOrder,
+		Size = UDim2.fromScale(1, 1),
+	}, {
+		e("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			Padding = UDim.new(0.04, 0),
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+		}),
+
+		Label = e("TextLabel", {
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamBlack,
+			LayoutOrder = 0,
+			Size = UDim2.new(0.4, 0, 1, 0),
+			Text = props.StatName,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+		}),
+
+		Current = e("TextLabel", {
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamSemibold,
+			LayoutOrder = 1,
+			Size = UDim2.new(0.25, 0, 0.5, 0),
+			Text = props.StatNumber,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+		}),
 	})
 end
 
@@ -231,43 +269,6 @@ function LootInfo:render()
 	elseif Loot.IsAttachment(loot) then
 		local statName, statNumber
 
-		-- this sucks, should just be used in Stat :/
-		local function BasicStat(props)
-			return e("Frame", {
-				BackgroundTransparency = 1,
-				LayoutOrder = props.LayoutOrder,
-				Size = UDim2.fromScale(1, 1),
-			}, {
-				e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.04, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-				}),
-
-				Label = e("TextLabel", {
-					BackgroundTransparency = 1,
-					Font = Enum.Font.GothamBlack,
-					LayoutOrder = 0,
-					Size = UDim2.new(0.4, 0, 1, 0),
-					Text = props.StatName,
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-
-				Current = e("TextLabel", {
-					BackgroundTransparency = 1,
-					Font = Enum.Font.GothamSemibold,
-					LayoutOrder = 1,
-					Size = UDim2.new(0.25, 0, 0.5, 0),
-					Text = props.StatNumber,
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-			})
-		end
-
 		if loot.Type == "Magazine" then
 			statName = "AMMO+"
 			statNumber = AttachmentsConstants.Magazine[loot.Rarity] .. "%"
@@ -282,7 +283,7 @@ function LootInfo:render()
 
 			stats.CritChance = e(BasicStat, {
 				StatName = "CRITx",
-				StatNumber = ("1.%dx"):format(AttachmentsConstants.LaserSightCritChance[loot.Rarity]),
+				StatNumber = ("1.%.2dx"):format(AttachmentsConstants.LaserSightCritChance[loot.Rarity]),
 			})
 
 			stats.Recoil = e(BasicStat, {
@@ -301,6 +302,27 @@ function LootInfo:render()
 				StatNumber = statNumber,
 			})
 		end
+	elseif Loot.IsPet(loot) then
+		stats.UIGridLayout = e("UIGridLayout", {
+			CellPadding = UDim2.new(0.1, 0, 0.02, 0),
+			CellSize = UDim2.new(0.9, 0, 0.48, 0),
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+		})
+
+		local rarity = PetsDictionary.Rarities[loot.Rarity]
+
+		stats.Damage = e(BasicStat, {
+			StatName = "DMG%",
+			StatNumber = ("%d%%"):format(rarity.Damage * 100),
+		})
+
+		stats.FireRate = e(BasicStat, {
+			LayoutOrder = 2,
+			StatName = "RATE",
+			StatNumber = ("%.1f"):format(rarity.FireRate),
+		})
 	else
 		error("unreachable code! invalid loot type: " .. loot.Type)
 	end

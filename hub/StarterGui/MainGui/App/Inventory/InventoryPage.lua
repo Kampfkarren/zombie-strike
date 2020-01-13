@@ -146,26 +146,50 @@ function InventoryPage:render()
 					VerticalAlignment = Enum.VerticalAlignment.Center,
 				}),
 
-				e(Equipped, {
+				Sidebar = e("Frame", {
+					BackgroundTransparency = 1,
 					LayoutOrder = 1,
-					Cosmetic = true,
-					Key = "Face",
-					Name = "FACE",
+					Size = UDim2.fromScale(0.5, 0.95),
+				}, {
+					e("UIListLayout", {
+						FillDirection = Enum.FillDirection.Vertical,
+						HorizontalAlignment = Enum.HorizontalAlignment.Center,
+						Padding = UDim.new(0.01, 0),
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						VerticalAlignment = Enum.VerticalAlignment.Center,
+					}),
 
-					Default = {
-						ParentType = "Face",
-						Type = "Face",
-						Image = ReplicatedStorage.Dummy.Head.face,
-					},
+					e(Equipped, {
+						LayoutOrder = 1,
+						Cosmetic = true,
+						Key = "Face",
+						Name = "FACE",
+						AspectRatio = 2,
+						Rectangle = true,
+
+						Default = {
+							ParentType = "Face",
+							Type = "Face",
+							Image = ReplicatedStorage.Dummy.Head.face,
+						},
+					}),
+
+					e(Equipped, {
+						LayoutOrder = 1,
+						Cosmetic = true,
+						Key = "Spray",
+						Name = "EMOTE",
+						AspectRatio = 2,
+						Rectangle = true,
+
+						Unequip = self.noop,
+					}),
 				}),
 
 				e(Equipped, {
-					LayoutOrder = 1,
-					Cosmetic = true,
-					Key = "Spray",
-					Name = "EMOTE",
-
-					Unequip = self.noop,
+					LayoutOrder = 2,
+					Key = "Pet",
+					Name = "PET",
 				}),
 			}),
 
