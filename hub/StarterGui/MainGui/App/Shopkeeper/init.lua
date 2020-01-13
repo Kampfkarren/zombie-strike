@@ -106,7 +106,10 @@ function ShopkeeperGui:render()
 
 		local text, color, activated
 
-		if selected.equipped and not Loot.IsAttachment(selected.loot) then
+		if selected.equipped
+			and not Loot.IsAttachment(selected.loot)
+			and not Loot.IsPet(selected.loot)
+		then
 			local originalIsMaxed = loot.Upgrades >= Upgrades.MaxUpgrades
 			if selected.equipped and loot.Upgrades < Upgrades.MaxUpgrades then
 				loot = copy(loot)

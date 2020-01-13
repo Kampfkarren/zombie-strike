@@ -14,7 +14,7 @@ local base = 10
 local scale = 1.2
 
 return function(item)
-	if Loot.IsAttachment(item) then
+	if Loot.IsAttachment(item) or Loot.IsPet(item) then
 		return 0
 	else
 		return math.floor(base * (scale ^ (item.Level - 1)) * goldMultipliers[item.Rarity])

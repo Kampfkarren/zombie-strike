@@ -24,6 +24,7 @@ return {
 			Damage = 0.05,
 			FireRate = 1,
 			DropRate = 50,
+			Luck = 10,
 		},
 
 		{
@@ -31,6 +32,7 @@ return {
 			Damage = 0.08,
 			FireRate = 1.2,
 			DropRate = 25,
+			Luck = 20,
 		},
 
 		{
@@ -38,6 +40,7 @@ return {
 			Damage = 0.11,
 			FireRate = 1.3,
 			DropRate = 15,
+			Luck = 30,
 		},
 
 		{
@@ -45,6 +48,7 @@ return {
 			Damage = 0.14,
 			FireRate = 1.4,
 			DropRate = 8,
+			Luck = 40,
 		},
 
 		{
@@ -52,6 +56,7 @@ return {
 			Damage = 0.25,
 			FireRate = 2,
 			DropRate = 2,
+			Luck = 50,
 		},
 	},
 }

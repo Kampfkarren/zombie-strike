@@ -126,7 +126,7 @@ local function BasicStat(props)
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBlack,
 			LayoutOrder = 0,
-			Size = UDim2.new(0.4, 0, 1, 0),
+			Size = UDim2.new(0.6, 0, 1, 0),
 			Text = props.StatName,
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
@@ -136,7 +136,7 @@ local function BasicStat(props)
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamSemibold,
 			LayoutOrder = 1,
-			Size = UDim2.new(0.25, 0, 0.5, 0),
+			Size = UDim2.new(0.35, 0, 0.5, 0),
 			Text = props.StatNumber,
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
@@ -304,8 +304,8 @@ function LootInfo:render()
 		end
 	elseif Loot.IsPet(loot) then
 		stats.UIGridLayout = e("UIGridLayout", {
-			CellPadding = UDim2.new(0.1, 0, 0.02, 0),
-			CellSize = UDim2.new(0.9, 0, 0.48, 0),
+			CellPadding = UDim2.new(0.01, 0, 0.02, 0),
+			CellSize = UDim2.new(0.48, 0, 0.48, 0),
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -322,6 +322,12 @@ function LootInfo:render()
 			LayoutOrder = 2,
 			StatName = "RATE",
 			StatNumber = ("%.1f"):format(rarity.FireRate),
+		})
+
+		stats.Luck = e(BasicStat, {
+			LayoutOrder = 3,
+			StatName = "LUCK%",
+			StatNumber = ("%d%%"):format(rarity.Luck),
 		})
 	else
 		error("unreachable code! invalid loot type: " .. loot.Type)

@@ -10,6 +10,7 @@ local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
+local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local Equipment = ReplicatedStorage.Equipment
@@ -81,6 +82,36 @@ end
 
 local takenAdvantageOfFreeLoot = {}
 
+local function getChancesFor(player, moreLegendaries)
+	local base = moreLegendaries and RARITY_PERCENTAGES_LEGENDARY or RARITY_PERCENTAGES
+	local pet = Data.GetPlayerData(player, "Pet")
+	local luckBoost = (pet and PetsDictionary.Rarities[pet.Rarity].Luck or 0) / 100
+
+	local chances = {}
+	local sum = 0
+
+	for index, data in ipairs(base) do
+		local rarity, chance = unpack(data)
+
+		if rarity == 1 then
+			-- Take away chance from commons
+			chance = chance - luckBoost
+		elseif rarity == 4 or rarity == 5 then
+			chance = chance + (luckBoost / 2)
+		end
+
+		chances[index] = { rarity, chance }
+		sum = sum + chance
+	end
+
+	if sum - 100 > 0.00001 then
+		warn("getChancesFor result didn't add up! added to " .. sum)
+		return base
+	end
+
+	return chances
+end
+
 local function getLootRarity(player)
 	if ServerStorage.ForceRarity.Value > 0 then
 		return ServerStorage.ForceRarity.Value
@@ -122,7 +153,7 @@ local function getLootRarity(player)
 	local rarityRng = rng:NextNumber() * 100
 
 	local cumulative = 0
-	for _, percent in ipairs(moreLegendaries and RARITY_PERCENTAGES_LEGENDARY or RARITY_PERCENTAGES) do
+	for _, percent in ipairs(getChancesFor(player, moreLegendaries)) do
 		if rarityRng <= cumulative + percent[1] then
 			return percent[2]
 		else
