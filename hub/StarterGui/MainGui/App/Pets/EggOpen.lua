@@ -30,6 +30,7 @@ function EggOpen:init()
 	self.close = function()
 		self:setState({
 			open = false,
+			model = Roact.None,
 		})
 	end
 end
