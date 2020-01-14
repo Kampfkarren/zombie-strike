@@ -180,7 +180,7 @@ end
 
 return RoactRodux.connect(function(state)
 	return {
-		inventoryAmount = #state.inventory,
+		inventoryAmount = #(state.inventory or {}),
 		visible = state.page.current == "PetShop",
 	}
 end)(EggPrompt)
