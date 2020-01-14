@@ -8,4 +8,13 @@ return {
 	"The Elite",
 	"The Maniac",
 	"The Crook",
+	"The Killer",
+	"The Sharpshot",
+	"The Vigilante",
+	"The Ultimate",
+	"The Master",
+	"The Legend",
+	"The Hero",
+	"The Sweeper",
+	"The Kawaii",
 }

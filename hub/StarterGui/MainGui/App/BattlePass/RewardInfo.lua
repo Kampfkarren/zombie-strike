@@ -8,6 +8,8 @@ local e = Roact.createElement
 local function getRewardName(reward)
 	if reward.Type == "Brains" then
 		return reward.Brains .. " Brains"
+	elseif reward.Type == "PetCoins" then
+		return reward.PetCoins .. " 🐾"
 	elseif reward.Type == "Title" then
 		return '"' .. reward.Title .. '"'
 	elseif reward.Type == "XP" then

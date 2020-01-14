@@ -9,6 +9,7 @@ local REWARD_COLORS = {
 	Brains = Color3.fromRGB(253, 121, 168),
 	Emote = Color3.fromRGB(249, 202, 36),
 	Font = Color3.fromRGB(149, 175, 192),
+	PetCoins = Color3.fromRGB(248, 194, 145),
 	Skin = Color3.fromRGB(235, 77, 75),
 	Title = Color3.fromRGB(149, 175, 192),
 	XP = Color3.fromRGB(108, 92, 231),

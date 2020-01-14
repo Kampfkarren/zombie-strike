@@ -11,13 +11,13 @@ local function RewardPreview(props)
 
 	local contents = {}
 
-	if rewardType == "Brains" then
+	if rewardType == "Brains" or rewardType == "PetCoins" then
 		contents.BrainsImage = e("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
 			Position = UDim2.fromScale(0.5, 0.5),
 			Size = UDim2.fromScale(0.7, 0.7),
-			Text = "🧠",
+			Text = rewardType == "Brains" and "🧠" or "🐾",
 			TextScaled = true,
 		})
 
@@ -27,7 +27,7 @@ local function RewardPreview(props)
 			Font = Enum.Font.GothamBold,
 			Position = UDim2.fromScale(0.98, 0.98),
 			Size = UDim2.fromScale(0.9, 0.35),
-			Text = reward.Brains,
+			Text = reward.Brains or reward.PetCoins,
 			TextColor3 = Color3.new(0.9, 0.9, 0.9),
 			TextScaled = true,
 			TextStrokeTransparency = 0.2,

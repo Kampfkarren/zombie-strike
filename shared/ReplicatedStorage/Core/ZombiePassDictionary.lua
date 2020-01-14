@@ -60,11 +60,18 @@ local function brains(brains)
 	}
 end
 
+local function petCoins(petCoins)
+	return {
+		Type = "PetCoins",
+		PetCoins = petCoins,
+	}
+end
+
 local function title(name)
 	return {
 		Type = "Title",
 		Title = name,
-		Index = assert(table.find(TitlesDictionary, name)),
+		Index = assert(table.find(TitlesDictionary, name), "can't find title " .. name),
 	}
 end
 
@@ -111,6 +118,31 @@ local ZombiePassDictionary = {
 	level(brains(50), title("The Maniac"), 11),
 	level(nil, skin("The Quirky"), 11),
 	level(title("The Crook"), emote("Zombie"), 18),
+	level(nil, skin("Sea Agent"), 1),
+	level(title("The Killer"), brains(100), 2),
+	level(nil, skin("World View"), 2),
+	level(brains(100), font("Cartoon"), 3),
+	level(nil, skin("Wanwood"), 3),
+	level(xp(15), petCoins(5000), 4),
+	level(brains(100), brains(300), 4),
+	level(nil, skin("Cat Vibes"), 4),
+	level(brains(50), petCoins(2500), 5),
+	level(title("The Sharpshot"), skin("Sea Agent"), 5),
+	level(nil, skin("Operator"), 5),
+	level(brains(200), font("Code"), 5),
+	level(title("The Vigilante"), xp(15), 5),
+	level(nil, title("The Ultimate"), 5),
+	level(xp(10), font("Sci-Fi"), 5),
+	level(title("The Master"), skin("Game Over"), 6),
+	level(nil, skin("Fear Contestant"), 7),
+	level(brains(300), title("The Legend"), 7),
+	level(title("The Hero"), brains(200), 8),
+	level(nil, skin("Bat & Ghost!"), 8),
+	level(brains(200), brains(400), 11),
+	level(title("The Sweeper"), brains(500), 11),
+	level(nil, brains(600), 11),
+	level(brains(400), font("Arcade"), 11),
+	level(title("The Kawaii"), skin("Aesthetic Nerd"), 18),
 }
 
 return ZombiePassDictionary
