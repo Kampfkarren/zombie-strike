@@ -40,6 +40,55 @@ local function getFriendsOnline()
 				GameId = game.GameId,
 				PlaceId = PlaceIds.GetMissionPlace(),
 			},
+
+			{
+				VisitorId = 1,
+				UserName = "LongList",
+				GameId = game.GameId,
+				PlaceId = PlaceIds.GetMissionPlace(),
+			},
+
+			{
+				VisitorId = 1,
+				UserName = "LongList",
+				GameId = game.GameId,
+				PlaceId = PlaceIds.GetMissionPlace(),
+			},
+
+			{
+				VisitorId = 1,
+				UserName = "LongList",
+				GameId = game.GameId,
+				PlaceId = PlaceIds.GetMissionPlace(),
+			},
+
+			{
+				VisitorId = 1,
+				UserName = "LongList",
+				GameId = game.GameId,
+				PlaceId = PlaceIds.GetMissionPlace(),
+			},
+
+			{
+				VisitorId = 1,
+				UserName = "LongList",
+				GameId = game.GameId,
+				PlaceId = PlaceIds.GetMissionPlace(),
+			},
+
+			{
+				VisitorId = 1,
+				UserName = "LongList",
+				GameId = game.GameId,
+				PlaceId = PlaceIds.GetMissionPlace(),
+			},
+
+			{
+				VisitorId = 1,
+				UserName = "LongList",
+				GameId = game.GameId,
+				PlaceId = PlaceIds.GetMissionPlace(),
+			},
 		}
 	else
 		return LocalPlayer:GetFriendsOnline()
@@ -104,6 +153,10 @@ function Friend:render()
 		BackgroundColor3 = Color3.fromRGB(163, 163, 163),
 		Size = UDim2.fromScale(0.98, 0.15),
 	}, {
+		UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
+			AspectRatio = 8,
+		}),
+
 		Inner = e("Frame", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
