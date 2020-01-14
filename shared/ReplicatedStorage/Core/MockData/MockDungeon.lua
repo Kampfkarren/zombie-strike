@@ -8,8 +8,8 @@
 
 -- DUNGEON
 return {
-	Campaign = 2,
-	Difficulty = 1,
+	Campaign = 5,
+	Difficulty = 3,
 	Gamemode = "Mission",
 	Hardcore = false,
 	Members = { 56140227 },

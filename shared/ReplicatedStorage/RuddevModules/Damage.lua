@@ -1,6 +1,7 @@
 -- services
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
 -- constants
@@ -14,6 +15,57 @@ local CRIT_MULTIPLIER = 2
 local DAMAGE = {}
 local BUFF_BULLETSTORM = 1.25
 local BUFF_RAGE = 2
+
+local damageNumberQueue = {}
+
+-- Combines all damage numbers shot at the same tick into one remote event
+-- Used because shotguns will fire a damage number for every pellet hit, which causes bandwidth problems
+local function batchDamageNumber(player, humanoid, damage, crit)
+	table.insert(damageNumberQueue, { player, humanoid, damage, crit })
+	if #damageNumberQueue == 1 then
+		local connection
+
+		connection = RunService.Heartbeat:connect(function()
+			connection:Disconnect()
+			local zombieDamage = {}
+
+			for _, batch in ipairs(damageNumberQueue) do
+				local player, humanoid, damage, crit = unpack(batch)
+
+				if not zombieDamage[humanoid] then
+					zombieDamage[humanoid] = {
+						[player] = { damage, crit },
+					}
+				elseif not zombieDamage[humanoid][player] then
+					zombieDamage[humanoid][player] = { damage, crit }
+				else
+					local playerDamage = zombieDamage[humanoid][player]
+					playerDamage[1] = playerDamage[1] + damage
+					if crit then
+						playerDamage[2] = true
+					end
+				end
+			end
+
+			for humanoid, playerDamages in pairs(zombieDamage) do
+				for player, info in pairs(playerDamages) do
+					local damage, crit = unpack(info)
+					ReplicatedStorage.Remotes.DamageNumber:FireClient(player, humanoid, damage, crit)
+
+					if not ReplicatedStorage.HubWorld.Value then
+						for _, otherPlayer in ipairs(Players:GetPlayers()) do
+							if otherPlayer ~= player then
+								ReplicatedStorage.Remotes.DamageNumber:FireClient(otherPlayer, humanoid, damage)
+							end
+						end
+					end
+				end
+			end
+
+			damageNumberQueue = {}
+		end)
+	end
+end
 
 function DAMAGE.Calculate(_, item, hit, origin)
 	local config = CONFIG:GetConfig(item)
@@ -80,15 +132,7 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance)
 
 		EVENTS.Damaged:Fire(humanoid, damage, player)
 
-		ReplicatedStorage.Remotes.DamageNumber:FireClient(player, humanoid, damage, crit)
-
-		if not ReplicatedStorage.HubWorld.Value then
-			for _, otherPlayer in pairs(Players:GetPlayers()) do
-				if otherPlayer ~= player then
-					ReplicatedStorage.Remotes.DamageNumber:FireClient(otherPlayer, humanoid, damage)
-				end
-			end
-		end
+		batchDamageNumber(player, humanoid, damage, crit)
 	end
 end
 
