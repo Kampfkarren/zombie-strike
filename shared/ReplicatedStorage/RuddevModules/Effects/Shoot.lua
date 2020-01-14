@@ -14,8 +14,34 @@ local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG	= require(MODULES:WaitForChild("Config"))
 
 local DAMAGE	= require(script.Parent:WaitForChild("Damage"))
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 
 -- functions
+local HOLE_LIFETIME = 30
+
+local holes = {}
+
+FastSpawn(function()
+	while true do
+		wait(5)
+
+		debug.profilebegin("Hole cleanup")
+
+		local newHoles = {}
+
+		for _, hole in ipairs(holes) do
+			if tick() - hole[2] <= HOLE_LIFETIME then
+				table.insert(newHoles, hole)
+			else
+				hole[1]:Destroy()
+			end
+		end
+
+		holes = newHoles
+
+		debug.profileend()
+	end
+end)
 
 local function Raycast(position, direction, ignore)
 	local ray		= Ray.new(position, direction)
@@ -137,7 +163,7 @@ return function(item, position, directions, ammo, forceEnd)
 						sound.Parent	= hole
 						sound:Play()
 
-					Debris:AddItem(hole, 30)
+					table.insert(holes, { hole, tick() })
 				end
 			end
 		end
