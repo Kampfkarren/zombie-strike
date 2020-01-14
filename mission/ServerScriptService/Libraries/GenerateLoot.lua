@@ -91,7 +91,7 @@ local function getChancesFor(player, moreLegendaries)
 	local sum = 0
 
 	for index, data in ipairs(base) do
-		local rarity, chance = unpack(data)
+		local chance, rarity = unpack(data)
 
 		if rarity == 1 then
 			-- Take away chance from commons
@@ -100,7 +100,7 @@ local function getChancesFor(player, moreLegendaries)
 			chance = chance + (luckBoost / 2)
 		end
 
-		chances[index] = { rarity, chance }
+		chances[index] = { chance, rarity }
 		sum = sum + chance
 	end
 

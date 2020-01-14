@@ -41,19 +41,22 @@ local function playerAdded(player)
 		if petIndex == 0 then return end
 
 		local character = player.Character
-		local pet = assert(PetsDictionary.Pets[petIndex], "pet not found")
 
-		local model = pet.Model:Clone()
-		model.Parent = character
+		if character then
+			local pet = assert(PetsDictionary.Pets[petIndex], "pet not found")
 
-		lastPet = model
-		activePets[player] = {
-			Model = model,
-			Offset = math.random(),
-			Rarity = petRarityValue.Value,
-		}
+			local model = pet.Model:Clone()
+			model.Parent = character
 
-		updatePetPosition(model, character:WaitForChild("HumanoidRootPart"), 0)
+			lastPet = model
+			activePets[player] = {
+				Model = model,
+				Offset = math.random(),
+				Rarity = petRarityValue.Value,
+			}
+
+			updatePetPosition(model, character:WaitForChild("HumanoidRootPart"), 0)
+		end
 	end
 
 	petValue.Changed:connect(updatePet)
