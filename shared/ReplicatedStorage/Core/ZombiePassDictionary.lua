@@ -127,7 +127,7 @@ local ZombiePassDictionary = {
 	level(brains(100), brains(300), 4),
 	level(nil, skin("Cat Vibes"), 4),
 	level(brains(50), petCoins(2500), 5),
-	level(title("The Sharpshot"), skin("Sea Agent"), 5),
+	level(title("The Sharpshot"), brains(200), 5),
 	level(nil, skin("Operator"), 5),
 	level(brains(200), font("Code"), 5),
 	level(title("The Vigilante"), xp(15), 5),

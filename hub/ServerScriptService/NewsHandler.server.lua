@@ -91,7 +91,7 @@ local function checkUseInventory(player)
 				local default = MOCK_PLAYER[equippable]
 				local equipped = Data.GetPlayerData(player, equippable)
 
-				for key, value in pairs(equipped) do
+				for key, value in pairs(equipped or {}) do
 					if key ~= "UUID" and default[key] ~= value then
 						-- They equipped something different
 						return NO_NEWS

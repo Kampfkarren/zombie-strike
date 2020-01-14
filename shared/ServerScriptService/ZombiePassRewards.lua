@@ -62,6 +62,10 @@ local function grantReward(player, reward)
 		return Data.GetPlayerDataAsync(player, "Brains"):andThen(function(_, brainsStore)
 			brainsStore:Increment(reward.Brains)
 		end)
+	elseif reward.Type == "PetCoins" then
+		return Data.GetPlayerDataAsync(player, "PetCoins"):andThen(function(_, petCoinsStore)
+			petCoinsStore:Increment(reward.PetCoins)
+		end)
 	elseif reward.Type == "XP" then
 		-- These are resolved in the mission
 		return Promise.resolve()
