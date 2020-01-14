@@ -28,11 +28,11 @@ function Codes:init()
 			alertOpen = true,
 		})
 
-		if type(response) == "number" then
+		if type(response) == "table" then
 			self:setState({
 				response = {
 					type = "received",
-					gold = response,
+					reward = response,
 				},
 			})
 		elseif response == "c" then
@@ -79,7 +79,8 @@ function Codes:render()
 	local alertText, alertColor
 
 	if response.type == "received" then
-		alertText = "SUCCESS! " .. response.gold .. "G received!"
+		local currencyType = response.reward.Type == "Gold" and "G" or "🐾"
+		alertText = "SUCCESS! " .. response.reward.Amount .. currencyType .. " received!"
 		alertColor = Color3.fromRGB(32, 187, 108)
 	elseif response.type == "claimed" then
 		alertText = "Code already claimed..."

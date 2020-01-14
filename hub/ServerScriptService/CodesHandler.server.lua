@@ -2,23 +2,32 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Data = require(ReplicatedStorage.Core.Data)
 
-local DEFAULT_GOLD = 10000
+local REWARD_GOLD = {
+	Type = "Gold",
+	Amount = 10000,
+}
+
+local REWARD_PET_COINS = {
+	Type = "PetCoins",
+	Amount = 1000,
+}
 
 local CODES = {
-	evil = DEFAULT_GOLD,
-	goblin = DEFAULT_GOLD,
-	zombie = DEFAULT_GOLD,
-	million = DEFAULT_GOLD,
-	prize = DEFAULT_GOLD,
-	strike = DEFAULT_GOLD,
-	loot = DEFAULT_GOLD,
-	cool = DEFAULT_GOLD,
-	rainway = DEFAULT_GOLD,
-	tanqr = DEFAULT_GOLD,
-	transrights = DEFAULT_GOLD,
-	arena = DEFAULT_GOLD,
-	xmas = DEFAULT_GOLD,
-	cowboy = DEFAULT_GOLD,
+	evil = REWARD_GOLD,
+	goblin = REWARD_GOLD,
+	zombie = REWARD_GOLD,
+	million = REWARD_GOLD,
+	prize = REWARD_GOLD,
+	strike = REWARD_GOLD,
+	loot = REWARD_GOLD,
+	cool = REWARD_GOLD,
+	rainway = REWARD_GOLD,
+	tanqr = REWARD_GOLD,
+	transrights = REWARD_GOLD,
+	arena = REWARD_GOLD,
+	xmas = REWARD_GOLD,
+	cowboy = REWARD_GOLD,
+	pet = REWARD_PET_COINS,
 }
 
 local SendCode = ReplicatedStorage.Remotes.SendCode
@@ -30,8 +39,9 @@ SendCode.OnServerEvent:connect(function(player, code)
 	end
 
 	code = code:lower()
+	local codeInfo = CODES[code]
 
-	if CODES[code] == nil then
+	if codeInfo == nil then
 		SendCode:FireClient(player, "i")
 		return
 	end
@@ -46,8 +56,13 @@ SendCode.OnServerEvent:connect(function(player, code)
 	table.insert(codesUsed, code)
 	codesUsedStore:Set(codesUsed)
 
-	local _, goldStore = Data.GetPlayerData(player, "Gold")
-	goldStore:Increment(CODES[code])
+	if codeInfo.Type == "Gold" then
+		local _, goldStore = Data.GetPlayerData(player, "Gold")
+		goldStore:Increment(codeInfo.Amount)
+	elseif codeInfo.Type == "PetCoins" then
+		local _, petCoinsStore = Data.GetPlayerData(player, "PetCoins")
+		petCoinsStore:Increment(codeInfo.Amount)
+	end
 
-	SendCode:FireClient(player, CODES[code])
+	SendCode:FireClient(player, codeInfo)
 end)
