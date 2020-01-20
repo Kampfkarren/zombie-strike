@@ -23,6 +23,11 @@ local LootStyles = {
 		Name = "Legendary",
 		Color = Color3.fromRGB(253, 150, 68),
 	},
+
+	{
+		Name = "Mythic",
+		Color = Color3.fromRGB(214, 48, 49),
+	},
 }
 
 return LootStyles

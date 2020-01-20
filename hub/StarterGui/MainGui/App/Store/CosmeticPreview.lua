@@ -175,6 +175,13 @@ return function(props)
 			size = props.size,
 			updateSet = props.updateSet,
 		})
+	elseif Loot.IsWeapon(cosmetic) then
+		return e(ViewportFrameCosmeticPreview, {
+			model = Data.GetModel(cosmetic),
+			previewScale = props.previewScale,
+			size = props.size,
+			updateSet = props.updateSet,
+		})
 	else
 		error("unknown item type for preview: " .. cosmetic.Type)
 	end

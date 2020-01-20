@@ -124,6 +124,14 @@ local RarityMultipliers = {
 		FireRate = 1.5,
 		Magazine = 1.5,
 	},
+
+	-- Mythic
+	{
+		CritChance = 1.5,
+		Damage = 3.5,
+		FireRate = 1.5,
+		Magazine = 1.5,
+	},
 }
 
 local function round(n)
@@ -149,12 +157,16 @@ function GunScaling.BaseStats(type, level, rarity)
 	return stats
 end
 
-function GunScaling.RandomType()
+function GunScaling.RandomType(rng, exclude)
+	rng = rng or Random.new()
 	local types = {}
 	for type in pairs(Types) do
-		table.insert(types, type)
+		if type ~= exclude then
+			table.insert(types, type)
+		end
 	end
-	return types[math.random(#types)]
+	table.sort(types) -- pairs is not documented to be deterministic
+	return types[rng:NextInteger(1, #types)]
 end
 
 return GunScaling

@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local CosmeticPreview = require(script.Parent.CosmeticPreview)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 
 local CosmeticButton = Roact.Component:extend("CosmeticButton")
@@ -40,10 +41,18 @@ function CosmeticButton:init()
 	)
 
 	self.hoverIn = function()
+		if self.props.OnHover then
+			self.props.OnHover()
+		end
+
 		tweenHoverIn:Play()
 	end
 
 	self.hoverOut = function()
+		if self.props.OnUnhover then
+			self.props.OnUnhover()
+		end
+
 		tweenHoverOut:Play()
 	end
 
@@ -55,10 +64,12 @@ function CosmeticButton:shouldUpdate(nextProps)
 end
 
 function CosmeticButton:render()
-	local color = COSMETIC_COLORS[
-		self.props.Item.ParentType
-		or self.props.Item.Type
-	]
+	local color = Loot.IsWeapon(self.props.Item)
+		and Loot.Rarities[self.props.Item.Rarity].Color
+		or COSMETIC_COLORS[
+			self.props.Item.ParentType
+			or self.props.Item.Type
+		]
 
 	local newProps = {
 		BackgroundColor3 = color,

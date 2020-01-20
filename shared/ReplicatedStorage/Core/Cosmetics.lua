@@ -1,8 +1,11 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local CosmeticsDictionary = require(ReplicatedStorage.Core.CosmeticsDictionary)
 local CosmeticsStore = require(ReplicatedStorage.Core.CosmeticsStore)
+local Data = require(ReplicatedStorage.Core.Data)
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local dateStamp
@@ -97,6 +100,16 @@ for index, item in ipairs(Cosmetics.Cosmetics) do
 	end
 end
 
+Cosmetics.Costs = {
+	Mythic = {
+		Cost = 1799,
+	},
+
+	Legendary = {
+		Cost = 1399,
+	},
+}
+
 Cosmetics.Distribution = {
 	HighTier = {
 		Count = 1,
@@ -119,7 +132,39 @@ Cosmetics.Distribution = {
 	},
 }
 
-function Cosmetics.GetStoreItems()
+local function generateGun(player, rarity, rng, exclude)
+	local model
+
+	if rarity == 5 then
+		model = 5
+	else
+		model = 1
+	end
+
+	return {
+		Type = GunScaling.RandomType(rng, exclude),
+		Rarity = rarity,
+		Level = player == Players.LocalPlayer
+			and player:WaitForChild("PlayerData"):WaitForChild("Level").Value
+			or Data.GetPlayerData(player, "Level"),
+
+		Bonus = rng:NextInteger(5, 10),
+		Upgrades = 0,
+		Favorited = false,
+
+		Model = model,
+		UUID = "COSMETIC_WEAPON_" .. rng:NextNumber(), -- Replaced with a real UUID on purchase
+	}
+end
+
+function Cosmetics.CostOf(itemType)
+	return (Cosmetics.Costs[itemType] or Cosmetics.Distribution[itemType]).Cost
+end
+
+function Cosmetics.GetStoreItems(player)
+	player = player or Players.LocalPlayer
+	--assert(player ~= nil, "GetStoreItems was not passed with a player")
+
 	local stamp
 
 	if RunService:IsServer() then
@@ -171,6 +216,15 @@ function Cosmetics.GetStoreItems()
 			contents[key] = patchedContents
 		end
 	end
+
+	-- Purchasable weapons
+	local playerRng = Random.new(stamp + player.UserId)
+
+	contents.Mythic = { generateGun(player, 6, playerRng) }
+
+	local legendaryOne = generateGun(player, 5, playerRng)
+	local legendaryTwo = generateGun(player, 5, playerRng, legendaryOne.Type)
+	contents.Legendary = { legendaryOne, legendaryTwo }
 
 	return contents
 end

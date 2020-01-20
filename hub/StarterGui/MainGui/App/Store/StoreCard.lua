@@ -1,9 +1,13 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 
+local Alert = require(ReplicatedStorage.Core.UI.Components.Alert)
 local BrainsPurchase = require(ReplicatedStorage.Core.UI.Components.BrainsPurchase)
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local CosmeticButton = require(script.Parent.CosmeticButton)
+local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
@@ -54,7 +58,26 @@ function StoreCard:init()
 	end
 
 	self.finishBuyProduct = function()
-		ReplicatedStorage.Remotes.BuyCosmetic:FireServer(self.props.ItemType, self.props.ItemIndex)
+		local itemType = self.props.ItemType
+		if itemType == "Mythic" or itemType == "Legendary" then
+			InventorySpace(Players.LocalPlayer):andThen(function(inventorySpace)
+				if #self.props.inventory < inventorySpace then
+					ReplicatedStorage.Remotes.BuyCosmetic:FireServer(itemType, self.props.ItemIndex)
+				else
+					self:setState({
+						tooManyItems = true,
+					})
+				end
+			end)
+		else
+			ReplicatedStorage.Remotes.BuyCosmetic:FireServer(itemType, self.props.ItemIndex)
+		end
+	end
+
+	self.closeTooManyItems = function()
+		self:setState({
+			tooManyItems = Roact.None,
+		})
 	end
 end
 
@@ -108,6 +131,12 @@ function StoreCard:render()
 		ZIndex = 2,
 	}, buyCostChildren)
 
+	local itemType = Loot.IsWeapon(item)
+		and Loot.Rarities[item.Rarity].Name .. " Weapon"
+		or COSMETIC_TYPE_NAMES[item.Type]
+
+	local itemName = item.Name or Loot.GetLootName(item)
+
 	children.ItemInfo = e("Frame", {
 		BackgroundColor3 = Color3.new(),
 		BackgroundTransparency = 0.5,
@@ -121,7 +150,7 @@ function StoreCard:render()
 			Font = Enum.Font.GothamBold,
 			Position = UDim2.new(0.5, 0, 0, 0),
 			Size = UDim2.new(0.95, 0, 0.6, 0),
-			Text = item.Name,
+			Text = itemName,
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
 		}),
@@ -132,7 +161,7 @@ function StoreCard:render()
 			Font = Enum.Font.Gotham,
 			Position = UDim2.new(0.5, 0, 1, 0),
 			Size = UDim2.new(0.95, 0, 0.4, 0),
-			Text = COSMETIC_TYPE_NAMES[item.Type],
+			Text = itemType,
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
 		}),
@@ -162,12 +191,20 @@ function StoreCard:render()
 	if self.state.buyingProduct then
 		children.Purchase = e(BrainsPurchase, {
 			Cost = self.props.Prices.Cost,
-			Name = item.Name,
+			Name = itemName,
 			Window = self.props.Window,
 
 			OnBuy = self.finishBuyProduct,
 			OnClose = self.closeBuyingProduct,
 		})
+	end
+
+	if self.state.tooManyItems then
+		table.insert(children, e(Alert, {
+			OnClose = self.close,
+			Open = true,
+			Text = "You have too many items, please sell something!",
+		}))
 	end
 
 	return e(CosmeticButton, {
@@ -180,6 +217,8 @@ function StoreCard:render()
 
 		Item = item,
 		PreviewSize = UDim2.new(1, 0, 0.9, 0),
+		OnHover = self.props.OnHover,
+		OnUnhover = self.props.OnUnhover,
 	}, children)
 end
 
@@ -200,6 +239,7 @@ return RoactRodux.connect(function(state, props)
 	end
 
 	return {
+		inventory = state.inventory,
 		owned = owned,
 	}
 end)(StoreCard)

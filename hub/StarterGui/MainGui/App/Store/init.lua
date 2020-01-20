@@ -7,6 +7,7 @@ local GamePasses = require(script.GamePasses)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local Shop = require(script.Shop)
+local Weapons = require(script.Weapons)
 local XPMultipliers = require(script.XPMultipliers)
 
 local e = Roact.createElement
@@ -56,6 +57,7 @@ function Store:init()
 	self.buyBrainsRef = Roact.createRef()
 	self.gamePassesRef = Roact.createRef()
 	self.shopRef = Roact.createRef()
+	self.weaponsRef = Roact.createRef()
 	self.xpMultiplierRef = Roact.createRef()
 
 	self.pageLayoutRef = Roact.createRef()
@@ -72,6 +74,8 @@ function Store:UpdateCurrentPage()
 		page:JumpTo(self.gamePassesRef:getValue())
 	elseif self.props.page == "BuyBrains" then
 		page:JumpTo(self.buyBrainsRef:getValue())
+	elseif self.props.page == "Weapons" then
+		page:JumpTo(self.weaponsRef:getValue())
 	end
 end
 
@@ -117,36 +121,43 @@ function Store:render()
 		}, {
 			e("UIListLayout", {
 				FillDirection = Enum.FillDirection.Horizontal,
-				Padding = UDim.new(0.01, 0),
+				Padding = UDim.new(0.005, 0),
 				SortOrder = Enum.SortOrder.LayoutOrder,
 			}),
 
 			ShopButton = e(CategoryButton, {
 				Page = "Shop",
 				Text = "SHOP",
-				Size = UDim2.fromScale(0.15, 1),
+				Size = UDim2.fromScale(0.18, 1),
 				LayoutOrder = 1,
+			}),
+
+			WeaponsButton = e(CategoryButton, {
+				Page = "Weapons",
+				Text = "WEAPONS",
+				Size = UDim2.fromScale(0.18, 1),
+				LayoutOrder = 2,
 			}),
 
 			XPButton = e(CategoryButton, {
 				Page = "XP",
 				Text = "DOUBLE XP",
-				Size = UDim2.fromScale(0.25, 1),
-				LayoutOrder = 2,
+				Size = UDim2.fromScale(0.18, 1),
+				LayoutOrder = 3,
 			}),
 
 			GamePasses = e(CategoryButton, {
 				Page = "GamePasses",
 				Text = "GAME PASSES",
-				Size = UDim2.fromScale(0.3, 1),
-				LayoutOrder = 3,
+				Size = UDim2.fromScale(0.2, 1),
+				LayoutOrder = 4,
 			}),
 
 			BuyBrains = e(CategoryButton, {
 				Page = "BuyBrains",
 				Text = "BRAINS",
-				Size = UDim2.fromScale(0.2, 1),
-				LayoutOrder = 4,
+				Size = UDim2.fromScale(0.18, 1),
+				LayoutOrder = 5,
 			}),
 		}),
 
@@ -187,6 +198,10 @@ function Store:render()
 
 			BuyBrains = e(BuyBrains, {
 				[Roact.Ref] = self.buyBrainsRef,
+			}),
+
+			Weapons = e(Weapons, {
+				[Roact.Ref] = self.weaponsRef,
 			}),
 		}),
 	})
