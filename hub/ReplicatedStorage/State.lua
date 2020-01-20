@@ -105,7 +105,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	}),
 
 	page = Rodux.createReducer({
-		current = "Store",
+		current = nil,
 	}, pageReducer({
 		"Codes",
 		"Friends",
@@ -149,7 +149,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	store = Rodux.createReducer({
 		contents = {},
 		equipped = {},
-		page = "Weapons",
+		page = "Shop",
 		new = false,
 		xpExpiration = 0,
 	}, {

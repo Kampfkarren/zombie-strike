@@ -63,6 +63,7 @@ function StoreCard:init()
 			InventorySpace(Players.LocalPlayer):andThen(function(inventorySpace)
 				if #self.props.inventory < inventorySpace then
 					ReplicatedStorage.Remotes.BuyCosmetic:FireServer(itemType, self.props.ItemIndex)
+					self.props.openInventory()
 				else
 					self:setState({
 						tooManyItems = true,
@@ -241,5 +242,13 @@ return RoactRodux.connect(function(state, props)
 	return {
 		inventory = state.inventory,
 		owned = owned,
+	}
+end, function(dispatch)
+	return {
+		openInventory = function()
+			dispatch({
+				type = "OpenInventory",
+			})
+		end
 	}
 end)(StoreCard)
