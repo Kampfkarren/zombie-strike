@@ -102,11 +102,11 @@ end
 
 Cosmetics.Costs = {
 	Mythic = {
-		Cost = 1799,
+		Cost = 3599,
 	},
 
 	Legendary = {
-		Cost = 1399,
+		Cost = 2199,
 	},
 }
 
