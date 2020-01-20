@@ -20,11 +20,11 @@ local FREE_EPIC_AFTER = 0
 local WEAPON_DROP_RATE = 0.6
 
 local RARITY_PERCENTAGES = {
-	{ 0.5, 5 },
+	{ 0.8, 5 },
 	{ 7.5, 4 },
 	{ 17, 3 },
 	{ 35, 2 },
-	{ 40, 1 },
+	{ 39.7, 1 },
 }
 
 local RARITY_PERCENTAGES_LEGENDARY = {
