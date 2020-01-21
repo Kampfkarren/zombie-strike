@@ -193,10 +193,7 @@ end
 
 -- TODO: Go back to explicitly tapped focus if there's no target left
 RunService.Heartbeat:connect(function()
-	if UserInputService.MouseEnabled
-		or UserInputService.GamepadEnabled
-	then
-		return
+	if UserInputService:GetLastInputType() ~= Enum.UserInputType.Touch then		return
 	end
 
 	if target == nil then
