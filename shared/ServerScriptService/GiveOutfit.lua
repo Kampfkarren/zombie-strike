@@ -26,7 +26,7 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
-local DEBUG = true
+local DEBUG = false
 
 local function debug(message)
 	if DEBUG then
@@ -206,7 +206,7 @@ local function equipGun(player, character)
 		}):andThen(function(results)
 			local weapon, cosmetics = unpack(results)
 
-			return Promise.async(function()
+			return Promise.async(function(resolve)
 				local gunSkin = Cosmetics.Cosmetics[cosmetics.Equipped.GunSkin]
 				local gun = Data.GetModel(weapon):Clone()
 
@@ -261,6 +261,8 @@ local function equipGun(player, character)
 						maid:GiveTask(particle)
 					end
 				end
+
+				resolve()
 			end)
 		end), maid
 	end
