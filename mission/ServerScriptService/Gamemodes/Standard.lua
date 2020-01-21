@@ -145,6 +145,9 @@ local function endMission()
 						return inventory
 					end)
 
+					-- GenerateLoot.GenerateSet sets the last legendary to 0 if it gets one
+					DataStore2("DungeonsSinceLastLegendary", player):Increment(1)
+
 					resolve(Loot.SerializeTable(loot))
 				end)
 			end),

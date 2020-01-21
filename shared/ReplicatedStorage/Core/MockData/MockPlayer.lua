@@ -27,6 +27,7 @@ return function()
 
 	MockPlayer.LegendaryBonus = false
 	MockPlayer.DungeonsPlayed = 0
+	MockPlayer.DungeonsSinceLastLegendary = 1
 	MockPlayer.Level = 1
 	MockPlayer.XP = 0
 	MockPlayer.Gold = 0

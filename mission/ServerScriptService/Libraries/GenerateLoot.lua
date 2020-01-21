@@ -19,12 +19,16 @@ local ATTACHMENT_DROP_RATE = 0.2
 local FREE_EPIC_AFTER = 0
 local WEAPON_DROP_RATE = 0.6
 
+local PITY_TIMER_BASE = 0.5
+local PITY_TIMER_MISSIONS_UNTIL_GUARANTEED = 25
+local PITY_TIMER_SLOW_RATE = 0.04
+
 local RARITY_PERCENTAGES = {
-	{ 0.8, 5 },
+	{ PITY_TIMER_BASE, 5 },
 	{ 7.5, 4 },
 	{ 17, 3 },
 	{ 35, 2 },
-	{ 39.7, 1 },
+	{ 40, 1 },
 }
 
 local RARITY_PERCENTAGES_LEGENDARY = {
@@ -34,6 +38,14 @@ local RARITY_PERCENTAGES_LEGENDARY = {
 	{ 34, 2 },
 	{ 39, 1 },
 }
+
+local function getLegendaryChance(dungeonsSinceLast)
+	local s = PITY_TIMER_BASE
+	local p = PITY_TIMER_MISSIONS_UNTIL_GUARANTEED
+	local r = PITY_TIMER_SLOW_RATE
+
+	return s * ((100 / s) ^ (1 / p)) ^ (((dungeonsSinceLast ^ 2) * (r * (dungeonsSinceLast - p) + 1)) / p)
+end
 
 local function getModel(type, rarity)
 	if table.find(Loot.Attachments, type) then
@@ -82,7 +94,7 @@ end
 
 local takenAdvantageOfFreeLoot = {}
 
-local function getChancesFor(player, moreLegendaries)
+local function getChancesFor(player, moreLegendaries, dungeonsSinceLast)
 	local base = moreLegendaries and RARITY_PERCENTAGES_LEGENDARY or RARITY_PERCENTAGES
 	local pet = Data.GetPlayerData(player, "Pet")
 	local luckBoost = (pet and PetsDictionary.Rarities[pet.Rarity].Luck or 0) / 100
@@ -103,6 +115,15 @@ local function getChancesFor(player, moreLegendaries)
 		chances[index] = { chance, rarity }
 		sum = sum + chance
 	end
+
+	if not moreLegendaries then
+		local newLegendaryChance = getLegendaryChance(dungeonsSinceLast)
+		local half = (newLegendaryChance - PITY_TIMER_BASE) / 2
+		chances[1] = { newLegendaryChance, 5 }
+		chances[#chances] = { math.max(0, chances[#chances][1] - half), 1 }
+		chances[#chances - 1] = { math.max(0, chances[#chances - 1][1] - half), 2 }
+	end
+	print(require(ReplicatedStorage.Core.inspect)(chances))
 
 	if sum - 100 > 0.00001 then
 		warn("getChancesFor result didn't add up! added to " .. sum)
@@ -152,8 +173,24 @@ local function getLootRarity(player)
 
 	local rarityRng = rng:NextNumber() * 100
 
+	local dungeonsSinceLast
+
+	-- We don't pity timer in arena for two reasons
+	-- 1. Players would get low level legendaries reguarly
+	-- 2. We'd have to set the data store in the arena, otherwise people would
+	-- frequently get legendaries.
+	if Dungeon.GetDungeonData("Gamemode") ~= "Arena" then
+		dungeonsSinceLast = Data.GetPlayerData(player, "DungeonsSinceLastLegendary")
+	else
+		dungeonsSinceLast = 1
+	end
+
 	local cumulative = 0
-	for _, percent in ipairs(getChancesFor(player, moreLegendaries)) do
+	for _, percent in ipairs(getChancesFor(
+		player,
+		moreLegendaries,
+		dungeonsSinceLast
+	)) do
 		if rarityRng <= cumulative + percent[1] then
 			return percent[2]
 		else
@@ -244,13 +281,23 @@ end
 
 local function generateLoot(player)
 	return getLootAmount(player):andThen(function(amount)
-		local lootTable = {}
+		return Promise.async(function(resolve)
+			local _, dungeonsSinceLastStore = Data.GetPlayerData(player, "DungeonsSinceLastLegendary")
 
-		for _ = 1, amount do
-			table.insert(lootTable, Promise.promisify(generateLootItem)(player))
-		end
+			local lootTable = {}
 
-		return Promise.all(lootTable)
+			for _ = 1, amount do
+				local lootItem = generateLootItem(player)
+				if lootItem.Rarity == 5 then
+					-- Multiple items game pass shouldn't mean multiple legendaries
+					dungeonsSinceLastStore:Set(0)
+				end
+
+				table.insert(lootTable, lootItem)
+			end
+
+			resolve(lootTable)
+		end)
 	end)
 end
 
