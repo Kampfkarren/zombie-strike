@@ -123,7 +123,6 @@ local function getChancesFor(player, moreLegendaries, dungeonsSinceLast)
 		chances[#chances] = { math.max(0, chances[#chances][1] - half), 1 }
 		chances[#chances - 1] = { math.max(0, chances[#chances - 1][1] - half), 2 }
 	end
-	print(require(ReplicatedStorage.Core.inspect)(chances))
 
 	if sum - 100 > 0.00001 then
 		warn("getChancesFor result didn't add up! added to " .. sum)
