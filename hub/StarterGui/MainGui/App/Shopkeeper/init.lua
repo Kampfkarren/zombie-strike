@@ -81,19 +81,36 @@ function ShopkeeperGui:init()
 
 	self.sellAll = function()
 		self:setState({
-			selling = true,
+			sellingAll = true,
 		})
 	end
 
 	self.closeSellAll = function()
 		self:setState({
-			selling = false,
+			sellingAll = false,
 		})
 	end
 
 	self.trulySellAll = function()
 		Sell:FireServer("*")
 		self.closeSellAll()
+	end
+
+	self.sell = function(loot)
+		self:setState({
+			selling = loot,
+		})
+	end
+
+	self.closeSell = function()
+		self:setState({
+			selling = Roact.None,
+		})
+	end
+
+	self.trulySell = function()
+		Sell:FireServer(self.state.selling.UUID)
+		self.closeSell()
 	end
 end
 
@@ -147,7 +164,7 @@ function ShopkeeperGui:render()
 			color = SELL_COLOR
 
 			activated = function()
-				Sell:FireServer(loot.UUID)
+				self.sell(loot)
 			end
 		end
 
@@ -221,14 +238,21 @@ function ShopkeeperGui:render()
 		}
 	end
 
-	local sellAllDropdown
+	local sellDropdown, sellAllDropdown
 
-	if self.state.selling then
+	if self.state.sellingAll then
 		sellAllDropdown = e(ConfirmPrompt, {
 			Window = self.ref:getValue(),
 			Text = "Are you sure you want to sell ALL unequipped and unfavorited items?",
 			Yes = self.trulySellAll,
 			No = self.closeSellAll,
+		})
+	elseif self.state.selling then
+		sellDropdown = e(ConfirmPrompt, {
+			Window = self.ref:getValue(),
+			Text = ("Are you sure you want to sell %s?"):format(Loot.GetLootName(self.state.selling)),
+			Yes = self.trulySell,
+			No = self.closeSell,
 		})
 	end
 
@@ -310,6 +334,7 @@ function ShopkeeperGui:render()
 			[Roact.Event.Activated] = self.sellAll,
 		}),
 
+		SellDropdown = sellDropdown,
 		SellAllDropdown = sellAllDropdown,
 	})
 end
