@@ -26,7 +26,7 @@ local Helmet = {
 	Health = ArmorScaling.HelmetHealth,
 }
 
-local DEBUG = false
+local DEBUG = true
 
 local function debug(message)
 	if DEBUG then
@@ -192,6 +192,7 @@ local function equipGun(player, character)
 		local weapon, cosmetics, armorStable = unpack(results)
 		return HttpService:JSONEncode({
 			UUID = weapon.UUID,
+			GunSkin = tostring(cosmetics.Equipped.GunSkin),
 			Particle = tostring(cosmetics.Equipped.Particle),
 			Upgrades = tostring(weapon.Upgrades),
 			Attachment = tostring(weapon.Attachment and weapon.Attachment.UUID),
@@ -199,15 +200,36 @@ local function equipGun(player, character)
 			GoldGuns = tostring(Settings.GetSetting("Gold Guns", player)),
 		})
 	end), function()
-		return weapon:andThen(function(data)
-			return Promise.async(function(resolve)
-				local gun = Data.GetModel(data)
+		return Promise.all({
+			weapon,
+			cosmetics,
+		}):andThen(function(results)
+			local weapon, cosmetics = unpack(results)
+
+			return Promise.async(function()
+				local gunSkin = Cosmetics.Cosmetics[cosmetics.Equipped.GunSkin]
+				local gun = Data.GetModel(weapon):Clone()
+
+				if gunSkin then
+					gun.Animations:Destroy()
+					gun.PrimaryPart:Destroy()
+
+					gunSkin.Instance.Animations:Clone().Parent = gun
+
+					local gunPart = gunSkin.Instance.Gun:Clone()
+					gunPart.CanCollide = false
+					gunPart.Name = "Handle"
+					gunPart.Parent = gun
+
+					gun.PrimaryPart = gunPart
+				end
+
 				gun.Name = "Gun"
 
 				local weaponData = Instance.new("Folder")
 				weaponData.Name = "WeaponData"
 
-				for statName, stat in pairs(data) do
+				for statName, stat in pairs(weapon) do
 					if statName ~= "Attachment" then
 						local statValue = Instance.new(valueClass(type(stat)) .. "Value")
 						statValue.Name = statName
@@ -230,10 +252,7 @@ local function equipGun(player, character)
 
 				maid:GiveTask(gun)
 				Equip(gun)
-				resolve(gun)
-			end)
-		end):andThen(function(gun)
-			return Data.GetPlayerDataAsync(player, "Cosmetics"):andThen(function(cosmetics)
+
 				local particleIndex = cosmetics.Equipped.Particle
 				if particleIndex then
 					for _, particle in pairs(Cosmetics.Cosmetics[particleIndex].Instance:GetChildren()) do

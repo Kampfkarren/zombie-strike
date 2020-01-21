@@ -37,9 +37,15 @@ UpdateCosmetics.OnServerEvent:connect(function(player, itemIndex)
 		end
 
 		local cosmetic = assert(Cosmetics.Cosmetics[itemIndex], "equipping non-existent cosmetic!")
-		if data.Equipped[cosmetic.Type] ~= itemIndex then
+
+		local cosmeticType = cosmetic.Type
+		if cosmeticType == "GunLowTier" or cosmetic.Type == "GunHighTier" then
+			cosmeticType = "GunSkin"
+		end
+
+		if data.Equipped[cosmeticType] ~= itemIndex then
 			dataStore:Update(function(data)
-				data.Equipped[cosmetic.Type] = itemIndex
+				data.Equipped[cosmeticType] = itemIndex
 				UpdateCosmetics:FireClient(player, nil, data.Equipped)
 				return data
 			end)

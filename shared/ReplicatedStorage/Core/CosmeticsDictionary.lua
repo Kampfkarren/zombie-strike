@@ -17,6 +17,13 @@ local function quick(type, instanceType, patch)
 		patch(data, item)
 		return data
 	end
+
+end
+
+local function quickInstance(type, instanceType)
+	return quick(type, instanceType, function(data, item)
+		data.Instance = item
+	end)
 end
 
 local function dontSellMe(thing)
@@ -24,21 +31,24 @@ local function dontSellMe(thing)
 	return thing
 end
 
-local face = quick("Face", "Face", function(data, item)
-	data.Instance = item.Face
-end)
-
 local particle = quick("Particle", "Particle", function(data, item)
 	data.Instance = item.Contents
 	data.Image = item.Image
 end)
 
-local lowTier = quick("LowTier", "Bundle", function(data, item)
-	data.Instance = item
+local face = quick("Face", "Face", function(data, item)
+	data.Instance = item.Face
 end)
 
-local highTier = quick("HighTier", "Bundle", function(data, item)
-	data.Instance = item
+local lowTier = quickInstance("LowTier", "Bundle")
+local highTier = quickInstance("HighTier", "Bundle")
+
+local gunLowTier = quick("GunLowTier", "GunSkin", function(data, item)
+	data.Instance = item.Contents
+end)
+
+local gunHighTier = quick("GunHighTier", "GunSkin", function(data, item)
+	data.Instance = item.Contents
 end)
 
 -- DON'T REORDER THIS LIST!
@@ -127,4 +137,7 @@ return {
 	dontSellMe(lowTier("Sea Agent", "SeaAgent")),
 	dontSellMe(lowTier("Wanwood")),
 	dontSellMe(lowTier("World View", "WorldView")),
+	gunHighTier("Henry Rifle", "HenryRifle"),
+	gunLowTier("Borchardt"),
+	gunLowTier("Coach Gun", "CoachGun"),
 }

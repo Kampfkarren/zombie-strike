@@ -253,26 +253,29 @@ function InventoryPage:render()
 				Size = UDim2.fromScale(0.9, 0.25),
 			}, {
 				e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
+					FillDirection = Enum.FillDirection.Vertical,
 					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.05, 0),
+					Padding = UDim.new(0.01, 0),
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					VerticalAlignment = Enum.VerticalAlignment.Center,
 				}),
 
 				e(Equipped, {
-					LayoutOrder = 1,
 					Key = "Weapon",
 					Name = "WEAPON",
+					LayoutOrder = 1,
+					Rectangle = true,
+					Size = UDim2.fromScale(0.95, 0.48),
+					Rectangle = true,
 				}),
 
-				Sidebar = e("Frame", {
+				BottomBar = e("Frame", {
 					BackgroundTransparency = 1,
 					LayoutOrder = 2,
-					Size = UDim2.fromScale(0.5, 0.95),
+					Size = UDim2.fromScale(1, 0.48),
 				}, {
 					e("UIListLayout", {
-						FillDirection = Enum.FillDirection.Vertical,
+						FillDirection = Enum.FillDirection.Horizontal,
 						HorizontalAlignment = Enum.HorizontalAlignment.Center,
 						Padding = UDim.new(0.01, 0),
 						SortOrder = Enum.SortOrder.LayoutOrder,
@@ -282,18 +285,24 @@ function InventoryPage:render()
 					e(Equipped, {
 						LayoutOrder = 1,
 						Cosmetic = true,
-						Key = "Particle",
-						Name = "EFFECT",
-						AspectRatio = 2,
-						Rectangle = true,
+						Key = "GunSkin",
+						Name = "SKIN",
+						Size = UDim2.fromScale(0.32, 1),
 					}),
 
 					e(Equipped, {
 						LayoutOrder = 2,
+						Cosmetic = true,
+						Key = "Particle",
+						Name = "EFFECT",
+						Size = UDim2.fromScale(0.32, 1),
+					}),
+
+					e(Equipped, {
+						LayoutOrder = 3,
 						Key = "Attachment",
 						Name = "ATTACHMENT",
-						AspectRatio = 2,
-						Rectangle = true,
+						Size = UDim2.fromScale(0.32, 1),
 					}),
 				}),
 			}),

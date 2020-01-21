@@ -1,11 +1,8 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local CosmeticsDictionary = require(ReplicatedStorage.Core.CosmeticsDictionary)
 local CosmeticsStore = require(ReplicatedStorage.Core.CosmeticsStore)
-local Data = require(ReplicatedStorage.Core.Data)
-local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local dateStamp
@@ -69,6 +66,17 @@ local cosmeticType = t.array(t.union(
 			t.literal("HighTier")
 		),
 		DontSellMe = t.optional(t.boolean),
+	}),
+
+	t.strictInterface({
+		Index = t.number,
+		Name = t.string,
+		Type = t.union(
+			t.literal("GunLowTier"),
+			t.literal("GunHighTier")
+		),
+		Instance = t.instanceIsA("Folder"),
+		DontSellMe = t.optional(t.boolean),
 	})
 ))
 
@@ -100,16 +108,6 @@ for index, item in ipairs(Cosmetics.Cosmetics) do
 	end
 end
 
-Cosmetics.Costs = {
-	Mythic = {
-		Cost = 3599,
-	},
-
-	Legendary = {
-		Cost = 2199,
-	},
-}
-
 Cosmetics.Distribution = {
 	HighTier = {
 		Count = 1,
@@ -130,41 +128,23 @@ Cosmetics.Distribution = {
 		Count = 2,
 		Cost = 900,
 	},
+
+	GunHighTier = {
+		Count = 1,
+		Cost = 1499,
+	},
+
+	GunLowTier = {
+		Count = 2,
+		Cost = 1199,
+	},
 }
 
-local function generateGun(player, rarity, rng, exclude)
-	local model
-
-	if rarity == 5 then
-		model = 5
-	else
-		model = 1
-	end
-
-	return {
-		Type = GunScaling.RandomType(rng, exclude),
-		Rarity = rarity,
-		Level = player == Players.LocalPlayer
-			and player:WaitForChild("PlayerData"):WaitForChild("Level").Value
-			or Data.GetPlayerData(player, "Level"),
-
-		Bonus = rng:NextInteger(5, 10),
-		Upgrades = 0,
-		Favorited = false,
-
-		Model = model,
-		UUID = "COSMETIC_WEAPON_" .. rng:NextNumber(), -- Replaced with a real UUID on purchase
-	}
-end
-
 function Cosmetics.CostOf(itemType)
-	return (Cosmetics.Costs[itemType] or Cosmetics.Distribution[itemType]).Cost
+	return Cosmetics.Distribution[itemType].Cost
 end
 
-function Cosmetics.GetStoreItems(player)
-	player = player or Players.LocalPlayer
-	--assert(player ~= nil, "GetStoreItems was not passed with a player")
-
+function Cosmetics.GetStoreItems()
 	local stamp
 
 	if RunService:IsServer() then
@@ -216,15 +196,6 @@ function Cosmetics.GetStoreItems(player)
 			contents[key] = patchedContents
 		end
 	end
-
-	-- Purchasable weapons
-	local playerRng = Random.new(stamp + player.UserId)
-
-	contents.Mythic = { generateGun(player, 6, playerRng) }
-
-	local legendaryOne = generateGun(player, 5, playerRng)
-	local legendaryTwo = generateGun(player, 5, playerRng, legendaryOne.Type)
-	contents.Legendary = { legendaryOne, legendaryTwo }
 
 	return contents
 end

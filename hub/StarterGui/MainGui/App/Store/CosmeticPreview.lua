@@ -175,9 +175,21 @@ return function(props)
 			size = props.size,
 			updateSet = props.updateSet,
 		})
-	elseif Loot.IsWeapon(cosmetic) then
+	elseif cosmetic.Type == "GunLowTier" or cosmetic.Type == "GunHighTier" then
+		local model = Instance.new("Model")
+
+		local gun = cosmetic.Instance.Gun:Clone()
+		gun.Parent = model
+
+		local uuid = Instance.new("StringValue")
+		uuid.Name = "UUID"
+		uuid.Value = "Gun_" .. cosmetic.Index
+		uuid.Parent = model
+
+		model.PrimaryPart = gun
+
 		return e(ViewportFrameCosmeticPreview, {
-			model = Data.GetModel(cosmetic),
+			model = model,
 			previewScale = props.previewScale,
 			size = props.size,
 			updateSet = props.updateSet,

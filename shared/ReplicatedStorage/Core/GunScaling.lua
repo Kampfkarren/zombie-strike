@@ -124,14 +124,6 @@ local RarityMultipliers = {
 		FireRate = 1.5,
 		Magazine = 1.5,
 	},
-
-	-- Mythic
-	{
-		CritChance = 1.5,
-		Damage = 3.5,
-		FireRate = 1.5,
-		Magazine = 1.5,
-	},
 }
 
 local function round(n)

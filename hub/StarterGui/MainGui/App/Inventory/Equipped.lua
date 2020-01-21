@@ -56,6 +56,13 @@ function Equipped:render()
 		ZIndex = 2,
 	})
 
+	local aspectRatioConstraint
+	if not props.Size then
+		aspectRatioConstraint = e("UIAspectRatioConstraint", {
+			AspectRatio = props.AspectRatio,
+		})
+	end
+
 	if (props.equipped == nil and props.Default == nil) or not props.Cosmetic then
 		local backgroundColor = Color3.fromRGB(215, 215, 215)
 		local preview
@@ -82,13 +89,10 @@ function Equipped:render()
 			BackgroundTransparency = 1,
 			LayoutOrder = props.LayoutOrder,
 			Square = true,
-			Size = UDim2.fromScale(0.95, 0.9),
+			Size = props.Size or UDim2.fromScale(0.95, 0.9),
 			Square = not props.Rectangle,
 		}, {
-			UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
-				AspectRatio = props.AspectRatio,
-			}),
-
+			UIAspectRatioConstraint = aspectRatioConstraint,
 			Preview = preview,
 			Label = label,
 		})
@@ -102,15 +106,12 @@ function Equipped:render()
 				BorderSizePixel = 0,
 				Image = "http://www.roblox.com/asset/?id=3973353646",
 				LayoutOrder = props.LayoutOrder,
-				Size = UDim2.fromScale(0.95, 0.9),
+				Size = props.Size or UDim2.fromScale(0.95, 0.9),
 
 				[Roact.Event.Activated] = self.unequip,
 			},
 		}, {
-			UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
-				AspectRatio = props.AspectRatio,
-			}),
-
+			UIAspectRatioConstraint = aspectRatioConstraint,
 			Label = label,
 		})
 	end

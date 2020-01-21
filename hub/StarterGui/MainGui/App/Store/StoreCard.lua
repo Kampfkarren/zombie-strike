@@ -1,4 +1,3 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 
@@ -6,8 +5,6 @@ local Alert = require(ReplicatedStorage.Core.UI.Components.Alert)
 local BrainsPurchase = require(ReplicatedStorage.Core.UI.Components.BrainsPurchase)
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local CosmeticButton = require(script.Parent.CosmeticButton)
-local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
-local Loot = require(ReplicatedStorage.Core.Loot)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 
@@ -19,6 +16,8 @@ local COSMETIC_TYPE_NAMES = {
 	Particle = "Particle",
 	LowTier = "Bundle",
 	HighTier = "LIMITED Bundle",
+	GunLowTier = "Gun Skin",
+	GunHighTier = "LIMITED Gun Skin",
 }
 
 local function PriceText(props)
@@ -59,20 +58,7 @@ function StoreCard:init()
 
 	self.finishBuyProduct = function()
 		local itemType = self.props.ItemType
-		if itemType == "Mythic" or itemType == "Legendary" then
-			InventorySpace(Players.LocalPlayer):andThen(function(inventorySpace)
-				if #self.props.inventory < inventorySpace then
-					ReplicatedStorage.Remotes.BuyCosmetic:FireServer(itemType, self.props.ItemIndex)
-					self.props.openInventory()
-				else
-					self:setState({
-						tooManyItems = true,
-					})
-				end
-			end)
-		else
-			ReplicatedStorage.Remotes.BuyCosmetic:FireServer(itemType, self.props.ItemIndex)
-		end
+		ReplicatedStorage.Remotes.BuyCosmetic:FireServer(itemType, self.props.ItemIndex)
 	end
 
 	self.closeTooManyItems = function()
@@ -132,11 +118,8 @@ function StoreCard:render()
 		ZIndex = 2,
 	}, buyCostChildren)
 
-	local itemType = Loot.IsWeapon(item)
-		and Loot.Rarities[item.Rarity].Name .. " Weapon"
-		or COSMETIC_TYPE_NAMES[item.Type]
-
-	local itemName = item.Name or Loot.GetLootName(item)
+	local itemType = COSMETIC_TYPE_NAMES[item.Type]
+	local itemName = item.Name
 
 	children.ItemInfo = e("Frame", {
 		BackgroundColor3 = Color3.new(),

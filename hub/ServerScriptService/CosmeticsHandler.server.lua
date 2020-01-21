@@ -1,22 +1,12 @@
-local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Data = require(ReplicatedStorage.Core.Data)
-local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 
 local UpdateCosmetics = ReplicatedStorage.Remotes.UpdateCosmetics
 
-local function copy(list)
-	local copy = {}
-	for key, value in pairs(list) do
-		copy[key] = value
-	end
-	return copy
-end
-
 ReplicatedStorage.Remotes.BuyCosmetic.OnServerEvent:connect(function(player, itemType, itemIndex)
-	local cosmetics = Cosmetics.GetStoreItems(player)
+	local cosmetics = Cosmetics.GetStoreItems()
 
 	local items = cosmetics[itemType]
 	if not items then
@@ -37,37 +27,24 @@ ReplicatedStorage.Remotes.BuyCosmetic.OnServerEvent:connect(function(player, ite
 		return
 	end
 
-	if itemType ~= "Mythic" and itemType ~= "Legendary" then
-		local cosmetics, cosmeticsStore = Data.GetPlayerData(player, "Cosmetics")
+	local cosmetics, cosmeticsStore = Data.GetPlayerData(player, "Cosmetics")
 
-		for _, owned in pairs(cosmetics.Owned) do
-			if owned == item.Index then
-				warn("BuyCosmetic: player owned item they were buying")
-				return
-			end
-		end
-
-		if item.Type == "LowTier" or item.Type == "HighTier" then
-			table.insert(cosmetics.Owned, item.Index + 1)
-			table.insert(cosmetics.Owned, item.Index + 2)
-		else
-			table.insert(cosmetics.Owned, item.Index)
-		end
-
-		cosmeticsStore:Set(cosmetics)
-		UpdateCosmetics:FireClient(player, cosmetics.Owned, cosmetics.Equipped)
-	else
-		local inventory, inventoryStore = Data.GetPlayerData(player, "Inventory")
-		if #inventory >= InventorySpace(player):awaitValue() then
-			warn("BuyCosmetic: player bought gun when their inventory is full")
+	for _, owned in pairs(cosmetics.Owned) do
+		if owned == item.Index then
+			warn("BuyCosmetic: player owned item they were buying")
 			return
 		end
-
-		local gun = copy(item)
-		gun.UUID = HttpService:GenerateGUID(false):gsub("-", "")
-		table.insert(inventory, gun)
-		inventoryStore:Set(inventory)
 	end
+
+	if item.Type == "LowTier" or item.Type == "HighTier" then
+		table.insert(cosmetics.Owned, item.Index + 1)
+		table.insert(cosmetics.Owned, item.Index + 2)
+	else
+		table.insert(cosmetics.Owned, item.Index)
+	end
+
+	cosmeticsStore:Set(cosmetics)
+	UpdateCosmetics:FireClient(player, cosmetics.Owned, cosmetics.Equipped)
 
 	brainsStore:Increment(-cost)
 end)
