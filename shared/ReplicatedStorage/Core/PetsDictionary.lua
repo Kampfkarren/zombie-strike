@@ -4,10 +4,10 @@ local LootStyles = require(ReplicatedStorage.Core.LootStyles)
 
 local Pets = ReplicatedStorage.Pets
 
-local function pet(name, model)
+local function pet(name)
 	return {
 		Name = name,
-		Model = Pets[model],
+		Model = Pets[name],
 	}
 end
 
