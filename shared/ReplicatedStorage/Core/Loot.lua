@@ -239,6 +239,7 @@ function Loot.IsCosmetic(loot)
 		or loot.Type == "LowTier"
 		or loot.Type == "HighTier"
 		or loot.Type == "Spray"
+		or loot.Type == "GunSkin"
 		or loot.ParentType ~= nil
 end
 

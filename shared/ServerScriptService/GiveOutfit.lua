@@ -221,6 +221,7 @@ local function equipGun(player, character)
 					gunPart.CanCollide = false
 					gunPart.Massless = true
 					gunPart.Name = "Handle"
+					gunPart.Size = gunPart.Size * 1.15
 					gunPart.Parent = gun
 
 					gun.PrimaryPart = gunPart
