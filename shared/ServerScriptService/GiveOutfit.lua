@@ -217,7 +217,9 @@ local function equipGun(player, character)
 					gunSkin.Instance.Animations:Clone().Parent = gun
 
 					local gunPart = gunSkin.Instance.Gun:Clone()
+					gunPart.Anchored = false
 					gunPart.CanCollide = false
+					gunPart.Massless = true
 					gunPart.Name = "Handle"
 					gunPart.Parent = gun
 
