@@ -146,9 +146,11 @@ local function endMission()
 					end)
 
 					-- GenerateLoot.GenerateSet sets the last legendary to 0 if it gets one
-					DataStore2("DungeonsSinceLastLegendary", player):Increment(1)
+					DataStore2("DungeonsSinceLastLegendary", player):Increment(1, 0)
 
 					resolve(Loot.SerializeTable(loot))
+				end):tap(function()
+					DataStore2("DungeonsPlayed", player):IncrementAsync(1, 0)
 				end)
 			end),
 
@@ -165,7 +167,6 @@ local function endMission()
 					DataStore2("Level", player):Set(player.PlayerData.Level.Value),
 					DataStore2("XP", player):Set(player.PlayerData.XP.Value),
 					DataStore2("Gold", player):IncrementAsync(gold, 0),
-					DataStore2("DungeonsPlayed", player):IncrementAsync(1, 0),
 				}):andThen(function()
 					resolve({ xp, gold })
 				end)
