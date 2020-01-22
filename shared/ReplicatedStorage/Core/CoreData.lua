@@ -52,6 +52,24 @@ local function addAttachment(item, attachment)
 	attachment.Parent = item
 end
 
+function CoreData.AddAttachmentsToGun(data, model, uuid)
+	uuid = uuid or model.UUID
+	local attachment = data.Attachment
+	if attachment then
+		local attachmentModel = ReplicatedStorage.Items[attachment.Type .. attachment.Model]:Clone()
+		attachmentModel.Name = "GunAttachment"
+		attachmentModel.PrimaryPart.Anchored = false
+
+		local rarityValue = Instance.new("NumberValue")
+		rarityValue.Name = "Rarity"
+		rarityValue.Value = attachment.Rarity
+		rarityValue.Parent = attachmentModel
+
+		addAttachment(model, attachmentModel)
+		uuid.Value = uuid.Value .. "/" .. attachment.UUID
+	end
+end
+
 function CoreData.GetModel(data)
 	local itemType = data.Type
 
@@ -131,22 +149,7 @@ function CoreData.GetModel(data)
 		return model
 	else
 		local model = ReplicatedStorage.Items[data.Type .. data.Model]:Clone()
-
-		local attachment = data.Attachment
-		if attachment then
-			local attachmentModel = ReplicatedStorage.Items[attachment.Type .. attachment.Model]:Clone()
-			attachmentModel.Name = "GunAttachment"
-			attachmentModel.PrimaryPart.Anchored = false
-
-			local rarityValue = Instance.new("NumberValue")
-			rarityValue.Name = "Rarity"
-			rarityValue.Value = attachment.Rarity
-			rarityValue.Parent = attachmentModel
-
-			addAttachment(model, attachmentModel)
-			uuid.Value = uuid.Value .. "/" .. attachment.UUID
-		end
-
+		CoreData.AddAttachmentsToGun(data, model, uuid)
 		uuid.Parent = model
 		return model
 	end

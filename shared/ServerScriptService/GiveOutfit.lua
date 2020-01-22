@@ -224,6 +224,7 @@ local function equipGun(player, character)
 					gunPart.Parent = gun
 
 					gun.PrimaryPart = gunPart
+					Data.AddAttachmentsToGun(weapon, gun)
 				end
 
 				gun.Name = "Gun"

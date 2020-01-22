@@ -6,6 +6,7 @@ local CoreData = require(ReplicatedStorage.Core.CoreData)
 
 local Data = {}
 
+Data.AddAttachmentsToGun = CoreData.AddAttachmentsToGun
 Data.GetModel = CoreData.GetModel
 Data.LocalPlayerData = {}
 
