@@ -289,7 +289,7 @@ ReplicatedStorage.Remotes.UpdateEquipment.OnClientEvent:connect(function(armor, 
 	})
 end)
 
-ReplicatedStorage.Remotes.UpdateXPExpiration.OnClientEvent:connect(function(expiration)
+ReplicatedStorage.Remotes.XPMultipliers.OnClientEvent:connect(function(expiration)
 	Store:dispatch({
 		type = "UpdateXPExpiration",
 		expiration = expiration,

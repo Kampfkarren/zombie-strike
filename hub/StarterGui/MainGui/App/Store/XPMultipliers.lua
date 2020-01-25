@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local DevProductList = require(script.Parent.DevProductList)
+local BrainsPurchase = require(ReplicatedStorage.Core.UI.Components.BrainsPurchase)
+local ProductCard = require(script.Parent.ProductCard)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local XPMultiplierDictionary = require(ReplicatedStorage.XPMultiplierDictionary)
@@ -10,6 +11,53 @@ local XPMultipliers = Roact.PureComponent:extend("XPMultipliers")
 
 function XPMultipliers:init()
 	self.timer, self.updateTimer = Roact.createBinding(0)
+
+	self.closeBuy = function()
+		self:setState({
+			buying = Roact.None,
+			buyingIndex = Roact.None,
+		})
+	end
+
+	self.finishBuy = function()
+		ReplicatedStorage.Remotes.XPMultipliers:FireServer(self.state.buyingIndex)
+		self.closeBuy()
+	end
+
+	self.renderProductCard = function(product, nameRotation, nameTextRef)
+		return {
+			Name = e("Frame", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				LayoutOrder = 1,
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(0.35, 0.9),
+			}, {
+				Label = e("TextLabel", {
+					BackgroundTransparency = 1,
+					Font = Enum.Font.GothamBold,
+					Rotation = nameRotation,
+					Size = UDim2.fromScale(1, 1),
+					Text = product.Name,
+					TextColor3 = Color3.new(1, 1, 1),
+					TextScaled = true,
+					[Roact.Ref] = nameTextRef,
+				}),
+			}),
+
+			Cost = e("TextLabel", {
+				AnchorPoint = Vector2.new(1, 0.5),
+				BackgroundTransparency = 1,
+				Font = Enum.Font.GothamBold,
+				LayoutOrder = 2,
+				Position = UDim2.fromScale(0.95, 0.5),
+				Size = UDim2.fromScale(0.2, 0.95),
+				Text = product.Cost .. "🧠",
+				TextColor3 = Color3.fromRGB(255, 205, 248),
+				TextScaled = true,
+			}),
+		}
+	end
 
 	self:SetTimer()
 end
@@ -42,8 +90,24 @@ function XPMultipliers:render()
 	local props = self.props
 
 	local products = {}
-	for _, product in pairs(XPMultiplierDictionary) do
-		table.insert(products, product.Product)
+	for productIndex, product in pairs(XPMultiplierDictionary) do
+		table.insert(products, e(ProductCard, {
+			imageButtonProps = {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				ImageColor3 = Color3.fromRGB(154, 255, 110),
+				Position = UDim2.fromScale(0.5, 0.5),
+			},
+
+			activate = function()
+				self:setState({
+					buying = product,
+					buyingIndex = productIndex,
+				})
+			end,
+
+			product = product,
+			renderButton = self.renderProductCard,
+		}))
 	end
 
 	return e("Frame", {
@@ -52,62 +116,28 @@ function XPMultipliers:render()
 		Size = UDim2.fromScale(0.9, 0.9),
 		[Roact.Ref] = props[Roact.Ref],
 	}, {
+		Purchase = self.state.buying and e(BrainsPurchase, {
+			Cost = self.state.buying.Cost,
+			Name = self.state.buying.Name,
+			Window = props[Roact.Ref],
+
+			OnBuy = self.finishBuy,
+			OnClose = self.closeBuy,
+		}),
+
 		Products = e("Frame", {
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, 0.8),
 		}, {
-			ProductList = e(DevProductList, {
-				products = products,
+			UIListLayout = e("UIListLayout", {
+				FillDirection = Enum.FillDirection.Vertical,
+				HorizontalAlignment = Enum.HorizontalAlignment.Center,
+				Padding = UDim.new(0.02, 0),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+			}),
 
-				imageButtonProps = {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					ImageColor3 = Color3.fromRGB(154, 255, 110),
-					Position = UDim2.fromScale(0.5, 0.5),
-				},
-
-				renderButton = function(product, nameRotation, nameTextRef)
-					return {
-						Name = e("Frame", {
-							AnchorPoint = Vector2.new(0.5, 0.5),
-							BackgroundTransparency = 1,
-							LayoutOrder = 1,
-							Position = UDim2.fromScale(0.5, 0.5),
-							Size = UDim2.fromScale(0.35, 0.9),
-						}, {
-							Label = e("TextLabel", {
-								BackgroundTransparency = 1,
-								Font = Enum.Font.GothamBold,
-								Rotation = nameRotation,
-								Size = UDim2.fromScale(1, 1),
-								Text = product.Name,
-								TextColor3 = Color3.new(1, 1, 1),
-								TextScaled = true,
-								[Roact.Ref] = nameTextRef,
-							}),
-						}),
-
-						Cost = e("TextLabel", {
-							AnchorPoint = Vector2.new(1, 0.5),
-							BackgroundTransparency = 1,
-							Font = Enum.Font.GothamBold,
-							LayoutOrder = 2,
-							Position = UDim2.fromScale(0.95, 0.5),
-							Size = UDim2.fromScale(0.2, 0.95),
-							Text = "R$" .. product.Cost,
-							TextColor3 = Color3.fromRGB(92, 255, 67),
-							TextScaled = true,
-						}),
-					}
-				end,
-			}, {
-				UIListLayout = e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Vertical,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.02, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-				}),
-			})
+			Products = Roact.createFragment(products),
 		}),
 
 		Timer = e("TextLabel", {
