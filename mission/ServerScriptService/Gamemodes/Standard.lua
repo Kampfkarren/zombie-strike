@@ -30,6 +30,8 @@ local Standard = {}
 
 local damagedByBoss = {}
 
+DataStore2.Combine("DATA", "DungeonsPlayed", "LootEarned", "RoomsCleared")
+
 ServerStorage.Events.DamagedByBoss.Event:connect(function(player)
 	damagedByBoss[player] = true
 end)
@@ -150,7 +152,16 @@ local function endMission()
 
 					resolve(Loot.SerializeTable(loot))
 				end):tap(function()
-					DataStore2("DungeonsPlayed", player):IncrementAsync(1, 0)
+					return Promise.async(function(resolve)
+						DataStore2("DungeonsPlayed", player):Increment(1, 0)
+						DataStore2("LootEarned", player):Increment(#loot, 0)
+						DataStore2("RoomsCleared", player):Increment(
+							Dungeon.GetDungeonData("DifficultyInfo").Rooms,
+							0
+						)
+
+						resolve()
+					end)
 				end)
 			end),
 

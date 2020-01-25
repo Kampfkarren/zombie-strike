@@ -38,6 +38,8 @@ local ZOMBIES_IN_FIELD = 17
 
 local rng = Random.new()
 
+DataStore2.Combine("DATA", "LootEarned")
+
 local function spawnArena()
 	local rooms = Instance.new("Folder")
 	rooms.Name = "Rooms"
@@ -136,6 +138,7 @@ function Arena.Init()
 		if loot == nil then
 			loot = GenerateLoot.GenerateOne(player)
 			loot.Level = math.min(Data.GetPlayerData(player, "Level"), currentWave)
+			DataStore2("LootEarned", player):IncrementAsync(1, 0)
 		end
 
 		return loot

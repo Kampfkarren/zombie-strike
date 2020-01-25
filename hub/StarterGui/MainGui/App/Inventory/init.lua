@@ -13,6 +13,7 @@ local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
+local StatsPage = require(script.StatsPage)
 local TitlesPage = require(script.TitlesPage)
 
 local e = Roact.createElement
@@ -169,6 +170,14 @@ function Inventory:render()
 			}),
 		}),
 
+		StatsPageFrame = e("Frame", {
+			BackgroundTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			Visible = self.state.tab == "stats",
+		}, {
+			StatsPage = e(StatsPage),
+		}),
+
 		TitlesPageFrame = e("Frame", {
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, 1),
@@ -191,8 +200,8 @@ function Inventory:render()
 		}),
 
 		Tabs = e("Frame", {
+			AnchorPoint = Vector2.new(0, 1),
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0, 1),
 			Size = UDim2.fromScale(1, 0.1),
 		}, {
 			UIListLayout = e("UIListLayout", {
@@ -213,6 +222,13 @@ function Inventory:render()
 				Activate = self.switchTab("titles"),
 				LayoutOrder = 2,
 				Text = "Titles",
+			}),
+
+			TabStats = e(Tab, {
+				Active = self.state.tab == "stats",
+				Activate = self.switchTab("stats"),
+				LayoutOrder = 3,
+				Text = "Stats",
 			}),
 		}),
 	})

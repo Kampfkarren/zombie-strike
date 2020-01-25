@@ -1,9 +1,11 @@
 local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
+local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
@@ -38,6 +40,8 @@ local RARITY_PERCENTAGES_LEGENDARY = {
 	{ 34, 2 },
 	{ 39, 1 },
 }
+
+DataStore2.Combine("DATA", "LegendariesObtained")
 
 local function getLegendaryChance(dungeonsSinceLast)
 	local s = PITY_TIMER_BASE
@@ -290,6 +294,7 @@ local function generateLoot(player)
 				if lootItem.Rarity == 5 then
 					-- Multiple items game pass shouldn't mean multiple legendaries
 					dungeonsSinceLastStore:Set(0)
+					DataStore2("LegendariesObtained", player):IncrementAsync(1, 0)
 				end
 
 				table.insert(lootTable, lootItem)

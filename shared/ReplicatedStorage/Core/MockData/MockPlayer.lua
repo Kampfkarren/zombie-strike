@@ -25,8 +25,15 @@ return function()
 	-- ASSUMPTION: We will never have more than 9 difficulties in a campaign
 	MockPlayer.LastKnownDifficulty = 11
 
-	MockPlayer.LegendaryBonus = false
+	-- Stats
+	MockPlayer.DamageDealt = 0
 	MockPlayer.DungeonsPlayed = 0
+	MockPlayer.LootEarned = 0
+	MockPlayer.RoomsCleared = 0
+	MockPlayer.ZombiesKilled = 0
+	MockPlayer.LegendariesObtained = 0
+
+	MockPlayer.LegendaryBonus = false
 	MockPlayer.DungeonsSinceLastLegendary = 1
 	MockPlayer.Level = 1
 	MockPlayer.XP = 0

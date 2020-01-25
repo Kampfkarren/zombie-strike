@@ -2,6 +2,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local Players = game:GetService("Players")
 
@@ -12,9 +13,12 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES.Config)
 	local DAMAGE = require(MODULES.Damage)
 
+local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 
 local GiveQuest = ServerStorage.Events.GiveQuest
+
+DataStore2.Combine("DATA", "DamageDealt", "ZombiesKilled")
 
 -- variables
 
@@ -98,6 +102,9 @@ local function hit(player, hit, index)
 							end
 
 							local damage = DAMAGE:Calculate(shot.Item, hit, position)
+							DataStore2("DamageDealt", player):Update(function(damageDealt)
+								return math.log10(10 ^ (damageDealt or 0) + damage)
+							end)
 							DAMAGE:Damage(humanoid, damage, player, config.CritChance)
 
 							local otherPlayer = Players:GetPlayerFromCharacter(humanoid.Parent)
@@ -124,6 +131,10 @@ local function hit(player, hit, index)
 										return quest.Args[2] == shot.Item.WeaponData.Type.Value
 									end)
 								end
+
+								DataStore2("ZombiesKilled", player):Update(function(zombiesKilled)
+									return (zombiesKilled or 0) + 1
+								end)
 							end
 						end
 					end
