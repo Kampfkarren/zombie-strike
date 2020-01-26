@@ -102,7 +102,6 @@ function Zombie:SetupHumanoid()
 	humanoid.Health = health
 
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
-	humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying, false)
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false)
@@ -425,9 +424,13 @@ function Zombie:GetScaleSafe(key)
 end
 
 function Zombie:GetHealth()
-	local health = self:GetScale("Health")
-	health = health * (1 + (0.35 * (#Players:GetPlayers() - 1)))
-	return health
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		return 100
+	else
+		local health = self:GetScale("Health")
+		health = health * (1 + (0.35 * (#Players:GetPlayers() - 1)))
+		return health
+	end
 end
 
 function Zombie:GetDamageAgainst(player)
@@ -447,6 +450,10 @@ function Zombie.GetDamageAgainstConstant(_, player, damage, maxHpDamage)
 	end
 
 	return damage
+end
+
+function Zombie.GetDamageReceivedScale()
+	return 0.5
 end
 
 function Zombie:GetAttackCooldown()
