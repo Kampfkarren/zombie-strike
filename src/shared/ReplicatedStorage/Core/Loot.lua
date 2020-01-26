@@ -31,6 +31,14 @@ local armorMap = {
 	"UUID",
 }
 
+local petMap = {
+	"Type",
+	"Rarity",
+	"Favorited",
+	"Model",
+	"UUID",
+}
+
 Loot.Rarities = LootStyles
 
 Loot.Attachments = {
@@ -116,6 +124,8 @@ function Loot.Deserialize(data)
 
 	if data[1] == "Armor" or data[1] == "Helmet" then
 		map = armorMap
+	elseif data[1] == "Pet" then
+		map = petMap
 	end
 
 	for index, key in pairs(map) do
@@ -158,6 +168,8 @@ function Loot.Serialize(data)
 
 	if Loot.IsWearable(data) then
 		map = armorMap
+	elseif Loot.IsPet(data) then
+		map = petMap
 	end
 
 	for index, key in pairs(map) do
