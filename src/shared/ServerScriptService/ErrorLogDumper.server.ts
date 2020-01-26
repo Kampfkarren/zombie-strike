@@ -13,6 +13,7 @@ Players.PlayerAdded.Connect((player) => {
 			if (tick() - lastLogSent <= LOG_DELAY) {
 				message = "Sent too recently."
 			} else {
+				lastLogSent = tick()
 				const result = pcall(() => {
 					return HttpService.PostAsync(URL, "serverLog=" + HttpService.UrlEncode(
 						HttpService.JSONEncode(LogService.GetLogHistory())
