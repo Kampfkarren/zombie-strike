@@ -102,15 +102,18 @@ local function hit(player, hit, index)
 							end
 
 							local damage = DAMAGE:Calculate(shot.Item, hit, position)
+							local lyingDamage
 							DataStore2("DamageDealt", player):Update(function(damageDealt)
 								return math.log10(10 ^ (damageDealt or 0) + damage)
 							end)
-							DAMAGE:Damage(humanoid, damage, player, config.CritChance)
 
-							local otherPlayer = Players:GetPlayerFromCharacter(humanoid.Parent)
-							if otherPlayer then
-								REMOTES.HitIndicator:FireClient(otherPlayer, direction, damage)
+							local damageReceivedScale = humanoid:FindFirstChild("DamageReceivedScale")
+							if damageReceivedScale then
+								lyingDamage = damage
+								damage = (1 / config.FireRate) * damageReceivedScale.Value * 100
 							end
+
+							DAMAGE:Damage(humanoid, damage, player, config.CritChance, lyingDamage)
 
 							if humanoid.Health <= 0 then
 								if hit.Name == "Head" then

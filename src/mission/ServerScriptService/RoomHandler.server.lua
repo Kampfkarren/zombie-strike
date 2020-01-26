@@ -53,7 +53,8 @@ local function start()
 		JoinTimer.Value = countdown
 		currentGamemode.Countdown(-countdown)
 
-		wait(1)
+		-- wait(1)
+		wait()
 	end
 
 	JoinTimer.Value = -4

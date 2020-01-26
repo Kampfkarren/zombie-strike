@@ -78,6 +78,13 @@ function Zombie:Spawn(position)
 		end
 	end
 
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		local damageReceivedScale = Instance.new("NumberValue")
+		damageReceivedScale.Name = "DamageReceivedScale"
+		damageReceivedScale.Value = self:GetDamageReceivedScale()
+		damageReceivedScale.Parent = humanoid
+	end
+
 	self:SetupHumanoid()
 	self:UpdateNametag()
 	self:InitializeAI()

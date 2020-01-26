@@ -11,11 +11,6 @@ class BossSamurai implements ZombieClass {
 	InitializeBossAI(room: Model) {
 		this.bossRoom = room
 	}
-
-	// TODO: Move these out into a bigger BossGamemode class?
-	GetHealth() {
-		return 100
-	}
 }
 
 export = BossSamurai

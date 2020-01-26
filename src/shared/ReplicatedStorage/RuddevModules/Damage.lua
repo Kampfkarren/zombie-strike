@@ -99,7 +99,7 @@ function DAMAGE.PlayerCanDamage(_, _, humanoid)
 	return Players:GetPlayerFromCharacter(humanoid.Parent) == nil and humanoid.Health > 0
 end
 
-function DAMAGE.Damage(_, humanoid, damage, player, critChance)
+function DAMAGE.Damage(_, humanoid, damage, player, critChance, lyingDamage)
 	if player then
 		local killTag = humanoid:FindFirstChild("KillTag")
 
@@ -132,7 +132,7 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance)
 
 		EVENTS.Damaged:Fire(humanoid, damage, player)
 
-		batchDamageNumber(player, humanoid, damage, crit)
+		batchDamageNumber(player, humanoid, lyingDamage or damage, crit)
 	end
 end
 

@@ -88,5 +88,5 @@ Players.PlayerAdded:connect(function(player)
 		end
 	end
 
-	Interval(1 / rarity.FireRate, tryFire)
+	-- Interval(1 / rarity.FireRate, tryFire)
 end)

@@ -39,6 +39,10 @@ function Boss:AfterSpawn()
 	end
 end
 
+function Boss.GetDamageReceivedScale()
+	return 0.25
+end
+
 function Boss.GetHealth()
 	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
 		return 100
