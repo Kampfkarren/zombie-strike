@@ -18,14 +18,14 @@ return {
 	{
 		Name = "4 HOURS",
 
-		Cost = 3329,
+		Cost = 2999,
 		Time = SECONDS_IN_HOUR * 4,
 	},
 
 	{
 		Name = "8 HOURS",
 
-		Cost = 6649,
+		Cost = 5499,
 		Time = SECONDS_IN_HOUR * 8,
 	},
 }
