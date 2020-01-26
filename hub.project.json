@@ -5,22 +5,22 @@
     "$className": "DataModel",
     "ReplicatedFirst": {
       "$className": "ReplicatedFirst",
-      "$path": "src/hub/ReplicatedFirst"
+      "$path": "out/hub/ReplicatedFirst"
     },
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "$path": "src/hub/ReplicatedStorage",
+      "$path": "out/hub/ReplicatedStorage",
       "Core": {
-        "$path": "src/shared/ReplicatedStorage/Core"
+        "$path": "out/shared/ReplicatedStorage/Core"
       },
       "Equipment": {
-        "$path": "src/shared/ReplicatedStorage/Equipment"
+        "$path": "out/shared/ReplicatedStorage/Equipment"
       },
       "ItemModules": {
-        "$path": "src/shared/ReplicatedStorage/ItemModules"
+        "$path": "out/shared/ReplicatedStorage/ItemModules"
       },
       "RuddevModules": {
-        "$path": "src/shared/ReplicatedStorage/RuddevModules"
+        "$path": "out/shared/ReplicatedStorage/RuddevModules"
       },
       "Vendor": {
         "$className": "Folder",
@@ -46,9 +46,9 @@
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "$path": "src/hub/ServerScriptService",
+      "$path": "out/hub/ServerScriptService",
       "Shared": {
-        "$path": "src/shared/ServerScriptService"
+        "$path": "out/shared/ServerScriptService"
       },
       "Vendor": {
         "$className": "Folder",
@@ -62,25 +62,25 @@
     },
     "StarterGui": {
       "$className": "StarterGui",
-      "$path": "src/hub/StarterGui",
+      "$path": "out/hub/StarterGui",
       "RuddevGui": {
-        "$path": "src/shared/StarterGui/RuddevGui"
+        "$path": "out/shared/StarterGui/RuddevGui"
       }
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
-        "$path": "src/hub/StarterPlayer/StarterCharacterScripts",
+        "$path": "out/hub/StarterPlayer/StarterCharacterScripts",
         "Shared": {
-          "$path": "src/shared/StarterPlayer/StarterCharacterScripts"
+          "$path": "out/shared/StarterPlayer/StarterCharacterScripts"
         }
       },
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
-        "$path": "src/hub/StarterPlayer/StarterPlayerScripts",
+        "$path": "out/hub/StarterPlayer/StarterPlayerScripts",
         "Shared": {
-          "$path": "src/shared/StarterPlayer/StarterPlayerScripts"
+          "$path": "out/shared/StarterPlayer/StarterPlayerScripts"
         }
       }
     }
