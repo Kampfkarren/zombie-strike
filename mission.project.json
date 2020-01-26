@@ -5,22 +5,22 @@
     "$className": "DataModel",
     "ReplicatedFirst": {
       "$className": "ReplicatedFirst",
-      "$path": "mission/ReplicatedFirst"
+      "$path": "src/mission/ReplicatedFirst"
     },
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "$path": "mission/ReplicatedStorage",
+      "$path": "src/mission/ReplicatedStorage",
       "Core": {
-        "$path": "shared/ReplicatedStorage/Core"
+        "$path": "src/shared/ReplicatedStorage/Core"
       },
       "Equipment": {
-        "$path": "shared/ReplicatedStorage/Equipment"
+        "$path": "src/shared/ReplicatedStorage/Equipment"
       },
       "ItemModules": {
-        "$path": "shared/ReplicatedStorage/ItemModules"
+        "$path": "src/shared/ReplicatedStorage/ItemModules"
       },
       "RuddevModules": {
-        "$path": "shared/ReplicatedStorage/RuddevModules"
+        "$path": "src/shared/ReplicatedStorage/RuddevModules"
       },
       "Vendor": {
         "$className": "Folder",
@@ -36,13 +36,19 @@
         "t": {
           "$path": "vendor/t/lib"
         }
+      },
+      "rbxts_include": {
+        "$path": "ts_include",
+        "node_modules": {
+          "$path": "node_modules/@rbxts"
+        }
       }
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "$path": "mission/ServerScriptService",
+      "$path": "src/mission/ServerScriptService",
       "Shared": {
-        "$path": "shared/ServerScriptService"
+        "$path": "src/shared/ServerScriptService"
       },
       "Vendor": {
         "$className": "Folder",
@@ -56,25 +62,25 @@
     },
     "StarterGui": {
       "$className": "StarterGui",
-      "$path": "mission/StarterGui",
+      "$path": "src/mission/StarterGui",
       "RuddevGui": {
-        "$path": "shared/StarterGui/RuddevGui"
+        "$path": "src/shared/StarterGui/RuddevGui"
       }
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
-        "$path": "mission/StarterPlayer/StarterCharacterScripts",
+        "$path": "src/mission/StarterPlayer/StarterCharacterScripts",
         "Shared": {
-          "$path": "shared/StarterPlayer/StarterCharacterScripts"
+          "$path": "src/shared/StarterPlayer/StarterCharacterScripts"
         }
       },
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
-        "$path": "mission/StarterPlayer/StarterPlayerScripts",
+        "$path": "src/mission/StarterPlayer/StarterPlayerScripts",
         "Shared": {
-          "$path": "shared/StarterPlayer/StarterPlayerScripts"
+          "$path": "src/shared/StarterPlayer/StarterPlayerScripts"
         }
       }
     }
