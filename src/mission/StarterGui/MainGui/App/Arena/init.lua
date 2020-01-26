@@ -4,9 +4,7 @@ local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local EquipmentInfo = require(ReplicatedStorage.Core.UI.Components.EquipmentInfo)
 local EquipmentUtil = require(ReplicatedStorage.Core.EquipmentUtil)
 local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
-local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
-local LivesText = require(ReplicatedStorage.Libraries.LivesText)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
@@ -24,24 +22,6 @@ function Arena:init()
 		currentWave = 0,
 		waveOpen = false,
 	})
-
-	FastSpawn(function()
-		if Dungeon.GetDungeonData("Gamemode") ~= "Arena" then
-			return
-		end
-
-		local arenaLives = ReplicatedStorage:WaitForChild("Lives")
-
-		self:setState({
-			lives = arenaLives.Value,
-		})
-
-		arenaLives.Changed:connect(function(lives)
-			self:setState({
-				lives = lives,
-			})
-		end)
-	end)
 end
 
 function Arena:didUpdate(_, previousState)
@@ -76,20 +56,6 @@ function Arena:render()
 
 		event = ArenaRemotes.NewWave.OnClientEvent,
 	})
-
-	if self.state.lives then
-		children.Lives = e("TextLabel", {
-			AnchorPoint = Vector2.new(0, 1),
-			BackgroundTransparency = 1,
-			Font = Enum.Font.Gotham,
-			Position = UDim2.fromScale(0.01, 0.99),
-			Size = UDim2.fromScale(0.4, 0.1),
-			Text = LivesText(self.state.lives),
-			TextColor3 = Color3.new(1, 0.6, 1),
-			TextScaled = true,
-			TextXAlignment = Enum.TextXAlignment.Left,
-		})
-	end
 
 	if self.state.waveOpen then
 		children.NewWaveText = e("TextLabel", {
