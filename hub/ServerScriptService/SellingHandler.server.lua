@@ -22,7 +22,10 @@ ReplicatedStorage.Remotes.Sell.OnServerEvent:connect(function(player, uuid)
 		local equipped = {}
 
 		for equippable in pairs(Data.Equippable) do
-			equipped[Data.GetPlayerData(player, "Equipped" .. equippable)] = true
+			local equippedItem = Data.GetPlayerData(player, "Equipped" .. equippable)
+			if equippedItem then
+				equipped[equippedItem] = true
+			end
 		end
 
 		for index, item in ipairs(inventory) do
