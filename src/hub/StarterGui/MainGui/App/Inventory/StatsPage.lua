@@ -121,7 +121,7 @@ local function StatsPage()
 				Render = function(value)
 					return e(Stat, {
 						LayoutOrder = 6,
-						Name = "Legendaries Owned",
+						Name = "Legendaries Obtained",
 						Value = value,
 					})
 				end,
