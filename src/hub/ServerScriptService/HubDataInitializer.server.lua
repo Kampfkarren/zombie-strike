@@ -91,6 +91,7 @@ Players.PlayerAdded:connect(function(player)
 
 	initStat(player, "DamageDealt", playerData)
 	initStat(player, "DungeonsPlayed", playerData)
+	initStat(player, "LegendariesObtained", playerData)
 	initStat(player, "LootEarned", playerData)
 	initStat(player, "RoomsCleared", playerData)
 	initStat(player, "ZombiesKilled", playerData)
