@@ -238,24 +238,8 @@ local function getBossSequence()
 end
 
 local function spawnBoss(position, room)
-	local BossSequence = getBossSequence()
-
-	local bossZombie = Zombie.new("Boss", Dungeon.GetDungeonData("DifficultyInfo").MinLevel)
-
-	local model = bossZombie:Spawn(position)
-	model:FindFirstChildOfClass("Humanoid").Died:connect(function()
-		for _, player in pairs(Players:GetPlayers()) do
-			if player.Character then
-				Instance.new("ForceField").Parent = player.Character
-			end
-		end
-	end)
+	local bossZombie = Gamemode.SpawnBoss(getBossSequence(), position, room)
 	bossZombie.Died:connect(endMission)
-	BossSequence.Start(model):await()
-
-	bossZombie:InitializeBossAI(room)
-
-	return bossZombie
 end
 
 function Standard.Init()

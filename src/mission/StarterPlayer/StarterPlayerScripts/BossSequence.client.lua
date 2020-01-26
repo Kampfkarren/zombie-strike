@@ -10,7 +10,14 @@ local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local MainGui = PlayerGui:WaitForChild("MainGui")
 local RuddevGui = PlayerGui:WaitForChild("RuddevGui")
 
-local Sequence = require(ReplicatedStorage.BossSequences[Dungeon.GetDungeonData("Campaign")])
+local sequenceName
+if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	sequenceName = Dungeon.GetDungeonData("BossInfo").RoomName
+else
+	sequenceName = Dungeon.GetDungeonData("Campaign")
+end
+
+local Sequence = require(ReplicatedStorage.BossSequences[sequenceName])
 
 local assets = {}
 

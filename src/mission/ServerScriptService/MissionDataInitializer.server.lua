@@ -98,4 +98,6 @@ local gamemode = Dungeon.GetDungeonData("Gamemode")
 clientDungeonKey("Gamemode", "StringValue")(gamemode)
 if gamemode == "Mission" then
 	clientDungeonKey("Hardcore", "BoolValue")(Dungeon.GetDungeonData("Hardcore"))
+elseif gamemode == "Boss" then
+	clientDungeonKey("Boss")(Dungeon.GetDungeonData("Boss"))
 end

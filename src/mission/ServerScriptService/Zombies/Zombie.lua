@@ -1,5 +1,4 @@
 local Debris = game:GetService("Debris")
-local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -13,13 +12,11 @@ local Buffs = require(ServerScriptService.Libraries.Buffs)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local ExperienceUtil = require(ServerScriptService.Libraries.ExperienceUtil)
-local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local MapNumbers = require(ReplicatedStorage.Core.MapNumbers)
 local Nametag = require(ServerScriptService.Shared.Nametag)
 local OnDied = require(ReplicatedStorage.Core.OnDied)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
-local XP = require(ReplicatedStorage.Core.XP)
 
 local AMOUNT_FOR_NOT_BOSS = 0.7
 local DEBUG = true
@@ -492,7 +489,15 @@ end
 -- END SOUNDS
 
 function Zombie:GetModel()
-	return ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")][self.Model]:Clone()
+	local folder
+
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		folder = ServerStorage.Zombies[Dungeon.GetDungeonData("BossInfo").RoomName]
+	else
+		folder = ServerStorage.Zombies[Dungeon.GetDungeonData("Campaign")]
+	end
+
+	return folder[self.Model]:Clone()
 end
 
 function Zombie.new(zombieType, level, ...)

@@ -19,7 +19,6 @@ local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
-local OnDied = require(ReplicatedStorage.Core.OnDied)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local ArenaRemotes = ReplicatedStorage.Remotes.Arena
@@ -83,34 +82,6 @@ local function spawnZombie(zombieSpawns, level)
 	end)
 
 	return zombie
-end
-
-local function initiateLives()
-	local livesValue = Instance.new("NumberValue")
-	livesValue.Name = "ArenaLives"
-	livesValue.Value = ArenaConstants.Lives
-	livesValue.Parent = ReplicatedStorage
-
-	local function hookCharacter(character)
-		OnDied(character.Humanoid):connect(function()
-			RunService.Heartbeat:wait()
-			livesValue.Value = math.max(0, livesValue.Value - 1)
-		end)
-	end
-
-	local function hookPlayer(player)
-		if player.Character then
-			hookCharacter(player.Character)
-		end
-
-		player.CharacterAdded:connect(hookCharacter)
-	end
-
-	for _, player in pairs(Players:GetPlayers()) do
-		hookPlayer(player)
-	end
-
-	Players.PlayerAdded:connect(hookPlayer)
 end
 
 function Arena.Init()
@@ -226,8 +197,6 @@ function Arena.Init()
 			startWave()
 		end)
 	end)
-
-	initiateLives()
 
 	return {
 		Countdown = function(timer)

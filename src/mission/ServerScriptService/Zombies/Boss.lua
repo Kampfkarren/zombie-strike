@@ -9,9 +9,17 @@ local AMOUNT_FOR_BOSS = 0.3
 local Boss = {}
 Boss.__index = Boss
 
+local function getIdentifier()
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		return Dungeon.GetDungeonData("BossInfo").RoomName
+	else
+		return Dungeon.GetDungeonData("Campaign")
+	end
+end
+
 function Boss.new(level)
 	local derivative = Zombie.new(
-		"Boss" .. Dungeon.GetDungeonData("Campaign"),
+		"Boss" .. getIdentifier(),
 		level
 	)
 
@@ -32,7 +40,11 @@ function Boss:AfterSpawn()
 end
 
 function Boss.GetHealth()
-	return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Health
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		return 100
+	else
+		return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Health
+	end
 end
 
 function Boss.GetSpeed()

@@ -19,7 +19,7 @@ local START_SPECTATE_TIME = 1
 local MIN_COINS = 50
 
 local characterAdded
-local gamemode = Dungeon.GetDungeonData("Gamemode")
+local gamemodeInfo = Dungeon.GetGamemodeInfo()
 
 local function hardcoreDeath()
 	local total = 0
@@ -98,7 +98,7 @@ local function respawningDeath(shiftAmount)
 	LocalPlayer.PlayerGui.RuddevGui.Enabled = true
 end
 
-if gamemode == "Mission" then
+if gamemodeInfo.Lives == nil then
 	if Dungeon.GetDungeonData("Hardcore") then
 		characterAdded = function(character)
 			OnDied(character:WaitForChild("Humanoid")):wait()
@@ -119,21 +119,21 @@ if gamemode == "Mission" then
 			end)
 		end
 	end
-elseif gamemode == "Arena" then
-	local arenaLives = ReplicatedStorage.ArenaLives
+else
+	local lives = ReplicatedStorage.Lives
 
 	characterAdded = function(character)
 		OnDied(character:WaitForChild("Humanoid")):connect(function()
-			if arenaLives.Value == 0 then
+			if lives.Value == 0 then
 				hardcoreDeath()
 			else
 				GoldLoss.TextColor3 = Color3.new(1, 0.6, 1)
-				GoldLoss.Text = LivesText(arenaLives.Value)
+				GoldLoss.Text = LivesText(lives.Value)
 
 				respawningDeath(function()
-					GoldLoss.Text = LivesText(arenaLives.Value)
+					GoldLoss.Text = LivesText(lives.Value)
 
-					if arenaLives.Value == 0 then
+					if lives.Value == 0 then
 						FastSpawn(hardcoreDeath)
 					end
 

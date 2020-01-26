@@ -30,7 +30,7 @@ function Arena:init()
 			return
 		end
 
-		local arenaLives = ReplicatedStorage:WaitForChild("ArenaLives")
+		local arenaLives = ReplicatedStorage:WaitForChild("Lives")
 
 		self:setState({
 			lives = arenaLives.Value,

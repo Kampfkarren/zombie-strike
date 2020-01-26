@@ -2,6 +2,7 @@ local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local Bosses = require(ReplicatedStorage.Core.Bosses)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local MockDungeon = require(ReplicatedStorage.Core.MockData.MockDungeon)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -80,6 +81,8 @@ function Dungeon.GetDungeonData(key)
 		return Campaigns[Dungeon.GetDungeonData("Campaign")]
 	elseif key == "DifficultyInfo" then
 		return Dungeon.GetDungeonData("CampaignInfo").Difficulties[Dungeon.GetDungeonData("Difficulty")]
+	elseif key == "BossInfo" then
+		return assert(Bosses[Dungeon.GetDungeonData("Boss")], "No boss")
 	else
 		local success, result = Dungeon.GetDungeonTable():await()
 		assert(success, result)
@@ -89,6 +92,10 @@ function Dungeon.GetDungeonData(key)
 end
 
 Dungeon.GetDungeonDataAsync = Promise.promisify(Dungeon.GetDungeonData)
+
+function Dungeon.GetGamemodeInfo()
+	return require(ReplicatedStorage.GamemodeInfo[Dungeon.GetDungeonData("Gamemode")])
+end
 
 function Dungeon.RNGZombieLevel()
 	local difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")

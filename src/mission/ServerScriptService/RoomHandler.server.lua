@@ -1,26 +1,49 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
+local OnDied = require(ReplicatedStorage.Core.OnDied)
 
 local JoinTimer = ReplicatedStorage.JoinTimer
 
 DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP", "DungeonsPlayed")
 
 local gamemode = Dungeon.GetDungeonData("Gamemode")
+local gamemodeInfo = Dungeon.GetGamemodeInfo()
 
 local currentGamemode
-if gamemode == "Arena" then
-	currentGamemode = require(ServerScriptService.Gamemodes.Arena).Init()
-else
+if gamemode == "Mission" then
 	currentGamemode = require(ServerScriptService.Gamemodes.Standard).Init()
+else
+	currentGamemode = require(ServerScriptService.Gamemodes[gamemode]).Init()
 end
 
 local started = 0
 local startedCountdown = false
+
+local livesValue = Instance.new("NumberValue")
+livesValue.Name = "Lives"
+livesValue.Value = gamemodeInfo.Lives
+livesValue.Parent = ReplicatedStorage
+
+local function hookCharacter(character)
+	OnDied(character.Humanoid):connect(function()
+		RunService.Heartbeat:wait()
+		livesValue.Value = math.max(0, livesValue.Value - 1)
+	end)
+end
+
+local function hookPlayerLives(player)
+	if player.Character then
+		hookCharacter(player.Character)
+	end
+
+	player.CharacterAdded:connect(hookCharacter)
+end
 
 local function start()
 	if started == 2 then return end
@@ -34,6 +57,7 @@ local function start()
 	end
 
 	JoinTimer.Value = -4
+	currentGamemode.Countdown(0)
 
 	local playMusicFlag = Instance.new("Model")
 	playMusicFlag.Name = "PlayMissionMusic"
@@ -69,6 +93,8 @@ local function playerAdded(player)
 
 	checkCharacterCount()
 	player.CharacterAdded:connect(checkCharacterCount)
+
+	hookPlayerLives(player)
 
 	if not startedCountdown then
 		startedCountdown = true

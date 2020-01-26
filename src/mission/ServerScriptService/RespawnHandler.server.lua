@@ -13,9 +13,13 @@ local PlaceIds = require(ReplicatedStorage.Core.PlaceIds)
 local goldScales = {}
 
 local function noRespawns()
-	local gamemode = Dungeon.GetDungeonData("Gamemode")
-	return (gamemode == "Mission" and Dungeon.GetDungeonData("Hardcore"))
-		or (gamemode == "Arena" and ReplicatedStorage:WaitForChild("ArenaLives").Value == 0)
+	local gamemodeInfo = Dungeon.GetGamemodeInfo()
+
+	if gamemodeInfo.Lives ~= nil then
+		return ReplicatedStorage:WaitForChild("Lives").Value == 0
+	else
+		return Dungeon.GetDungeonData("Hardcore")
+	end
 end
 
 ReplicatedStorage.Remotes.RespawnMe.OnServerInvoke = function(player)

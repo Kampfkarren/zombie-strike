@@ -1,7 +1,6 @@
 return {
 	LevelStep = 20,
 	MaxLevel = 200,
-	Lives = 10,
 
 	BannedZombies = {
 		Bomber = true,
