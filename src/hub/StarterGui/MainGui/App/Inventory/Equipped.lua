@@ -91,6 +91,8 @@ function Equipped:render()
 			Square = true,
 			Size = props.Size or UDim2.fromScale(0.95, 0.9),
 			Square = not props.Rectangle,
+
+			[Roact.Event.Activated] = self.unequip,
 		}, {
 			UIAspectRatioConstraint = aspectRatioConstraint,
 			Preview = preview,

@@ -1,13 +1,18 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 
 local OpenEgg = ReplicatedStorage.Remotes.OpenEgg
+local UnequipPet = ReplicatedStorage.Remotes.UnequipPet
 local UpdatePetCoins = ReplicatedStorage.Remotes.UpdatePetCoins
+
+DataStore2.Combine("DATA", "EquippedPet")
 
 local rng = Random.new()
 
@@ -80,4 +85,8 @@ OpenEgg.OnServerEvent:connect(function(player)
 
 	OpenEgg:FireClient(player, model, rarity)
 	coinsStore:Increment(-PetsDictionary.EggCost)
+end)
+
+UnequipPet.OnServerEvent:connect(function(player)
+	DataStore2("EquippedPet", player):Set(nil)
 end)

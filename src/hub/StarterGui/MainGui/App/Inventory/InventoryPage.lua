@@ -72,6 +72,11 @@ function InventoryPage:init()
 		end
 	end
 
+	self.unequipPet = function()
+		print("who?")
+		ReplicatedStorage.Remotes.UnequipPet:FireServer()
+	end
+
 	self.noop = function() end
 end
 
@@ -190,6 +195,7 @@ function InventoryPage:render()
 					LayoutOrder = 2,
 					Key = "Pet",
 					Name = "PET",
+					Unequip = self.unequipPet,
 				}),
 			}),
 
