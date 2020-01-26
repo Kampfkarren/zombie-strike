@@ -37,7 +37,6 @@ Players.PlayerAdded:connect(function(player)
 	local rarity = assert(PetsDictionary.Rarities[rarityIndex], "rarity does not exist")
 
 	local function tryFire()
-		-- PetFire:FireAllClients(player.Character, pet)
 		local character = player.Character
 
 		if character then
@@ -88,5 +87,5 @@ Players.PlayerAdded:connect(function(player)
 		end
 	end
 
-	-- Interval(1 / rarity.FireRate, tryFire)
+	Interval(1 / rarity.FireRate, tryFire)
 end)
