@@ -165,6 +165,10 @@ function Zombie:InitializeAI()
 	end)
 end
 
+local function isViableAggroTarget(player)
+	return player.Character and player.Character.Humanoid.Health > 0
+end
+
 function Zombie:Wander()
 	if not self.defaultAiInitialized then return end
 	self.aggroTick = self.aggroTick + 1
@@ -197,7 +201,7 @@ function Zombie:Wander()
 		while self.wandering do
 			for _, player in pairs(Players:GetPlayers()) do
 				local character = player.Character
-				if character and character.Humanoid.Health > 0 then
+				if isViableAggroTarget(player) then
 					if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude
 						<= Dungeon.GetDungeonData("CampaignInfo").AIAggroRange
 					then
@@ -211,7 +215,6 @@ function Zombie:Wander()
 	end)
 end
 
--- AGGRO
 function Zombie:AIShouldMove(ourTick)
 	return self.alive
 		and self.aggroTick == ourTick
@@ -305,7 +308,6 @@ function Zombie:AssignAggroFocus(force)
 	self:Debug("AssignAggroFocus: All players have died")
 	self:Wander()
 end
--- END AGGRO
 
 function Zombie:CheckAttack()
 	if self.alive and
