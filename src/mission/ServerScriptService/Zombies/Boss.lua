@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
@@ -40,7 +41,21 @@ function Boss:AfterSpawn()
 end
 
 function Boss.GetDamageReceivedScale()
-	return 0.0037
+	-- Balanced around:
+	-- f(1) = 0.0055
+	-- f(2) = 0.0037
+	-- 3 and 4 UNTESTED
+	local playerCount = #Players:GetPlayers()
+
+	if playerCount == 1 then
+		return 0.0055
+	elseif playerCount == 2 then
+		return 0.0037
+	elseif playerCount == 3 then
+		return 0.0019
+	elseif playerCount == 4 then
+		return 0.0015
+	end
 end
 
 function Boss.GetHealth()
