@@ -45,6 +45,7 @@ function Boss.GetDamageReceivedScale()
 	-- f(1) = 0.0055
 	-- f(2) = 0.0037
 	-- 3 and 4 UNTESTED
+	if true then return 1 end
 	local playerCount = #Players:GetPlayers()
 
 	if playerCount == 1 then
@@ -73,11 +74,7 @@ function Boss.GetSpeed()
 end
 
 function Boss.GetXP()
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
-		return 0 -- TODO
-	else
-		return Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
-	end
+	return Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
 end
 
 function Boss:UpdateNametag()

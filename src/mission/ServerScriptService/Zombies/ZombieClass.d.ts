@@ -5,6 +5,7 @@ export interface ZombieClass {
 	Died: RBXScriptSignal
 
 	AfterSpawn: () => void
+	GiveXP: () => void
 	InitializeAI: () => void
 }
 

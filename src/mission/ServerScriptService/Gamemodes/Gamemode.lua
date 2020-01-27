@@ -10,6 +10,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
+local GetAvailableMissions = require(ReplicatedStorage.Core.GetAvailableMissions)
 local GiveQuest = ServerStorage.Events.GiveQuest
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -68,10 +69,27 @@ function Gamemode.EndMission()
 			end),
 
 			Promise.async(function(resolve)
-				local difficulty = Dungeon.GetDungeonData("DifficultyInfo")
-
 				local goldScale = player.PlayerData.GoldScale.Value
 				local xpScale = player.PlayerData.XPScale.Value
+
+				local difficulty
+
+				if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+					local missions = GetAvailableMissions(player)
+					local earlierMission
+
+					for index = 2, 0, -1 do
+						local nearbyMission = missions[#missions - index]
+						if nearbyMission then
+							earlierMission = nearbyMission
+							break
+						end
+					end
+
+					difficulty = earlierMission
+				else
+					difficulty = Dungeon.GetDungeonData("DifficultyInfo")
+				end
 
 				local xp = math.floor(difficulty.XP * xpScale)
 				local gold = math.floor(difficulty.Gold * goldScale)
@@ -180,5 +198,7 @@ function Gamemode.SpawnZombie(zombieType, level, position)
 	zombie:Spawn(position)
 	return zombie
 end
+
+ServerStorage.Events.EndDungeon.Event:connect(Gamemode.EndMission)
 
 return Gamemode

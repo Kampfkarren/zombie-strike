@@ -1,6 +1,8 @@
-import { ReplicatedStorage } from "@rbxts/services"
+import { Players, ReplicatedStorage } from "@rbxts/services"
 import { BossClass, ZombieClass } from "./ZombieClass"
+import ExperienceUtil from "mission/ServerScriptService/Libraries/ExperienceUtil"
 import Interval from "shared/ReplicatedStorage/Core/Interval"
+import GetAvailableMissions from "shared/ReplicatedStorage/Core/GetAvailableMissions"
 import TakeDamage from "shared/ServerScriptService/TakeDamage"
 import Zombie from "./Zombie"
 
@@ -40,6 +42,23 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 		})
 
 		this.NextPhase()
+	}
+
+	GiveXP(this: ZombieClass) {
+		for (const player of Players.GetPlayers()) {
+			const missions = GetAvailableMissions(player)
+			let earlierMission = missions[0]
+
+			for (let index = 3; index >= 1; index--) {
+				const nearbyMission = missions[missions.size() - index]
+				if (nearbyMission !== undefined) {
+					earlierMission = nearbyMission
+					break
+				}
+			}
+
+			ExperienceUtil.GivePlayerXP(player, earlierMission.XP, this.instance.PrimaryPart)
+		}
 	}
 
 	NextPhase() {

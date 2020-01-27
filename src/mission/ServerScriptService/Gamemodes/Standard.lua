@@ -117,8 +117,6 @@ local function generateDungeon(roomModels, numRooms)
 	return rooms
 end
 
-ServerStorage.Events.EndDungeon.Event:connect(Gamemode.EndMission)
-
 local function getBossSequence()
 	return require(ReplicatedStorage.BossSequences[Dungeon.GetDungeonData("Campaign")])
 end
