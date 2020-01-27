@@ -1,5 +1,13 @@
+export type GamemodeReward = {
+	GamemodeLoot: true,
+} & ({
+	Type: "Brains",
+	Brains: number,
+})
+
 export declare interface Gamemode {
 	Countdown(this: void, time: number): void
+	GenerateLootItem?: (this: void, player: Player) => GamemodeReward | undefined
 }
 
 export declare interface GamemodeInfo {

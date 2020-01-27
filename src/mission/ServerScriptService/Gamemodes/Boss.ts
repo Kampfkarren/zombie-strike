@@ -1,7 +1,8 @@
 import { Players, ReplicatedStorage, ServerScriptService, ServerStorage, StarterPlayer, Workspace } from "@rbxts/services"
+import Data from "shared/ReplicatedStorage/Core/Data"
 import Dungeon from "mission/ReplicatedStorage/Libraries/Dungeon"
 import DungeonState from "mission/ServerScriptService/DungeonState"
-import { Gamemode as GamemodeType, GamemodeConstructor } from "mission/ReplicatedStorage/GamemodeInfo/Gamemode"
+import { Gamemode as GamemodeType, GamemodeConstructor, GamemodeReward } from "mission/ReplicatedStorage/GamemodeInfo/Gamemode"
 import Gamemode from "./Gamemode"
 
 const bossInfo = Dungeon.GetDungeonData("BossInfo")
@@ -45,6 +46,22 @@ const BossConstructor: GamemodeConstructor = {
 					boss.Died.Connect(Gamemode.EndMission)
 				}
 			},
+
+			GenerateLootItem(this: void, player: Player): GamemodeReward | undefined {
+				// This method sucks, if a player plays a boss, doesn't play for a while,
+				// and comes back and it's the same boss, then they won't get brains.
+				const [lastDefeatedBoss, lastDefeatedBossStore] = Data.GetPlayerData(player, "LastDefeatedBoss")
+				if (lastDefeatedBoss !== bossInfo.RoomName) {
+					lastDefeatedBossStore.Set(bossInfo.RoomName)
+					return {
+						GamemodeLoot: true,
+						Type: "Brains",
+						Brains: 100,
+					}
+				} else {
+					return undefined
+				}
+			}
 		}
 	},
 }

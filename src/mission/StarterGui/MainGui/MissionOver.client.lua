@@ -35,6 +35,13 @@ local FULL_TIME_GOLD = 250
 local FULL_TIME_XP = 2000
 local REVEAL_ANIMATE_INTERVAL = 1
 
+local GAMEMODE_LOOT_STYLES = {
+	Brains = {
+		BackgroundColor = Color3.fromRGB(253, 121, 168),
+		Type = "Brains",
+	},
+}
+
 local wordTweenIn = {
 	TweenInfo.new(2, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out),
 	{ Position = UDim2.new(0.5, 0, 0.5, 0) },
@@ -131,7 +138,7 @@ CollectionService:GetInstanceAddedSignal("Boss"):connect(function(boss)
 	end)
 end)
 
-ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, gold)
+ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, gold, gamemodeLoot)
 	local clearTime = time()
 	LootResults.Minor.ClearTime.Text = ("%d:%02d"):format(math.floor(clearTime / 60), clearTime % 60)
 
@@ -170,7 +177,7 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	local revealTemplate = LootContents.RevealTemplate:Clone()
 	LootContents.RevealTemplate:Destroy()
 
-	if #loot == 0 then
+	if #loot == 0 and not gamemodeLoot then
 		LootContents.InventoryFull.Visible = true
 	end
 
@@ -182,7 +189,26 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 	local revealButtons = {}
 	local revealed = 0
 
-	local amountOfLoot = #loot
+	local amountOfLoot = #loot + #(gamemodeLoot or {})
+
+	local function lootRevealed()
+		local sound = SoundService.SFX.Reveal:Clone()
+		sound.PlayOnRemove = true
+		sound.Parent = SoundService
+		sound:Destroy()
+
+		revealed = revealed + 1
+
+		if revealed == amountOfLoot then
+			for timer = 10, 1, -1 do
+				LootResults.Minor.Leave.Label.Text = "LEAVE (" .. timer .. ")"
+				wait(1)
+			end
+
+			LootResults.Minor.Leave.Label.Text = "LEAVING..."
+			leave()
+		end
+	end
 
 	for index, loot in pairs(loot) do
 		local revealButton = revealTemplate:Clone()
@@ -226,22 +252,49 @@ ReplicatedStorage.Remotes.MissionOver.OnClientEvent:connect(function(loot, xp, g
 			lootButton.Parent = LootContents
 			hover()
 
-			local sound = SoundService.SFX.Reveal:Clone()
-			sound.PlayOnRemove = true
-			sound.Parent = SoundService
-			sound:Destroy()
+			lootRevealed()
+		end)
 
-			revealed = revealed + 1
+		revealButton.Parent = LootContents
+		table.insert(revealButtons, revealButton)
+	end
 
-			if revealed == amountOfLoot then
-				for timer = 10, 1, -1 do
-					LootResults.Minor.Leave.Label.Text = "LEAVE (" .. timer .. ")"
-					wait(1)
-				end
+	for index, item in pairs(gamemodeLoot or {}) do
+		local revealButton = revealTemplate:Clone()
+		revealButton.LayoutOrder = #loot + index
 
-				LootResults.Minor.Leave.Label.Text = "LEAVING..."
-				leave()
+		-- if only there was some gui framework that made it easy
+		-- to make components. oh well. guess it doesnt exist.
+		-- time to do this the stupid baby goo goo way.
+		revealButton.MouseButton1Click:connect(function()
+			local style = GAMEMODE_LOOT_STYLES[item.Type]
+
+			local lootButton = itemTemplate:Clone()
+			lootButton.LayoutOrder = index
+
+			lootButton.BackgroundColor3 = style.BackgroundColor
+			lootButton.Rarity.Text = style.Type
+
+			local lootName
+
+			if item.Type == "Brains" then
+				lootName = item.Brains .. " 🧠"
+
+				local textLabel = Instance.new("TextLabel")
+				textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+				textLabel.BackgroundTransparency = 1
+				textLabel.Position = UDim2.fromScale(0.5, 0.5)
+				textLabel.Size = UDim2.fromScale(0.95, 0.95)
+				textLabel.Text = "🧠"
+				textLabel.TextScaled = true
+				textLabel.Parent = lootButton.ViewportFrame
 			end
+
+			lootButton.GunName.Text = lootName
+
+			revealButton:Destroy()
+			lootButton.Parent = LootContents
+			lootRevealed()
 		end)
 
 		revealButton.Parent = LootContents

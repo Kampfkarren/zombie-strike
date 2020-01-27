@@ -39,7 +39,7 @@ end)
 function Gamemode.EndMission()
 	for _, player in pairs(Players:GetPlayers()) do
 		Promise.all({
-			GenerateLoot.GenerateSet(player):andThen(function(loot)
+			GenerateLoot.GenerateSet(player):andThen(function(loot, gamemodeLoot)
 				return Promise.async(function(resolve)
 					-- TODO: UpdateAsync
 					DataStore2("Inventory", player):Update(function(inventory)
@@ -53,7 +53,7 @@ function Gamemode.EndMission()
 					-- GenerateLoot.GenerateSet sets the last legendary to 0 if it gets one
 					DataStore2("DungeonsSinceLastLegendary", player):Increment(1, 0)
 
-					resolve(Loot.SerializeTable(loot))
+					resolve({ Loot.SerializeTable(loot), gamemodeLoot })
 				end):tap(function()
 					return Promise.async(function(resolve)
 						DataStore2("DungeonsPlayed", player):Increment(1, 0)
@@ -139,13 +139,17 @@ function Gamemode.EndMission()
 
 			DataStore2.SaveAllAsync(player)
 
-			local loot, xp, gold = data[1], data[2][1], data[2][2]
+			local loot, gamemodeLoot, xp, gold = data[1][1], data[1][2], data[2][1], data[2][2]
+			if #gamemodeLoot == 0 then
+				gamemodeLoot = nil
+			end
 
 			ReplicatedStorage.Remotes.MissionOver:FireClient(
 				player,
 				loot,
 				xp,
-				gold
+				gold,
+				gamemodeLoot
 			)
 		end)
 	end

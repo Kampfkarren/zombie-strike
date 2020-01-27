@@ -45,7 +45,6 @@ function Boss.GetDamageReceivedScale()
 	-- f(1) = 0.0055
 	-- f(2) = 0.0037
 	-- 3 and 4 UNTESTED
-	if true then return 1 end
 	local playerCount = #Players:GetPlayers()
 
 	if playerCount == 1 then

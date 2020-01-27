@@ -7,6 +7,7 @@ local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local DungeonState = require(ServerScriptService.DungeonState)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
@@ -41,7 +42,7 @@ local RARITY_PERCENTAGES_LEGENDARY = {
 	{ 39, 1 },
 }
 
-DataStore2.Combine("DATA", "LegendariesObtained")
+DataStore2.Combine("DATA", "Brains", "LegendariesObtained")
 
 local function getLegendaryChance(dungeonsSinceLast)
 	local s = PITY_TIMER_BASE
@@ -214,6 +215,15 @@ local function getLootRarity(player)
 end
 
 local function generateLootItem(player)
+	-- First, see if the gamemode has anything it wants to give
+	local generateGamemodeLoot = DungeonState.CurrentGamemode.GenerateLootItem
+	if generateGamemodeLoot then
+		local gamemodeLoot = generateGamemodeLoot(player)
+		if gamemodeLoot then
+			return gamemodeLoot
+		end
+	end
+
 	local rng = Random.new()
 	local level = getLootLevel(player)
 	local rarity = getLootRarity(player)
@@ -299,19 +309,29 @@ local function generateLoot(player)
 			local _, dungeonsSinceLastStore = Data.GetPlayerData(player, "DungeonsSinceLastLegendary")
 
 			local lootTable = {}
+			local gamemodeLoot = {}
 
 			for _ = 1, amount do
 				local lootItem = generateLootItem(player)
-				if lootItem.Rarity == 5 then
-					-- Multiple items game pass shouldn't mean multiple legendaries
-					dungeonsSinceLastStore:Set(0)
-					DataStore2("LegendariesObtained", player):IncrementAsync(1, 0)
-				end
 
-				table.insert(lootTable, lootItem)
+				if lootItem.GamemodeLoot then
+					if lootItem.Type == "Brains" then
+						DataStore2("Brains", player):Increment(lootItem.Brains, 0)
+					end
+
+					table.insert(gamemodeLoot, lootItem)
+				else
+					if lootItem.Rarity == 5 then
+						-- Multiple items game pass shouldn't mean multiple legendaries
+						dungeonsSinceLastStore:Set(0)
+						DataStore2("LegendariesObtained", player):IncrementAsync(1, 0)
+					end
+
+					table.insert(lootTable, lootItem)
+				end
 			end
 
-			resolve(lootTable)
+			resolve(lootTable, gamemodeLoot)
 		end)
 	end)
 end

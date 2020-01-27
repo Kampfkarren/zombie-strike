@@ -5,6 +5,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local DungeonState = require(ServerScriptService.DungeonState)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local OnDied = require(ReplicatedStorage.Core.OnDied)
 
@@ -21,6 +22,8 @@ if gamemode == "Mission" then
 else
 	currentGamemode = require(ServerScriptService.Gamemodes[gamemode]).Init()
 end
+
+DungeonState.CurrentGamemode = currentGamemode
 
 local started = 0
 local startedCountdown = false
