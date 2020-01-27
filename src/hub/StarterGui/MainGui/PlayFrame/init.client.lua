@@ -140,7 +140,6 @@ do
 
 		local lobbyInfo = cloneAndDestroy(LobbyInfo.Inner)
 
-		lobbyInfo.MapImage.Image = campaign.Image
 		lobbyInfo.MapImage.Hardcore.Visible = lobby.Hardcore
 
 		lobbyInfo.User.Username.Text = lobby.Owner.Name
@@ -150,12 +149,24 @@ do
 			end
 		end)
 
-		lobbyInfo.Info.Campaign.Text = campaign.Name
-		lobbyInfo.Info.Level.Text = difficulty and "LV. " .. difficulty.MinLevel .. "+" or ""
-		lobbyInfo.Info.Players.Text = #lobby.Players .. "/4"
+		if lobby.Gamemode == "Boss" then
+			local boss = Bosses[lobby.Boss]
 
-		lobbyInfo.Info.Difficulty.Text = difficultyName
-		lobbyInfo.Info.Difficulty.TextStrokeColor3 = difficulty and difficulty.Style.Color or Color3.new(1, 1, 1)
+			lobbyInfo.Info.Campaign.Text = boss.Name:upper()
+			lobbyInfo.Info.Level.Text = ""
+			lobbyInfo.Info.Difficulty.Text = "BOSS"
+			lobbyInfo.Info.Difficulty.TextStrokeTransparency = 1
+			lobbyInfo.MapImage.Image = boss.Image
+		else
+			lobbyInfo.Info.Campaign.Text = campaign.Name
+			lobbyInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
+			lobbyInfo.Info.Difficulty.Text = difficultyName
+			lobbyInfo.Info.Difficulty.TextStrokeColor3 = difficulty.Style.Color
+			lobbyInfo.Info.Difficulty.TextStrokeTransparency = 0.2
+			lobbyInfo.MapImage.Image = campaign.Image
+		end
+
+		lobbyInfo.Info.Players.Text = #lobby.Players .. "/4"
 
 		if (difficulty and difficulty.MinLevel > level) or #lobby.Players == 4 or kickedFrom[lobby.Unique] then
 			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(234, 32, 39)
@@ -363,7 +374,7 @@ do
 			MapInfo.Info.Difficulty.Text = "BOSS"
 			MapInfo.Info.Difficulty.TextColor3 = Color3.new(1, 1, 1)
 			MapInfo.Info.Level.Text = ""
-			MapInfo.Campaign.Text = boss.Name
+			MapInfo.Campaign.Text = boss.Name:upper()
 			MapInfo.MapImage.Image = boss.Image
 		else
 			local difficulty = campaign.Difficulties[current.Difficulty]
