@@ -4,6 +4,10 @@ export declare interface Gamemode {
 
 export declare interface GamemodeInfo {
 	Lives?: number,
+	DifficultyInfo?: {
+		Gold: number,
+		XP: number,
+	},
 }
 
 export declare interface GamemodeConstructor {

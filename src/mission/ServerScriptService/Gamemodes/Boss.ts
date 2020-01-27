@@ -41,7 +41,8 @@ const BossConstructor: GamemodeConstructor = {
 						"No BossSpawn found",
 					) as Attachment).WorldPosition
 
-					Gamemode.SpawnBoss(bossSequence, position, bossRoom)
+					const boss = Gamemode.SpawnBoss(bossSequence, position, bossRoom)
+					boss.Died.Connect(Gamemode.EndMission)
 				}
 			},
 		}

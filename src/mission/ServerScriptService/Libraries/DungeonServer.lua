@@ -80,7 +80,11 @@ function Dungeon.GetDungeonData(key)
 	if key == "CampaignInfo" then
 		return Campaigns[Dungeon.GetDungeonData("Campaign")]
 	elseif key == "DifficultyInfo" then
-		return Dungeon.GetDungeonData("CampaignInfo").Difficulties[Dungeon.GetDungeonData("Difficulty")]
+		if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+			return Dungeon.GetGamemodeInfo().DifficultyInfo
+		else
+			return Dungeon.GetDungeonData("CampaignInfo").Difficulties[Dungeon.GetDungeonData("Difficulty")]
+		end
 	elseif key == "BossInfo" then
 		return assert(Bosses[Dungeon.GetDungeonData("Boss")], "No boss")
 	else

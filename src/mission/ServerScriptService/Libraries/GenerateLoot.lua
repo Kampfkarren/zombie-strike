@@ -55,7 +55,14 @@ local function getModel(type, rarity)
 	if table.find(Loot.Attachments, type) then
 		return rarity
 	else
-		local loot = Dungeon.GetDungeonData("CampaignInfo").Loot
+		local loot
+
+		if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+			loot = Campaigns[1].Loot
+		else
+			loot = Dungeon.GetDungeonData("CampaignInfo").Loot
+		end
+
 		local models = assert(loot[type], "No loot for " .. type)[Loot.Rarities[rarity].Name]
 		return models[math.random(#models)]
 	end
@@ -83,11 +90,13 @@ local function nextDungeonLevel()
 end
 
 local function getLootLevel(player)
+	local playerLevel = Data.GetPlayerData(player, "Level")
+
 	if Dungeon.GetDungeonData("Gamemode") == "Arena" then
 		return 1
+	elseif Dungeon.GetDungeonData("Gamemode") ~= "Mission" then
+		return math.max(playerLevel - math.random(0, 10), 1)
 	end
-
-	local playerLevel = Data.GetPlayerData(player, "Level")
 
 	local dungeonLevelMin = Dungeon.GetDungeonData("DifficultyInfo").MinLevel
 
@@ -211,7 +220,9 @@ local function generateLootItem(player)
 
 	local uuid = HttpService:GenerateGUID(false):gsub("-", "")
 
-	if takenAdvantageOfFreeLoot[player] or rng:NextNumber() <= WEAPON_DROP_RATE then
+	if (takenAdvantageOfFreeLoot[player] or rng:NextNumber() <= WEAPON_DROP_RATE)
+		or Dungeon.GetDungeonData("Gamemode") == "Boss"
+	then
 		local type = GunScaling.RandomType()
 
 		local funny = rng:NextInteger(0, 35)

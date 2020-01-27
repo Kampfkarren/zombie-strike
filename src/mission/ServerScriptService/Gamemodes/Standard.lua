@@ -6,35 +6,19 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
-local Campaigns = require(ReplicatedStorage.Core.Campaigns)
-local Data = require(ReplicatedStorage.Core.Data)
-local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Gamemode = require(script.Parent.Gamemode)
-local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
 local GenerateTreasureLoot = require(ServerScriptService.Libraries.GenerateTreasureLoot)
-local Loot = require(ReplicatedStorage.Core.Loot)
-local Promise = require(ReplicatedStorage.Core.Promise)
-local Zombie = require(ServerScriptService.Zombies.Zombie)
 
 local BossTimer = ReplicatedStorage.BossTimer
-local GiveQuest = ServerStorage.Events.GiveQuest
 local Rooms = ServerStorage.Rooms
 
 local SPEED_BONUS = 0.33
 local SPEED_TIME = 3.5
 
 local Standard = {}
-
-local damagedByBoss = {}
-
-DataStore2.Combine("DATA", "DungeonsPlayed", "LootEarned", "RoomsCleared")
-
-ServerStorage.Events.DamagedByBoss.Event:connect(function(player)
-	damagedByBoss[player] = true
-end)
 
 local function createRoom(room, parent, connectTo)
 	local room = room:Clone()
@@ -133,105 +117,7 @@ local function generateDungeon(roomModels, numRooms)
 	return rooms
 end
 
-local function endMission()
-	for _, player in pairs(Players:GetPlayers()) do
-		Promise.all({
-			GenerateLoot.GenerateSet(player):andThen(function(loot)
-				return Promise.async(function(resolve)
-					-- TODO: UpdateAsync
-					DataStore2("Inventory", player):Update(function(inventory)
-						for _, item in pairs(loot) do
-							table.insert(inventory, item)
-						end
-
-						return inventory
-					end)
-
-					-- GenerateLoot.GenerateSet sets the last legendary to 0 if it gets one
-					DataStore2("DungeonsSinceLastLegendary", player):Increment(1, 0)
-
-					resolve(Loot.SerializeTable(loot))
-				end):tap(function()
-					return Promise.async(function(resolve)
-						DataStore2("DungeonsPlayed", player):Increment(1, 0)
-						DataStore2("LootEarned", player):Increment(#loot, 0)
-						DataStore2("RoomsCleared", player):Increment(
-							Dungeon.GetDungeonData("DifficultyInfo").Rooms,
-							0
-						)
-
-						resolve()
-					end)
-				end)
-			end),
-
-			Promise.async(function(resolve)
-				local difficulty = Dungeon.GetDungeonData("DifficultyInfo")
-
-				local goldScale = player.PlayerData.GoldScale.Value
-				local xpScale = player.PlayerData.XPScale.Value
-
-				local xp = math.floor(difficulty.XP * xpScale)
-				local gold = math.floor(difficulty.Gold * goldScale)
-
-				return Promise.all({
-					DataStore2("Level", player):Set(player.PlayerData.Level.Value),
-					DataStore2("XP", player):Set(player.PlayerData.XP.Value),
-					DataStore2("Gold", player):IncrementAsync(gold, 0),
-				}):andThen(function()
-					resolve({ xp, gold })
-				end)
-			end),
-
-			Promise.async(function(resolve)
-				local zombiePass, zombiePassStore = Data.GetPlayerData(player, "ZombiePass")
-
-				local level = DataStore2("Level", player):Get(1)
-				local hardestCampaign = 1
-
-				for campaignIndex, campaign in ipairs(Campaigns) do
-					if campaign.Difficulties[1].MinLevel <= level then
-						hardestCampaign = campaignIndex
-					else
-						break
-					end
-				end
-
-				zombiePass.XP = zombiePass.XP + Dungeon.GetDungeonData("Campaign") / hardestCampaign
-				zombiePassStore:Set(zombiePass)
-
-				resolve()
-			end)
-		}):andThen(function(data)
-			if Dungeon.GetDungeonData("Hardcore") then
-				GiveQuest:Fire(player, "BeatHardcoreMissions", 1)
-			end
-
-			if not damagedByBoss[player] then
-				GiveQuest:Fire(player, "DefeatBossWithoutDamage", 1)
-			end
-
-			DataStore2.SaveAllAsync(player)
-
-			local loot, xp, gold = data[1], data[2][1], data[2][2]
-
-			ReplicatedStorage.Remotes.MissionOver:FireClient(
-				player,
-				loot,
-				xp,
-				gold
-			)
-		end)
-	end
-
-	for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
-		if zombie:IsDescendantOf(Workspace) then
-			zombie.Humanoid.Health = 0
-		end
-	end
-end
-
-ServerStorage.Events.EndDungeon.Event:connect(endMission)
+ServerStorage.Events.EndDungeon.Event:connect(Gamemode.EndMission)
 
 local function getBossSequence()
 	return require(ReplicatedStorage.BossSequences[Dungeon.GetDungeonData("Campaign")])
@@ -239,7 +125,7 @@ end
 
 local function spawnBoss(position, room)
 	local bossZombie = Gamemode.SpawnBoss(getBossSequence(), position, room)
-	bossZombie.Died:connect(endMission)
+	bossZombie.Died:connect(Gamemode.EndMission)
 end
 
 function Standard.Init()

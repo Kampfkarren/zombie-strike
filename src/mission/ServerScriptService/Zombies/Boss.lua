@@ -56,7 +56,11 @@ function Boss.GetSpeed()
 end
 
 function Boss.GetXP()
-	return Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		return 0 -- TODO
+	else
+		return Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
+	end
 end
 
 function Boss:UpdateNametag()
