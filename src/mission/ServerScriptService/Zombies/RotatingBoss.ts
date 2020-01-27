@@ -4,6 +4,8 @@ import Interval from "shared/ReplicatedStorage/Core/Interval"
 import TakeDamage from "shared/ServerScriptService/TakeDamage"
 import Zombie from "./Zombie"
 
+export type BossAttack<T> = (self: T) => Promise<void> | void
+
 export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>> {
 	bossRoom: Room | undefined
 	currentPhase: number = -1
@@ -11,7 +13,7 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 	phaseValue: NumberValue | undefined
 
 	attackInterval: number = 4
-	phases: ((self: this) => Promise<void> | void)[][] = []
+	phases: BossAttack<this>[][] = []
 
 	constructor() {
 		this.nextPhaseEvent = this.NewRemoteEvent("NextPhase")

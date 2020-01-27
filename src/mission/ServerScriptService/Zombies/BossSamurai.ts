@@ -1,7 +1,7 @@
 import { Players } from "@rbxts/services"
 import Interval from "shared/ReplicatedStorage/Core/Interval"
 import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
-import { RotatingBoss } from "./RotatingBoss"
+import { BossAttack, RotatingBoss } from "./RotatingBoss"
 import { BossClass, ZombieClass } from "./ZombieClass"
 
 const DAMAGE_SHURIKEN_FRENZY = 30
@@ -25,18 +25,18 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	static Model: string = "Boss"
 	static Name: string = "Samurai Master Zombie"
 
-	shurikenFrenzy: RemoteEvent
-	swordBeamAttack: RemoteEvent
-	swordSpin: RemoteEvent
-	yooo: RemoteEvent
+	shurikenFrenzy: RemoteEvent | undefined
+	swordBeamAttack: RemoteEvent | undefined
+	swordSpin: RemoteEvent | undefined
+	yooo: RemoteEvent | undefined
 
-	phases = [
+	phases: BossAttack<this>[][] = [
 		[this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
-		[this.Yooo, this.SwordSpin],
+		[this.SummonZombies],
 	]
 
-	constructor() {
-		super()
+	AfterSpawn(this: this & ZombieClass) {
+		super.AfterSpawn()
 
 		this.shurikenFrenzy = this.NewDamageSource("ShurikenFrenzy", DAMAGE_SHURIKEN_FRENZY)
 		this.swordBeamAttack = this.NewDamageSource("SwordBeamAttack", DAMAGE_SWORD_BEAM_ATTACK)
@@ -45,10 +45,7 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 			DAMAGE_SWORD_SPIN_PHASE2,
 		])
 		this.yooo = this.NewDamageSource("Yooo", DAMAGE_YOOO)
-	}
 
-	AfterSpawn(this: ZombieClass) {
-		super.AfterSpawn()
 		this.instance.SetPrimaryPartCFrame(this.instance.PrimaryPart!.CFrame.mul(
 			CFrame.Angles(0, -math.pi / 2, 0),
 		))
@@ -80,14 +77,14 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 					return false
 				}
 
-				this.shurikenFrenzy.FireAllClients()
+				this.shurikenFrenzy!.FireAllClients()
 			})
 		})
 	}
 
-	SummonZombies(this: BossClass<SamuraiRoom>) {
+	SummonZombies(this: this & BossClass<SamuraiRoom>) {
 		for (let _ = 0; _ < NINJA_ZOMBIE_SUMMONED; _++) {
-			this.SummonGoon(undefined, "Projectile")
+			this.SummonGoon(undefined, this.currentPhase === 0 ? "Projectile" : "Common")
 		}
 	}
 
@@ -102,7 +99,7 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 
 				const target = this.FindAliveTarget()
 				if (target !== undefined) {
-					this.swordBeamAttack.FireAllClients(new Vector2int16(
+					this.swordBeamAttack!.FireAllClients(new Vector2int16(
 						target.PrimaryPart!.Position.X,
 						target.PrimaryPart!.Position.Z,
 					))
@@ -126,14 +123,14 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 				chosenPoints.push(swordSpinPoints.unorderedRemove(math.random(0, swordSpinPoints.size() - 1))!)
 			}
 
-			this.swordSpin.FireAllClients(chosenPoints)
+			this.swordSpin!.FireAllClients(chosenPoints)
 
 			RealDelay(SWORD_SPIN_DELAY * SWORD_SPIN_SPOTS, resolve)
 		})
 	}
 
 	Yooo() {
-		this.yooo.FireAllClients()
+		this.yooo!.FireAllClients()
 	}
 }
 

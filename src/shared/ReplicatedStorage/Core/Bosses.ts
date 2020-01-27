@@ -1,16 +1,32 @@
 import { BossInfo, BossStat } from "./BossInfo"
 
+const NO_DAMAGE = {
+	Base: 0,
+	Scale: 1,
+}
+
 const Bosses: Array<BossInfo> = [{
 	Name: "Samurai Master Zombie",
 	RoomName: "Samurai",
 	AIAggroRange: 100,
 
 	Stats: {
-		"Projectile": {
-			Damage: {
-				Base: 0,
+		Common: {
+			Damage: NO_DAMAGE,
+
+			MaxHealthDamage: {
+				Base: 30,
 				Scale: 1,
 			},
+
+			Speed: {
+				Base: 15,
+				Scale: 1,
+			},
+		},
+
+		Projectile: {
+			Damage: NO_DAMAGE,
 
 			MaxHealthDamage: {
 				Base: 20,
