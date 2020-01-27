@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Damage = require(ReplicatedStorage.RuddevModules.Damage)
 local Data = require(ReplicatedStorage.Core.Data)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local Interval = require(ReplicatedStorage.Core.Interval)
 local LineOfSight = require(ReplicatedStorage.Libraries.LineOfSight)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
@@ -11,6 +12,7 @@ local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local PetFire = ReplicatedStorage.Remotes.PetFire
 
 local BOSS_DAMAGE_SCALE = 1 / 15
+local BOSS_GAMEMODE_DAMAGE_SCALE = 1 / 300
 local COINS_PER_INTERVAL = 5
 local COINS_INTERVAL = 10
 local PET_RANGE = 90
@@ -67,7 +69,12 @@ Players.PlayerAdded:connect(function(player)
 
 			if not zombie and boss and not boss.Humanoid:FindFirstChild("NoKill") then
 				zombie = boss
-				damageScale = BOSS_DAMAGE_SCALE
+
+				if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+					damageScale = BOSS_GAMEMODE_DAMAGE_SCALE
+				else
+					damageScale = BOSS_DAMAGE_SCALE
+				end
 			end
 
 			if zombie then

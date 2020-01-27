@@ -1,4 +1,4 @@
-import { BossInfo, BossStat } from "./BossInfo"
+import { BossInfo } from "./BossInfo"
 
 const NO_DAMAGE = {
 	Base: 0,
@@ -7,6 +7,7 @@ const NO_DAMAGE = {
 
 const Bosses: Array<BossInfo> = [{
 	Name: "Samurai Master Zombie",
+	Image: "rbxassetid://46738832",
 	RoomName: "Samurai",
 	AIAggroRange: 100,
 

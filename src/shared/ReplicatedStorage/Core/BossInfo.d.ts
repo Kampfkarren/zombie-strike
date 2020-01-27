@@ -5,6 +5,7 @@ export type BossStat = {
 
 export type BossInfo = {
 	Name: string,
+	Image: string,
 	RoomName: string,
 	AIAggroRange: number,
 

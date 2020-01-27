@@ -8,6 +8,7 @@ local TweenService = game:GetService("TweenService")
 
 local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
 local AutomatedScrollingFrame = require(ReplicatedStorage.Core.UI.AutomatedScrollingFrame)
+local Bosses = require(ReplicatedStorage.Core.Bosses)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -121,9 +122,16 @@ do
 		local level = Players.LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
 
 		local campaign = assert(Campaigns[lobby.Campaign])
-		local difficulty = lobby.Gamemode == "Arena"
-			and ArenaDifficulty(lobby.ArenaLevel)
-			or assert(campaign.Difficulties[lobby.Difficulty])
+		local difficulty, difficultyName
+		if lobby.Gamemode == "Arena" then
+			difficulty = ArenaDifficulty(lobby.ArenaLevel)
+			difficultyName = "THE ARENA"
+		elseif lobby.Gamemode == "Boss" then
+			difficultyName = "BOSS"
+		else
+			difficulty = campaign.Difficulties[lobby.Difficulty]
+			difficultyName = difficulty.Style.Name
+		end
 
 		currentlySelected = lobby.Unique
 
@@ -143,13 +151,13 @@ do
 		end)
 
 		lobbyInfo.Info.Campaign.Text = campaign.Name
-		lobbyInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
+		lobbyInfo.Info.Level.Text = difficulty and "LV. " .. difficulty.MinLevel .. "+" or ""
 		lobbyInfo.Info.Players.Text = #lobby.Players .. "/4"
 
-		lobbyInfo.Info.Difficulty.Text = lobby.Gamemode == "Arena" and "THE ARENA" or difficulty.Style.Name
-		lobbyInfo.Info.Difficulty.TextStrokeColor3 = difficulty.Style.Color
+		lobbyInfo.Info.Difficulty.Text = difficultyName
+		lobbyInfo.Info.Difficulty.TextStrokeColor3 = difficulty and difficulty.Style.Color or Color3.new(1, 1, 1)
 
-		if difficulty.MinLevel > level or #lobby.Players == 4 or kickedFrom[lobby.Unique] then
+		if (difficulty and difficulty.MinLevel > level) or #lobby.Players == 4 or kickedFrom[lobby.Unique] then
 			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(234, 32, 39)
 		else
 			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(32, 187, 108)
@@ -187,11 +195,14 @@ do
 
 				local campaign = Campaigns[lobby.Campaign]
 
-				local difficulty = lobby.Gamemode == "Arena"
-					and ArenaDifficulty(lobby.ArenaLevel)
-					or campaign.Difficulties[lobby.Difficulty]
+				local difficulty
+				if lobby.Gamemode == "Arena" then
+					difficulty = ArenaDifficulty(lobby.ArenaLevel)
+				elseif lobby.Gamemode ~= "Boss" then
+					difficulty = campaign.Difficulties[lobby.Difficulty]
+				end
 
-				local cantJoin = difficulty.MinLevel > level
+				local cantJoin = (difficulty and difficulty.MinLevel > level)
 					or #lobby.Players == 4
 					or kickedFrom[lobby.Unique]
 					or (not lobby.Public and not friends)
@@ -206,7 +217,13 @@ do
 
 				button.Inner.Players.Text = #lobby.Players .. "/4"
 
-				local campaignName = campaign.Name .. " - " .. difficulty.Style.Name
+				local campaignName
+
+				if lobby.Gamemode == "Boss" then
+					campaignName = "BOSS - " .. Bosses[lobby.Boss].Name
+				else
+					campaignName = campaign.Name .. " - " .. difficulty.Style.Name
+				end
 
 				if lobby.Gamemode == "Arena" then
 					campaignName = campaignName .. "⚔"
@@ -236,7 +253,7 @@ do
 					cantJoin = cantJoin,
 					fallback = lobby.Unique,
 					friends = friends,
-					level = difficulty.MinLevel,
+					level = difficulty and difficulty.MinLevel,
 				})
 
 				if lobby.Unique == currentlySelected then
@@ -333,13 +350,21 @@ do
 		local campaign = Campaigns[current.Campaign]
 
 		MapInfo.Campaign.Text = campaign.Name
-			MapInfo.MapImage.Image = campaign.Image
-			MapInfo.MapImage.Hardcore.Visible = current.Hardcore
+		MapInfo.MapImage.Image = campaign.Image
+		MapInfo.MapImage.Hardcore.Visible = current.Hardcore
 
 		if current.Gamemode == "Arena" then
 			MapInfo.Info.Difficulty.Text = "THE ARENA"
 			MapInfo.Info.Difficulty.TextColor3 = Color3.new(1, 1, 1)
 			MapInfo.Info.Level.Text = "LV. " .. current.ArenaLevel .. "+"
+		elseif current.Gamemode == "Boss" then
+			local boss = Bosses[current.Boss]
+
+			MapInfo.Info.Difficulty.Text = "BOSS"
+			MapInfo.Info.Difficulty.TextColor3 = Color3.new(1, 1, 1)
+			MapInfo.Info.Level.Text = ""
+			MapInfo.Campaign.Text = boss.Name
+			MapInfo.MapImage.Image = boss.Image
 		else
 			local difficulty = campaign.Difficulties[current.Difficulty]
 			MapInfo.Info.Difficulty.Text = difficulty.Style.Name
@@ -456,6 +481,8 @@ local function updateLobbies()
 		elseif lobby.Gamemode == "Mission" then
 			lobby.Difficulty = lobbyInstance.Difficulty.Value
 			lobby.Hardcore = lobbyInstance.Hardcore.Value
+		elseif lobby.Gamemode == "Boss" then
+			lobby.Boss = lobbyInstance.Boss.Value
 		end
 
 		if ours then

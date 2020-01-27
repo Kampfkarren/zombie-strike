@@ -11,6 +11,7 @@ local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporter)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
+local GetCurrentBoss = require(ReplicatedStorage.Libraries.GetCurrentBoss)
 local inspect = require(ReplicatedStorage.Core.inspect)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local t = require(ReplicatedStorage.Vendor.t)
@@ -89,6 +90,11 @@ local validateLobby = t.intersection(
 		t.interface({
 			Gamemode = t.literal("Mission"),
 			Difficulty = t.integer, -- We can't constrain this here
+			Hardcore = t.boolean,
+		}),
+
+		t.interface({
+			Gamemode = t.literal("Boss"),
 			Hardcore = t.boolean,
 		})
 	)
@@ -175,6 +181,9 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 	elseif info.Gamemode == "Arena" then
 		lobby.ArenaLevel = info.Level
 		value(lobbyInstance, "NumberValue", "Level", info.Level)
+	elseif info.Gamemode == "Boss" then
+		lobby.Boss = GetCurrentBoss().Index
+		value(lobbyInstance, "NumberValue", "Boss", lobby.Boss)
 	end
 
 	if getPlayerLobby(player) then
@@ -266,13 +275,16 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
 	end
 
 	local campaign = assert(Campaigns[lobby.Campaign])
-	local difficulty = lobby.Gamemode == "Arena"
-		and ArenaDifficulty(lobby.ArenaLevel)
-		or assert(campaign.Difficulties[lobby.Difficulty])
+	local difficulty
+	if lobby.Gamemode == "Arena" then
+		difficulty = ArenaDifficulty(lobby.ArenaLevel)
+	elseif lobby.Gamemode ~= "Boss" then
+		difficulty = campaign.Difficulties[lobby.Difficulty]
+	end
 
 	local playerLevel = Data.GetPlayerData(player, "Level")
 
-	if difficulty.MinLevel > playerLevel then
+	if difficulty and difficulty.MinLevel > playerLevel then
 		warn("level too low")
 		return
 	end

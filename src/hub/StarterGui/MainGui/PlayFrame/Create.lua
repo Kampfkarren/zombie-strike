@@ -6,6 +6,7 @@ local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
 local AutomatedScrollingFrameComponent = require(ReplicatedStorage.Core.UI.Components.AutomatedScrollingFrameComponent)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
+local GetCurrentBoss = require(ReplicatedStorage.Libraries.GetCurrentBoss)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local StyledButton = require(ReplicatedStorage.Core.UI.Components.StyledButton)
@@ -275,6 +276,7 @@ function Create:render()
 	end
 
 	local isArena = self.state.gamemode == "Arena"
+	local isBoss = self.state.gamemode == "Boss"
 
 	local mapsChildren = {}
 	mapsChildren.UIListLayout = e("UIListLayout", {
@@ -284,23 +286,25 @@ function Create:render()
 		SortOrder = Enum.SortOrder.LayoutOrder,
 	})
 
-	for campaignIndex, campaign in ipairs(Campaigns) do
-		local campaignDisabled
+	if not isBoss then
+		for campaignIndex, campaign in ipairs(Campaigns) do
+			local campaignDisabled
 
-		if isArena then
-			campaignDisabled = campaign.LockedArena
-		else
-			campaignDisabled = self.state.level < campaign.Difficulties[1].MinLevel
+			if isArena then
+				campaignDisabled = campaign.LockedArena
+			else
+				campaignDisabled = self.state.level < campaign.Difficulties[1].MinLevel
+			end
+
+			table.insert(mapsChildren, e(BigButton, {
+				Color = Color3.fromRGB(36, 171, 157),
+				Disabled = campaignDisabled,
+				Name = campaign.Name,
+				LayoutOrder = campaignIndex,
+				Selected = campaign == self.state.campaign,
+				OnClick = self.selectCampaign(campaignIndex),
+			}))
 		end
-
-		table.insert(mapsChildren, e(BigButton, {
-			Color = Color3.fromRGB(36, 171, 157),
-			Disabled = campaignDisabled,
-			Name = campaign.Name,
-			LayoutOrder = campaignIndex,
-			Selected = campaign == self.state.campaign,
-			OnClick = self.selectCampaign(campaignIndex),
-		}))
 	end
 
 	local difficulty
@@ -382,6 +386,39 @@ function Create:render()
 		})
 	end
 
+	local difficultyFrame
+	if not isBoss then
+		difficultyFrame = e("Frame", {
+			BackgroundTransparency = 1,
+			LayoutOrder = 2,
+			Size = UDim2.fromScale(0.7, 0.08),
+		}, {
+			UIListLayout = e("UIListLayout", {
+				FillDirection = Enum.FillDirection.Horizontal,
+				HorizontalAlignment = Enum.HorizontalAlignment.Center,
+				Padding = UDim.new(0.02, 0),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+			}),
+
+			Previous = e(Arrow, {
+				LayoutOrder = 1,
+				OnClick = self.previousDifficulty,
+				Text = "<",
+			}),
+
+			DifficultyText = difficultyText,
+
+			Next = e(Arrow, {
+				LayoutOrder = 3,
+				OnClick = self.nextDifficulty,
+				Text = ">",
+			}),
+		})
+	end
+
+	local currentBoss = GetCurrentBoss().Info
+
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
@@ -413,6 +450,13 @@ function Create:render()
 				Selected = state.gamemode,
 				SelectGamemode = self.selectGamemode,
 			}),
+
+			Boss = e(MissionButton, {
+				Name = "Boss",
+				LayoutOrder = 3,
+				Selected = state.gamemode,
+				SelectGamemode = self.selectGamemode,
+			}),
 		}),
 
 		Info = e("Frame", {
@@ -432,14 +476,14 @@ function Create:render()
 				Font = Enum.Font.GothamBold,
 				LayoutOrder = 0,
 				Size = UDim2.fromScale(0.8, 0.1),
-				Text = state.campaign.Name,
+				Text = isBoss and currentBoss.Name or state.campaign.Name,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 			}),
 
 			MapImage = e("ImageLabel", {
 				BackgroundTransparency = 1,
-				Image = state.campaign.Image,
+				Image = isBoss and currentBoss.Image or state.campaign.Image,
 				LayoutOrder = 1,
 				Size = UDim2.fromScale(1, 0.5),
 			}, {
@@ -447,33 +491,7 @@ function Create:render()
 				Warning = warning,
 			}),
 
-			Difficulty = e("Frame", {
-				BackgroundTransparency = 1,
-				LayoutOrder = 2,
-				Size = UDim2.fromScale(0.7, 0.08),
-			}, {
-				UIListLayout = e("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					Padding = UDim.new(0.02, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-				}),
-
-				Previous = e(Arrow, {
-					LayoutOrder = 1,
-					OnClick = self.previousDifficulty,
-					Text = "<",
-				}),
-
-				DifficultyText = difficultyText,
-
-				Next = e(Arrow, {
-					LayoutOrder = 3,
-					OnClick = self.nextDifficulty,
-					Text = ">",
-				}),
-			}),
+			Difficulty = difficultyFrame,
 
 			Public = e(Checkbox, {
 				Checked = state.public,

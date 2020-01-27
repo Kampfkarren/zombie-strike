@@ -473,7 +473,7 @@ function Zombie.GetDamageAgainstConstant(_, player, damage, maxHpDamage)
 end
 
 function Zombie.GetDamageReceivedScale()
-	return 0.8
+	return 0.5
 end
 
 function Zombie:GetAttackCooldown()
