@@ -495,7 +495,14 @@ function Zombie:GetAsset(assetName)
 end
 
 function Zombie:UpdateNametag()
-	return Nametag(self.instance, self.level)
+	local nametag = Nametag(self.instance, self.level)
+
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		nametag.Level.Text = ""
+		nametag.Health.HealthNumber.Visible = false
+	end
+
+	return nametag
 end
 
 -- START BASIC HOOKS
