@@ -193,7 +193,7 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 		end
 	end
 
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" and shots[player] then
 		shots[player].Directions = { shots[player].Directions[1] }
 		hits = { hits[1] }
 	end
