@@ -1,3 +1,4 @@
+import { BossInfo } from "shared/ReplicatedStorage/Core/BossInfo";
 import { GamemodeInfo } from "../GamemodeInfo/Gamemode";
 
 declare namespace Dungeon {

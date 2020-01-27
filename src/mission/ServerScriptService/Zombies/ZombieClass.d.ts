@@ -1,6 +1,6 @@
 export interface ZombieClass {
 	alive: boolean
-	instance: Model
+	instance: Character
 
 	AfterSpawn: () => void
 	InitializeAI: () => void

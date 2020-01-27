@@ -7,14 +7,27 @@ import Zombie from "./Zombie"
 export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>> {
 	bossRoom: Room | undefined
 	currentPhase: number = -1
+	nextPhaseEvent: RemoteEvent
 
 	attackInterval: number = 4
 	phases: ((self: this) => Promise<void> | void)[][] = []
+
+	constructor() {
+		this.nextPhaseEvent = this.NewRemoteEvent("NextPhase")
+	}
 
 	InitializeAI() { }
 
 	InitializeBossAI(this: RotatingBoss<Room> & ZombieClass, room: Room) {
 		this.bossRoom = room
+
+		this.instance.Humanoid.HealthChanged.Connect((health) => {
+			const expectedPhase = -math.ceil(health / (100 / this.phases.size())) + this.phases.size()
+			if (this.currentPhase !== expectedPhase && health > 0) {
+				this.nextPhaseEvent.FireAllClients()
+				this.NextPhase()
+			}
+		})
 
 		this.NextPhase()
 	}
@@ -43,15 +56,19 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 		})
 	}
 
-	NewDamageSource(remoteEventName: string, damage: number): RemoteEvent {
+	NewRemoteEvent(remoteEventName: string): RemoteEvent {
 		const remoteEvent = new Instance("RemoteEvent")
 		remoteEvent.Name = remoteEventName
+		remoteEvent.Parent = ReplicatedStorage.Remotes.RotatingBoss
+		return remoteEvent
+	}
+
+	NewDamageSource(remoteEventName: string, damage: number): RemoteEvent {
+		const remoteEvent = this.NewRemoteEvent(remoteEventName)
 		remoteEvent.OnServerEvent.Connect((player) => {
 			// this is gross, but `this` wouldn't work
 			TakeDamage(player, Zombie.GetDamageAgainstConstant(undefined, player, 0, damage))
 		})
-
-		remoteEvent.Parent = ReplicatedStorage.Remotes.RotatingBoss
 
 		return remoteEvent
 	}

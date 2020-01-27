@@ -4,6 +4,7 @@ interface ReplicatedStorage {
 			Samurai: Folder & {
 				Boss: Folder & {
 					Crescent: BasePart,
+					Katana: BasePart,
 				},
 			},
 		},
@@ -37,4 +38,10 @@ interface ServerStorage {
 
 interface StarterPlayer {
 	StarterPlayerScripts: Folder,
+}
+
+interface Workspace {
+	Rooms: Folder & {
+		StartSection: Model,
+	},
 }

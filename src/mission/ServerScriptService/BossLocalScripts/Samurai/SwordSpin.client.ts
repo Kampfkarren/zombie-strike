@@ -2,12 +2,12 @@ import { CollectionService, Players, RunService } from "@rbxts/services"
 import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil";
 import WarningRange = require("mission/ReplicatedStorage/Libraries/WarningRange");
 
-const SwordSpin = BossLocalScriptUtil.WaitForBossRemote("SwordSpin")
-
 const RANGE_OFFSET = 5
 const SWORD_SPIN_DELAY = 2.5
 const SWORD_SPIN_RANGE = 15
 const SWORD_SPIN_RATE = 3
+
+const SwordSpin = BossLocalScriptUtil.WaitForBossRemote("SwordSpin")
 
 let swordSpinTick = 0
 

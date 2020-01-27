@@ -6,6 +6,7 @@ import { BossClass, ZombieClass } from "./ZombieClass"
 
 const DAMAGE_SWORD_BEAM_ATTACK = 30
 const DAMAGE_SWORD_SPIN = 40
+const DAMAGE_YOOO = 25
 
 const NINJA_ZOMBIE_SUMMONED = 6
 
@@ -15,26 +16,25 @@ const SWORD_SPIN_SPOTS = 3
 const SWORD_BEAM_DURATION = 5
 const SWORD_BEAM_ROF = 1 / 2
 
-type SamuraiRoom = Model & {
-	Arena: Model & {
-		PrimaryPart: BasePart,
-	},
-}
-
 class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	static Model: string = "Boss"
 	static Name: string = "Samurai Master Zombie"
 
 	swordBeamAttack: RemoteEvent
 	swordSpin: RemoteEvent
+	yooo: RemoteEvent
 
-	phases = [[this.SwordBeamAttack, this.SwordSpin, this.SummonZombies]]
+	phases = [
+		// [this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
+		[this.Yooo],
+	]
 
 	constructor() {
 		super()
 
 		this.swordBeamAttack = this.NewDamageSource("SwordBeamAttack", DAMAGE_SWORD_BEAM_ATTACK)
 		this.swordSpin = this.NewDamageSource("SwordSpin", DAMAGE_SWORD_SPIN)
+		this.yooo = this.NewDamageSource("Yooo", DAMAGE_YOOO)
 	}
 
 	AfterSpawn(this: ZombieClass) {
@@ -105,6 +105,10 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 
 			RealDelay(SWORD_SPIN_DELAY * SWORD_SPIN_SPOTS, resolve)
 		})
+	}
+
+	Yooo() {
+		this.yooo.FireAllClients()
 	}
 }
 

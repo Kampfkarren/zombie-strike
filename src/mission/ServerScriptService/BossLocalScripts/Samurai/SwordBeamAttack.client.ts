@@ -1,10 +1,10 @@
 import { CollectionService, ReplicatedStorage } from "@rbxts/services"
-import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil";
-
-const SwordBeamAttack = BossLocalScriptUtil.WaitForBossRemote("SwordBeamAttack")
+import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil"
 
 const PROJECTILE_Y = 3 // ooohh god
 const RANDOM_RANGE = 25
+
+const SwordBeamAttack = BossLocalScriptUtil.WaitForBossRemote("SwordBeamAttack")
 
 SwordBeamAttack.OnClientEvent.Connect((point: Vector2int16) => {
 	const boss = CollectionService.GetTagged("Boss")[0] as Model
