@@ -27,7 +27,7 @@ local startedCountdown = false
 
 local livesValue = Instance.new("NumberValue")
 livesValue.Name = "Lives"
-livesValue.Value = gamemodeInfo.Lives
+livesValue.Value = Dungeon.GetDungeonData("Hardcore") and 1 or gamemodeInfo.Lives
 livesValue.Parent = ReplicatedStorage
 
 local function hookCharacter(character)

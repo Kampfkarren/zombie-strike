@@ -10,6 +10,7 @@
 return {
 	Boss = 1,
 	Gamemode = "Boss",
+	Hardcore = false,
 	Members = { 56140227 },
 }
 
