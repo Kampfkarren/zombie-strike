@@ -32,7 +32,7 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 
 	phases: BossAttack<this>[][] = [
 		[this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
-		[this.SummonZombies],
+		[this.Yooo, this.ShurikenFrenzy, this.SummonZombies, this.SwordSpin],
 	]
 
 	AfterSpawn(this: this & ZombieClass) {
