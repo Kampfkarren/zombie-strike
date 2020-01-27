@@ -6,7 +6,8 @@ import { BossClass, ZombieClass } from "./ZombieClass"
 
 const DAMAGE_SHURIKEN_FRENZY = 30
 const DAMAGE_SWORD_BEAM_ATTACK = 30
-const DAMAGE_SWORD_SPIN = 40
+const DAMAGE_SWORD_SPIN_PHASE1 = 40
+const DAMAGE_SWORD_SPIN_PHASE2 = 80
 const DAMAGE_YOOO = 25
 
 const NINJA_ZOMBIE_SUMMONED = 6
@@ -30,9 +31,8 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	yooo: RemoteEvent
 
 	phases = [
-		// [this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
-		// [this.Yooo],
-		[this.ShurikenFrenzy],
+		[this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
+		[this.Yooo, this.SwordSpin],
 	]
 
 	constructor() {
@@ -40,11 +40,15 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 
 		this.shurikenFrenzy = this.NewDamageSource("ShurikenFrenzy", DAMAGE_SHURIKEN_FRENZY)
 		this.swordBeamAttack = this.NewDamageSource("SwordBeamAttack", DAMAGE_SWORD_BEAM_ATTACK)
-		this.swordSpin = this.NewDamageSource("SwordSpin", DAMAGE_SWORD_SPIN)
+		this.swordSpin = this.NewDamageSource("SwordSpin", [
+			DAMAGE_SWORD_SPIN_PHASE1,
+			DAMAGE_SWORD_SPIN_PHASE2,
+		])
 		this.yooo = this.NewDamageSource("Yooo", DAMAGE_YOOO)
 	}
 
 	AfterSpawn(this: ZombieClass) {
+		super.AfterSpawn()
 		this.instance.SetPrimaryPartCFrame(this.instance.PrimaryPart!.CFrame.mul(
 			CFrame.Angles(0, -math.pi / 2, 0),
 		))

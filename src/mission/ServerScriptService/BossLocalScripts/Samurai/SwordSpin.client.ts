@@ -3,9 +3,11 @@ import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLo
 import WarningRange = require("mission/ReplicatedStorage/Libraries/WarningRange");
 
 const RANGE_OFFSET = 5
-const SWORD_SPIN_DELAY = 2.5
 const SWORD_SPIN_RANGE = 15
 const SWORD_SPIN_RATE = 3
+
+const SWORD_SPIN_DELAY_PHASE1 = 2.5
+const SWORD_SPIN_DELAY_PHASE2 = 1.8
 
 const SwordSpin = BossLocalScriptUtil.WaitForBossRemote("SwordSpin")
 
@@ -15,7 +17,10 @@ SwordSpin.OnClientEvent.Connect((swordPoints: Attachment[]) => {
 	swordSpinTick += 1
 	const spinTick = swordSpinTick
 
-	const boss = CollectionService.GetTagged("Boss")[0] as Model
+	const boss = CollectionService.GetTagged("Boss")[0] as Model & {
+		CurrentPhase: NumberValue,
+	}
+
 	const primaryPart = boss.PrimaryPart!
 	const angle = primaryPart.CFrame.sub(primaryPart.Position)
 
@@ -41,12 +46,14 @@ SwordSpin.OnClientEvent.Connect((swordPoints: Attachment[]) => {
 		const goal = new Vector3(swordPoint.WorldPosition.X, initial.Y, swordPoint.WorldPosition.Z)
 		let total = 0
 
-		while (total < SWORD_SPIN_DELAY && swordSpinTick === spinTick) {
+		const spinDelay = boss.CurrentPhase.Value === 1 ? SWORD_SPIN_DELAY_PHASE2 : SWORD_SPIN_DELAY_PHASE1
+
+		while (total < spinDelay && swordSpinTick === spinTick) {
 			const delta = RunService.Heartbeat.Wait()[0]
 			total += delta
 			angleTotal += delta
 
-			const centerPosition = initial.Lerp(goal, total / SWORD_SPIN_DELAY)
+			const centerPosition = initial.Lerp(goal, total / spinDelay)
 			boss.SetPrimaryPartCFrame(
 				new CFrame(centerPosition)
 					.mul(angle)
