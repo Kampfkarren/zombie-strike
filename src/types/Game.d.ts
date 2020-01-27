@@ -5,6 +5,7 @@ interface ReplicatedStorage {
 				Boss: Folder & {
 					Crescent: BasePart,
 					Katana: BasePart,
+					Shuriken: BasePart,
 				},
 			},
 		},

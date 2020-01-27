@@ -4,11 +4,15 @@ import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 import { RotatingBoss } from "./RotatingBoss"
 import { BossClass, ZombieClass } from "./ZombieClass"
 
+const DAMAGE_SHURIKEN_FRENZY = 30
 const DAMAGE_SWORD_BEAM_ATTACK = 30
 const DAMAGE_SWORD_SPIN = 40
 const DAMAGE_YOOO = 25
 
 const NINJA_ZOMBIE_SUMMONED = 6
+
+const SHURIKEN_FRENZY_DURATION = 5
+const SHURIKEN_FRENZY_ROF = 2
 
 const SWORD_SPIN_DELAY = 2.5
 const SWORD_SPIN_SPOTS = 3
@@ -20,18 +24,21 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	static Model: string = "Boss"
 	static Name: string = "Samurai Master Zombie"
 
+	shurikenFrenzy: RemoteEvent
 	swordBeamAttack: RemoteEvent
 	swordSpin: RemoteEvent
 	yooo: RemoteEvent
 
 	phases = [
 		// [this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
-		[this.Yooo],
+		// [this.Yooo],
+		[this.ShurikenFrenzy],
 	]
 
 	constructor() {
 		super()
 
+		this.shurikenFrenzy = this.NewDamageSource("ShurikenFrenzy", DAMAGE_SHURIKEN_FRENZY)
 		this.swordBeamAttack = this.NewDamageSource("SwordBeamAttack", DAMAGE_SWORD_BEAM_ATTACK)
 		this.swordSpin = this.NewDamageSource("SwordSpin", DAMAGE_SWORD_SPIN)
 		this.yooo = this.NewDamageSource("Yooo", DAMAGE_YOOO)
@@ -58,6 +65,20 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 		} else {
 			return possibleTargets[math.random(0, possibleTargets.size() - 1)]
 		}
+	}
+
+	ShurikenFrenzy(): Promise<void> {
+		return new Promise((resolve) => {
+			const started = tick()
+			Interval(SHURIKEN_FRENZY_ROF, () => {
+				if (tick() - started >= SHURIKEN_FRENZY_DURATION) {
+					resolve()
+					return false
+				}
+
+				this.shurikenFrenzy.FireAllClients()
+			})
+		})
 	}
 
 	SummonZombies(this: BossClass<SamuraiRoom>) {
