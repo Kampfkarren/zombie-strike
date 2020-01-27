@@ -2,9 +2,9 @@ export interface ZombieClass {
 	alive: boolean
 
 	InitializeAI: () => void
-	InitializeBossAI: (room: Model) => void
 }
 
-export interface BossClass extends ZombieClass {
-	SummonGoon: (this: BossClass, zombie: ZombieClass) => void
+export interface BossClass<Room extends Model> extends ZombieClass {
+	InitializeBossAI: (room: Room) => void
+	SummonGoon: (this: BossClass<Room>, zombie: ZombieClass) => void
 }

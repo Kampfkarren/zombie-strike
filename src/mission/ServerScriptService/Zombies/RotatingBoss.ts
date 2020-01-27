@@ -4,8 +4,8 @@ import Interval from "shared/ReplicatedStorage/Core/Interval"
 import TakeDamage from "shared/ServerScriptService/TakeDamage"
 import Zombie from "./Zombie"
 
-export class RotatingBoss implements Partial<BossClass> {
-	bossRoom: Model | undefined
+export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>> {
+	bossRoom: Room | undefined
 	currentPhase: number = -1
 
 	attackInterval: number = 4
@@ -13,7 +13,7 @@ export class RotatingBoss implements Partial<BossClass> {
 
 	InitializeAI() { }
 
-	InitializeBossAI(this: RotatingBoss & ZombieClass, room: Model) {
+	InitializeBossAI(this: RotatingBoss<Room> & ZombieClass, room: Room) {
 		this.bossRoom = room
 
 		this.NextPhase()

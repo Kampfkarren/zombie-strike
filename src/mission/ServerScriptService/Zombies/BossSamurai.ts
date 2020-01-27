@@ -1,24 +1,38 @@
 import { Players } from "@rbxts/services"
 import Interval from "shared/ReplicatedStorage/Core/Interval"
-import { ZombieClass } from "./ZombieClass"
+import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 import { RotatingBoss } from "./RotatingBoss"
 
 const DAMAGE_SWORD_BEAM_ATTACK = 30
+const DAMAGE_SWORD_SPIN = 40
+
+const SWORD_SPIN_DELAY = 2.5
+const SWORD_SPIN_SPOTS = 3
 
 const SWORD_BEAM_DURATION = 5
 const SWORD_BEAM_ROF = 1 / 2
 
-class BossSamurai extends RotatingBoss {
+type SamuraiRoom = Model & {
+	Arena: Model & {
+		PrimaryPart: BasePart,
+	},
+}
+
+class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	static Model: string = "Boss"
 	static Name: string = "Samurai Master Zombie"
 
 	swordBeamAttack: RemoteEvent
-	phases = [[this.SwordBeamAttack]]
+	swordSpin: RemoteEvent
+
+	// phases = [[this.SwordBeamAttack]]
+	phases = [[this.SwordSpin]]
 
 	constructor() {
 		super()
 
 		this.swordBeamAttack = this.NewDamageSource("SwordBeamAttack", DAMAGE_SWORD_BEAM_ATTACK)
+		this.swordSpin = this.NewDamageSource("SwordSpin", DAMAGE_SWORD_SPIN)
 	}
 
 	FindAliveTarget(): Character | undefined {
@@ -55,6 +69,27 @@ class BossSamurai extends RotatingBoss {
 					))
 				}
 			})
+		})
+	}
+
+	SwordSpin(): Promise<void> {
+		return new Promise((resolve) => {
+			const swordSpinPoints = []
+
+			for (const child of this.bossRoom!.Arena.PrimaryPart.GetChildren()) {
+				if (child.Name === "SwordSpinPoint") {
+					swordSpinPoints.push(child)
+				}
+			}
+
+			const chosenPoints = []
+			for (let _ = 0; _ < swordSpinPoints.size(); _++) {
+				chosenPoints.push(swordSpinPoints.unorderedRemove(math.random(0, swordSpinPoints.size() - 1)))
+			}
+
+			this.swordSpin.FireAllClients(chosenPoints)
+
+			RealDelay(SWORD_SPIN_DELAY * SWORD_SPIN_SPOTS, resolve)
 		})
 	}
 }

@@ -447,7 +447,6 @@ function Zombie.GetDamageAgainstConstant(_, player, damage, maxHpDamage)
 	if maxHpDamage then
 		local character = player.Character
 		if character then
-			print(character.Humanoid.MaxHealth, maxHpDamage / 100)
 			damage = damage + character.Humanoid.MaxHealth * (maxHpDamage / 100)
 		end
 	end
