@@ -14,6 +14,7 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local DAMAGE = require(MODULES.Damage)
 
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 
 local GiveQuest = ServerStorage.Events.GiveQuest
@@ -190,6 +191,11 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 				end
 			end
 		end
+	end
+
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		shots[player].Directions = { shots[player].Directions[1] }
+		hits = { hits[1] }
 	end
 
 	for _, hitMark in pairs(hits) do
