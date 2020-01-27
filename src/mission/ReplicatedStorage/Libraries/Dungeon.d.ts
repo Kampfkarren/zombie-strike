@@ -1,7 +1,10 @@
 import { GamemodeInfo } from "../GamemodeInfo/Gamemode";
 
 declare namespace Dungeon {
-	export function GetDungeonData(boss: "BossInfo"): BossInfo
+	export function GetDungeonData(arg: "BossInfo"): BossInfo
+	export function GetDungeonData(arg: "Campaign"): number
+	export function GetDungeonData(arg: "Gamemode"): "Mission" | "Arena" | "Boss"
+
 	export function GetGamemodeInfo(): GamemodeInfo
 }
 

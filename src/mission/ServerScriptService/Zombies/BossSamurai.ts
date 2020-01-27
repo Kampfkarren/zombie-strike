@@ -2,9 +2,12 @@ import { Players } from "@rbxts/services"
 import Interval from "shared/ReplicatedStorage/Core/Interval"
 import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 import { RotatingBoss } from "./RotatingBoss"
+import { BossClass, ZombieClass } from "./ZombieClass"
 
 const DAMAGE_SWORD_BEAM_ATTACK = 30
 const DAMAGE_SWORD_SPIN = 40
+
+const NINJA_ZOMBIE_SUMMONED = 6
 
 const SWORD_SPIN_DELAY = 2.5
 const SWORD_SPIN_SPOTS = 3
@@ -25,14 +28,19 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	swordBeamAttack: RemoteEvent
 	swordSpin: RemoteEvent
 
-	// phases = [[this.SwordBeamAttack]]
-	phases = [[this.SwordSpin]]
+	phases = [[this.SwordBeamAttack, this.SwordSpin, this.SummonZombies]]
 
 	constructor() {
 		super()
 
 		this.swordBeamAttack = this.NewDamageSource("SwordBeamAttack", DAMAGE_SWORD_BEAM_ATTACK)
 		this.swordSpin = this.NewDamageSource("SwordSpin", DAMAGE_SWORD_SPIN)
+	}
+
+	AfterSpawn(this: ZombieClass) {
+		this.instance.SetPrimaryPartCFrame(this.instance.PrimaryPart!.CFrame.mul(
+			CFrame.Angles(0, -math.pi / 2, 0),
+		))
 	}
 
 	FindAliveTarget(): Character | undefined {
@@ -49,6 +57,12 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 			return undefined
 		} else {
 			return possibleTargets[math.random(0, possibleTargets.size() - 1)]
+		}
+	}
+
+	SummonZombies(this: BossClass<SamuraiRoom>) {
+		for (let _ = 0; _ < NINJA_ZOMBIE_SUMMONED; _++) {
+			this.SummonGoon(undefined, "Projectile")
 		}
 	}
 
@@ -72,19 +86,19 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 		})
 	}
 
-	SwordSpin(): Promise<void> {
+	SwordSpin(this: this & RotatingBoss<SamuraiRoom> & ZombieClass): Promise<void> {
 		return new Promise((resolve) => {
-			const swordSpinPoints = []
+			const swordSpinPoints: Attachment[] = []
 
 			for (const child of this.bossRoom!.Arena.PrimaryPart.GetChildren()) {
 				if (child.Name === "SwordSpinPoint") {
-					swordSpinPoints.push(child)
+					swordSpinPoints.push(child as Attachment)
 				}
 			}
 
-			const chosenPoints = []
-			for (let _ = 0; _ < swordSpinPoints.size(); _++) {
-				chosenPoints.push(swordSpinPoints.unorderedRemove(math.random(0, swordSpinPoints.size() - 1)))
+			const chosenPoints: Attachment[] = []
+			for (let _ = 0; _ < SWORD_SPIN_SPOTS; _++) {
+				chosenPoints.push(swordSpinPoints.unorderedRemove(math.random(0, swordSpinPoints.size() - 1))!)
 			}
 
 			this.swordSpin.FireAllClients(chosenPoints)

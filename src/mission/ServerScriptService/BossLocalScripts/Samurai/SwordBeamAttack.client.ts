@@ -14,7 +14,7 @@ SwordBeamAttack.OnClientEvent.Connect((point: Vector2int16) => {
 	const unit = characterPoint.sub(initial).Unit
 
 	BossLocalScriptUtil.Projectile(
-		ReplicatedStorage.Assets.Bosses.Samurai.Crescent,
+		ReplicatedStorage.Assets.Bosses.Samurai.Boss.Crescent,
 		{
 			initial,
 			lifetime: 3,

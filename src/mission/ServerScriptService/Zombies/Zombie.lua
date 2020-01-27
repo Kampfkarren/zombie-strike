@@ -12,6 +12,7 @@ local Buffs = require(ServerScriptService.Libraries.Buffs)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local ExperienceUtil = require(ServerScriptService.Libraries.ExperienceUtil)
+local GetAssetsFolder = require(ReplicatedStorage.Libraries.GetAssetsFolder)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local MapNumbers = require(ReplicatedStorage.Core.MapNumbers)
 local Nametag = require(ServerScriptService.Shared.Nametag)
@@ -202,8 +203,16 @@ function Zombie:Wander()
 			for _, player in pairs(Players:GetPlayers()) do
 				local character = player.Character
 				if isViableAggroTarget(player) then
+					local aggroRange
+
+					if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+						aggroRange = Dungeon.GetDungeonData("BossInfo").AIAggroRange
+					else
+						aggroRange = Dungeon.GetDungeonData("CampaignInfo").AIAggroRange
+					end
+
 					if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude
-						<= Dungeon.GetDungeonData("CampaignInfo").AIAggroRange
+						<= aggroRange
 					then
 						self:Aggro(character)
 					end
@@ -368,8 +377,12 @@ end
 
 -- START STATS
 function Zombie:GetScaling()
-	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
-	return assert(campaignInfo.Stats[self.zombieType])
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		return Dungeon.GetDungeonData("BossInfo").Stats[self.zombieType]
+	else
+		local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+		return assert(campaignInfo.Stats[self.zombieType])
+	end
 end
 
 function Zombie:GetScale(key)
@@ -413,7 +426,12 @@ function Zombie:GetScale(key)
 			"no scale for " .. key
 		)
 
-		return scale.Base * scale.Scale ^ (self.level - campaignInfo.Difficulties[1].MinLevel)
+		local scaleAmount = 1
+		if Dungeon.GetDungeonData("Gamemode") ~= "Boss" then
+			scaleAmount = self.level - campaignInfo.Difficulties[1].MinLevel
+		end
+
+		return scale.Base * scale.Scale ^ scaleAmount
 	end
 end
 
@@ -455,7 +473,7 @@ function Zombie.GetDamageAgainstConstant(_, player, damage, maxHpDamage)
 end
 
 function Zombie.GetDamageReceivedScale()
-	return 0.5
+	return 0.8
 end
 
 function Zombie:GetAttackCooldown()
@@ -473,11 +491,7 @@ function Zombie:GetName()
 end
 
 function Zombie:GetAsset(assetName)
-	return ReplicatedStorage
-		.Assets
-		.Campaign["Campaign" .. Dungeon.GetDungeonData("Campaign")]
-		[self.Model]
-		[assetName]
+	return GetAssetsFolder()[self.Model][assetName]
 end
 
 function Zombie:UpdateNametag()
@@ -492,7 +506,15 @@ function Zombie.AfterSpawn() end
 
 -- START SOUNDS
 function Zombie.GetDeathSound()
-	local sounds = SoundService.ZombieSounds[Dungeon.GetDungeonData("Campaign")].Death:GetChildren()
+	local soundsFolder
+
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		soundsFolder = SoundService.ZombieSounds[Dungeon.GetDungeonData("BossInfo").RoomName]
+	else
+		soundsFolder = SoundService.ZombieSounds[Dungeon.GetDungeonData("Campaign")]
+	end
+
+	local sounds = soundsFolder.Death:GetChildren()
 	return sounds[math.random(#sounds)]:Clone()
 end
 

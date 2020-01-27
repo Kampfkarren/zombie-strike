@@ -69,7 +69,7 @@ function Boss:UpdateNametag()
 	return super
 end
 
-function Boss:SummonGoon(callback)
+function Boss:SummonGoon(callback, forceType)
 	local zombieSummon = self.bossRoom.ZombieSummon
 	local basePosition = zombieSummon.Position
 	local sizeX, sizeZ = zombieSummon.Size.X, zombieSummon.Size.Z
@@ -83,13 +83,19 @@ function Boss:SummonGoon(callback)
 
 	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
 
-	local zombieTypes = {}
+	local zombieType = forceType
 
-	for zombieType in pairs(campaignInfo.ZombieTypes) do
-		table.insert(zombieTypes, zombieType)
+	if zombieType == nil then
+		local zombieTypes = {}
+
+		for zombieType in pairs(campaignInfo.ZombieTypes) do
+			table.insert(zombieTypes, zombieType)
+		end
+
+		zombieType = zombieTypes[math.random(#zombieTypes)]
 	end
 
-	local zombie = Zombie.new(zombieTypes[math.random(#zombieTypes)], Dungeon.RNGZombieLevel())
+	local zombie = Zombie.new(zombieType, Dungeon.RNGZombieLevel())
 
 	zombie.GetXP = function()
 		return 0

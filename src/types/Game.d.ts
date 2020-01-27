@@ -2,8 +2,14 @@ interface ReplicatedStorage {
 	Assets: Folder & {
 		Bosses: Folder & {
 			Samurai: Folder & {
-				Crescent: BasePart,
+				Boss: Folder & {
+					Crescent: BasePart,
+				},
 			},
+		},
+
+		Campaign: Folder & {
+			[name: string]: Folder,
 		},
 	},
 

@@ -98,8 +98,12 @@ function Dungeon.GetGamemodeInfo()
 end
 
 function Dungeon.RNGZombieLevel()
-	local difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")
-	return math.random(difficultyInfo.MinLevel, difficultyInfo.MinLevel + 2)
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		return 1
+	else
+		local difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")
+		return math.random(difficultyInfo.MinLevel, difficultyInfo.MinLevel + 2)
+	end
 end
 
 return Dungeon
