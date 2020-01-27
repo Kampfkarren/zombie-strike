@@ -55,6 +55,8 @@ function Boss.GetDamageReceivedScale()
 		return 0.0019
 	elseif playerCount == 4 then
 		return 0.0015
+	else
+		return 0
 	end
 end
 
