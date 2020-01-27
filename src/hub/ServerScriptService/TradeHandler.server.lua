@@ -41,7 +41,9 @@ local function getEquipment(player)
 	for equippable in pairs(Data.Equippable) do
 		local index = Data.GetPlayerData(player, "Equipped" .. equippable)
 		local item = inventory[index]
-		table.insert(equipment, item.UUID)
+		if item then
+			table.insert(equipment, item.UUID)
+		end
 	end
 
 	return equipment
