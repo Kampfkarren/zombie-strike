@@ -1,4 +1,4 @@
-import { ReplicatedStorage, ServerStorage, Workspace } from "@rbxts/services"
+import { Players, ReplicatedStorage, ServerScriptService, ServerStorage, StarterPlayer, Workspace } from "@rbxts/services"
 import Dungeon from "mission/ReplicatedStorage/Libraries/Dungeon"
 import DungeonState from "mission/ServerScriptService/DungeonState"
 import { Gamemode as GamemodeType, GamemodeConstructor } from "mission/ReplicatedStorage/GamemodeInfo/Gamemode"
@@ -23,6 +23,14 @@ const BossConstructor: GamemodeConstructor = {
 	Init(this: void): GamemodeType {
 		const bossRoom = spawnBossRoom()
 		DungeonState.CurrentSpawn = bossRoom.FindFirstChild("SpawnLocation", true) as SpawnLocation
+
+		for (const localScript of ServerScriptService.BossLocalScripts[bossInfo.RoomName].GetChildren()) {
+			localScript.Clone().Parent = StarterPlayer.StarterPlayerScripts
+
+			for (const player of Players.GetPlayers()) {
+				localScript.Clone().Parent = player.WaitForChild("PlayerGui")
+			}
+		}
 
 		return {
 			Countdown(this: void, time) {

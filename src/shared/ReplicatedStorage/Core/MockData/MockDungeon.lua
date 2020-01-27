@@ -7,17 +7,17 @@
 -- }
 
 -- BOSS
--- return {
--- 	Boss = 1,
--- 	Gamemode = "Boss",
--- 	Members = { 56140227 },
--- }
-
--- DUNGEON
 return {
-	Campaign = 2,
-	Difficulty = 1,
-	Gamemode = "Mission",
-	Hardcore = false,
+	Boss = 1,
+	Gamemode = "Boss",
 	Members = { 56140227 },
 }
+
+-- DUNGEON
+-- return {
+-- 	Campaign = 5,
+-- 	Difficulty = 1,
+-- 	Gamemode = "Mission",
+-- 	Hardcore = false,
+-- 	Members = { 56140227 },
+-- }

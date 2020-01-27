@@ -13,5 +13,13 @@ local function preloadChildrenOf(instance)
 end
 
 preloadChildrenOf(Assets.Animations)
-preloadChildrenOf(Assets.Campaign["Campaign" .. Dungeon.GetDungeonData("Campaign")])
+
+local campaign = Dungeon.GetDungeonData("Campaign")
+
+if campaign then
+	preloadChildrenOf(Assets.Campaign["Campaign" .. campaign])
+elseif Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	preloadChildrenOf(Assets.Bosses[Dungeon.GetDungeonData("BossInfo").RoomName])
+end
+
 preloadChildrenOf(SoundService.SFX.Explosion)
