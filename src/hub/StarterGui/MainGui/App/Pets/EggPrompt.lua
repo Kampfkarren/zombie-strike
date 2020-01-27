@@ -53,6 +53,10 @@ function EggPrompt:init()
 						alertOpen = true,
 						alertText = "Your inventory is full, please sell something.",
 					})
+
+					self:setState({
+						loading = false,
+					})
 				else
 					ReplicatedStorage.Remotes.OpenEgg:FireServer()
 				end
