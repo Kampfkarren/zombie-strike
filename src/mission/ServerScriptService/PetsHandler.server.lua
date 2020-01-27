@@ -12,7 +12,7 @@ local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local PetFire = ReplicatedStorage.Remotes.PetFire
 
 local BOSS_DAMAGE_SCALE = 1 / 15
-local BOSS_GAMEMODE_DAMAGE_SCALE = 1 / 300
+local BOSS_GAMEMODE_DAMAGE_SCALE = 1 / 450
 local COINS_PER_INTERVAL = 5
 local COINS_INTERVAL = 10
 local PET_RANGE = 90

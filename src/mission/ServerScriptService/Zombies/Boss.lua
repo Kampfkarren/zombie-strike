@@ -40,7 +40,7 @@ function Boss:AfterSpawn()
 end
 
 function Boss.GetDamageReceivedScale()
-	return 0.0033
+	return 0.0037
 end
 
 function Boss.GetHealth()
