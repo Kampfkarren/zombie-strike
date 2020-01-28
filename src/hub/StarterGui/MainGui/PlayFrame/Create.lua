@@ -327,7 +327,8 @@ function Create:render()
 	difficultyTextProps.Text = difficulty.Style.Name
 	difficultyTextProps.TextStrokeColor3 = difficulty.Style.Color
 
-	local disabled = self.state.level < difficulty.MinLevel or (isArena and self.state.campaign.LockedArena)
+	local disabled = (not isBoss and self.state.level < difficulty.MinLevel)
+		or (isArena and self.state.campaign.LockedArena)
 	local difficultyText = e("TextLabel", difficultyTextProps)
 
 	local hardcoreCheckbox
