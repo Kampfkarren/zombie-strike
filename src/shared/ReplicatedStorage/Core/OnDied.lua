@@ -2,21 +2,40 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
-local Memoize = require(ReplicatedStorage.Core.Memoize)
 
-return Memoize(function(humanoid)
+local events = {}
+
+local function OnDied(humanoid)
 	assert(typeof(humanoid) == "Instance", "OnDied called without Instance")
 	assert(humanoid:IsA("Humanoid"), "OnDied called with " .. humanoid.ClassName .. ", not Humanoid")
 
+	if events[humanoid] then
+		return events[humanoid]
+	end
+
 	local event = Instance.new("BindableEvent")
+	local fired = false
+
+	local function fire()
+		if fired then return end
+		fired = true
+		event:Fire()
+	end
+
+	humanoid.Died:connect(fire)
 
 	FastSpawn(function()
 		while humanoid.Health > 0 do
 			humanoid.HealthChanged:wait()
 		end
 
-		event:Fire()
+		if not fired then
+			fire()
+		end
 	end)
 
+	events[humanoid] = event.Event
 	return event.Event
-end)
+end
+
+return OnDied
