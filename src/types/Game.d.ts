@@ -37,6 +37,16 @@ interface ServerStorage {
 	},
 }
 
+interface SoundService {
+	ZombieSounds: Folder & {
+		Samurai: Folder & {
+			Boss: Folder & {
+				Yooo: Sound,
+			},
+		},
+	},
+}
+
 interface StarterPlayer {
 	StarterPlayerScripts: Folder,
 }

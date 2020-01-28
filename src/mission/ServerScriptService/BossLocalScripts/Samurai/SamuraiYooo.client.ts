@@ -1,4 +1,4 @@
-import { Players, ReplicatedStorage, TweenService, Workspace } from "@rbxts/services"
+import { Players, ReplicatedStorage, SoundService, TweenService, Workspace } from "@rbxts/services"
 import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil"
 
 const Katana = ReplicatedStorage.Assets.Bosses.Samurai.Boss.Katana
@@ -9,6 +9,8 @@ const katanaTweenInfo = new TweenInfo(2.5, Enum.EasingStyle.Back, Enum.EasingDir
 
 const KATANA_DELAY = 0.7 * 2.5 // 0.7 is when Back tween starts to be positive
 const KATANA_RANGE = 250
+
+const SOUND_START_POSITION = 5 - KATANA_DELAY // YOOOO is at 5, subtract by delay
 
 let touched = false
 
@@ -58,6 +60,11 @@ function spawnKatana(cframe: CFrame) {
 Yooo.OnClientEvent.Connect(() => {
 	touched = false
 	const room = Workspace.Rooms.StartSection as SamuraiRoom
+
+	const sound = SoundService.ZombieSounds.Samurai.Boss.Yooo.Clone()
+	sound.TimePosition = SOUND_START_POSITION
+	sound.Parent = Workspace
+	sound.Play()
 
 	const katanaSpawns: Attachment[] = []
 	for (const attachment of room.Arena.PrimaryPart.GetChildren()) {
