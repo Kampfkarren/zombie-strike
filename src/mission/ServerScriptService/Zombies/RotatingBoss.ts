@@ -41,6 +41,8 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 			}
 		})
 
+		this.instance.Humanoid.LoadAnimation(this.GetAsset("IdleAnimation") as Animation).Play()
+
 		this.NextPhase()
 	}
 
