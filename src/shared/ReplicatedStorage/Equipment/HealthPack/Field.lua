@@ -72,7 +72,9 @@ function Field.ServerEffect(player)
 		maid:GiveTask(RunService.Heartbeat:connect(function(delta)
 			for _, character in pairs(getCharactersInRangeOf(model.PrimaryPart)) do
 				local humanoid = character.Humanoid
-				humanoid.Health = humanoid.Health + (humanoid.MaxHealth * healAmount * delta)
+				if humanoid.Health > 0 then
+					humanoid.Health = humanoid.Health + (humanoid.MaxHealth * healAmount * delta)
+				end
 			end
 		end))
 
