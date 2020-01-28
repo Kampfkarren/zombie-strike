@@ -11,7 +11,7 @@ local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 local TitlesDictionary = require(ReplicatedStorage.Core.TitlesDictionary)
 
 local function makeVip(nametag)
-	if not nametag.EnemyName.Text:match("[VIP]") then
+	if not nametag.EnemyName.Text:match("%[VIP%]") then
 		nametag.EnemyName.Text = "[VIP] " .. nametag.EnemyName.Text
 		nametag.EnemyName.TextColor3 = Color3.new(1, 1, 0.5)
 	end
