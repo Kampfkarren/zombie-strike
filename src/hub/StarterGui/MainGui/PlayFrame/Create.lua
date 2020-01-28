@@ -365,7 +365,7 @@ function Create:render()
 	elseif disabled then
 		local text
 
-		if isArena then
+		if isArena and self.state.campaign.LockedArena then
 			text = "Coming Soon!"
 		else
 			text = ("You must be level %d to play on %s."):format(

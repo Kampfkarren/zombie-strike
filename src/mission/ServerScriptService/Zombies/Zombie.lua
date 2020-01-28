@@ -20,7 +20,7 @@ local OnDied = require(ReplicatedStorage.Core.OnDied)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local AMOUNT_FOR_NOT_BOSS = 0.7
-local DEBUG = true
+local DEBUG = false
 local LIFETIME = 4
 
 local Zombie = {}
