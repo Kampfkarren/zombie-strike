@@ -132,7 +132,9 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance, lyingDamage)
 
 		EVENTS.Damaged:Fire(humanoid, damage, player)
 
-		batchDamageNumber(player, humanoid, lyingDamage or damage, crit)
+		if lyingDamage ~= false then
+			batchDamageNumber(player, humanoid, lyingDamage or damage, crit)
+		end
 	end
 end
 

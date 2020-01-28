@@ -78,11 +78,17 @@ Players.PlayerAdded:connect(function(player)
 			end
 
 			if zombie then
+				local lyingDamage
+				if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+					lyingDamage = false
+				end
+
 				Damage:Damage(
 					zombie.Humanoid,
 					zombie.Humanoid.MaxHealth * rarity.Damage * damageScale,
 					player,
-					0
+					0,
+					lyingDamage
 				)
 
 				PetFire:FireAllClients(player, zombie)
