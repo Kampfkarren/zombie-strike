@@ -4,6 +4,8 @@ import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 import { BossAttack, RotatingBoss } from "./RotatingBoss"
 import { BossClass, ZombieClass } from "./ZombieClass"
 
+const BOSS_DEATH_DELAY = 4
+
 const DAMAGE_SHURIKEN_FRENZY = 30
 const DAMAGE_SWORD_BEAM_ATTACK = 30
 const DAMAGE_SWORD_SPIN_PHASE1 = 40
@@ -34,6 +36,16 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 		[this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
 		[this.Yooo, this.ShurikenFrenzy, this.SummonZombies, this.SwordSpin],
 	]
+
+	AfterDeath(this: this & ZombieClass) {
+		this.instance.Humanoid.LoadAnimation(
+			this.GetAsset("DeathAnimation") as Animation
+		).Play()
+
+		wait(BOSS_DEATH_DELAY)
+
+		this.Destroy()
+	}
 
 	AfterSpawn(this: this & ZombieClass) {
 		super.AfterSpawn()

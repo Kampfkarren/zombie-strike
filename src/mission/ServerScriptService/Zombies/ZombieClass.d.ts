@@ -4,7 +4,10 @@ export interface ZombieClass {
 
 	Died: RBXScriptSignal
 
+	AfterDeath: () => void
 	AfterSpawn: () => void
+	Destroy: (this: this) => void
+	GetAsset: (this: this, assetName: string) => Instance
 	GiveXP: () => void
 	InitializeAI: () => void
 }
