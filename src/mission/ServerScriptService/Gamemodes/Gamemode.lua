@@ -9,6 +9,7 @@ local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
 local GetAvailableMissions = require(ReplicatedStorage.Core.GetAvailableMissions)
 local GiveQuest = ServerStorage.Events.GiveQuest
@@ -37,6 +38,7 @@ ServerStorage.Events.DamagedByBoss.Event:connect(function(player)
 end)
 
 function Gamemode.EndMission()
+	print("Gamemode.EndMission()")
 	for _, player in pairs(Players:GetPlayers()) do
 		Promise.all({
 			GenerateLoot.GenerateSet(player):andThen(function(loot, gamemodeLoot)
@@ -192,7 +194,9 @@ function Gamemode.SpawnBoss(bossSequence, position, room)
 	end)
 
 	bossSequence.Start(model):await()
-	bossZombie:InitializeBossAI(room)
+	FastSpawn(function()
+		bossZombie:InitializeBossAI(room)
+	end)
 
 	return bossZombie
 end
