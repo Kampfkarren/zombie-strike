@@ -28,7 +28,9 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 		this.phaseValue.Parent = (this as unknown as ZombieClass).instance
 	}
 
-	InitializeAI() { }
+	InitializeAI(this: this & ZombieClass) {
+		this.instance.Humanoid.LoadAnimation(this.GetAsset("IdleAnimation") as Animation).Play()
+	}
 
 	InitializeBossAI(this: RotatingBoss<Room> & ZombieClass, room: Room) {
 		this.bossRoom = room
@@ -40,8 +42,6 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 				this.NextPhase()
 			}
 		})
-
-		this.instance.Humanoid.LoadAnimation(this.GetAsset("IdleAnimation") as Animation).Play()
 
 		this.NextPhase()
 	}
