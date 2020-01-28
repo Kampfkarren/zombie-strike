@@ -96,7 +96,7 @@ local function getLootLevel(player)
 	if Dungeon.GetDungeonData("Gamemode") == "Arena" then
 		return 1
 	elseif Dungeon.GetDungeonData("Gamemode") ~= "Mission" then
-		return math.max(playerLevel - math.random(0, 10), 1)
+		return math.max(playerLevel - math.random(0, 3), 1)
 	end
 
 	local dungeonLevelMin = Dungeon.GetDungeonData("DifficultyInfo").MinLevel
