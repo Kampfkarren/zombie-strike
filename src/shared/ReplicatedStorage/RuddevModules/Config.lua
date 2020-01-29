@@ -19,6 +19,7 @@ Bases.Pistol = {
 	ReloadTime = 1,
 	FireMode = "Auto",
 	Dropoff = 3,
+	ScaleBuff = 1.15,
 }
 
 Bases.Rifle = {
@@ -33,6 +34,7 @@ Bases.Rifle = {
 	ReloadTime = 1.8,
 	FireMode = "Auto",
 	Dropoff = 3,
+	ScaleBuff = 1.18,
 }
 
 Bases.Shotgun = {
@@ -47,6 +49,7 @@ Bases.Shotgun = {
 	FireMode = "Auto",
 	Dropoff = 3,
 	Reticle = "Shotgun",
+	ScaleBuff = 1.15,
 }
 
 Bases.SMG = {
@@ -61,6 +64,7 @@ Bases.SMG = {
 	ReloadTime = 1,
 	FireMode = "Auto",
 	Dropoff = 3,
+	ScaleBuff = 1.15,
 }
 
 Bases.Sniper = {
@@ -75,6 +79,7 @@ Bases.Sniper = {
 	ReloadTime = 1.8,
 	FireMode = "Auto",
 	Dropoff = 5,
+	ScaleBuff = 0.95,
 }
 
 function Config.GetShotgunShotSize(level)

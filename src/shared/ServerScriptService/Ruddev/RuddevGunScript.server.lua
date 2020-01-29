@@ -110,7 +110,10 @@ local function hit(player, hit, index)
 							local damageReceivedScale = humanoid:FindFirstChild("DamageReceivedScale")
 							if damageReceivedScale then
 								lyingDamage = damage
-								damage = (1 / config.FireRate) * damageReceivedScale.Value * 100
+								damage = (1 / config.FireRate)
+									* config.ScaleBuff
+									* damageReceivedScale.Value
+									* 100
 							end
 
 							DAMAGE:Damage(humanoid, damage, player, config.CritChance, lyingDamage)
