@@ -80,11 +80,15 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 		}
 	}
 
-	ShurikenFrenzy(): Promise<void> {
+	ShurikenFrenzy(this: this & ZombieClass): Promise<void> {
+		const animation = this.instance.Humanoid.LoadAnimation(this.GetAsset("ShurikenAnimation") as Animation)
+		animation.Play()
+
 		return new Promise((resolve) => {
 			const started = tick()
 			Interval(SHURIKEN_FRENZY_ROF, () => {
 				if (tick() - started >= SHURIKEN_FRENZY_DURATION) {
+					animation.Stop()
 					resolve()
 					return false
 				}
@@ -100,11 +104,15 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 		}
 	}
 
-	SwordBeamAttack(): Promise<void> {
+	SwordBeamAttack(this: this & ZombieClass): Promise<void> {
+		const animation = this.instance.Humanoid.LoadAnimation(this.GetAsset("ShurikenAnimation") as Animation)
+		animation.Play()
+
 		return new Promise((resolve) => {
 			const started = tick()
 			Interval(SWORD_BEAM_ROF, () => {
 				if (tick() - started >= SWORD_BEAM_DURATION) {
+					animation.Stop()
 					resolve()
 					return false
 				}
