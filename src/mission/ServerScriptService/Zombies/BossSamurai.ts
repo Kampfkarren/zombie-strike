@@ -129,6 +129,9 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	}
 
 	SwordSpin(this: this & RotatingBoss<SamuraiRoom> & ZombieClass): Promise<void> {
+		const animation = this.instance.Humanoid.LoadAnimation(this.GetAsset("SpinAnimation") as Animation)
+		animation.Play()
+
 		return new Promise((resolve) => {
 			const swordSpinPoints: Attachment[] = []
 
@@ -146,6 +149,8 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 			this.swordSpin!.FireAllClients(chosenPoints)
 
 			RealDelay(SWORD_SPIN_DELAY * SWORD_SPIN_SPOTS, resolve)
+		}).then(() => {
+			animation.Stop()
 		})
 	}
 
