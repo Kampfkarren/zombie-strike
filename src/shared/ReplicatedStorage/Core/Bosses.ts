@@ -7,7 +7,7 @@ const NO_DAMAGE = {
 
 const Bosses: Array<BossInfo> = [{
 	Name: "Samurai Master Zombie",
-	Image: "rbxassetid://46738832",
+	Image: "rbxassetid://4639829163",
 	RoomName: "Samurai",
 	AIAggroRange: 100,
 
