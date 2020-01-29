@@ -175,9 +175,6 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 
 		lobby.Difficulty = info.Difficulty
 		value(lobbyInstance, "NumberValue", "Difficulty", info.Difficulty)
-
-		lobby.Hardcore = info.Hardcore
-		value(lobbyInstance, "BoolValue", "Hardcore", info.Hardcore)
 	elseif info.Gamemode == "Arena" then
 		lobby.ArenaLevel = info.Level
 		value(lobbyInstance, "NumberValue", "Level", info.Level)
@@ -185,6 +182,8 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 		lobby.Boss = GetCurrentBoss().Index
 		value(lobbyInstance, "NumberValue", "Boss", lobby.Boss)
 	end
+
+	lobby.Hardcore = info.Hardcore
 
 	if getPlayerLobby(player) then
 		warn("CreateLobby: player already in lobby")

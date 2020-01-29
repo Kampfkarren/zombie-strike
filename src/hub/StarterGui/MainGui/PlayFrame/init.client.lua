@@ -491,9 +491,12 @@ local function updateLobbies()
 			lobby.ArenaLevel = lobbyInstance.Level.Value
 		elseif lobby.Gamemode == "Mission" then
 			lobby.Difficulty = lobbyInstance.Difficulty.Value
-			lobby.Hardcore = lobbyInstance.Hardcore.Value
 		elseif lobby.Gamemode == "Boss" then
 			lobby.Boss = lobbyInstance.Boss.Value
+		end
+
+		if lobby.Gamemode ~= "Arena" then
+			lobby.Hardcore = lobbyInstance.Hardcore.Value
 		end
 
 		if ours then
