@@ -4,7 +4,7 @@ import WarningRange = require("mission/ReplicatedStorage/Libraries/WarningRange"
 
 const RANGE_OFFSET = 5
 const SWORD_SPIN_RANGE = 15
-const SWORD_SPIN_RATE = 3
+const SWORD_SPIN_RATE = 12
 
 const SWORD_SPIN_DELAY_PHASE1 = 2.5
 const SWORD_SPIN_DELAY_PHASE2 = 1.8
