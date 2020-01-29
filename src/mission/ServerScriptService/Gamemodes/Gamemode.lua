@@ -80,7 +80,7 @@ function Gamemode.EndMission()
 					local missions = GetAvailableMissions(player)
 					local earlierMission
 
-					for index = 2, 0, -1 do
+					for index = 1, 0, -1 do
 						local nearbyMission = missions[#missions - index]
 						if nearbyMission then
 							earlierMission = nearbyMission

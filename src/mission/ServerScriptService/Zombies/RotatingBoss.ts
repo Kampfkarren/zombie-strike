@@ -51,7 +51,7 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 			const missions = GetAvailableMissions(player)
 			let earlierMission = missions[0]
 
-			for (let index = 3; index >= 1; index--) {
+			for (let index = 2; index >= 1; index--) {
 				const nearbyMission = missions[missions.size() - index]
 				if (nearbyMission !== undefined) {
 					earlierMission = nearbyMission
