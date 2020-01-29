@@ -63,7 +63,7 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 		}
 	}
 
-	NextPhase() {
+	NextPhase(this: this & ZombieClass) {
 		this.currentPhase += 1
 		const currentPhase = this.currentPhase
 		const phase = this.phases[currentPhase]
@@ -75,6 +75,10 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 		let currentSequence = 0
 
 		Interval(this.attackInterval, () => {
+			if (!this.alive) {
+				return false
+			}
+
 			const result = phase[currentSequence](this)
 			if (Promise.is(result)) {
 				result.await()
