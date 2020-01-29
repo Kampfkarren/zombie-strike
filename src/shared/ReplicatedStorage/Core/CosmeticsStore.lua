@@ -5,6 +5,13 @@ local function catalog(limited, bundle1, bundle2)
 	}
 end
 
+local function guns(limited, bundle1, bundle2)
+	return {
+		GunHighTier = { limited },
+		GunLowTier = { bundle1, bundle2 },
+	}
+end
+
 local function cosmeticsStore(store)
 	local newStore = {}
 
@@ -36,4 +43,9 @@ return cosmeticsStore({
 	["2020-01-06"] = catalog("The Dark God", "Little Ms. Rich", "Bunny"),
 	["2020-01-07"] = catalog("The Professional", "New Kid", "White Belt"),
 	["2020-01-07"] = catalog("The Dark God", "SinisterBot 5001", "Penguin"),
+	["2020-01-30"] = guns("Volcanic", "Winchest", "Coach Gun"),
+	["2020-01-31"] = guns("Martin", "Derringer", "Lever Shotgun"),
+	["2020-02-01"] = guns("Guycot", "Mauser", "Peacemaker"),
+	["2020-02-02"] = guns("Enouy", "Revolver Rifle", "Six Shooter"),
+	["2020-02-03"] = guns("Henry Rifle", "Spencer", "Borchardt"),
 })
