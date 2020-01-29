@@ -20,6 +20,7 @@ interface ReplicatedStorage {
 	},
 
 	Remotes: Folder & {
+		NewBoss: RemoteEvent,
 		RotatingBoss: Folder,
 		SendServerLogs: RemoteEvent,
 	},

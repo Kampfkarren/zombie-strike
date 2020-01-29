@@ -5,6 +5,7 @@ local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
 local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
 local AutomatedScrollingFrameComponent = require(ReplicatedStorage.Core.UI.Components.AutomatedScrollingFrameComponent)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
+local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GetCurrentBoss = require(ReplicatedStorage.Libraries.GetCurrentBoss)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
@@ -93,6 +94,23 @@ local function BigButton(props)
 		color = Color3.fromHSV(h, s, v * 0.7)
 	end
 
+	local newLabel
+
+	if props.New then
+		newLabel = e("TextLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.2),
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamBold,
+			Rotation = -20,
+			Size = UDim2.fromScale(0.3, 0.5),
+			Text = "NEW",
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+			TextStrokeColor3 = Color3.fromRGB(214, 48, 49),
+			TextStrokeTransparency = 0,
+		})
+	end
+
 	return e(StyledButton, {
 		ImageColor3 = color,
 		LayoutOrder = props.LayoutOrder,
@@ -113,6 +131,8 @@ local function BigButton(props)
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
 		}),
+
+		New = newLabel,
 	})
 end
 
@@ -123,6 +143,7 @@ local function MissionButton(props)
 		LayoutOrder = props.LayoutOrder,
 		Selected = props.Selected == props.Name,
 		OnClick = props.SelectGamemode(props.Name),
+		New = props.New,
 	})
 end
 
@@ -245,6 +266,12 @@ function Create:init()
 		end
 
 		self.props.OnSubmit(properties)
+	end
+
+	self.newBoss = function()
+		self:setState({
+			newBoss = true,
+		})
 	end
 end
 
@@ -457,6 +484,7 @@ function Create:render()
 				LayoutOrder = 3,
 				Selected = state.gamemode,
 				SelectGamemode = self.selectGamemode,
+				New = self.state.newBoss,
 			}),
 		}),
 
@@ -532,6 +560,11 @@ function Create:render()
 			LayoutOrder = 3,
 			Size = UDim2.fromScale(0.3, 0.95),
 		}, mapsChildren),
+
+		NewBoss = e(EventConnection, {
+			event = ReplicatedStorage.Remotes.NewBoss.OnClientEvent,
+			callback = self.newBoss,
+		}),
 	})
 end
 
