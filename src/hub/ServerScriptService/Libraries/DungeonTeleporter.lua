@@ -39,6 +39,9 @@ function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId, l
 			data.Boss = lobby.Boss
 		else
 			data.Difficulty = lobby.Difficulty
+		end
+
+		if lobby.Gamemode ~= "Arena" then
 			data.Hardcore = lobby.Hardcore
 		end
 
