@@ -166,8 +166,71 @@ function Zombie:InitializeAI()
 	end)
 end
 
+local hasSteppedAwayFromSpawn = {}
+
+local function partToRegion3(part)
+	local abs = math.abs
+
+	local cf = part.CFrame -- this causes a LuaBridge invocation + heap allocation to create CFrame object - expensive! - but no way around it. we need the cframe
+	local size = part.Size -- this causes a LuaBridge invocation + heap allocation to create Vector3 object - expensive! - but no way around it
+	local sx, sy, sz = size.X, size.Y, size.Z -- this causes 3 Lua->C++ invocations
+
+	local x, y, z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = cf:components() -- this causes 1 Lua->C++ invocations and gets all components of cframe in one go, with no allocations
+
+	-- https://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
+	local wsx = 0.5 * (abs(R00) * sx + abs(R01) * sy + abs(R02) * sz) -- this requires 3 Lua->C++ invocations to call abs, but no hash lookups since we cached abs value above; otherwise this is just a bunch of local ops
+	local wsy = 0.5 * (abs(R10) * sx + abs(R11) * sy + abs(R12) * sz) -- same
+	local wsz = 0.5 * (abs(R20) * sx + abs(R21) * sy + abs(R22) * sz) -- same
+
+	-- just a bunch of local ops
+	local minx = x - wsx
+	local miny = y - wsy
+	local minz = z - wsz
+
+	local maxx = x + wsx
+	local maxy = y + wsy
+	local maxz = z + wsz
+
+	local minv, maxv = Vector3.new(minx, miny, minz), Vector3.new(maxx, maxy, maxz)
+	return Region3.new(minv, maxv)
+end
+
+local spawnLocationRegion3
+
 local function isViableAggroTarget(player)
-	return player.Character and player.Character.Humanoid.Health > 0
+	local character = player.Character
+	if not character or character.Humanoid.Health <= 0 then
+		return false
+	end
+
+	if Dungeon.GetDungeonData("Gamemode") == "Mission" then
+		if hasSteppedAwayFromSpawn[player] then
+			return true
+		end
+
+		if character.PrimaryPart then
+			if spawnLocationRegion3 == nil then
+				spawnLocationRegion3 = partToRegion3(Workspace.Rooms.StartSection.SpawnLocation)
+			end
+
+			local count = #Workspace:FindPartsInRegion3WithWhiteList(
+				spawnLocationRegion3,
+				{ character },
+				1
+			)
+
+			if count == 0 then
+				hasSteppedAwayFromSpawn[player] = true
+				return true
+			else
+				return false
+			end
+		else
+			return false
+		end
+	end
+
+	return true
 end
 
 function Zombie:Wander()
