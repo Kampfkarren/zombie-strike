@@ -1,6 +1,6 @@
-import { CollectionService, Players, RunService } from "@rbxts/services"
-import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil";
-import WarningRange = require("mission/ReplicatedStorage/Libraries/WarningRange");
+import { CollectionService, Players, RunService, SoundService } from "@rbxts/services"
+import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil"
+import WarningRange from "mission/ReplicatedStorage/Libraries/WarningRange"
 
 const RANGE_OFFSET = 5
 const SWORD_SPIN_RANGE = 15

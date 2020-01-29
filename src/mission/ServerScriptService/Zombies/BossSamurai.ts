@@ -1,4 +1,4 @@
-import { Players } from "@rbxts/services"
+import { Players, SoundService, Workspace } from "@rbxts/services"
 import Interval from "shared/ReplicatedStorage/Core/Interval"
 import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 import { BossAttack, RotatingBoss } from "./RotatingBoss"
@@ -22,6 +22,12 @@ const SWORD_SPIN_SPOTS = 3
 
 const SWORD_BEAM_DURATION = 5
 const SWORD_BEAM_ROF = 1 / 2
+
+type SamuraiRootPart = BasePart & {
+	SpinEnd: Sound,
+	SpinLoop: Sound,
+	SpinStart: Sound,
+}
 
 class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	static Model: string = "Boss"
@@ -99,6 +105,11 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 	}
 
 	SummonZombies(this: this & BossClass<SamuraiRoom>) {
+		const sound = SoundService.ZombieSounds.Samurai.Boss.ZombieSummon.Clone()
+		sound.PlayOnRemove = true
+		sound.Parent = Workspace
+		sound.Destroy()
+
 		for (let _ = 0; _ < NINJA_ZOMBIE_SUMMONED; _++) {
 			this.SummonGoon(undefined, this.currentPhase === 0 ? "Projectile" : "Common")
 		}
@@ -132,6 +143,10 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 		const animation = this.instance.Humanoid.LoadAnimation(this.GetAsset("SpinAnimation") as Animation)
 		animation.Play()
 
+		const primaryPart = this.instance.PrimaryPart as SamuraiRootPart
+		primaryPart.SpinStart.Play()
+		primaryPart.SpinLoop.Play()
+
 		return new Promise((resolve) => {
 			const swordSpinPoints: Attachment[] = []
 
@@ -150,6 +165,8 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 
 			RealDelay(SWORD_SPIN_DELAY * SWORD_SPIN_SPOTS, resolve)
 		}).then(() => {
+			primaryPart.SpinLoop.Stop()
+			primaryPart.SpinEnd.Play()
 			animation.Stop()
 		})
 	}

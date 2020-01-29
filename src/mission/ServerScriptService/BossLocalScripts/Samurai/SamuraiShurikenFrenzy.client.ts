@@ -1,5 +1,6 @@
-import { CollectionService, Players, ReplicatedStorage } from "@rbxts/services"
+import { CollectionService, Players, ReplicatedStorage, SoundService } from "@rbxts/services"
 import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil"
+import PlayQuickSound from "shared/ReplicatedStorage/Core/PlayQuickSound"
 
 const PROJECTILES_THROWN = 2
 const PROJECTILE_Y = 3 // ooohh GOOOOD
@@ -26,6 +27,8 @@ ShurikenFrenzy.OnClientEvent.Connect(() => {
 				const unit = characterPoint.sub(initial).Unit
 
 				for (let _ = 0; _ < PROJECTILES_THROWN; _++) {
+					PlayQuickSound(SoundService.ZombieSounds.Samurai.Boss.Attack, boss.PrimaryPart)
+
 					BossLocalScriptUtil.Projectile(
 						ReplicatedStorage.Assets.Bosses.Samurai.Boss.Shuriken,
 						{

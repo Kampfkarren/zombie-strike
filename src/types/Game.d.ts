@@ -42,7 +42,9 @@ interface SoundService {
 	ZombieSounds: Folder & {
 		Samurai: Folder & {
 			Boss: Folder & {
+				Attack: Sound,
 				Yooo: Sound,
+				ZombieSummon: Sound,
 			},
 		},
 	},

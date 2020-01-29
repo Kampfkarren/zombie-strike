@@ -1,5 +1,6 @@
-import { CollectionService, ReplicatedStorage } from "@rbxts/services"
+import { CollectionService, ReplicatedStorage, SoundService } from "@rbxts/services"
 import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil"
+import PlayQuickSound from "shared/ReplicatedStorage/Core/PlayQuickSound"
 
 const PROJECTILE_Y = 3 // ooohh god
 const RANDOM_RANGE = 25
@@ -13,20 +14,23 @@ SwordBeamAttack.OnClientEvent.Connect((point: Vector2int16) => {
 	const characterPoint = new Vector3(point.X, PROJECTILE_Y, point.Y)
 	const unit = characterPoint.sub(initial).Unit
 
-	BossLocalScriptUtil.Projectile(
-		ReplicatedStorage.Assets.Bosses.Samurai.Boss.Crescent,
-		{
-			initial,
-			lifetime: 3,
-			goal: characterPoint.add(unit.mul(characterPoint.Magnitude)).add(
-				new Vector3(
-					math.random(-RANDOM_RANGE, RANDOM_RANGE),
-					0,
-					math.random(-RANDOM_RANGE, RANDOM_RANGE),
+	PlayQuickSound(
+		SoundService.ZombieSounds.Samurai.Boss.Attack,
+		BossLocalScriptUtil.Projectile(
+			ReplicatedStorage.Assets.Bosses.Samurai.Boss.Crescent,
+			{
+				initial,
+				lifetime: 3,
+				goal: characterPoint.add(unit.mul(characterPoint.Magnitude)).add(
+					new Vector3(
+						math.random(-RANDOM_RANGE, RANDOM_RANGE),
+						0,
+						math.random(-RANDOM_RANGE, RANDOM_RANGE),
+					),
 				),
-			),
-			speed: 90,
-			onTouched: SwordBeamAttack,
-		},
+				speed: 90,
+				onTouched: SwordBeamAttack,
+			},
+		),
 	)
 })
