@@ -41,7 +41,7 @@ return function()
 	MockPlayer.Brains = 0
 	MockPlayer.PetCoins = 1000
 
-	MockPlayer.LastDefeatedBoss = MockPlayer.None
+	MockPlayer.BossesDefeated = {}
 
 	MockPlayer.Weapon = {
 		Type = "Pistol",
