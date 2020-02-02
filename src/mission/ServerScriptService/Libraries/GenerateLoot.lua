@@ -211,7 +211,8 @@ local function getLootRarity(player)
 		end
 	end
 
-	error("unreachable code! GenerateLoot did not give a rarity percent")
+	warn("unreachable code! GenerateLoot did not give a rarity percent")
+	return 1
 end
 
 local function generateLootItem(player)

@@ -5,13 +5,13 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
 local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
+local Bosses = require(ReplicatedStorage.Core.Bosses)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporter)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
-local GetCurrentBoss = require(ReplicatedStorage.Libraries.GetCurrentBoss)
 local inspect = require(ReplicatedStorage.Core.inspect)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local t = require(ReplicatedStorage.Vendor.t)
@@ -72,12 +72,12 @@ end
 
 local validateLobby = t.intersection(
 	t.interface({
-		Campaign = t.intersection(t.integer, t.numberConstrained(1, #Campaigns)),
 		Public = t.boolean,
 	}),
 
 	t.union(
 		t.interface({
+			Campaign = t.intersection(t.integer, t.numberConstrained(1, #Campaigns)),
 			Gamemode = t.literal("Arena"),
 			Level = t.intersection(t.integer, function(level)
 				return level == 1
@@ -88,12 +88,14 @@ local validateLobby = t.intersection(
 		}),
 
 		t.interface({
+			Campaign = t.intersection(t.integer, t.numberConstrained(1, #Campaigns)),
 			Gamemode = t.literal("Mission"),
 			Difficulty = t.integer, -- We can't constrain this here
 			Hardcore = t.boolean,
 		}),
 
 		t.interface({
+			Boss = t.intersection(t.integer, t.numberConstrained(1, #Bosses)),
 			Gamemode = t.literal("Boss"),
 			Hardcore = t.boolean,
 		})
@@ -138,15 +140,20 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 		return
 	end
 
-	local campaign = Campaigns[info.Campaign]
-	if not campaign then
-		warn("CreateLobby: invalid campaign (should be unreachable?)", info.Campaign)
-		return
+	local lobbyInstance = Instance.new("Folder")
+	local campaign
+
+	if info.Campaign then
+		campaign = Campaigns[info.Campaign]
+		if not campaign then
+			warn("CreateLobby: invalid campaign (should be unreachable?)", info.Campaign)
+			return
+		end
+
+		value(lobbyInstance, "NumberValue", "Campaign", info.Campaign)
 	end
 
-	local lobbyInstance = Instance.new("Folder")
 	value(lobbyInstance, "StringValue", "Gamemode", info.Gamemode)
-	value(lobbyInstance, "NumberValue", "Campaign", info.Campaign)
 	value(lobbyInstance, "BoolValue", "Public", info.Public)
 	value(lobbyInstance, "BoolValue", "Hardcore", info.Hardcore)
 
@@ -179,7 +186,7 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 		lobby.ArenaLevel = info.Level
 		value(lobbyInstance, "NumberValue", "Level", info.Level)
 	elseif info.Gamemode == "Boss" then
-		lobby.Boss = GetCurrentBoss().Index
+		lobby.Boss = info.Boss
 		value(lobbyInstance, "NumberValue", "Boss", lobby.Boss)
 	end
 
@@ -273,7 +280,12 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
 		return
 	end
 
-	local campaign = assert(Campaigns[lobby.Campaign])
+	local campaign
+
+	if lobby.Campaign then
+		campaign = assert(Campaigns[lobby.Campaign])
+	end
+
 	local difficulty
 	if lobby.Gamemode == "Arena" then
 		difficulty = ArenaDifficulty(lobby.ArenaLevel)

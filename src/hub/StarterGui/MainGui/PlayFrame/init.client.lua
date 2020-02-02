@@ -121,7 +121,12 @@ do
 	local function selectLobby(lobby)
 		local level = Players.LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
 
-		local campaign = assert(Campaigns[lobby.Campaign])
+		local campaign
+
+		if lobby.Campaign then
+			campaign = assert(Campaigns[lobby.Campaign])
+		end
+
 		local difficulty, difficultyName
 		if lobby.Gamemode == "Arena" then
 			difficulty = ArenaDifficulty(lobby.ArenaLevel)
@@ -284,9 +289,9 @@ do
 			end
 
 			-- TODO: If the lobby has a higher level than you, put it to the bottom
-			if a.level ~= b.level then
-				return a.level > b.level
-			end
+			-- if a.level ~= b.level then
+			-- 	return a.level > b.level
+			-- end
 
 			-- More recent missions go on the bottom
 			return a.fallback < b.fallback
@@ -360,8 +365,11 @@ do
 		local MapInfo = Lobby.Info.MapInfo
 		local campaign = Campaigns[current.Campaign]
 
-		MapInfo.Campaign.Text = campaign.Name
-		MapInfo.MapImage.Image = campaign.Image
+		if campaign then
+			MapInfo.Campaign.Text = campaign.Name
+			MapInfo.MapImage.Image = campaign.Image
+		end
+
 		MapInfo.MapImage.Hardcore.Visible = current.Hardcore
 
 		if current.Gamemode == "Arena" then
@@ -478,7 +486,6 @@ local function updateLobbies()
 		end
 
 		local lobby = {
-			Campaign = lobbyInstance.Campaign.Value,
 			Gamemode = lobbyInstance.Gamemode.Value,
 			Players = players,
 			Public = lobbyInstance.Public.Value,
@@ -497,6 +504,10 @@ local function updateLobbies()
 
 		if lobby.Gamemode ~= "Arena" then
 			lobby.Hardcore = lobbyInstance.Hardcore.Value
+		end
+
+		if lobby.Gamemode ~= "Boss" then
+			lobby.Campaign = lobbyInstance.Campaign.Value
 		end
 
 		if ours then

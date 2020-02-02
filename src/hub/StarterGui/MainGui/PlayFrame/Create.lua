@@ -1,13 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local ArenaConstants = require(ReplicatedStorage.Core.ArenaConstants)
-local ArenaDifficulty = require(ReplicatedStorage.Libraries.ArenaDifficulty)
 local AutomatedScrollingFrameComponent = require(ReplicatedStorage.Core.UI.Components.AutomatedScrollingFrameComponent)
-local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
-local GetCurrentBoss = require(ReplicatedStorage.Libraries.GetCurrentBoss)
+local Gamemodes = require(script.Parent.Gamemodes)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local StyledButton = require(ReplicatedStorage.Core.UI.Components.StyledButton)
@@ -141,24 +138,16 @@ local function MissionButton(props)
 		Color = Color3.fromRGB(247, 159, 31),
 		Name = props.Name,
 		LayoutOrder = props.LayoutOrder,
-		Selected = props.Selected == props.Name,
+		Selected = props.Selected.Name == props.Name,
 		OnClick = props.SelectGamemode(props.Name),
 		New = props.New,
 	})
 end
 
-local function roundArenaLevel(level)
-	if level == 1 then
-		return 0
-	else
-		return level
-	end
-end
-
 function Create:init()
 	self:setState({
 		hardcore = false,
-		gamemode = "Mission",
+		gamemode = Gamemodes.Mission,
 		public = true,
 	})
 
@@ -167,15 +156,11 @@ function Create:init()
 
 		self:setState({
 			level = level,
-			arenaLevel = math.min(
-				ArenaConstants.MaxLevel,
-				math.max(1, math.floor(level / ArenaConstants.LevelStep) * ArenaConstants.LevelStep)
-			),
 		})
 
 		local latestCampaign
 
-		for campaignIndex, campaign in ipairs(Campaigns) do
+		for campaignIndex, campaign in ipairs(Gamemodes.Mission.Locations) do
 			if level >= campaign.Difficulties[1].MinLevel then
 				latestCampaign = campaignIndex
 			else
@@ -183,7 +168,7 @@ function Create:init()
 			end
 		end
 
-		self:SelectCampaign(assert(latestCampaign))
+		self:SelectLocation(assert(latestCampaign))
 	end)
 
 	self.toggleHardcore = function()
@@ -199,69 +184,57 @@ function Create:init()
 	end
 
 	self.nextDifficulty = function()
-		if self.state.gamemode == "Arena" then
-			local level = roundArenaLevel(self.state.arenaLevel) + 20
-			if level > ArenaConstants.MaxLevel then
-				level = 1
-			end
-
-			self:setState({
-				arenaLevel = level,
-			})
-		else
-			self:setState({
-				difficulty = (self.state.difficulty % #self.state.campaign.Difficulties) + 1,
-			})
-		end
+		self:setState({
+			difficulty = (self.state.difficulty % #self.state.campaign.Difficulties) + 1,
+		})
 	end
 
 	self.previousDifficulty = function()
-		if self.state.gamemode == "Arena" then
-			local level = roundArenaLevel(self.state.arenaLevel) - 20
-			if level == 0 then
-				level = 1
-			elseif level < 0 then
-				level = ArenaConstants.MaxLevel
-			end
-
-			self:setState({
-				arenaLevel = level,
-			})
-		else
-			self:setState({
-				difficulty = self.state.difficulty == 1
-					and #self.state.campaign.Difficulties
-					or self.state.difficulty - 1,
-			})
-		end
+		self:setState({
+			difficulty = self.state.difficulty == 1
+				and #self.state.campaign.Difficulties
+				or self.state.difficulty - 1,
+		})
 	end
 
-	self.selectCampaign = Memoize(function(campaignIndex)
+	self.selectLocation = Memoize(function(campaignIndex)
 		return function()
-			self:SelectCampaign(campaignIndex)
+			self:SelectLocation(campaignIndex)
 		end
 	end)
 
 	self.selectGamemode = Memoize(function(gamemode)
 		return function()
+			local gamemode = Gamemodes[gamemode]
+			local selectedLocation
+
+			for locationIndex, location in pairs(gamemode.Locations) do
+				if location.Name == self.state.campaign.Name then
+					selectedLocation = locationIndex
+					break
+				end
+			end
+
+			if not selectedLocation then
+				selectedLocation = 1
+			end
+
 			self:setState({
 				gamemode = gamemode,
 			})
+
+			self:SelectLocation(selectedLocation)
 		end
 	end)
 
 	self.submit = function()
 		local state = self.state
-		local properties = {
-			Campaign = state.campaignIndex,
-			Gamemode = state.gamemode,
-			Public = state.public,
-		}
+		local properties = state.gamemode.Submit(state)
 
-		if state.gamemode == "Arena" then
-			properties.Level = state.arenaLevel
-		else
-			properties.Difficulty = state.difficulty
+		properties.Gamemode = state.gamemode.Name
+		properties.Public = state.public
+
+		if state.gamemode.HardcoreEnabled then
 			properties.Hardcore = state.hardcore
 		end
 
@@ -275,12 +248,12 @@ function Create:init()
 	end
 end
 
-function Create:SelectCampaign(campaignIndex)
-	local campaign = Campaigns[campaignIndex]
+function Create:SelectLocation(campaignIndex)
+	local campaign = self.state.gamemode.Locations[campaignIndex]
 
 	local latestDifficulty
 
-	for difficultyIndex, difficulty in ipairs(campaign.Difficulties) do
+	for difficultyIndex, difficulty in ipairs(campaign.Difficulties or {}) do
 		if self.state.level >= difficulty.MinLevel then
 			latestDifficulty = difficultyIndex
 		else
@@ -302,9 +275,6 @@ function Create:render()
 		return Roact.createFragment()
 	end
 
-	local isArena = self.state.gamemode == "Arena"
-	local isBoss = self.state.gamemode == "Boss"
-
 	local mapsChildren = {}
 	mapsChildren.UIListLayout = e("UIListLayout", {
 		FillDirection = Enum.FillDirection.Vertical,
@@ -313,54 +283,47 @@ function Create:render()
 		SortOrder = Enum.SortOrder.LayoutOrder,
 	})
 
-	if not isBoss then
-		for campaignIndex, campaign in ipairs(Campaigns) do
-			local campaignDisabled
+	for locationIndex, location in ipairs(self.state.gamemode.Locations) do
+		local campaignDisabled = false
 
-			if isArena then
-				campaignDisabled = campaign.LockedArena
-			else
-				campaignDisabled = self.state.level < campaign.Difficulties[1].MinLevel
-			end
-
-			table.insert(mapsChildren, e(BigButton, {
-				Color = Color3.fromRGB(36, 171, 157),
-				Disabled = campaignDisabled,
-				Name = campaign.Name,
-				LayoutOrder = campaignIndex,
-				Selected = campaign == self.state.campaign,
-				OnClick = self.selectCampaign(campaignIndex),
-			}))
+		if location.Difficulties then
+			campaignDisabled = self.state.level < location.Difficulties[1].MinLevel
 		end
+
+		table.insert(mapsChildren, e(BigButton, {
+			Color = Color3.fromRGB(36, 171, 157),
+			Disabled = campaignDisabled,
+			Name = location.Name,
+			LayoutOrder = locationIndex,
+			Selected = location == self.state.campaign,
+			OnClick = self.selectLocation(locationIndex),
+		}))
 	end
 
-	local difficulty
-	local difficultyTextProps = {
-		BackgroundTransparency = 1,
-		Font = Enum.Font.GothamSemibold,
-		LayoutOrder = 2,
-		Size = UDim2.fromScale(0.4, 1),
-		TextColor3 = Color3.new(1, 1, 1),
-		TextScaled = true,
-		TextStrokeTransparency = 0.2,
-	}
+	local difficulty = (self.state.campaign.Difficulties or {})[self.state.difficulty]
+	local difficultyText
+	local disabled = difficulty and self.state.level < difficulty.MinLevel
 
-	if isArena then
-		difficulty = ArenaDifficulty(self.state.arenaLevel)
-	else
-		difficulty = self.state.campaign.Difficulties[self.state.difficulty]
+	if difficulty then
+		local difficultyTextProps = {
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamSemibold,
+			LayoutOrder = 2,
+			Size = UDim2.fromScale(0.4, 1),
+			TextColor3 = Color3.new(1, 1, 1),
+			TextScaled = true,
+			TextStrokeTransparency = 0.2,
+		}
+
+		difficultyTextProps.Text = difficulty.Style.Name
+		difficultyTextProps.TextStrokeColor3 = difficulty.Style.Color
+
+		difficultyText = e("TextLabel", difficultyTextProps)
 	end
-
-	difficultyTextProps.Text = difficulty.Style.Name
-	difficultyTextProps.TextStrokeColor3 = difficulty.Style.Color
-
-	local disabled = (not isBoss and self.state.level < difficulty.MinLevel)
-		or (isArena and self.state.campaign.LockedArena)
-	local difficultyText = e("TextLabel", difficultyTextProps)
 
 	local hardcoreCheckbox
 
-	if not isArena then
+	if self.state.gamemode.HardcoreEnabled then
 		hardcoreCheckbox = e(Checkbox, {
 			Checked = state.hardcore,
 			Color = Color3.fromRGB(195, 54, 20),
@@ -377,7 +340,7 @@ function Create:render()
 
 	local warning
 
-	if not isArena and state.hardcore and not disabled then
+	if self.state.gamemode.HardcoreEnabled and state.hardcore and not disabled then
 		warning = e("TextLabel", {
 			AnchorPoint = Vector2.new(0, 0.5),
 			BackgroundTransparency = 1,
@@ -390,16 +353,10 @@ function Create:render()
 			TextStrokeTransparency = 0.2,
 		})
 	elseif disabled then
-		local text
-
-		if isArena and self.state.campaign.LockedArena then
-			text = "Coming Soon!"
-		else
-			text = ("You must be level %d to play on %s."):format(
-				difficulty.MinLevel,
-				difficulty.Style.Name
-			)
-		end
+		local text = ("You must be level %d to play on %s."):format(
+			difficulty.MinLevel,
+			difficulty.Style.Name
+		)
 
 		warning = e("TextLabel", {
 			AnchorPoint = Vector2.new(0, 0.5),
@@ -415,7 +372,7 @@ function Create:render()
 	end
 
 	local difficultyFrame
-	if not isBoss then
+	if self.state.campaign.Difficulties ~= nil then
 		difficultyFrame = e("Frame", {
 			BackgroundTransparency = 1,
 			LayoutOrder = 2,
@@ -444,8 +401,6 @@ function Create:render()
 			}),
 		})
 	end
-
-	local currentBoss = GetCurrentBoss().Info
 
 	return e("Frame", {
 		BackgroundTransparency = 1,
@@ -505,14 +460,14 @@ function Create:render()
 				Font = Enum.Font.GothamBold,
 				LayoutOrder = 0,
 				Size = UDim2.fromScale(0.8, 0.1),
-				Text = isBoss and currentBoss.Name or state.campaign.Name,
+				Text = state.campaign.Name,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
 			}),
 
 			MapImage = e("ImageLabel", {
 				BackgroundTransparency = 1,
-				Image = isBoss and currentBoss.Image or state.campaign.Image,
+				Image = state.campaign.Image,
 				LayoutOrder = 1,
 				Size = UDim2.fromScale(1, 0.5),
 			}, {
