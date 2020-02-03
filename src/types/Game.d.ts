@@ -1,6 +1,12 @@
 interface ReplicatedStorage {
 	Assets: Folder & {
 		Bosses: Folder & {
+			Radioactive: Folder & {
+				Boss: Folder & {
+					SlamAnimation: Animation,
+				},
+			},
+
 			Samurai: Folder & {
 				Boss: Folder & {
 					Crescent: BasePart,
@@ -11,6 +17,12 @@ interface ReplicatedStorage {
 		},
 
 		Campaign: Folder & {
+			Campaign4: Folder & {
+				Boss: Folder & {
+					Ring: BasePart,
+				},
+			},
+
 			[name: string]: Folder,
 		},
 	},
@@ -54,6 +66,7 @@ interface StarterPlayer {
 }
 
 interface Workspace {
+	Effects: Folder,
 	Rooms: Folder & {
 		StartSection: Model,
 	},

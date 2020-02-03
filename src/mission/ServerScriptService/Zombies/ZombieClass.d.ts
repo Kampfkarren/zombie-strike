@@ -4,6 +4,7 @@ export interface ZombieClass {
 
 	Died: RBXScriptSignal
 
+	Aggro: (this: this) => void
 	AfterDeath: () => void
 	AfterSpawn: () => void
 	Attack(): () => boolean

@@ -2,13 +2,19 @@ import { Players, ReplicatedStorage, SoundService, Workspace } from "@rbxts/serv
 import Interval from "shared/ReplicatedStorage/Core/Interval"
 import CircleEffect from "shared/ReplicatedStorage/Core/CircleEffect"
 import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
+import { GetFarthestPlayer } from "mission/ReplicatedStorage/Libraries/CharacterSelector"
 import { BossAttack, RotatingBoss } from "./RotatingBoss"
 import { BossClass, ZombieClass } from "./ZombieClass"
+import Raycast from "shared/ReplicatedStorage/Core/Raycast"
 import TakeDamage from "shared/ServerScriptService/TakeDamage"
 import Zombie from "./Zombie"
 
 const ATTACK_DAMAGE = 90
 const ATTACK_RANGE = 25
+
+const DAMAGE_SLAM_DOWN_AOE_PHASE1 = 40
+const DAMAGE_SLAM_DOWN_AOE_PHASE2 = 100
+const DAMAGE_SLAM_DOWN_RING = 25
 
 const CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect
 
@@ -17,18 +23,48 @@ type Ability = {
 	cooldown: number,
 }
 
+function SlamAttack(this: BossRadioactive & ZombieClass): void | Promise<void> {
+	const closest = GetFarthestPlayer(this.instance.PrimaryPart!.Position)
+	if (closest !== undefined) {
+		const boss = this.instance
+		boss.PrimaryPart!.Anchored = true
+
+		const [_, position] = Raycast(
+			closest.Character!.PrimaryPart!.Position,
+			new Vector3(0, -1000, 0),
+			Players.GetPlayers().mapFiltered((player) => player.Character),
+		)
+
+		this.slamDownAoE!.FireAllClients(position)
+
+		return new Promise((resolve) => {
+			RealDelay(0.6, () => {
+				boss.SetPrimaryPartCFrame(new CFrame(position)
+					.mul(boss.PrimaryPart!.CFrame.sub(boss.PrimaryPart!.Position))
+					.add(new Vector3(0, boss.GetExtentsSize().Y, 0)))
+				boss.PrimaryPart!.Anchored = false
+				this.Aggro()
+				resolve()
+			})
+		})
+	}
+}
+
 class BossRadioactive extends RotatingBoss<RadioactiveRoom> {
 	static Model: string = "Boss"
 	static Name: string = "Radioactive Giga Zombie"
 	static AttackRange: number = 15
 
 	abilities: Ability[] = [{
-		attack: print,
+		attack: SlamAttack,
 		cooldown: 7,
 	}]
 
 	abilityUseTimes: Map<keyof this["abilities"] & number, number> = new Map()
 	normalAi: boolean = true
+
+	slamDownAoE: RemoteEvent | undefined
+	slamDownRing: RemoteEvent | undefined
 
 	stompAnimation: AnimationTrack | undefined
 
@@ -46,6 +82,13 @@ class BossRadioactive extends RotatingBoss<RadioactiveRoom> {
 
 	AfterSpawn(this: this & ZombieClass) {
 		super.AfterSpawn()
+
+		this.slamDownAoE = this.NewDamageSource("SlamDownAoE", [
+			DAMAGE_SLAM_DOWN_AOE_PHASE1,
+			DAMAGE_SLAM_DOWN_AOE_PHASE2,
+		])
+
+		this.slamDownRing = this.NewDamageSource("SlamDownRing", DAMAGE_SLAM_DOWN_RING)
 
 		this.stompAnimation = this.instance.Humanoid.LoadAnimation(
 			this.GetAsset("AttackAnimation") as Animation,
