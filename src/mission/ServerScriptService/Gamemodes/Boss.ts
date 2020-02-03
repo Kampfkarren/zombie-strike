@@ -25,11 +25,15 @@ const BossConstructor: GamemodeConstructor = {
 		const bossRoom = spawnBossRoom()
 		DungeonState.CurrentSpawn = bossRoom.FindFirstChild("SpawnLocation", true) as SpawnLocation
 
-		for (const localScript of ServerScriptService.BossLocalScripts[bossInfo.RoomName].GetChildren()) {
-			localScript.Clone().Parent = StarterPlayer.StarterPlayerScripts
+		const localScriptsFolder = ServerScriptService.BossLocalScripts.FindFirstChild(bossInfo.RoomName)
 
-			for (const player of Players.GetPlayers()) {
-				localScript.Clone().Parent = player.WaitForChild("PlayerGui")
+		if (localScriptsFolder !== undefined) {
+			for (const localScript of localScriptsFolder.GetChildren()) {
+				localScript.Clone().Parent = StarterPlayer.StarterPlayerScripts
+
+				for (const player of Players.GetPlayers()) {
+					localScript.Clone().Parent = player.WaitForChild("PlayerGui")
+				}
 			}
 		}
 
@@ -50,17 +54,21 @@ const BossConstructor: GamemodeConstructor = {
 			GenerateLootItem(this: void, player: Player): GamemodeReward | undefined {
 				// This method sucks, if a player plays a boss, doesn't play for a while,
 				// and comes back and it's the same boss, then they won't get brains.
-				const [lastDefeatedBoss, lastDefeatedBossStore] = Data.GetPlayerData(player, "LastDefeatedBoss")
-				if (lastDefeatedBoss !== bossInfo.RoomName) {
-					lastDefeatedBossStore.Set(bossInfo.RoomName)
-					return {
-						GamemodeLoot: true,
-						Type: "Brains",
-						Brains: 100,
-					}
-				} else {
-					return undefined
-				}
+
+				// const [lastDefeatedBoss, lastDefeatedBossStore] = Data.GetPlayerData(player, "LastDefeatedBoss")
+				// if (lastDefeatedBoss !== bossInfo.RoomName) {
+				// 	lastDefeatedBossStore.Set(bossInfo.RoomName)
+				// 	return {
+				// 		GamemodeLoot: true,
+				// 		Type: "Brains",
+				// 		Brains: 100,
+				// 	}
+				// } else {
+				// 	return undefined
+				// }
+
+				warn("NYI: Boss.GenerateLootItem")
+				return undefined
 			}
 		}
 	},

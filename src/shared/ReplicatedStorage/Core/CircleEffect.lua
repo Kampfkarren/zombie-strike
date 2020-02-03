@@ -14,6 +14,7 @@ CircleEffect.Presets = {
 	TANK_BUFF = 2,
 	BOMBER_ZOMBIE = 3,
 	KATANA = 4,
+	BOSS_RADIOACTIVE = 5,
 }
 
 CircleEffect.PresetOptions = {
@@ -34,6 +35,11 @@ CircleEffect.PresetOptions = {
 
 	[CircleEffect.Presets.KATANA] = {
 		Color = Color3.new(0.7, 0.7, 0.7),
+		Range = 25,
+	},
+
+	[CircleEffect.Presets.BOSS_RADIOACTIVE] = {
+		Color = Color3.fromRGB(255, 124, 124),
 		Range = 25,
 	},
 }

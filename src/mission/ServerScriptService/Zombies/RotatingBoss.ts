@@ -17,6 +17,8 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 	attackInterval: number = 4
 	phases: BossAttack<this>[][] = []
 
+	normalAi: boolean = false
+
 	constructor() {
 		this.nextPhaseEvent = this.NewRemoteEvent("NextPhase")
 	}
@@ -29,7 +31,11 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 	}
 
 	InitializeAI(this: this & ZombieClass) {
-		this.instance.Humanoid.LoadAnimation(this.GetAsset("IdleAnimation") as Animation).Play()
+		if (this.normalAi) {
+			Zombie.InitializeAI(this)
+		} else {
+			this.instance.Humanoid.LoadAnimation(this.GetAsset("IdleAnimation") as Animation).Play()
+		}
 	}
 
 	InitializeBossAI(this: RotatingBoss<Room> & ZombieClass, room: Room) {

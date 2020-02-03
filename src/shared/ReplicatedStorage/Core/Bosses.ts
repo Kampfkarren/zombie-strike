@@ -1,8 +1,10 @@
 import { BossInfo } from "./BossInfo"
 
-const NO_DAMAGE = {
-	Base: 0,
-	Scale: 1,
+function scale(x: number): { Base: number, Scale: number } {
+	return {
+		Base: x,
+		Scale: 1,
+	}
 }
 
 const Bosses = [
@@ -14,33 +16,30 @@ const Bosses = [
 
 		Stats: {
 			Common: {
-				Damage: NO_DAMAGE,
-
-				MaxHealthDamage: {
-					Base: 30,
-					Scale: 1,
-				},
-
-				Speed: {
-					Base: 15,
-					Scale: 1,
-				},
+				Damage: scale(0),
+				MaxHealthDamage: scale(30),
+				Speed: scale(15),
 			},
 
 			Projectile: {
-				Damage: NO_DAMAGE,
-
-				MaxHealthDamage: {
-					Base: 20,
-					Scale: 1,
-				},
-
-				Speed: {
-					Base: 13,
-					Scale: 1,
-				},
+				Damage: scale(0),
+				MaxHealthDamage: scale(20),
+				Speed: scale(13),
 			},
 		}
+	},
+
+	{
+		Name: "Radioactive Giga Zombie",
+		Image: "rbxassetid://378620366",
+		RoomName: "Radioactive",
+		AIAggroRange: 200,
+
+		Stats: {
+			Boss: {
+				Speed: scale(14),
+			},
+		},
 	},
 ] as const
 

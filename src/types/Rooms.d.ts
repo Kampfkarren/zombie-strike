@@ -3,3 +3,5 @@ type SamuraiRoom = Model & {
 		PrimaryPart: BasePart,
 	},
 }
+
+type RadioactiveRoom = Model

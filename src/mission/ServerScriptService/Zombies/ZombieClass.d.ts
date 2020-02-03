@@ -6,6 +6,7 @@ export interface ZombieClass {
 
 	AfterDeath: () => void
 	AfterSpawn: () => void
+	Attack(): () => boolean
 	Destroy: (this: this) => void
 	GetAsset: (this: this, assetName: string) => Instance
 	GiveXP: () => void

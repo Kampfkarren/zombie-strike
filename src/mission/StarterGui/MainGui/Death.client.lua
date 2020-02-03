@@ -120,7 +120,7 @@ if gamemodeInfo.Lives == nil then
 		end
 	end
 else
-	local lives = ReplicatedStorage.Lives
+	local lives = ReplicatedStorage:WaitForChild("Lives")
 
 	characterAdded = function(character)
 		OnDied(character:WaitForChild("Humanoid")):connect(function()

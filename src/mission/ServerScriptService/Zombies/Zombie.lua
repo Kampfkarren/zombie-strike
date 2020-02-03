@@ -152,7 +152,7 @@ function Zombie:InitializeAI()
 
 			if headBump then
 				self:Debug("can't jump, something above")
-			else
+			elseif self.InitializeBossAI == nil then
 				local oldJumpPower = self.instance.Humanoid.JumpPower
 				self.instance.Humanoid.JumpPower = 40
 				self.instance.Humanoid.Jump = true

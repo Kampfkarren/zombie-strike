@@ -68,8 +68,13 @@ function Boss.GetHealth()
 	end
 end
 
-function Boss.GetSpeed()
-	return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Speed
+function Boss:GetSpeed()
+	local bossStats = Dungeon.GetDungeonData("DifficultyInfo").BossStats
+	if bossStats then
+		return bossStats.Speed
+	else
+		return Zombie.GetSpeed(self)
+	end
 end
 
 function Boss.GetXP()

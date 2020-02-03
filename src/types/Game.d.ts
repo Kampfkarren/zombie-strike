@@ -20,6 +20,7 @@ interface ReplicatedStorage {
 	},
 
 	Remotes: Folder & {
+		CircleEffect: RemoteEvent,
 		NewBoss: RemoteEvent,
 		RotatingBoss: Folder,
 		SendServerLogs: RemoteEvent,
@@ -27,9 +28,7 @@ interface ReplicatedStorage {
 }
 
 interface ServerScriptService {
-	BossLocalScripts: Folder & {
-		[name: string]: Folder,
-	}
+	BossLocalScripts: Folder,
 }
 
 interface ServerStorage {
