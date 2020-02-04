@@ -61,6 +61,7 @@ function SludgeBallAttack(this: BossRadioactive & ZombieClass): Promise<void> {
 	return new Promise((resolve) => {
 		RealDelay(SLUDGE_BALL_DELAY, () => {
 			boss.PrimaryPart!.Anchored = false
+			this.Aggro()
 			resolve()
 		})
 	})
@@ -71,13 +72,13 @@ class BossRadioactive extends RotatingBoss<RadioactiveRoom> {
 	static Name: string = "Radioactive Giga Zombie"
 	static AttackRange: number = 15
 
-	abilities: Ability[] = [/*{
+	abilities: Ability[] = [{
 		attack: SlamAttack,
 		cooldown: 7,
-	},*/ {
-			attack: SludgeBallAttack,
-			cooldown: 7,
-		}]
+	}, {
+		attack: SludgeBallAttack,
+		cooldown: 7,
+	}]
 
 	abilityUseTimes: Map<keyof this["abilities"] & number, number> = new Map()
 	normalAi: boolean = true

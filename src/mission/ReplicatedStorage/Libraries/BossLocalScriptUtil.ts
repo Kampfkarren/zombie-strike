@@ -27,7 +27,6 @@ export function FireRing(info: RingInfo) {
 	ring.Touched.Connect((part) => {
 		if (!touched && part.IsDescendantOf(Players.LocalPlayer.Character!)) {
 			touched = true
-			print("asdkdfgojidfjkgfdjiogfddfi[90sadiojudjuioio89jjio")
 			if (typeIs(info.onTouched, "function")) {
 				info.onTouched()
 			} else {

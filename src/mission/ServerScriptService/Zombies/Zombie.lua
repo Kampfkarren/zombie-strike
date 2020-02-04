@@ -20,7 +20,7 @@ local OnDied = require(ReplicatedStorage.Core.OnDied)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local AMOUNT_FOR_NOT_BOSS = 0.7
-local DEBUG = false
+local DEBUG = true
 local LIFETIME = 4
 
 local Zombie = {}
@@ -370,6 +370,7 @@ function Zombie:AssignAggroFocus(force)
 	end
 
 	if self.aggroFocus then
+		self:Debug("Aggro focus chosen: " .. self.aggroFocus.Name)
 		self.aliveMaid:GiveTask(self.aggroFocus.Humanoid.Died:connect(function()
 			self:AssignAggroFocus()
 		end))
