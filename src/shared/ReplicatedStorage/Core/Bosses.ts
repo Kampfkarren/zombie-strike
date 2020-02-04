@@ -29,18 +29,18 @@ const Bosses = [
 		}
 	},
 
-	{
-		Name: "Radioactive Giga Zombie",
-		Image: "rbxassetid://378620366",
-		RoomName: "Radioactive",
-		AIAggroRange: 200,
+	// {
+	// 	Name: "Radioactive Giga Zombie",
+	// 	Image: "rbxassetid://378620366",
+	// 	RoomName: "Radioactive",
+	// 	AIAggroRange: 200,
 
-		Stats: {
-			Boss: {
-				Speed: scale(14),
-			},
-		},
-	},
+	// 	Stats: {
+	// 		Boss: {
+	// 			Speed: scale(14),
+	// 		},
+	// 	},
+	// },
 ] as const
 
 export = Bosses

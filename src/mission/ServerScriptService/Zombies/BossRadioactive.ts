@@ -12,6 +12,7 @@ import Zombie from "./Zombie"
 const ATTACK_DAMAGE = 90
 const ATTACK_RANGE = 25
 
+const DAMAGE_PSYCHO_ATTACK = 40
 const DAMAGE_SLAM_DOWN_AOE_PHASE1 = 40
 const DAMAGE_SLAM_DOWN_AOE_PHASE2 = 100
 const DAMAGE_SLAM_DOWN_RING = 25
@@ -67,22 +68,35 @@ function SludgeBallAttack(this: BossRadioactive & ZombieClass): Promise<void> {
 	})
 }
 
+function PsychoAttack(this: BossRadioactive & ZombieClass): Promise<void> {
+	const boss = this.instance
+	boss.PrimaryPart!.Anchored = true
+
+	this.psychoAttack!.FireAllClients()
+	return new Promise((resolve) => {
+	})
+}
+
 class BossRadioactive extends RotatingBoss<RadioactiveRoom> {
 	static Model: string = "Boss"
 	static Name: string = "Radioactive Giga Zombie"
 	static AttackRange: number = 15
 
-	abilities: Ability[] = [{
+	abilities: Ability[] = [/*{
 		attack: SlamAttack,
 		cooldown: 7,
 	}, {
 		attack: SludgeBallAttack,
 		cooldown: 7,
-	}]
+	},*/ {
+			attack: PsychoAttack,
+			cooldown: 7,
+		}]
 
 	abilityUseTimes: Map<keyof this["abilities"] & number, number> = new Map()
 	normalAi: boolean = true
 
+	psychoAttack: RemoteEvent | undefined
 	slamDownAoE: RemoteEvent | undefined
 	slamDownRing: RemoteEvent | undefined
 	sludgeBall: RemoteEvent | undefined
@@ -104,6 +118,7 @@ class BossRadioactive extends RotatingBoss<RadioactiveRoom> {
 	AfterSpawn(this: this & ZombieClass) {
 		super.AfterSpawn()
 
+		this.psychoAttack = this.NewDamageSource("PsychoAttack", DAMAGE_PSYCHO_ATTACK)
 		this.slamDownAoE = this.NewDamageSource("SlamDownAoE", [
 			DAMAGE_SLAM_DOWN_AOE_PHASE1,
 			DAMAGE_SLAM_DOWN_AOE_PHASE2,

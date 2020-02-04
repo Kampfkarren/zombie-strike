@@ -8,7 +8,7 @@
 
 -- BOSS
 return {
-	Boss = 2,
+	Boss = 1,
 	Gamemode = "Boss",
 	Hardcore = false,
 	Members = { 56140227 },
