@@ -15,6 +15,9 @@ const ATTACK_RANGE = 25
 const DAMAGE_SLAM_DOWN_AOE_PHASE1 = 40
 const DAMAGE_SLAM_DOWN_AOE_PHASE2 = 100
 const DAMAGE_SLAM_DOWN_RING = 25
+const DAMAGE_SLUDGE_BALL = 40
+
+const SLUDGE_BALL_DELAY = 6
 
 const CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect
 
@@ -50,21 +53,38 @@ function SlamAttack(this: BossRadioactive & ZombieClass): void | Promise<void> {
 	}
 }
 
+function SludgeBallAttack(this: BossRadioactive & ZombieClass): Promise<void> {
+	const boss = this.instance
+	boss.PrimaryPart!.Anchored = true
+
+	this.sludgeBall!.FireAllClients()
+	return new Promise((resolve) => {
+		RealDelay(SLUDGE_BALL_DELAY, () => {
+			boss.PrimaryPart!.Anchored = false
+			resolve()
+		})
+	})
+}
+
 class BossRadioactive extends RotatingBoss<RadioactiveRoom> {
 	static Model: string = "Boss"
 	static Name: string = "Radioactive Giga Zombie"
 	static AttackRange: number = 15
 
-	abilities: Ability[] = [{
+	abilities: Ability[] = [/*{
 		attack: SlamAttack,
 		cooldown: 7,
-	}]
+	},*/ {
+			attack: SludgeBallAttack,
+			cooldown: 7,
+		}]
 
 	abilityUseTimes: Map<keyof this["abilities"] & number, number> = new Map()
 	normalAi: boolean = true
 
 	slamDownAoE: RemoteEvent | undefined
 	slamDownRing: RemoteEvent | undefined
+	sludgeBall: RemoteEvent | undefined
 
 	stompAnimation: AnimationTrack | undefined
 
@@ -87,8 +107,8 @@ class BossRadioactive extends RotatingBoss<RadioactiveRoom> {
 			DAMAGE_SLAM_DOWN_AOE_PHASE1,
 			DAMAGE_SLAM_DOWN_AOE_PHASE2,
 		])
-
 		this.slamDownRing = this.NewDamageSource("SlamDownRing", DAMAGE_SLAM_DOWN_RING)
+		this.sludgeBall = this.NewDamageSource("SludgeBall", DAMAGE_SLUDGE_BALL)
 
 		this.stompAnimation = this.instance.Humanoid.LoadAnimation(
 			this.GetAsset("AttackAnimation") as Animation,

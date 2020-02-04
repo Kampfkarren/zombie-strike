@@ -4,6 +4,9 @@ interface ReplicatedStorage {
 			Radioactive: Folder & {
 				Boss: Folder & {
 					SlamAnimation: Animation,
+					SludgeBall: BasePart,
+					SludgeFire: Animation,
+					SludgePrime: Animation,
 				},
 			},
 
