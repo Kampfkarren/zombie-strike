@@ -57,6 +57,7 @@ function Grenade.DealDamage(player, zombie, damage)
 
 	local humanoid = zombie.Humanoid
 	if humanoid.Health <= 0 then return end
+	if not Damage:PlayerCanDamage(player, humanoid) then return end
 
 	if not ReplicatedStorage.HubWorld.Value then
 		humanoid:TakeDamage(damage)
