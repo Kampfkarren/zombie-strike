@@ -52,23 +52,19 @@ const BossConstructor: GamemodeConstructor = {
 			},
 
 			GenerateLootItem(this: void, player: Player): GamemodeReward | undefined {
-				// This method sucks, if a player plays a boss, doesn't play for a while,
-				// and comes back and it's the same boss, then they won't get brains.
+				const [timeBossDefeated, timeBossDefeatedStore] = Data.GetPlayerData(player, "TimeBossDefeated")
+				const time = os.time()
 
-				// const [lastDefeatedBoss, lastDefeatedBossStore] = Data.GetPlayerData(player, "LastDefeatedBoss")
-				// if (lastDefeatedBoss !== bossInfo.RoomName) {
-				// 	lastDefeatedBossStore.Set(bossInfo.RoomName)
-				// 	return {
-				// 		GamemodeLoot: true,
-				// 		Type: "Brains",
-				// 		Brains: 100,
-				// 	}
-				// } else {
-				// 	return undefined
-				// }
-
-				warn("NYI: Boss.GenerateLootItem")
-				return undefined
+				if (time - timeBossDefeated >= 24 * 24 * 60) {
+					timeBossDefeatedStore.Set(time)
+					return {
+						GamemodeLoot: true,
+						Type: "Brains",
+						Brains: 100,
+					}
+				} else {
+					return undefined
+				}
 			}
 		}
 	},
