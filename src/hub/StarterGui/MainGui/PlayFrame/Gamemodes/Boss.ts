@@ -1,5 +1,6 @@
 import { Difficulty, Gamemode, Location } from "types/Gamemode"
 import Bosses from "shared/ReplicatedStorage/Core/Bosses"
+import BossImageOverlay from "./BossImageOverlay"
 
 const Boss: Gamemode = {
 	Name: "Boss",
@@ -16,6 +17,10 @@ const Boss: Gamemode = {
 			Boss: state.campaignIndex,
 		}
 	},
+
+	ImageOverlay: (e) => {
+		return e(BossImageOverlay)
+	}
 }
 
 export = Boss

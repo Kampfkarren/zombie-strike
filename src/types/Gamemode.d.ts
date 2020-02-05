@@ -1,3 +1,5 @@
+import * as Roact from "@rbxts/roact"
+
 export type Difficulty = {
 	MinLevel: number,
 	Style: {
@@ -23,4 +25,5 @@ export type Gamemode = {
 	HardcoreEnabled: boolean,
 
 	Submit(state: CreateState): object,
+	ImageOverlay?(e: typeof Roact.createElement): Roact.Element
 }

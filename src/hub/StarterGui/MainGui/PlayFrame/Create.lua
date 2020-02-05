@@ -152,7 +152,8 @@ function Create:init()
 	})
 
 	FastSpawn(function()
-		local level = LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
+		local level = self.props.FakeLevel
+			or LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
 
 		self:setState({
 			level = level,
@@ -239,12 +240,6 @@ function Create:init()
 		end
 
 		self.props.OnSubmit(properties)
-	end
-
-	self.newBoss = function()
-		self:setState({
-			newBoss = true,
-		})
 	end
 end
 
@@ -439,7 +434,6 @@ function Create:render()
 				LayoutOrder = 3,
 				Selected = state.gamemode,
 				SelectGamemode = self.selectGamemode,
-				New = self.state.newBoss,
 			}),
 		}),
 
@@ -473,6 +467,11 @@ function Create:render()
 			}, {
 				UIAspectRatioConstraint = e("UIAspectRatioConstraint"),
 				Warning = warning,
+
+				Overlay = state.gamemode.ImageOverlay and e("Frame", {
+					BackgroundTransparency = 1,
+					Size = UDim2.fromScale(1, 1),
+				}, state.gamemode.ImageOverlay(e)),
 			}),
 
 			Difficulty = difficultyFrame,
@@ -515,11 +514,6 @@ function Create:render()
 			LayoutOrder = 3,
 			Size = UDim2.fromScale(0.3, 0.95),
 		}, mapsChildren),
-
-		NewBoss = e(EventConnection, {
-			event = ReplicatedStorage.Remotes.NewBoss.OnClientEvent,
-			callback = self.newBoss,
-		}),
 	})
 end
 

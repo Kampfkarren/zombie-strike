@@ -23,8 +23,16 @@ local function timer()
 end
 
 function DayTimer:init()
+	local timerValue
+
+	if self.props.TimeSince then
+		timerValue = SECONDS_IN_DAY - (os.time() - self.props.TimeSince)
+	else
+		timerValue = timer()
+	end
+
 	self:setState({
-		timer = timer(),
+		timer = timerValue,
 	})
 end
 
@@ -34,6 +42,7 @@ function DayTimer:didMount()
 	coroutine.wrap(function()
 		while self.running do
 			wait(1)
+			if not self.running then break end
 			self:setState(function(state)
 				local timer = state.timer - 1
 
