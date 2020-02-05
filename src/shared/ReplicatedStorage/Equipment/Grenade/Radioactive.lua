@@ -24,7 +24,7 @@ local Radioactive = {}
 Radioactive.Index = 4
 Radioactive.Name = "Radioactive Grenade"
 Radioactive.Icon = "rbxassetid://4657714533"
-Radioactive.Cooldown = 12
+Radioactive.Cooldown = 15
 
 Radioactive.ClientEffect = Basic.ClientEffect
 

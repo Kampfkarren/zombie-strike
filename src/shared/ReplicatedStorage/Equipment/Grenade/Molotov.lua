@@ -14,8 +14,8 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 local Raycast = require(ReplicatedStorage.Core.Raycast)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
-local BASE_DAMAGE = 30
-local BASE_DAMAGE_BETTER = 30 * 1.5
+local BASE_DAMAGE = 55
+local BASE_DAMAGE_BETTER = BASE_DAMAGE * 1.5
 local DAMAGE_SCALE = 1.13
 local FIRE_LIFETIME = 6
 

@@ -13,7 +13,7 @@ local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local LIFETIME = 9
 local OFFSET = Vector3.new(0, 0.5, 0)
-local RANGE = 30
+local RANGE = 50
 
 local HEAL_PER_SECOND = 0.05
 local HEAL_PER_SECOND_BETTER = 0.09
