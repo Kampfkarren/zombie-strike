@@ -17,7 +17,7 @@ local DAMAGE	= require(script.Parent:WaitForChild("Damage"))
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 
 -- functions
-local HOLE_LIFETIME = 30
+local HOLE_LIFETIME = 5
 
 local holes = {}
 
@@ -158,10 +158,6 @@ return function(item, position, directions, ammo, forceEnd)
 					hole.DirtEmitter:Emit(5)
 					hole.DustEmitter:Emit(3)
 					hole.HitEmitter:Emit(1)
-
-					local sound	= script.ImpactSounds["ImpactSound" .. tostring(math.random(8))]:Clone()
-						sound.Parent	= hole
-						sound:Play()
 
 					table.insert(holes, { hole, tick() })
 				end

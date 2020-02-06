@@ -27,7 +27,7 @@ local GiveQuest = ServerStorage.Events.GiveQuest
 local Arena = {}
 
 local BADGE = 2124497452
-local LOOT_EQUIPMENT_RATE = 0.02
+local LOOT_EQUIPMENT_RATE = 0.05
 local LOOT_ROUNDS = 5
 local XP_BASE = 57
 local XP_SCALE = 1.145

@@ -8,8 +8,16 @@ local e = Roact.createElement
 
 local BossImageOverlay = Roact.Component:extend("BossImageOverlay")
 
+-- This is a dumb way of doing it, but I'm under crunch :(
+local cachedTimeBossDefeated
+
 function BossImageOverlay:init()
+	self:setState({
+		timeBossDefeated = cachedTimeBossDefeated,
+	})
+
 	self.setTimeBossDefeated = function(time)
+		cachedTimeBossDefeated = time
 		self:setState({
 			timeBossDefeated = time,
 		})
