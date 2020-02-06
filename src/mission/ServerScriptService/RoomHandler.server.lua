@@ -56,8 +56,7 @@ local function start()
 		JoinTimer.Value = countdown
 		currentGamemode.Countdown(-countdown)
 
-		-- wait(1)
-		wait()
+		wait(1)
 	end
 
 	JoinTimer.Value = -4
@@ -86,7 +85,7 @@ local function checkCharacterCount()
 		print("all players connected")
 		started = 1
 		JoinTimer.Value = 0
-		-- wait(5)
+		wait(5)
 		start()
 		return
 	end

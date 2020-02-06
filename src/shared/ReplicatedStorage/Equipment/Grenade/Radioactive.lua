@@ -52,7 +52,7 @@ Radioactive.ServerEffect = Basic.CreateServerEffect(
 						local initDamage, dps = getDamage(better, level)
 						Basic.DealDamage(player, zombie, initDamage)
 
-						local emitter = ServerStorage.Assets.PoisonEmitter
+						local emitter = ServerStorage.Assets.PoisonEmitter:Clone()
 						emitter.Parent = zombie.PrimaryPart
 						maid:GiveTask(emitter)
 
