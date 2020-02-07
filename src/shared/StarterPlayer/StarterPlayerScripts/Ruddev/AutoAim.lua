@@ -79,6 +79,10 @@ function AutoAim.CanFocusTarget(target, skipRange)
 		return false
 	end
 
+	if target:FindFirstChild("Humanoid") == nil then
+		return false
+	end
+
 	if target.Humanoid.Health <= 0 then
 		return false
 	end
