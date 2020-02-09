@@ -55,7 +55,7 @@ const BossConstructor: GamemodeConstructor = {
 				const [timeBossDefeated, timeBossDefeatedStore] = Data.GetPlayerData(player, "TimeBossDefeated")
 				const time = os.time()
 
-				if (time - timeBossDefeated >= 24 * 24 * 60) {
+				if (time - timeBossDefeated >= 24 * 60 * 60) {
 					timeBossDefeatedStore.Set(time)
 					return {
 						GamemodeLoot: true,
