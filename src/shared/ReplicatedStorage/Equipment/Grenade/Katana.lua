@@ -19,6 +19,7 @@ local BASE_DAMAGE = 105
 local BASE_DAMAGE_BETTER = 105 * 1.2
 local DAMAGE_SCALE = 1.13
 local KATANA_DELAY = 1
+local SCALED_DAMAGE = 0.7
 
 Katana.Index = 3
 Katana.Name = "Katana"
@@ -80,7 +81,7 @@ function Katana.ServerEffect(player)
 				then
 					local humanoid = zombie.Humanoid
 					if humanoid.Health > 0 then
-						Grenade.DealDamage(player, zombie, damage)
+						Grenade.DealDamage(player, zombie, damage, SCALED_DAMAGE)
 						ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
 						ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
 					end

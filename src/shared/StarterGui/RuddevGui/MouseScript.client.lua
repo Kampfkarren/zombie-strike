@@ -21,6 +21,8 @@ local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 local GUI		= script.Parent
 local MOUSE_GUI	= GUI:WaitForChild("Mouse")
 
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
+
 local hubWorld = ReplicatedStorage.HubWorld.Value
 
 -- variables
@@ -71,7 +73,9 @@ local function Hitmarker(headshot, position, healthScale)
 	local tweenB	= TweenService:Create(hitmarker, infoB, {Size = UDim2.new(0.015, 0, 0.015, 0)})
 
 	tweenB:Play()
-	Debris:AddItem(hitmarker, 0.1)
+	RealDelay(0.1, function()
+		hitmarker:Destroy()
+	end)
 
 	script.HitmarkerSound.PitchShiftSoundEffect.Octave = lerp(1, MAX_OCTAVE, 1 - healthScale)
 	script.HitmarkerSound:Play()

@@ -1,6 +1,7 @@
 import { CollectionService, Players, ReplicatedStorage, RunService, SoundService, Workspace } from "@rbxts/services"
 import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil"
 import Interval from "shared/ReplicatedStorage/Core/Interval"
+import PlayQuickSound from "shared/ReplicatedStorage/Core/PlayQuickSound"
 import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 import WarningRange from "mission/ReplicatedStorage/Libraries/WarningRange"
 
@@ -17,7 +18,7 @@ const RATE_OF_FIRE = 3
 const TO_TARGET_TIME = 0.8
 const WIND_UP_TIME = 0.3
 
-SludgeBall.OnClientEvent.Connect((position: Vector3) => {
+SludgeBall.OnClientEvent.Connect(() => {
 	const boss = CollectionService.GetTagged("Boss")[0] as Model & {
 		Head: BasePart,
 		Humanoid: Humanoid,
@@ -30,9 +31,15 @@ SludgeBall.OnClientEvent.Connect((position: Vector3) => {
 		const time = tick()
 
 		Interval(1 / RATE_OF_FIRE, () => {
+			if (boss.Humanoid.Health <= 0) {
+				return
+			}
+
 			if (tick() - time >= DURATION) {
 				return false
 			}
+
+			PlayQuickSound(SoundService.ZombieSounds.Radioactive.Boss.ThrowBall, boss.PrimaryPart)
 
 			fireAnimation.Play()
 
@@ -63,6 +70,10 @@ SludgeBall.OnClientEvent.Connect((position: Vector3) => {
 					ball.Position = newPosition
 
 					if (total >= TO_TARGET_TIME) {
+						const jumpSound = SoundService.ZombieSounds.Radioactive.Boss.Jump.Clone()
+						jumpSound.PlayOnRemove = true
+						jumpSound.Parent = ball
+
 						ball.Destroy()
 						range.Destroy()
 						connection.Disconnect()

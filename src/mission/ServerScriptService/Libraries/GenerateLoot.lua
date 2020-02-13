@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
+local assign = require(ReplicatedStorage.Core.assign)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
@@ -59,7 +60,7 @@ local function getModel(type, rarity)
 		local loot
 
 		if Dungeon.GetDungeonData("Gamemode") == "Boss" then
-			loot = Campaigns[1].Loot
+			loot = assign(Dungeon.GetDungeonData("BossInfo").Loot, Campaigns[1].Loot)
 		else
 			loot = Dungeon.GetDungeonData("CampaignInfo").Loot
 		end
@@ -231,8 +232,18 @@ local function generateLootItem(player)
 
 	local uuid = HttpService:GenerateGUID(false):gsub("-", "")
 
+	local bossLoot = Dungeon.GetDungeonData("Gamemode") == "Boss"
+		and Dungeon.GetDungeonData("BossInfo").Loot
+		or {}
+
 	if (takenAdvantageOfFreeLoot[player] or rng:NextNumber() <= WEAPON_DROP_RATE)
-		or Dungeon.GetDungeonData("Gamemode") == "Boss"
+		or (
+			-- If the boss has no custom loot, just always give weapons
+			-- This could be changed so that it gives attachments too, though
+			Dungeon.GetDungeonData("Gamemode") == "Boss"
+			and bossLoot.Armor == nil
+			and bossLoot.Helmet == nil
+		)
 	then
 		local type = GunScaling.RandomType()
 

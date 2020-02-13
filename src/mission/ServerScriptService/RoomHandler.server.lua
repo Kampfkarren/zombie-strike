@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+local Analytics = require(ServerScriptService.Shared.Analytics)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
@@ -119,3 +120,5 @@ for _, player in pairs(Players:GetPlayers()) do
 end
 
 Players.PlayerAdded:connect(playerAdded)
+
+Analytics.DungeonStarted()

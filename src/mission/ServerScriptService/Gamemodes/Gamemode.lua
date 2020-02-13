@@ -193,7 +193,7 @@ function Gamemode.SpawnBoss(bossSequence, position, room)
 		end
 	end)
 
-	bossSequence.Start(model):await()
+	bossSequence.Start(model, bossZombie):await()
 	FastSpawn(function()
 		bossZombie:InitializeBossAI(room)
 	end)

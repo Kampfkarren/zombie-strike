@@ -21,6 +21,7 @@ local LocalPlayer = Players.LocalPlayer
 local BASE_DAMAGE = 65
 local BASE_DAMAGE_BETTER = 65 * 1.5
 local DAMAGE_SCALE = 1.13
+local SCALED_DAMAGE = 0.5
 
 local DROPOFF = 0.5
 local GRENADE_SPEED = 50
@@ -52,12 +53,24 @@ Grenade.DefaultPhysicalProperties = PhysicalProperties.new(
 	5 -- elasticity weight
 )
 
-function Grenade.DealDamage(player, zombie, damage)
+function Grenade.DealDamage(player, zombie, damage, scaledDamage)
 	local GiveQuest = ServerStorage.Events.GiveQuest
 
 	local humanoid = zombie.Humanoid
 	if humanoid.Health <= 0 then return end
 	if not Damage:PlayerCanDamage(player, humanoid) then return end
+
+	if not ReplicatedStorage.HubWorld.Value then
+		local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+
+		if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+			if CollectionService:HasTag(zombie, "Boss") then
+				return
+			end
+
+			damage = humanoid.MaxHealth * scaledDamage
+		end
+	end
 
 	if not ReplicatedStorage.HubWorld.Value then
 		humanoid:TakeDamage(damage)
@@ -160,7 +173,7 @@ Grenade.ServerEffect = Grenade.CreateServerEffect(
 					if range <= maxRange then
 						local baseDamage = getDamage(better, level)
 						local damage = lerp(baseDamage * DROPOFF, baseDamage, range / maxRange)
-						Grenade.DealDamage(player, zombie, damage)
+						Grenade.DealDamage(player, zombie, damage, SCALED_DAMAGE)
 					end
 				end
 			end

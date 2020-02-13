@@ -1,6 +1,13 @@
+import Maid from "shared/ReplicatedStorage/Core/Maid"
+
 export interface ZombieClass {
 	alive: boolean
-	instance: Character
+	aliveMaid: Maid
+	instance: Character & {
+		Humanoid: {
+			DamageReceivedScale: NumberValue,
+		},
+	}
 
 	Died: RBXScriptSignal
 

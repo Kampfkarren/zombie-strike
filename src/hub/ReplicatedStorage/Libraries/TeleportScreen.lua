@@ -9,7 +9,7 @@ return function(gui, lobby)
 
 	if lobby.Gamemode == "Boss" then
 		local boss = Bosses[lobby.Boss]
-		gui.Background.ImageColor3 = Color3.fromRGB(255, 121, 32)
+		gui.Background.ImageColor3 = boss.LoadingColor
 		inner.Cover.Image = boss.Image
 		inner.Cover.CampaignName.Text = boss.Name
 	else

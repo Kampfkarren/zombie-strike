@@ -115,31 +115,33 @@ function CoreData.GetModel(data)
 	elseif itemType == "Helmet" then
 		local helmetItem = getDataItem(data)
 
-		local hat
+		local model = Instance.new("Model")
+		uuid.Parent = model
 
-		if helmetItem:IsA("Accessory") or helmetItem:IsA("BasePart") then
-			hat = helmetItem
-		else
-			hat = helmetItem:FindFirstChildOfClass("Accessory")
-		end
+		if helmetItem:IsA("BasePart") or helmetItem:IsA("Accessory") then
+			local clone = helmetItem:Clone()
+			clone.Parent = model
 
-		if hat then
-			local hat = hat:Clone()
-			local model = Instance.new("Model")
-			hat.Parent = model
-
-			if hat:IsA("Accessory") then
-				model.PrimaryPart = hat.Handle
+			if clone:IsA("BasePart") then
+				model.PrimaryPart = clone
 			else
-				assert(hat:IsA("BasePart"), "not an accessory nor a basepart: " .. inspect(helmetItem))
-				model.PrimaryPart = hat
+				model.PrimaryPart = clone.Handle
 			end
-
-			uuid.Parent = model
-			return model
 		else
-			error("don't know how to handle " .. inspect(data))
+			for _, content in pairs(helmetItem:GetChildren()) do
+				if content:IsA("BasePart") then
+					local clone = content:Clone()
+					clone.Parent = model
+					model.PrimaryPart = clone
+				elseif content:IsA("Accessory") then
+					local clone = content:Clone()
+					clone.Parent = model
+					model.PrimaryPart = clone.Handle
+				end
+			end
 		end
+
+		return model
 	elseif itemType == "Pet" then
 		local model = Instance.new("Model")
 		local pet = PetsDictionary.Pets[data.Model].Model:Clone()

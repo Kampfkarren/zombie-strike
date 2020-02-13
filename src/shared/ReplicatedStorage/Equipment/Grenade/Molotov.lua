@@ -18,6 +18,7 @@ local BASE_DAMAGE = 55
 local BASE_DAMAGE_BETTER = BASE_DAMAGE * 1.5
 local DAMAGE_SCALE = 1.13
 local FIRE_LIFETIME = 6
+local SCALED_DAMAGE = 0.15
 
 local Molotov = {}
 
@@ -93,7 +94,7 @@ function Molotov.ServerEffect(player)
 								local distance = (zombie.PrimaryPart.Position - fire.Position).Magnitude
 								if distance <= fire.Size.X then
 									local damage = getDamage(better, level)
-									Basic.DealDamage(player, zombie, damage * delta)
+									Basic.DealDamage(player, zombie, damage * delta, SCALED_DAMAGE * delta)
 								end
 							end
 						end

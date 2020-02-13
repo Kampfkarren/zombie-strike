@@ -1,5 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
+local Analytics = require(ServerScriptService.Shared.Analytics)
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Data = require(ReplicatedStorage.Core.Data)
 
@@ -47,4 +49,5 @@ ReplicatedStorage.Remotes.BuyCosmetic.OnServerEvent:connect(function(player, ite
 	UpdateCosmetics:FireClient(player, cosmetics.Owned, cosmetics.Equipped)
 
 	brainsStore:Increment(-cost)
+	Analytics.CosmeticBought(player, item.Name)
 end)

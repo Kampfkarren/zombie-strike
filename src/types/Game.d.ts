@@ -3,6 +3,7 @@ interface ReplicatedStorage {
 		Bosses: Folder & {
 			Radioactive: Folder & {
 				Boss: Folder & {
+					PsychoAnimation: Animation,
 					SlamAnimation: Animation,
 					SludgeBall: BasePart,
 					SludgeFire: Animation,
@@ -28,6 +29,8 @@ interface ReplicatedStorage {
 
 			[name: string]: Folder,
 		},
+
+		Warning: BasePart,
 	},
 
 	BossSequences: Folder & {
@@ -54,6 +57,18 @@ interface ServerStorage {
 
 interface SoundService {
 	ZombieSounds: Folder & {
+		Radioactive: Folder & {
+			Boss: Folder & {
+				BallHit: Folder,
+				BeamDamage: Folder,
+				BeamReady: Folder,
+				Jump: Sound,
+				JumpLand: Folder,
+				Smash: Folder,
+				ThrowBall: Sound,
+			},
+		},
+
 		Samurai: Folder & {
 			Boss: Folder & {
 				Attack: Sound,

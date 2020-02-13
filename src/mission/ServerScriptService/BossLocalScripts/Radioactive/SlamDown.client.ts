@@ -1,19 +1,22 @@
 import { CollectionService, Players, ReplicatedStorage, RunService, SoundService, TweenService } from "@rbxts/services"
 import * as BossLocalScriptUtil from "mission/ReplicatedStorage/Libraries/BossLocalScriptUtil"
+import PlayQuickSound from "shared/ReplicatedStorage/Core/PlayQuickSound"
 import WarningRange from "mission/ReplicatedStorage/Libraries/WarningRange"
 
 const SlamDownAoE = BossLocalScriptUtil.WaitForBossRemote("SlamDownAoE")
 const SlamDownRing = BossLocalScriptUtil.WaitForBossRemote("SlamDownRing")
 
 const LIFTOFF_HEIGHT = 300
-const RING_DELAY = 0.75
-const RINGS = 3
+const RING_DELAY = 0.95
+const RINGS_PHASE_ONE = 3
+const RINGS_PHASE_TWO = 1
 
 const SLAM_DOWN_RANGE = 16
 const SLAM_DOWN_TIME = 0.8
 
 SlamDownAoE.OnClientEvent.Connect((position: Vector3) => {
 	const boss = CollectionService.GetTagged("Boss")[0] as Model & {
+		CurrentPhase: NumberValue,
 		Humanoid: Humanoid,
 	}
 
@@ -31,6 +34,8 @@ SlamDownAoE.OnClientEvent.Connect((position: Vector3) => {
 	slamAnimation.Play()
 	slamAnimation.KeyframeReached.Connect((keyframe) => {
 		if (keyframe === "Liftoff") {
+			PlayQuickSound(SoundService.ZombieSounds.Radioactive.Boss.Jump, boss.PrimaryPart)
+
 			const start = boss.PrimaryPart!.Position
 			let total = 0
 
@@ -52,7 +57,7 @@ SlamDownAoE.OnClientEvent.Connect((position: Vector3) => {
 					liftoffHeight = LIFTOFF_HEIGHT - (liftoffHeight * LIFTOFF_HEIGHT)
 				}
 
-				const newPosition = start.Lerp(position, alpha)
+				const newPosition = start.Lerp(position.add(new Vector3(0, 5, 0)), alpha)
 					.add(new Vector3(0, liftoffHeight, 0))
 
 				boss.SetPrimaryPartCFrame(new CFrame(newPosition)
@@ -68,7 +73,9 @@ SlamDownAoE.OnClientEvent.Connect((position: Vector3) => {
 						SlamDownAoE.FireServer()
 					}
 
-					for (let _ = 0; _ < RINGS; _++) {
+					PlayQuickSound(SoundService.ZombieSounds.Radioactive.Boss.JumpLand, boss.PrimaryPart)
+
+					for (let _ = 0; _ < (boss.CurrentPhase.Value === 0 ? RINGS_PHASE_ONE : RINGS_PHASE_TWO); _++) {
 						BossLocalScriptUtil.FireRing({
 							initial: position.add(new Vector3(0, 2, 0)),
 							height: 3,

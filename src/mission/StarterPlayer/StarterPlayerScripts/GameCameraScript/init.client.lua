@@ -202,7 +202,11 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 			if isFirstPerson() then
 				if character then
 					local gun = character:FindFirstChild("Gun")
-					visible(gun and gun.PrimaryPart)
+					if gun then
+						visible(gun.PrimaryPart)
+						local attachment = gun:FindFirstChild("GunAttachment")
+						visible(attachment and attachment.PrimaryPart)
+					end
 
 					visible(character:FindFirstChild("RightUpperArm"))
 					visible(character:FindFirstChild("RightLowerArm"))

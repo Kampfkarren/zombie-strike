@@ -18,6 +18,8 @@ local DAMAGE_SCALE = 1.13
 local MAX_BOSS_RANGE = 100
 local MAX_RANGE = 50
 local POISON_TIME = 8
+local SCALED_BASE_DAMAGE = 0.15
+local SCALED_POISON_DAMAGE = 0.09
 
 local Radioactive = {}
 
@@ -50,14 +52,16 @@ Radioactive.ServerEffect = Basic.CreateServerEffect(
 
 					if range <= maxRange then
 						local initDamage, dps = getDamage(better, level)
-						Basic.DealDamage(player, zombie, initDamage)
+						Basic.DealDamage(player, zombie, initDamage, SCALED_BASE_DAMAGE)
 
 						local emitter = ServerStorage.Assets.PoisonEmitter:Clone()
 						emitter.Parent = zombie.PrimaryPart
 						maid:GiveTask(emitter)
 
 						maid:GiveTask(RunService.Heartbeat:connect(function(delta)
-							Basic.DealDamage(player, zombie, dps * delta)
+							if zombie:IsDescendantOf(Workspace) then
+								Basic.DealDamage(player, zombie, dps * delta, SCALED_POISON_DAMAGE * delta)
+							end
 						end))
 					end
 				end

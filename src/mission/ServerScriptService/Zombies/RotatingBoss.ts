@@ -6,7 +6,7 @@ import GetAvailableMissions from "shared/ReplicatedStorage/Core/GetAvailableMiss
 import TakeDamage from "shared/ServerScriptService/TakeDamage"
 import Zombie from "./Zombie"
 
-export type BossAttack<T> = (self: T) => Promise<void> | void
+export type BossAttack<T> = (self: T, arg0?: unknown) => Promise<void> | void
 
 export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>> {
 	bossRoom: Room | undefined
@@ -77,6 +77,7 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 			return
 		}
 
+		this.NewPhase(currentPhase)
 		this.phaseValue!.Value = currentPhase
 		let currentSequence = 0
 
@@ -127,4 +128,6 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 
 		return remoteEvent
 	}
+
+	NewPhase(_phase: number) { }
 }
