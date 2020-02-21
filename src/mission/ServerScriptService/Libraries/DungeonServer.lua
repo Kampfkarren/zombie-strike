@@ -1,9 +1,11 @@
 local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local Bosses = require(ReplicatedStorage.Core.Bosses)
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
+local DungeonState = require(ServerScriptService.DungeonState)
 local MockDungeon = require(ReplicatedStorage.Core.MockData.MockDungeon)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
@@ -102,7 +104,7 @@ function Dungeon.GetGamemodeInfo()
 end
 
 function Dungeon.RNGZombieLevel()
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	if DungeonState.CurrentGamemode.Scales() then
 		return 1
 	else
 		local difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")

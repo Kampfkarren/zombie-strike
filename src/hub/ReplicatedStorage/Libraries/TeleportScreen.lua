@@ -30,7 +30,12 @@ return function(gui, lobby)
 		local difficulty = campaign.Difficulties[lobby.Difficulty]
 		inner.Info.Difficulty.Text = difficulty.Style.Name
 		inner.Info.Difficulty.TextStrokeColor3 = difficulty.Style.Color
-		inner.Info.Level.Text = "LV. " .. difficulty.MinLevel
+
+		if difficulty.MinLevel ~= nil then
+			inner.Info.Level.Text = "LV. " .. difficulty.MinLevel
+		else
+			inner.Info.Level.Text = ""
+		end
 	end
 
 	inner.Info.Hardcore.Visible = lobby.Hardcore

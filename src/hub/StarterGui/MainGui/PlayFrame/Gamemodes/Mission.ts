@@ -1,5 +1,6 @@
 import { Gamemode } from "types/Gamemode"
 import Campaigns from "shared/ReplicatedStorage/Core/Campaigns"
+import MissionPlayable from "hub/ReplicatedStorage/Libraries/MissionPlayable"
 
 const Mission: Gamemode = {
 	Name: "Mission",
@@ -12,6 +13,10 @@ const Mission: Gamemode = {
 			Difficulties: campaign.Difficulties.map((difficulty) => difficulty),
 		}
 	}),
+
+	IsPlayable: (campaignIndex: number, difficultyIndex: number) => {
+		return MissionPlayable(campaignIndex, difficultyIndex)
+	},
 
 	Submit: (state) => {
 		return {

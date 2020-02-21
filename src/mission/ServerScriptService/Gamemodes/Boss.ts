@@ -4,6 +4,9 @@ import Dungeon from "mission/ReplicatedStorage/Libraries/Dungeon"
 import DungeonState from "mission/ServerScriptService/DungeonState"
 import { Gamemode as GamemodeType, GamemodeConstructor, GamemodeReward } from "mission/ReplicatedStorage/GamemodeInfo/Gamemode"
 import Gamemode from "./Gamemode"
+import GetAvailableMissions from "shared/ReplicatedStorage/Core/GetAvailableMissions"
+
+const REWARDS_MISSIONS_BEHIND = 2
 
 const bossInfo = Dungeon.GetDungeonData("BossInfo")
 
@@ -51,7 +54,7 @@ const BossConstructor: GamemodeConstructor = {
 				}
 			},
 
-			GenerateLootItem(this: void, player: Player): GamemodeReward | undefined {
+			GenerateLootItem(this: void, player: Player) {
 				const [timeBossDefeated, timeBossDefeatedStore] = Data.GetPlayerData(player, "TimeBossDefeated")
 				const time = os.time()
 
@@ -65,6 +68,25 @@ const BossConstructor: GamemodeConstructor = {
 				} else {
 					return undefined
 				}
+			},
+
+			GetEndRewards(this: void, player: Player) {
+				const missions = GetAvailableMissions(player)
+
+				let earlierMission
+				for (let index = REWARDS_MISSIONS_BEHIND; index > 0; index--) {
+					const nearbyMission = missions[missions.size() - index]
+					if (nearbyMission !== undefined) {
+						earlierMission = nearbyMission
+						break
+					}
+				}
+
+				return assert(earlierMission, "No earlier mission?")
+			},
+
+			Scales(this: void) {
+				return true
 			}
 		}
 	},

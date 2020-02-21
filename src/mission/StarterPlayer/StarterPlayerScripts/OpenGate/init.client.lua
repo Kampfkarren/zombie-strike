@@ -13,6 +13,7 @@ local gates = {
 	require(script.Firelands),
 	require(script.Frostlands),
 	require(script.West),
+	require(script.Tower),
 }
 
 ReplicatedStorage.Remotes.OpenGate.OnClientEvent:connect(function(room)

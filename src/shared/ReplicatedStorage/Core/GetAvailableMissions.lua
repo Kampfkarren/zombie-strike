@@ -8,11 +8,13 @@ local function GetAvailableMissions(player)
 	local available = {}
 
 	for _, campaign in ipairs(Campaigns) do
-		for _, difficulty in ipairs(campaign.Difficulties) do
-			if difficulty.MinLevel <= level then
-				table.insert(available, difficulty)
-			else
-				break
+		if campaign.Difficulties[1].MinLevel ~= nil then
+			for _, difficulty in ipairs(campaign.Difficulties) do
+				if difficulty.MinLevel <= level then
+					table.insert(available, difficulty)
+				else
+					return available
+				end
 			end
 		end
 	end

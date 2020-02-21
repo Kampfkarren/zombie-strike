@@ -1,7 +1,7 @@
 import { HttpService, LogService, Players, ReplicatedStorage } from "@rbxts/services"
 
 const LOG_DELAY = 60
-const URL = "CENSORED URL
+const URL = "CENSORED URL"
 
 let lastLogSent = 0
 

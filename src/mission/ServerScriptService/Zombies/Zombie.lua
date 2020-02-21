@@ -12,15 +12,18 @@ local Buffs = require(ServerScriptService.Libraries.Buffs)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local ExperienceUtil = require(ServerScriptService.Libraries.ExperienceUtil)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GetAssetsFolder = require(ReplicatedStorage.Libraries.GetAssetsFolder)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local MapNumbers = require(ReplicatedStorage.Core.MapNumbers)
 local Nametag = require(ServerScriptService.Shared.Nametag)
 local OnDied = require(ReplicatedStorage.Core.OnDied)
+local Promise = require(ReplicatedStorage.Core.Promise)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local AMOUNT_FOR_NOT_BOSS = 0.7
 local DEBUG = false
+local DRS_PER_PLAYER = 0.5
 local LIFETIME = 4
 
 local Zombie = {}
@@ -52,7 +55,7 @@ function Zombie:Spawn(position)
 
 	local primaryPart = self.instance.PrimaryPart
 	primaryPart.AncestryChanged:connect(function()
-		if not primaryPart:IsDescendantOf(game) then
+		if not primaryPart:IsDescendantOf(game) and not self:Disappeared() then
 			self:Die()
 		end
 	end)
@@ -79,7 +82,7 @@ function Zombie:Spawn(position)
 		end
 	end
 
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	if DungeonState.CurrentGamemode.Scales() then
 		local damageReceivedScale = Instance.new("NumberValue")
 		damageReceivedScale.Name = "DamageReceivedScale"
 		damageReceivedScale.Value = self:GetDamageReceivedScale()
@@ -274,7 +277,12 @@ function Zombie:Wander()
 						aggroRange = Dungeon.GetDungeonData("CampaignInfo").AIAggroRange
 					end
 
-					if (character.PrimaryPart.Position - self.instance.PrimaryPart.Position).Magnitude
+					local primaryPart = self.instance.PrimaryPart
+					if primaryPart == nil then
+						return
+					end
+
+					if (character.PrimaryPart.Position - primaryPart.Position).Magnitude
 						<= aggroRange
 					then
 						self:Aggro(character)
@@ -290,6 +298,7 @@ end
 function Zombie:AIShouldMove(ourTick)
 	return self.alive
 		and self.aggroTick == ourTick
+		and self.aggroFocus ~= nil
 		and self.aggroFocus:IsDescendantOf(game)
 		and self.aggroFocus.Humanoid.Health > 0
 end
@@ -311,6 +320,7 @@ end
 
 function Zombie:Aggro(focus)
 	if not self.defaultAiInitialized then return end
+
 	local humanoid = self.instance.Humanoid
 	humanoid.WalkSpeed = self:GetSpeed()
 
@@ -323,17 +333,25 @@ function Zombie:Aggro(focus)
 	local ourTick = self.aggroTick + 1
 	self.aggroTick = ourTick
 
-	self:StupidAI()
+	local reactionTime = self:GetScaleSafe("ReactionTime")
+	local waitForReaction = Promise.resolve()
+	if reactionTime then
+		waitForReaction = Promise.delay(reactionTime)
+		if not self.alive then return end
+	end
 
-	spawn(function()
-		wait(math.random(40, 60) / 100)
-		while self.aggroTick == ourTick do
-			if self:CheckAttack() then
-				wait(self:GetAttackCooldown())
-			else
-				wait(self.AttackCheckInterval)
+	waitForReaction:andThen(function()
+		FastSpawn(function()
+			self:StupidAI()
+			wait(math.random(40, 60) / 100)
+			while self.aggroTick == ourTick do
+				if self:CheckAttack() then
+					wait(self:GetAttackCooldown())
+				else
+					wait(self.AttackCheckInterval)
+				end
 			end
-		end
+		end)
 	end)
 end
 
@@ -435,6 +453,11 @@ function Zombie:GiveXP()
 end
 
 function Zombie.GetXP()
+	if DungeonState.CurrentGamemode.Scales() then
+		-- Boss gives the XP, makes everything simpler
+		return 0
+	end
+
 	return (Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_NOT_BOSS) / DungeonState.NormalZombies
 end
 -- END XP
@@ -490,6 +513,13 @@ function Zombie:GetScale(key)
 			"no scale for " .. key
 		)
 
+		if scale.Base == nil then
+			return assert(
+				scale[Dungeon.GetDungeonData("Difficulty")],
+				"difficulty locked scaling has no key for " .. key
+			)
+		end
+
 		local scaleAmount = 1
 		if Dungeon.GetDungeonData("Gamemode") ~= "Boss" then
 			scaleAmount = self.level - campaignInfo.Difficulties[1].MinLevel
@@ -508,7 +538,7 @@ function Zombie:GetScaleSafe(key)
 end
 
 function Zombie:GetHealth()
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	if DungeonState.CurrentGamemode.Scales() then
 		return 100
 	else
 		local health = self:GetScale("Health")
@@ -536,8 +566,14 @@ function Zombie.GetDamageAgainstConstant(_, player, damage, maxHpDamage)
 	return damage
 end
 
-function Zombie.GetDamageReceivedScale()
-	return 0.5
+function Zombie:GetDamageReceivedScale()
+	local scale = self:GetScale("DamageReceivedScale")
+
+	if Dungeon.GetDungeonData("Gamemode") ~= "Boss" then
+		scale = scale * (DRS_PER_PLAYER ^ (#Players:GetPlayers() - 1))
+	end
+
+	return scale
 end
 
 function Zombie:GetAttackCooldown()
@@ -561,12 +597,16 @@ end
 function Zombie:UpdateNametag()
 	local nametag = Nametag(self.instance, self.level)
 
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	if DungeonState.CurrentGamemode.Scales() then
 		nametag.Level.Text = ""
 		nametag.Health.HealthNumber.Visible = false
 	end
 
 	return nametag
+end
+
+function Zombie.Disappeared()
+	return false
 end
 
 -- START BASIC HOOKS

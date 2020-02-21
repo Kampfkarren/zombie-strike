@@ -14,7 +14,10 @@ local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG	= require(MODULES:WaitForChild("Config"))
 
 local DAMAGE	= require(script.Parent:WaitForChild("Damage"))
+
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
+local GunSpray = require(ReplicatedStorage.Core.GunSpray)
+local LootStyles = require(ReplicatedStorage.Core.LootStyles)
 
 -- functions
 local HOLE_LIFETIME = 5
@@ -87,6 +90,14 @@ return function(item, position, directions, ammo, forceEnd)
 
 	if handle:FindFirstChild("ReloadSound_Clone") then
 		handle.ReloadSound_Clone:Destroy()
+	end
+
+	if directions == nil then
+		directions = {}
+
+		for _, spray in pairs(GunSpray(muzzle.WorldCFrame, config)) do
+			table.insert(directions, spray.LookVector.Unit)
+		end
 	end
 
 	local numSounds		= 0
@@ -181,11 +192,15 @@ return function(item, position, directions, ammo, forceEnd)
 			end
 		end
 
-		-- if attachments and (not attachments:FindFirstChild("Silencer")) then
-		local trail		= script.BulletTrail:Clone()
-			trail.CFrame				= CFrame.new(position, pos)
-			trail.EndAttach.Position	= Vector3.new(0, 0, -distance)
-			trail.Parent				= EFFECTS
+		local trail = script.BulletTrail:Clone()
+		trail.CFrame = CFrame.new(position, pos)
+		trail.EndAttach.Position = Vector3.new(0, 0, -distance)
+
+		if item.WeaponData.Type.Value == "Crystal" then
+			trail.Beam.Color = ColorSequence.new(LootStyles[item.WeaponData.Rarity.Value].Color)
+		end
+
+		trail.Parent = EFFECTS
 
 		spawn(function()
 			local start	= tick()

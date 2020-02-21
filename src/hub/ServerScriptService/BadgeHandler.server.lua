@@ -23,7 +23,9 @@ Players.PlayerAdded:connect(function(player)
 	local level = Data.GetPlayerData(player, "Level")
 
 	for _, campaign in pairs(Campaigns) do
-		if campaign.Difficulties[#campaign.Difficulties].MinLevel <= level then
+		if campaign.CompletionBadge ~= nil
+			and campaign.Difficulties[#campaign.Difficulties].MinLevel <= level
+		then
 			awardBadge(player, campaign.CompletionBadge)
 		end
 	end

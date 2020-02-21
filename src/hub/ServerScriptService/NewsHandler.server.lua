@@ -53,7 +53,17 @@ local function checkUnlockedContent(player)
 
 			if #campaign.Difficulties == difficultyIndex then
 				-- They're on the last difficulty, check if they can do the next one
-				local nextCampaign = Campaigns[campaignIndex + 1]
+				local nextCampaign
+				local nextCampaignIndex = campaignIndex
+
+				repeat
+					nextCampaignIndex = nextCampaignIndex + 1
+					local campaign = Campaigns[nextCampaignIndex]
+					if campaign and campaign.Difficulties[1].MinLevel ~= nil then
+						nextCampaign = campaign
+					end
+				until nextCampaign ~= nil or nextCampaignIndex >= #Campaigns
+
 				if nextCampaign == nil then
 					-- They finished every difficulty!
 					return NO_NEWS

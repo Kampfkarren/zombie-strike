@@ -1,8 +1,11 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local DungeonState = require(ServerScriptService.DungeonState)
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Zombie = require(script.Parent.Zombie)
 
 local AMOUNT_FOR_BOSS = 0.3
@@ -40,28 +43,32 @@ function Boss:AfterSpawn()
 	end
 end
 
-function Boss.GetDamageReceivedScale()
+function Boss:GetDamageReceivedScale()
 	-- Balanced around:
 	-- f(1) = 0.0055
 	-- f(2) = 0.0037
 	-- 3 and 4 UNTESTED
-	local playerCount = #Players:GetPlayers()
+	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		local playerCount = #Players:GetPlayers()
 
-	if playerCount == 1 then
-		return 0.0055
-	elseif playerCount == 2 then
-		return 0.0037
-	elseif playerCount == 3 then
-		return 0.0019
-	elseif playerCount == 4 then
-		return 0.0015
+		if playerCount == 1 then
+			return 0.0055
+		elseif playerCount == 2 then
+			return 0.0037
+		elseif playerCount == 3 then
+			return 0.0019
+		elseif playerCount == 4 then
+			return 0.0015
+		else
+			return 0
+		end
 	else
-		return 0
+		return self._derivative.GetDamageReceivedScale(self)
 	end
 end
 
 function Boss.GetHealth()
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	if DungeonState.CurrentGamemode.Scales() then
 		return 100
 	else
 		return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Health
@@ -127,7 +134,9 @@ function Boss:SummonGoon(callback, forceType)
 	zombie:Aggro()
 
 	if callback then
-		callback(zombie)
+		FastSpawn(function()
+			callback(zombie)
+		end)
 	end
 end
 

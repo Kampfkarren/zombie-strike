@@ -14,6 +14,7 @@ local Loot = require(ReplicatedStorage.Core.Loot)
 local Settings = require(ReplicatedStorage.Core.Settings)
 local TeleportScreen = require(ReplicatedStorage.Libraries.TeleportScreen)
 
+local UpdateCampaignsPlayed = ReplicatedStorage.Remotes.UpdateCampaignsPlayed
 local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
 local UpdateInventory = ReplicatedStorage.Remotes.UpdateInventory
 
@@ -205,4 +206,7 @@ Players.PlayerAdded:connect(function(player)
 	end
 
 	DataStore2("Cosmetics", player):OnUpdate(refreshCharacter)
+
+	local campaignsPlayed = Data.GetPlayerData(player, "CampaignsPlayed")
+	UpdateCampaignsPlayed:FireClient(player, campaignsPlayed)
 end)

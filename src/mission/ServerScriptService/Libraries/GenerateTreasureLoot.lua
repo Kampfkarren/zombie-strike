@@ -1,7 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local LEGENDARY_CHANCE = 0.1
@@ -29,7 +30,7 @@ end):andThen(function(campaignInfo)
 		return
 	end
 
-	local gunType = GunScaling.RandomType()
+	local gunType = GenerateLoot.RandomGunType()
 	local models, rarity, bonus
 
 	if rng:NextNumber() <= LEGENDARY_CHANCE then

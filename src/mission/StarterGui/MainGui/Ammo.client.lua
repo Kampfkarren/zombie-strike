@@ -13,7 +13,9 @@ local function characterAdded(character)
 		local ammo = gun:WaitForChild("Ammo")
 
 		local function updateAmmo()
-			if CurrentPowerup.Value:match("Bulletstorm/") then
+			if CurrentPowerup.Value:match("Bulletstorm/")
+				or gun:WaitForChild("WeaponData"):WaitForChild("Type").Value == "Crystal"
+			then
 				Ammo.Text = "∞/∞"
 			else
 				Ammo.Text = ammo.Value .. " / " .. Config:GetConfig(gun).Magazine

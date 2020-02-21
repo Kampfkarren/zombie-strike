@@ -62,7 +62,8 @@ local serializeStruct = t.union(
 			t.literal("Rifle"),
 			t.literal("SMG"),
 			t.literal("Shotgun"),
-			t.literal("Sniper")
+			t.literal("Sniper"),
+			t.literal("Crystal")
 		),
 
 		Attachment = t.optional(

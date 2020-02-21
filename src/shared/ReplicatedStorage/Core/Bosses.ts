@@ -23,12 +23,14 @@ const Bosses = [
 		Stats: {
 			Common: {
 				Damage: scale(0),
+				DamageReceivedScale: scale(0.5),
 				MaxHealthDamage: scale(30),
 				Speed: scale(15),
 			},
 
 			Projectile: {
 				Damage: scale(0),
+				DamageReceivedScale: scale(0.5),
 				MaxHealthDamage: scale(20),
 				Speed: scale(13),
 			},
@@ -68,6 +70,7 @@ const Bosses = [
 
 			Common: {
 				Damage: scale(0),
+				DamageReceivedScale: scale(0.5),
 				MaxHealthDamage: scale(20),
 				Speed: scale(20),
 			},

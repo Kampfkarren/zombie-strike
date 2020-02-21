@@ -22,7 +22,7 @@ local function pickArgument(argument)
 
 		return number
 	elseif argument.Type == "Weapon" then
-		return GunScaling.RandomType()
+		return GunScaling.RandomClassicType()
 	else
 		error("unknown argument type: " .. argument.Type)
 	end

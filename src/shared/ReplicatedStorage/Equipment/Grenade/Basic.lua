@@ -3,6 +3,7 @@ local Debris = game:GetService("Debris")
 local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local SoundService = game:GetService("SoundService")
 local UserInputService = game:GetService("UserInputService")
@@ -61,9 +62,9 @@ function Grenade.DealDamage(player, zombie, damage, scaledDamage)
 	if not Damage:PlayerCanDamage(player, humanoid) then return end
 
 	if not ReplicatedStorage.HubWorld.Value then
-		local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+		local DungeonState = require(ServerScriptService.DungeonState)
 
-		if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+		if DungeonState.CurrentGamemode.Scales() then
 			if CollectionService:HasTag(zombie, "Boss") then
 				return
 			end

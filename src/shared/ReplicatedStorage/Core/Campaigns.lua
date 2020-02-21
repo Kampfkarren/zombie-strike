@@ -37,6 +37,9 @@ local Impossible = {
 	Color = Color3.fromRGB(121, 3, 3),
 }
 
+local NO_DAMAGE = table.create(5, 0)
+local TOWER_REACTION_TIME = table.create(5, 1)
+
 local function range(start, finish)
 	local range = {}
 
@@ -97,9 +100,13 @@ local campaignsType = t.array(t.strictInterface({
 	ZombieTypes = t.map(t.string, t.numberMin(1)),
 	LoadingColor = t.Color3,
 	LockedArena = t.optional(t.boolean),
+	Scales = t.optional(t.boolean),
+	TreasureDelayTime = t.optional(t.numberMin(0)),
 
 	Difficulties = t.array(t.strictInterface({
-		MinLevel = t.numberMin(1),
+		MinLevel = t.optional(t.numberMin(1)),
+		TimesPlayed = t.optional(t.numberMin(0)),
+
 		Style = t.strictInterface({
 			Name = t.string,
 			Color = t.Color3,
@@ -111,7 +118,7 @@ local campaignsType = t.array(t.strictInterface({
 		ZombieSpawnRate = t.numberConstrained(0, 1),
 
 		BossStats = t.strictInterface({
-			Health = t.numberMin(1),
+			Health = t.optional(t.numberMin(1)),
 		}),
 	})),
 
@@ -124,15 +131,27 @@ local campaignsType = t.array(t.strictInterface({
 		SMG = lootRewardType,
 		Shotgun = lootRewardType,
 		Sniper = lootRewardType,
+		Crystal = t.optional(lootRewardType),
 	}),
 
-	Stats = t.map(t.string, t.map(t.string, t.strictInterface({
-		Base = t.number,
-		Scale = t.number,
-	}))),
+	DropTable = t.optional(t.strictInterface({
+		Crystal = t.optional(t.number),
+	})),
+
+	Stats = t.map(
+		t.string,
+		t.map(t.string, t.union(
+			t.strictInterface({
+				Base = t.number,
+				Scale = t.number,
+			}),
+
+			t.map(t.number, t.number)
+		))
+	),
 
 	AIAggroRange = t.number,
-	CompletionBadge = t.number,
+	CompletionBadge = t.optional(t.number),
 }))
 
 local Campaigns = {
@@ -1056,6 +1075,271 @@ local Campaigns = {
 
 		AIAggroRange = 90,
 		CompletionBadge = 2124500479,
+	},
+
+	{
+		Name = "The Magic Tower",
+		Image = "rbxassetid://4708947976",
+		ZombieTypes = {
+			Common = 3,
+			Fast = 1,
+			Projectile = 1,
+			Strong = 1,
+		},
+		LoadingColor = Color3.fromRGB(155, 89, 182),
+		LockedArena = true,
+		Scales = true,
+		TreasureDelayTime = 2.5,
+
+		DropTable = {
+			Crystal = 2,
+		},
+
+		Difficulties = {
+			{
+				TimesPlayed = 0,
+				Style = Easy,
+
+				Gold = 1,
+				XP = 1,
+				Rooms = 6,
+				ZombieSpawnRate = 0.5,
+
+				BossStats = {},
+			},
+
+			{
+				TimesPlayed = 4,
+				Style = Medium,
+
+				Gold = 1,
+				XP = 1,
+				Rooms = 7,
+				ZombieSpawnRate = 0.65,
+
+				BossStats = {},
+			},
+
+			{
+				TimesPlayed = 14,
+				Style = Hard,
+
+				Gold = 1,
+				XP = 1,
+				Rooms = 10,
+				ZombieSpawnRate = 0.75,
+
+				BossStats = {},
+			},
+
+			{
+				TimesPlayed = 30,
+				Style = VeryHard,
+
+				Gold = 1,
+				XP = 1,
+				Rooms = 12,
+				ZombieSpawnRate = 0.9,
+
+				BossStats = {},
+			},
+
+			{
+				TimesPlayed = 60,
+				Style = Extreme,
+
+				Gold = 1,
+				XP = 1,
+				Rooms = 13,
+				ZombieSpawnRate = 1,
+
+				BossStats = {},
+			},
+		},
+
+		Loot = classicGunsPatched({
+			Armor = {
+				Common = { 46, 47, 48, 49, 50 },
+				Uncommon = { 46 },
+				Rare = { 45 },
+				Epic = { 44 },
+				Legendary = { 42, 43 },
+			},
+
+			Helmet = {
+				Common = { 36 },
+				Uncommon = { 35 },
+				Rare = { 34 },
+				Epic = { 33 },
+				Legendary = { 31, 32 },
+			},
+		}, {
+			Crystal = {
+				Common = { 1 },
+				Uncommon = { 2 },
+				Rare = { 3 },
+				Epic = { 4 },
+				Legendary = { 5 },
+			},
+		}),
+
+		Stats = {
+			Common = {
+				Damage = NO_DAMAGE,
+				ReactionTime = TOWER_REACTION_TIME,
+
+				DamageReceivedScale = {
+					100 / 100,
+					100 / 110,
+					100 / 125,
+					100 / 155,
+					100 / 180,
+				},
+
+				MaxHealthDamage = {
+					15,
+					20,
+					25,
+					30,
+					35,
+				},
+
+				Speed = {
+					15,
+					16,
+					16.4,
+					16.8,
+					17.5,
+				},
+			},
+
+			Strong = {
+				Damage = NO_DAMAGE,
+				ReactionTime = TOWER_REACTION_TIME,
+
+				DamageReceivedScale = {
+					100 / 120,
+					100 / 135,
+					100 / 150,
+					100 / 180,
+					100 / 210,
+				},
+
+				MaxHealthDamage = {
+					20,
+					25,
+					30,
+					35,
+					40,
+				},
+
+				Speed = {
+					13,
+					14,
+					14.4,
+					14.8,
+					15.5,
+				},
+			},
+
+			Fast = {
+				Damage = NO_DAMAGE,
+				ReactionTime = TOWER_REACTION_TIME,
+
+				DamageReceivedScale = {
+					100 / 90,
+					100 / 100,
+					100 / 115,
+					100 / 145,
+					100 / 170,
+				},
+
+				MaxHealthDamage = {
+					15,
+					25,
+					30,
+					35,
+					40,
+				},
+
+				Speed = {
+					17,
+					19,
+					19.4,
+					19.8,
+					20.5,
+				},
+			},
+
+			Projectile = {
+				Damage = NO_DAMAGE,
+				ReactionTime = TOWER_REACTION_TIME,
+
+				DamageReceivedScale = {
+					100 / 90,
+					100 / 100,
+					100 / 115,
+					100 / 145,
+					100 / 170,
+				},
+
+				MaxHealthDamage = {
+					10,
+					15,
+					20,
+					20,
+					25,
+				},
+
+				Speed = {
+					15,
+					16,
+					16.4,
+					16.8,
+					17.5,
+				},
+			},
+
+			Ultra = {
+				Damage = NO_DAMAGE,
+
+				DamageReceivedScale = {
+					100 / 300,
+					100 / 360,
+					100 / 420,
+					100 / 440,
+					100 / 500,
+				},
+
+				MaxHealthDamage = {
+					20,
+					25,
+					30,
+					35,
+					40,
+				},
+
+				Speed = {
+					17,
+					18,
+					18.5,
+					19,
+					19.5,
+				},
+			},
+
+			Boss = {
+				DamageReceivedScale = {
+					100 / 6000,
+					100 / 7400,
+					100 / 9001,
+					100 / 11000,
+					100 / 12500,
+				},
+			}
+		},
+
+		AIAggroRange = 60,
 	},
 }
 

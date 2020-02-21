@@ -11,7 +11,7 @@ local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 
 local PetFire = ReplicatedStorage.Remotes.PetFire
 
-local BOSS_DAMAGE_SCALE = 1 / 15
+local BOSS_DAMAGE_SCALE = 1 / 25
 local BOSS_GAMEMODE_DAMAGE_SCALE = 1 / 450
 local COINS_PER_INTERVAL = 5
 local COINS_INTERVAL = 10
@@ -48,18 +48,20 @@ Players.PlayerAdded:connect(function(player)
 			for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
 				if zombie ~= boss then
 					local zombieRoot = zombie.PrimaryPart
-					local dist = (zombieRoot.Position - rootPosition).Magnitude
+					if zombieRoot ~= nil then
+						local dist = (zombieRoot.Position - rootPosition).Magnitude
 
-					if dist <= closest[2]
-						and Damage:PlayerCanDamage(player, zombie.Humanoid)
-						and LineOfSight(
-							rootPosition,
-							zombie,
-							PET_RANGE,
-							{ character }
-						)
-					then
-						closest = { zombie, dist }
+						if dist <= closest[2]
+							and Damage:PlayerCanDamage(player, zombie.Humanoid)
+							and LineOfSight(
+								rootPosition,
+								zombie,
+								PET_RANGE,
+								{ character }
+							)
+						then
+							closest = { zombie, dist }
+						end
 					end
 				end
 			end

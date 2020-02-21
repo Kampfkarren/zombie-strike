@@ -260,12 +260,26 @@ function LootInfo:render()
 			Format = "%d%%",
 		})
 
-		stats.MagSize = e(Stat, {
-			LayoutOrder = 3,
-			Compare = currentGun.Magazine,
-			Stat = loot.Magazine,
-			StatName = "AMMO",
-		})
+		if loot.Type == "Crystal" then
+			stats.MagSize = e(BasicStat, {
+				StatName = "AMMO",
+				StatNumber = "∞",
+			})
+		elseif currentGunItem.Type == "Crystal" then
+			-- Don't compare with Crystal gun's magazine size
+			stats.MagSize = e(BasicStat, {
+				StatName = "AMMO",
+				StatNumber = loot.Magazine,
+			})
+		else
+			-- Neither are crystal guns, so neither have infinite ammo
+			stats.MagSize = e(Stat, {
+				LayoutOrder = 3,
+				Compare = currentGun.Magazine,
+				Stat = loot.Magazine,
+				StatName = "AMMO",
+			})
+		end
 	elseif Loot.IsAttachment(loot) then
 		local statName, statNumber
 

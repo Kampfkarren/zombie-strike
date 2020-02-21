@@ -15,6 +15,7 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+local GunSpray = require(ReplicatedStorage.Core.GunSpray)
 
 local GiveQuest = ServerStorage.Events.GiveQuest
 
@@ -152,7 +153,7 @@ end
 
 -- REMOTES.Hit.OnServerEvent:connect(hit)
 
-REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
+REMOTES.Shoot.OnServerEvent:connect(function(player, position, mouseCFrame, hits)
 	if shots[player] then
 		shots[player] = nil
 	end
@@ -166,14 +167,18 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 		local ammo = item.Ammo
 		local config = CONFIG:GetConfig(item)
 
-		if #directions == config.ShotSize then
+		if #hits <= config.ShotSize then
 			if ammo.Value > 0 then
-				if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
+				if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/")
+					and item.WeaponData.Type.Value ~= "Crystal"
+				then
 					ammo.Value = ammo.Value - 1
 				end
 
-				for i, dir in pairs(directions) do
-					directions[i] = dir.Unit
+				local directions = {}
+
+				for _, dir in pairs(GunSpray(mouseCFrame, config)) do
+					table.insert(directions, dir.LookVector.Unit)
 				end
 
 				local shot = {
@@ -188,7 +193,7 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 
 				for _, other in pairs(Players:GetPlayers()) do
 					if other ~= player then
-						REMOTES.Effect:FireClient(other, "Shoot", item, position, directions)
+						REMOTES.Effect:FireClient(other, "Shoot", item, position)
 					end
 				end
 			end
@@ -196,15 +201,15 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, directions, hits)
 	end
 
 	if not ReplicatedStorage.HubWorld.Value then
-		local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-		if Dungeon.GetDungeonData("Gamemode") == "Boss" and shots[player] then
+		local DungeonState = require(ServerScriptService.DungeonState)
+		if DungeonState.CurrentGamemode.Scales() and shots[player] then
 			shots[player].Directions = { shots[player].Directions[1] }
 			hits = { hits[1] }
 		end
 	end
 
-	for _, hitMark in pairs(hits) do
-		hit(player, unpack(hitMark))
+	for index, hitMark in pairs(hits) do
+		hit(player, hitMark, index)
 	end
 end)
 

@@ -1,3 +1,5 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local GunScaling = {}
 
 local Types = {
@@ -82,6 +84,22 @@ local Types = {
 			Magazine = 1.011,
 		},
 	},
+
+	Crystal = {
+		Base = {
+			CritChance = 0.10,
+			Damage = 40,
+			FireRate = 3,
+			Magazine = 6,
+		},
+
+		Scale = {
+			CritChance = 1.0223,
+			Damage = 1.12,
+			FireRate = 1.005,
+			Magazine = 1,
+		},
+	},
 }
 
 local RarityMultipliers = {
@@ -149,15 +167,18 @@ function GunScaling.BaseStats(type, level, rarity)
 	return stats
 end
 
-function GunScaling.RandomType(rng, exclude)
-	rng = rng or Random.new()
+function GunScaling.RandomClassicType()
+	local rng = Random.new()
 	local types = {}
+
 	for type in pairs(Types) do
-		if type ~= exclude then
+		if type ~= "Crystal" then
 			table.insert(types, type)
 		end
 	end
+
 	table.sort(types) -- pairs is not documented to be deterministic
+
 	return types[rng:NextInteger(1, #types)]
 end
 

@@ -163,8 +163,13 @@ do
 			lobbyInfo.Info.Difficulty.TextStrokeTransparency = 1
 			lobbyInfo.MapImage.Image = boss.Image
 		else
+			if difficulty.MinLevel ~= nil then
+				lobbyInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
+			else
+				lobbyInfo.Info.Level.Text = ""
+			end
+
 			lobbyInfo.Info.Campaign.Text = campaign.Name
-			lobbyInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
 			lobbyInfo.Info.Difficulty.Text = difficultyName
 			lobbyInfo.Info.Difficulty.TextStrokeColor3 = difficulty.Style.Color
 			lobbyInfo.Info.Difficulty.TextStrokeTransparency = 0.2
@@ -173,7 +178,7 @@ do
 
 		lobbyInfo.Info.Players.Text = #lobby.Players .. "/4"
 
-		if (difficulty and difficulty.MinLevel > level) or #lobby.Players == 4 or kickedFrom[lobby.Unique] then
+		if (difficulty and difficulty.MinLevel ~= nil and difficulty.MinLevel > level) or #lobby.Players == 4 or kickedFrom[lobby.Unique] then
 			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(234, 32, 39)
 		else
 			lobbyInfo.Join.ImageColor3 = Color3.fromRGB(32, 187, 108)
@@ -218,7 +223,7 @@ do
 					difficulty = campaign.Difficulties[lobby.Difficulty]
 				end
 
-				local cantJoin = (difficulty and difficulty.MinLevel > level)
+				local cantJoin = (difficulty and difficulty.MinLevel and difficulty.MinLevel > level)
 					or #lobby.Players == 4
 					or kickedFrom[lobby.Unique]
 					or (not lobby.Public and not friends)
@@ -388,7 +393,12 @@ do
 			local difficulty = campaign.Difficulties[current.Difficulty]
 			MapInfo.Info.Difficulty.Text = difficulty.Style.Name
 			MapInfo.Info.Difficulty.TextColor3 = difficulty.Style.Color
-			MapInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
+
+			if difficulty.MinLevel ~= nil then
+				MapInfo.Info.Level.Text = "LV. " .. difficulty.MinLevel .. "+"
+			else
+				MapInfo.Info.Level.Text = ""
+			end
 		end
 
 

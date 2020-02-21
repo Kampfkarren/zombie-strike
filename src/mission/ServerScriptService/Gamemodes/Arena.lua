@@ -203,7 +203,11 @@ function Arena.Init()
 			if timer == 1 then
 				FastSpawn(startWave)
 			end
-		end
+		end,
+
+		Scales = function()
+			return false
+		end,
 	}
 end
 

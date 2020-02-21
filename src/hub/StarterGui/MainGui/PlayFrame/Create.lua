@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local AutomatedScrollingFrameComponent = require(ReplicatedStorage.Core.UI.Components.AutomatedScrollingFrameComponent)
-local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
+local Data = require(ReplicatedStorage.Core.Data)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Gamemodes = require(script.Parent.Gamemodes)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
@@ -155,6 +155,8 @@ function Create:init()
 		local level = self.props.FakeLevel
 			or LocalPlayer:WaitForChild("PlayerData"):WaitForChild("Level").Value
 
+		Data.GetLocalPlayerData("CampaignsPlayed")
+
 		self:setState({
 			level = level,
 		})
@@ -162,10 +164,14 @@ function Create:init()
 		local latestCampaign
 
 		for campaignIndex, campaign in ipairs(Gamemodes.Mission.Locations) do
-			if level >= campaign.Difficulties[1].MinLevel then
-				latestCampaign = campaignIndex
-			else
-				break
+			local minLevel = campaign.Difficulties[1].MinLevel
+
+			if minLevel ~= nil then
+				if level >= minLevel then
+					latestCampaign = campaignIndex
+				else
+					break
+				end
 			end
 		end
 
@@ -249,7 +255,7 @@ function Create:SelectLocation(campaignIndex)
 	local latestDifficulty
 
 	for difficultyIndex, difficulty in ipairs(campaign.Difficulties or {}) do
-		if self.state.level >= difficulty.MinLevel then
+		if self.state.gamemode.IsPlayable(campaignIndex, difficultyIndex, difficulty) then
 			latestDifficulty = difficultyIndex
 		else
 			break
@@ -266,7 +272,7 @@ end
 function Create:render()
 	local state = self.state
 
-	if not state.level then
+	if not state.level or not state.campaignIndex then
 		return Roact.createFragment()
 	end
 
@@ -282,7 +288,7 @@ function Create:render()
 		local campaignDisabled = false
 
 		if location.Difficulties then
-			campaignDisabled = self.state.level < location.Difficulties[1].MinLevel
+			campaignDisabled = self.state.level < (location.Difficulties[1].MinLevel or 0)
 		end
 
 		table.insert(mapsChildren, e(BigButton, {
@@ -297,7 +303,13 @@ function Create:render()
 
 	local difficulty = (self.state.campaign.Difficulties or {})[self.state.difficulty]
 	local difficultyText
-	local disabled = difficulty and self.state.level < difficulty.MinLevel
+	local playable, reason
+
+	if difficulty ~= nil then
+		playable, reason = state.gamemode.IsPlayable(self.state.campaignIndex, self.state.difficulty, difficulty)
+	else
+		playable = true
+	end
 
 	if difficulty then
 		local difficultyTextProps = {
@@ -329,13 +341,13 @@ function Create:render()
 	end
 
 	local submit
-	if not disabled then
+	if playable then
 		submit = self.submit
 	end
 
 	local warning
 
-	if self.state.gamemode.HardcoreEnabled and state.hardcore and not disabled then
+	if self.state.gamemode.HardcoreEnabled and state.hardcore and playable then
 		warning = e("TextLabel", {
 			AnchorPoint = Vector2.new(0, 0.5),
 			BackgroundTransparency = 1,
@@ -347,11 +359,24 @@ function Create:render()
 			TextScaled = true,
 			TextStrokeTransparency = 0.2,
 		})
-	elseif disabled then
-		local text = ("You must be level %d to play on %s."):format(
-			difficulty.MinLevel,
-			difficulty.Style.Name
-		)
+	elseif not playable then
+		local text
+
+		if reason == 1 then
+			text = ("You must be level %d to play on %s."):format(
+				difficulty.MinLevel,
+				difficulty.Style.Name
+			)
+		elseif reason == 2 then
+			local amount = difficulty.TimesPlayed
+				- (Data.GetLocalPlayerData("CampaignsPlayed")[tostring(self.state.campaignIndex)] or 0)
+
+			text = ("You must play %d more time%s to play on %s."):format(
+				amount,
+				amount == 1 and "" or "s",
+				difficulty.Style.Name
+			)
+		end
 
 		warning = e("TextLabel", {
 			AnchorPoint = Vector2.new(0, 0.5),
@@ -487,7 +512,7 @@ function Create:render()
 			Hardcore = hardcoreCheckbox,
 
 			Create = e(StyledButton, {
-				BackgroundColor3 = disabled and DISABLED_COLOR or Color3.fromRGB(32, 187, 108),
+				BackgroundColor3 = playable and Color3.fromRGB(32, 187, 108) or DISABLED_COLOR,
 				LayoutOrder = 5,
 				Size = UDim2.fromScale(1, 0.1),
 				[Roact.Event.Activated] = submit,

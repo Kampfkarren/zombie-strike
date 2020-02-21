@@ -1,12 +1,4 @@
-import { Difficulty } from "types/Gamemode"
-
-type Campaign = {
-	Name: string,
-	Image: string,
-	LockedArena?: boolean,
-
-	Difficulties: Difficulty[],
-}
+import { Campaign, Difficulty } from "types/Gamemode"
 
 declare const Campaigns: Campaign[]
 

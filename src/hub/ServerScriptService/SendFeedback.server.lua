@@ -3,7 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local WeakInstanceTable = require(ReplicatedStorage.Core.WeakInstanceTable)
 
-local FEEDBACK_URL = "CENSORED URL
+local FEEDBACK_URL = "CENSORED URL"
 
 local sentFeedback = WeakInstanceTable()
 

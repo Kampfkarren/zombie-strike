@@ -93,6 +93,7 @@ end
 
 clientDungeonKey("Members")(#Dungeon.GetDungeonData("Members"))
 clientDungeonKey("Campaign")(Dungeon.GetDungeonData("Campaign"))
+clientDungeonKey("Difficulty")(Dungeon.GetDungeonData("Difficulty"))
 
 local gamemode = Dungeon.GetDungeonData("Gamemode")
 clientDungeonKey("Gamemode", "StringValue")(gamemode)

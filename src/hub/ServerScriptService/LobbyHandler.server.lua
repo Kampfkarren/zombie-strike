@@ -13,12 +13,13 @@ local DungeonTeleporter = require(ServerScriptService.Libraries.DungeonTeleporte
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Friends = require(ReplicatedStorage.Libraries.Friends)
 local inspect = require(ReplicatedStorage.Core.inspect)
+local MissionPlayable = require(ReplicatedStorage.Libraries.MissionPlayable)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local t = require(ReplicatedStorage.Vendor.t)
 
 local Lobbies = ReplicatedStorage.Lobbies
 
-local HACKER_FAIL_URL = "CENSORED URL
+local HACKER_FAIL_URL = "CENSORED URL"
 
 local lobbies = {}
 local teleporting = {}
@@ -166,8 +167,6 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 		Instance = lobbyInstance,
 	}
 
-	local playerLevel = Data.GetPlayerData(player, "Level")
-
 	if info.Gamemode == "Mission" then
 		local difficulty = campaign.Difficulties[info.Difficulty]
 		if not difficulty then
@@ -175,8 +174,8 @@ ReplicatedStorage.Remotes.CreateLobby.OnServerInvoke = function(player, info)
 			return
 		end
 
-		if playerLevel < difficulty.MinLevel then
-			warn("CreateLobby: too low level for difficulty")
+		if not MissionPlayable(info.Campaign, info.Difficulty, player) then
+			warn("CreateLobby: mission not playable")
 			return
 		end
 
@@ -295,7 +294,10 @@ ReplicatedStorage.Remotes.JoinLobby.OnServerInvoke = function(player, unique)
 
 	local playerLevel = Data.GetPlayerData(player, "Level")
 
-	if difficulty and difficulty.MinLevel > playerLevel then
+	-- This INTENTIONALLY doesn't use MissionPlayable
+	-- We want players to be able to join very hard scalable missions even if they can't create them
+	-- Analytics show most missions are played solo, this should curb that.
+	if difficulty and (difficulty.MinLevel or 0) > playerLevel then
 		warn("level too low")
 		return
 	end

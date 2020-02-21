@@ -20,7 +20,11 @@ const Boss: Gamemode = {
 
 	ImageOverlay: (e) => {
 		return e(BossImageOverlay)
-	}
+	},
+
+	IsPlayable: () => {
+		return [true]
+	},
 }
 
 export = Boss

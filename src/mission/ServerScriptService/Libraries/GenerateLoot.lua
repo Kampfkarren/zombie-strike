@@ -96,7 +96,7 @@ local function getLootLevel(player)
 
 	if Dungeon.GetDungeonData("Gamemode") == "Arena" then
 		return 1
-	elseif Dungeon.GetDungeonData("Gamemode") ~= "Mission" then
+	elseif DungeonState.CurrentGamemode.Scales() then
 		return math.max(playerLevel - math.random(0, 3), 1)
 	end
 
@@ -216,6 +216,31 @@ local function getLootRarity(player)
 	return 1
 end
 
+local function randomGunType()
+	local rng = Random.new()
+	local types = {}
+
+	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+	local loot = campaignInfo and campaignInfo.Loot
+	local dropTable = campaignInfo and campaignInfo.DropTable or {}
+
+	if loot == nil then
+		return GunScaling.RandomClassicType()
+	end
+
+	for type in pairs(loot) do
+		if type ~= "Armor" and type ~= "Helmet" then
+			for _ = 1, (dropTable[type] or 1) do
+				table.insert(types, type)
+			end
+		end
+	end
+
+	table.sort(types) -- pairs is not documented to be deterministic
+
+	return types[rng:NextInteger(1, #types)]
+end
+
 local function generateLootItem(player)
 	-- First, see if the gamemode has anything it wants to give
 	local generateGamemodeLoot = DungeonState.CurrentGamemode.GenerateLootItem
@@ -245,7 +270,7 @@ local function generateLootItem(player)
 			and bossLoot.Helmet == nil
 		)
 	then
-		local type = GunScaling.RandomType()
+		local type = randomGunType()
 
 		local funny = rng:NextInteger(0, 35)
 
@@ -375,4 +400,5 @@ return {
 	GenerateEquipment = generateEquipment,
 	GenerateOne = generateLootItem,
 	GenerateSet = generateLoot,
+	RandomGunType = randomGunType,
 }

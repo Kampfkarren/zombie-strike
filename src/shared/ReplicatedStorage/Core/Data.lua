@@ -3,6 +3,7 @@ local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local CoreData = require(ReplicatedStorage.Core.CoreData)
+local MockPlayer = require(ReplicatedStorage.Core.MockData.MockPlayer)
 
 local Data = {}
 
@@ -18,6 +19,10 @@ function Data.SetLocalPlayerData(key, value)
 end
 
 function Data.GetLocalPlayerData(key)
+	if not RunService:IsRunning() then
+		return MockPlayer()[key]
+	end
+
 	local data = Data.LocalPlayerData[key]
 
 	while not data do

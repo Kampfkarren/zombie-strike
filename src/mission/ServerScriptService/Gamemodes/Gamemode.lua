@@ -9,9 +9,9 @@ local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local DungeonState = require(ServerScriptService.DungeonState)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
-local GetAvailableMissions = require(ReplicatedStorage.Core.GetAvailableMissions)
 local GiveQuest = ServerStorage.Events.GiveQuest
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -19,12 +19,14 @@ local Zombie = require(ServerScriptService.Zombies.Zombie)
 
 local Gamemode = {}
 
+local SCALED_PASS_POINTS = 0.7
+
 local zombieTypes
 
 DataStore2.Combine("DATA", "DungeonsPlayed", "LootEarned", "RoomsCleared")
 
 local function getBossLevel()
-	if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+	if DungeonState.CurrentGamemode.Scales() then
 		return 1
 	else
 		return Dungeon.GetDungeonData("DifficultyInfo").MinLevel
@@ -74,27 +76,9 @@ function Gamemode.EndMission()
 				local goldScale = player.PlayerData.GoldScale.Value
 				local xpScale = player.PlayerData.XPScale.Value
 
-				local difficulty
-
-				if Dungeon.GetDungeonData("Gamemode") == "Boss" then
-					local missions = GetAvailableMissions(player)
-					local earlierMission
-
-					for index = 1, 0, -1 do
-						local nearbyMission = missions[#missions - index]
-						if nearbyMission then
-							earlierMission = nearbyMission
-							break
-						end
-					end
-
-					difficulty = earlierMission
-				else
-					difficulty = Dungeon.GetDungeonData("DifficultyInfo")
-				end
-
-				local xp = math.floor(difficulty.XP * xpScale)
-				local gold = math.floor(difficulty.Gold * goldScale)
+				local rewards = DungeonState.CurrentGamemode.GetEndRewards(player)
+				local xp = math.floor(rewards.XP * xpScale)
+				local gold = math.floor(rewards.Gold * goldScale)
 
 				return Promise.all({
 					DataStore2("Level", player):Set(player.PlayerData.Level.Value),
@@ -111,25 +95,44 @@ function Gamemode.EndMission()
 				local level = DataStore2("Level", player):Get(1)
 				local zombiePassPoints = 1
 
+				-- TODO: If we add any new level locked campaigns, this'll mess up I bet
 				if Dungeon.GetDungeonData("Gamemode") == "Mission" then
-					local hardestCampaign = 1
+					if DungeonState.CurrentGamemode.Scales() then
+						local hardestCampaign = 1
 
-					for campaignIndex, campaign in ipairs(Campaigns) do
-						if campaign.Difficulties[1].MinLevel <= level then
-							hardestCampaign = campaignIndex
-						else
-							break
+						for campaignIndex, campaign in ipairs(Campaigns) do
+							local minLevel = campaign.Difficulties[1].MinLevel
+							if minLevel ~= nil and minLevel <= level then
+								hardestCampaign = campaignIndex
+							else
+								break
+							end
 						end
-					end
 
-					zombiePassPoints = Dungeon.GetDungeonData("Campaign") / hardestCampaign
+						zombiePassPoints = Dungeon.GetDungeonData("Campaign") / hardestCampaign
+					else
+						zombiePassPoints = SCALED_PASS_POINTS
+					end
 				end
 
 				zombiePass.XP = zombiePass.XP + zombiePassPoints
 				zombiePassStore:Set(zombiePass)
 
 				resolve()
-			end)
+			end),
+
+			Promise.async(function(resolve)
+				if Dungeon.GetDungeonData("Gamemode") == "Mission" then
+					if Dungeon.GetDungeonData("DifficultyInfo").TimesPlayed ~= nil then
+						local campaignIndex = tostring(Dungeon.GetDungeonData("Campaign"))
+						local campaignsPlayed, campaignsPlayedStore = Data.GetPlayerData(player, "CampaignsPlayed")
+						campaignsPlayed[campaignIndex] = (campaignsPlayed[campaignIndex] or 0) + 1
+						campaignsPlayedStore:Set(campaignsPlayed)
+					end
+				end
+
+				resolve()
+			end),
 		}):andThen(function(data)
 			if Dungeon.GetDungeonData("Hardcore") then
 				GiveQuest:Fire(player, "BeatHardcoreMissions", 1)

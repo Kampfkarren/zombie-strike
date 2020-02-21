@@ -82,6 +82,21 @@ Bases.Sniper = {
 	ScaleBuff = 0.95,
 }
 
+Bases.Crystal = {
+	Type = "Gun",
+	Size = "Light",
+
+	Recoil = 30,
+	Range = 1300,
+	ShotSize = 1,
+	Spread = 2,
+	Zoom = 20,
+	ReloadTime = 0,
+	FireMode = "Auto",
+	Dropoff = 3,
+	ScaleBuff = 1,
+}
+
 function Config.GetShotgunShotSize(level)
 	return math.floor(5 * (1.01 ^ (level - 1)))
 end

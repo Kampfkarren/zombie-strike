@@ -18,6 +18,7 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local DAMAGE = require(MODULES:WaitForChild("Damage"))
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
+local GunSpray = require(ReplicatedStorage.Core.GunSpray)
 
 local EQUIP_COOLDOWN = 0.2
 
@@ -164,7 +165,9 @@ function module.Create(_, item)
 	end
 
 	local function Shoot()
-		if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then
+		if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/")
+			and item:WaitForChild("WeaponData"):WaitForChild("Type").Value ~= "Crystal"
+		then
 			ammo = ammo - 1
 		end
 
@@ -173,24 +176,16 @@ function module.Create(_, item)
 
 		local hits = {}
 
-		for i = 1, config.ShotSize do
-			local spread = config.Spread * 10
-			local cframe
+		local cframe
 
-			if HubWorld and not UserInputService.MouseEnabled then
-				cframe = muzzle.WorldCFrame
-			else
-				cframe = CFrame.new(position, MOUSE.WorldPosition)
-			end
+		if HubWorld and not UserInputService.MouseEnabled then
+			cframe = muzzle.WorldCFrame
+		else
+			cframe = CFrame.new(position, MOUSE.WorldPosition)
+		end
 
-			if config.SpreadPattern then
-				local x, y = config.SpreadPattern[i][1], config.SpreadPattern[i][2]
-				cframe = cframe * CFrame.Angles(math.rad(spread * y / 50), math.rad(spread * x / 50), 0)
-			else
-				cframe = cframe * CFrame.Angles(math.rad(math.random(-spread, spread) / 50), math.rad(math.random(-spread, spread) / 50), 0)
-			end
-
-			local direction = cframe.lookVector
+		for _, spray in pairs(GunSpray(cframe, config)) do
+			local direction = spray.LookVector
 			table.insert(directions, direction)
 
 			local hit, pos, _, humanoid = Raycast(position, direction * config.Range, {character})
@@ -202,10 +197,8 @@ function module.Create(_, item)
 
 			if hit and humanoid then
 				if DAMAGE:PlayerCanDamage(PLAYER, humanoid) then
-					-- local damage = DAMAGE:Calculate(item, hit, position)
 					EVENTS.Hitmarker:Fire(hit.Name == "Head", pos, humanoid.Health / humanoid.MaxHealth)
-					-- REMOTES.Hit:FireServer(hit, i)
-					table.insert(hits, { hit, i })
+					table.insert(hits, hit)
 				end
 			end
 		end
@@ -218,7 +211,7 @@ function module.Create(_, item)
 
 		EVENTS.Gun:Fire("Update", ammo)
 		EFFECTS:Effect("Shoot", item, position, directions, ammo)
-		REMOTES.Shoot:FireServer(position, directions, hits)
+		REMOTES.Shoot:FireServer(position, cframe, hits)
 
 		EVENTS.Recoil:Fire(Vector3.new(math.random(-config.Recoil, config.Recoil) / 4, 0, math.random(config.Recoil / 2, config.Recoil)))
 	end

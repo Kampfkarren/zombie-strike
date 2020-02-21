@@ -127,10 +127,6 @@ struct = "Event"
 method = true
 args = []
 
-[selene.structs.BasePart.Elasticity]
-property = true
-writable = "overridden"
-
 [selene.structs.BasePart.FindFirstAncestor]
 method = true
 
@@ -180,10 +176,6 @@ type = "any"
 [[selene.structs.BasePart.FindFirstChildWhichIsA.args]]
 required = false
 type = "any"
-
-[selene.structs.BasePart.Friction]
-property = true
-writable = "overridden"
 
 [selene.structs.BasePart.FrontParamA]
 property = true
@@ -268,10 +260,6 @@ method = true
 required = false
 type = "any"
 
-[selene.structs.BasePart.GetRenderCFrame]
-method = true
-args = []
-
 [selene.structs.BasePart.GetRootPart]
 method = true
 args = []
@@ -321,9 +309,6 @@ writable = "overridden"
 property = true
 writable = "overridden"
 
-[selene.structs.BasePart.LocalSimulationTouched]
-struct = "Event"
-
 [selene.structs.BasePart.LocalTransparencyModifier]
 property = true
 writable = "overridden"
@@ -352,9 +337,6 @@ writable = "overridden"
 property = true
 writable = "overridden"
 
-[selene.structs.BasePart.OutfitChanged]
-struct = "Event"
-
 [selene.structs.BasePart.Parent]
 struct = "Instance"
 
@@ -368,10 +350,6 @@ property = true
 [selene.structs.BasePart.Reflectance]
 property = true
 writable = "overridden"
-
-[selene.structs.BasePart.Remove]
-method = true
-args = []
 
 [selene.structs.BasePart.Resize]
 method = true
@@ -444,12 +422,6 @@ args = []
 property = true
 writable = "overridden"
 
-[selene.structs.BasePart.SpecificGravity]
-property = true
-
-[selene.structs.BasePart.StoppedTouching]
-struct = "Event"
-
 [selene.structs.BasePart.SubtractAsync]
 method = true
 
@@ -520,91 +492,6 @@ type = "any"
 [[selene.structs.BasePart.WaitForChild.args]]
 required = false
 type = "any"
-
-[selene.structs.BasePart.archivable]
-property = true
-writable = "overridden"
-
-[selene.structs.BasePart.breakJoints]
-method = true
-args = []
-
-[selene.structs.BasePart.brickColor]
-property = true
-writable = "overridden"
-
-[selene.structs.BasePart.childAdded]
-struct = "Event"
-
-[selene.structs.BasePart.children]
-method = true
-args = []
-
-[selene.structs.BasePart.className]
-property = true
-
-[selene.structs.BasePart.clone]
-method = true
-args = []
-
-[selene.structs.BasePart.destroy]
-method = true
-args = []
-
-[selene.structs.BasePart.findFirstChild]
-method = true
-
-[[selene.structs.BasePart.findFirstChild.args]]
-required = false
-type = "any"
-
-[[selene.structs.BasePart.findFirstChild.args]]
-required = false
-type = "any"
-
-[selene.structs.BasePart.getChildren]
-method = true
-args = []
-
-[selene.structs.BasePart.getMass]
-method = true
-args = []
-
-[selene.structs.BasePart.isA]
-method = true
-
-[[selene.structs.BasePart.isA.args]]
-required = false
-type = "any"
-
-[selene.structs.BasePart.isDescendantOf]
-method = true
-
-[[selene.structs.BasePart.isDescendantOf.args]]
-required = false
-type = "any"
-
-[selene.structs.BasePart.makeJoints]
-method = true
-args = []
-
-[selene.structs.BasePart.remove]
-method = true
-args = []
-
-[selene.structs.BasePart.resize]
-method = true
-
-[[selene.structs.BasePart.resize.args]]
-required = false
-type = "any"
-
-[[selene.structs.BasePart.resize.args]]
-required = false
-type = "any"
-
-[selene.structs.BasePart.touched]
-struct = "Event"
 [selene.structs.Camera."*"]
 struct = "Instance"
 
@@ -648,10 +535,6 @@ args = []
 [selene.structs.Camera.Clone]
 method = true
 args = []
-
-[selene.structs.Camera.CoordinateFrame]
-property = true
-writable = "overridden"
 
 [selene.structs.Camera.DescendantAdded]
 struct = "Event"
@@ -866,10 +749,6 @@ type = "any"
 [selene.structs.Camera.Parent]
 struct = "Instance"
 
-[selene.structs.Camera.Remove]
-method = true
-args = []
-
 [selene.structs.Camera.ScreenPointToRay]
 method = true
 
@@ -973,70 +852,8 @@ method = true
 [[selene.structs.Camera.Zoom.args]]
 required = false
 type = "any"
-
-[selene.structs.Camera.archivable]
-property = true
-writable = "overridden"
-
-[selene.structs.Camera.childAdded]
-struct = "Event"
-
-[selene.structs.Camera.children]
-method = true
-args = []
-
-[selene.structs.Camera.className]
-property = true
-
-[selene.structs.Camera.clone]
-method = true
-args = []
-
-[selene.structs.Camera.destroy]
-method = true
-args = []
-
-[selene.structs.Camera.findFirstChild]
-method = true
-
-[[selene.structs.Camera.findFirstChild.args]]
-required = false
-type = "any"
-
-[[selene.structs.Camera.findFirstChild.args]]
-required = false
-type = "any"
-
-[selene.structs.Camera.focus]
-property = true
-writable = "overridden"
-
-[selene.structs.Camera.getChildren]
-method = true
-args = []
-
-[selene.structs.Camera.isA]
-method = true
-
-[[selene.structs.Camera.isA.args]]
-required = false
-type = "any"
-
-[selene.structs.Camera.isDescendantOf]
-method = true
-
-[[selene.structs.Camera.isDescendantOf.args]]
-required = false
-type = "any"
-
-[selene.structs.Camera.remove]
-method = true
-args = []
 [selene.structs.DataModel."*"]
 struct = "Instance"
-
-[selene.structs.DataModel.AllowedGearTypeChanged]
-struct = "Event"
 
 [selene.structs.DataModel.AncestryChanged]
 struct = "Event"
@@ -1190,9 +1007,6 @@ type = "any"
 [selene.structs.DataModel.GameId]
 property = true
 
-[selene.structs.DataModel.GearGenreSetting]
-property = true
-
 [selene.structs.DataModel.Genre]
 property = true
 
@@ -1284,10 +1098,6 @@ args = []
 method = true
 args = []
 
-[selene.structs.DataModel.GetMessage]
-method = true
-args = []
-
 [selene.structs.DataModel.GetObjects]
 method = true
 
@@ -1316,15 +1126,11 @@ method = true
 required = false
 type = "any"
 
-[selene.structs.DataModel.GetRemoteBuildMode]
-method = true
-args = []
-
 [selene.structs.DataModel.GetService]
 method = true
 
 [[selene.structs.DataModel.GetService.args]]
-type = ["ABTestService", "AdService", "AnalyticsService", "AssetService", "BadgeService", "CoreGui", "StarterGui", "BrowserService", "CacheableContentProvider", "MeshContentProvider", "SolidModelContentProvider", "ChangeHistoryService", "Chat", "ClusterPacketCache", "CollectionService", "ContentProvider", "ContextActionService", "ControllerService", "CookiesService", "CorePackages", "CoreScriptSyncService", "DataStoreService", "Debris", "DraftsService", "FlagStandService", "FlyweightService", "CSGDictionaryService", "NonReplicatedCSGDictionaryService", "FriendService", "GamePassService", "GamepadService", "Geometry", "GoogleAnalyticsConfiguration", "GroupService", "GuiService", "GuidRegistryService", "HapticService", "Hopper", "HttpRbxApiService", "HttpService", "InsertService", "JointsService", "KeyboardService", "KeyframeSequenceProvider", "Lighting", "LocalStorageService", "AppStorageService", "UserStorageService", "LocalizationService", "LogService", "LoginService", "LuaWebService", "MarketplaceService", "MemStorageService", "MessagingService", "MouseService", "NetworkClient", "NetworkServer", "NetworkSettings", "NotificationService", "Workspace", "PackageService", "PathfindingService", "PhysicsPacketCache", "PhysicsService", "Players", "PluginGuiService", "PointsService", "PolicyService", "RbxAnalyticsService", "RenderSettings", "ReplicatedFirst", "ReplicatedStorage", "RobloxPluginGuiService", "RobloxReplicatedStorage", "RunService", "RuntimeScriptService", "ScriptContext", "ScriptService", "Selection", "ServerScriptService", "ServerStorage", "SocialService", "SoundService", "SpawnerService", "StarterPack", "StarterPlayer", "Stats", "StopWatchReporter", "Studio", "StudioData", "StudioService", "TaskScheduler", "Teams", "TeleportService", "TestService", "TextService", "ThirdPartyUserService", "TimerService", "TouchInputService", "TweenService", "UGCValidationService", "UserGameSettings", "UserInputService", "VRService", "VersionControlService", "VirtualInputManager", "VirtualUser", "Visit"]
+type = ["ABTestService", "AdService", "AnalyticsService", "AssetService", "BadgeService", "CoreGui", "StarterGui", "BrowserService", "CacheableContentProvider", "MeshContentProvider", "SolidModelContentProvider", "ChangeHistoryService", "Chat", "ClusterPacketCache", "CollectionService", "ContentProvider", "ContextActionService", "ControllerService", "CookiesService", "CorePackages", "CoreScriptSyncService", "DataStoreService", "Debris", "DraftsService", "FlagStandService", "FlyweightService", "CSGDictionaryService", "NonReplicatedCSGDictionaryService", "FriendService", "GamePassService", "GamepadService", "Geometry", "GoogleAnalyticsConfiguration", "GroupService", "GuiService", "GuidRegistryService", "HapticService", "Hopper", "HttpRbxApiService", "HttpService", "InsertService", "JointsService", "KeyboardService", "KeyframeSequenceProvider", "Lighting", "LocalStorageService", "AppStorageService", "UserStorageService", "LocalizationService", "LogService", "LoginService", "LuaWebService", "MarketplaceService", "MemStorageService", "MessagingService", "MouseService", "NetworkClient", "NetworkServer", "NetworkSettings", "NotificationService", "Workspace", "PackageService", "PathfindingService", "PermissionsService", "PhysicsService", "PlayerEmulatorService", "Players", "PluginDebugService", "PluginGuiService", "PointsService", "PolicyService", "RbxAnalyticsService", "RenderSettings", "ReplicatedFirst", "ReplicatedStorage", "RobloxPluginGuiService", "RobloxReplicatedStorage", "RunService", "RuntimeScriptService", "ScriptContext", "ScriptService", "Selection", "ServerScriptService", "ServerStorage", "SocialService", "SoundService", "SpawnerService", "StarterPack", "StarterPlayer", "Stats", "StopWatchReporter", "Studio", "StudioData", "StudioService", "TaskScheduler", "Teams", "TeleportService", "TestService", "TextService", "ThirdPartyUserService", "TimerService", "TouchInputService", "TweenService", "UGCValidationService", "UserInputService", "VRService", "VersionControlService", "VirtualInputManager", "VirtualUser", "Visit"]
 
 [selene.structs.DataModel.GraphicsQualityChangeRequest]
 struct = "Event"
@@ -1340,16 +1146,8 @@ type = "any"
 required = false
 type = "any"
 
-[[selene.structs.DataModel.HttpGetAsync.args]]
-required = false
-type = "any"
-
 [selene.structs.DataModel.HttpPostAsync]
 method = true
-
-[[selene.structs.DataModel.HttpPostAsync.args]]
-required = false
-type = "any"
 
 [[selene.structs.DataModel.HttpPostAsync.args]]
 required = false
@@ -1395,19 +1193,9 @@ method = true
 required = false
 type = "any"
 
-[selene.structs.DataModel.IsGearTypeAllowed]
-method = true
-
-[[selene.structs.DataModel.IsGearTypeAllowed.args]]
-required = false
-type = "any"
-
 [selene.structs.DataModel.IsLoaded]
 method = true
 args = []
-
-[selene.structs.DataModel.ItemChanged]
-struct = "Event"
 
 [selene.structs.DataModel.JobId]
 property = true
@@ -1423,10 +1211,6 @@ type = "any"
 struct = "Event"
 
 [selene.structs.DataModel.Name]
-property = true
-writable = "overridden"
-
-[selene.structs.DataModel.OnClose]
 property = true
 writable = "overridden"
 
@@ -1453,10 +1237,6 @@ property = true
 [selene.structs.DataModel.PrivateServerOwnerId]
 property = true
 
-[selene.structs.DataModel.Remove]
-method = true
-args = []
-
 [selene.structs.DataModel.ReportInGoogleAnalytics]
 method = true
 
@@ -1473,13 +1253,6 @@ required = false
 type = "any"
 
 [[selene.structs.DataModel.ReportInGoogleAnalytics.args]]
-required = false
-type = "any"
-
-[selene.structs.DataModel.SavePlace]
-method = true
-
-[[selene.structs.DataModel.SavePlace.args]]
 required = false
 type = "any"
 
@@ -1503,6 +1276,39 @@ type = "any"
 required = false
 type = "any"
 
+[selene.structs.DataModel.SetFastFlagForTesting]
+method = true
+
+[[selene.structs.DataModel.SetFastFlagForTesting.args]]
+required = false
+type = "any"
+
+[[selene.structs.DataModel.SetFastFlagForTesting.args]]
+required = false
+type = "any"
+
+[selene.structs.DataModel.SetFastIntForTesting]
+method = true
+
+[[selene.structs.DataModel.SetFastIntForTesting.args]]
+required = false
+type = "any"
+
+[[selene.structs.DataModel.SetFastIntForTesting.args]]
+required = false
+type = "any"
+
+[selene.structs.DataModel.SetFastStringForTesting]
+method = true
+
+[[selene.structs.DataModel.SetFastStringForTesting.args]]
+required = false
+type = "any"
+
+[[selene.structs.DataModel.SetFastStringForTesting.args]]
+required = false
+type = "any"
+
 [selene.structs.DataModel.SetPlaceId]
 method = true
 
@@ -1521,12 +1327,6 @@ type = "any"
 method = true
 args = []
 
-[selene.structs.DataModel.VIPServerId]
-property = true
-
-[selene.structs.DataModel.VIPServerOwnerId]
-property = true
-
 [selene.structs.DataModel.WaitForChild]
 method = true
 
@@ -1540,81 +1340,6 @@ type = "any"
 
 [selene.structs.DataModel.Workspace]
 struct = "Workspace"
-
-[selene.structs.DataModel.archivable]
-property = true
-writable = "overridden"
-
-[selene.structs.DataModel.childAdded]
-struct = "Event"
-
-[selene.structs.DataModel.children]
-method = true
-args = []
-
-[selene.structs.DataModel.className]
-property = true
-
-[selene.structs.DataModel.clone]
-method = true
-args = []
-
-[selene.structs.DataModel.destroy]
-method = true
-args = []
-
-[selene.structs.DataModel.findFirstChild]
-method = true
-
-[[selene.structs.DataModel.findFirstChild.args]]
-required = false
-type = "any"
-
-[[selene.structs.DataModel.findFirstChild.args]]
-required = false
-type = "any"
-
-[selene.structs.DataModel.getChildren]
-method = true
-args = []
-
-[selene.structs.DataModel.getService]
-method = true
-
-[[selene.structs.DataModel.getService.args]]
-required = false
-type = "any"
-
-[selene.structs.DataModel.isA]
-method = true
-
-[[selene.structs.DataModel.isA.args]]
-required = false
-type = "any"
-
-[selene.structs.DataModel.isDescendantOf]
-method = true
-
-[[selene.structs.DataModel.isDescendantOf.args]]
-required = false
-type = "any"
-
-[selene.structs.DataModel.lighting]
-struct = "Instance"
-
-[selene.structs.DataModel.remove]
-method = true
-args = []
-
-[selene.structs.DataModel.service]
-method = true
-
-[[selene.structs.DataModel.service.args]]
-required = false
-type = "any"
-
-[selene.structs.DataModel.workspace]
-struct = "Workspace"
 [selene.structs.EnumItem.Name]
 property = true
 
@@ -1627,16 +1352,6 @@ method = true
 type = "function"
 
 [selene.structs.Event.Wait]
-method = true
-args = []
-
-[selene.structs.Event.connect]
-method = true
-
-[[selene.structs.Event.connect.args]]
-type = "function"
-
-[selene.structs.Event.wait]
 method = true
 args = []
 [selene.structs.Instance."*"]
@@ -1892,10 +1607,6 @@ method = true
 required = false
 type = "any"
 
-[selene.structs.Plugin.GetStudioUserId]
-method = true
-args = []
-
 [selene.structs.Plugin.GridSize]
 property = true
 
@@ -2039,10 +1750,6 @@ method = true
 required = false
 type = "any"
 
-[selene.structs.Plugin.Remove]
-method = true
-args = []
-
 [selene.structs.Plugin.ResumeSound]
 method = true
 
@@ -2143,61 +1850,6 @@ type = "any"
 [[selene.structs.Plugin.WaitForChild.args]]
 required = false
 type = "any"
-
-[selene.structs.Plugin.archivable]
-property = true
-writable = "overridden"
-
-[selene.structs.Plugin.childAdded]
-struct = "Event"
-
-[selene.structs.Plugin.children]
-method = true
-args = []
-
-[selene.structs.Plugin.className]
-property = true
-
-[selene.structs.Plugin.clone]
-method = true
-args = []
-
-[selene.structs.Plugin.destroy]
-method = true
-args = []
-
-[selene.structs.Plugin.findFirstChild]
-method = true
-
-[[selene.structs.Plugin.findFirstChild.args]]
-required = false
-type = "any"
-
-[[selene.structs.Plugin.findFirstChild.args]]
-required = false
-type = "any"
-
-[selene.structs.Plugin.getChildren]
-method = true
-args = []
-
-[selene.structs.Plugin.isA]
-method = true
-
-[[selene.structs.Plugin.isA.args]]
-required = false
-type = "any"
-
-[selene.structs.Plugin.isDescendantOf]
-method = true
-
-[[selene.structs.Plugin.isDescendantOf.args]]
-required = false
-type = "any"
-
-[selene.structs.Plugin.remove]
-method = true
-args = []
 [selene.structs.Script."*"]
 struct = "Instance"
 
@@ -2378,10 +2030,6 @@ writable = "overridden"
 [selene.structs.Script.Parent]
 struct = "Instance"
 
-[selene.structs.Script.Remove]
-method = true
-args = []
-
 [selene.structs.Script.SetAttribute]
 method = true
 
@@ -2403,61 +2051,6 @@ type = "any"
 [[selene.structs.Script.WaitForChild.args]]
 required = false
 type = "any"
-
-[selene.structs.Script.archivable]
-property = true
-writable = "overridden"
-
-[selene.structs.Script.childAdded]
-struct = "Event"
-
-[selene.structs.Script.children]
-method = true
-args = []
-
-[selene.structs.Script.className]
-property = true
-
-[selene.structs.Script.clone]
-method = true
-args = []
-
-[selene.structs.Script.destroy]
-method = true
-args = []
-
-[selene.structs.Script.findFirstChild]
-method = true
-
-[[selene.structs.Script.findFirstChild.args]]
-required = false
-type = "any"
-
-[[selene.structs.Script.findFirstChild.args]]
-required = false
-type = "any"
-
-[selene.structs.Script.getChildren]
-method = true
-args = []
-
-[selene.structs.Script.isA]
-method = true
-
-[[selene.structs.Script.isA.args]]
-required = false
-type = "any"
-
-[selene.structs.Script.isDescendantOf]
-method = true
-
-[[selene.structs.Script.isDescendantOf.args]]
-required = false
-type = "any"
-
-[selene.structs.Script.remove]
-method = true
-args = []
 [selene.structs.Workspace."*"]
 struct = "Instance"
 
@@ -2724,14 +2317,6 @@ args = []
 method = true
 args = []
 
-[selene.structs.Workspace.GetModelCFrame]
-method = true
-args = []
-
-[selene.structs.Workspace.GetModelSize]
-method = true
-args = []
-
 [selene.structs.Workspace.GetNumAwakeParts]
 method = true
 args = []
@@ -2758,6 +2343,29 @@ args = []
 [selene.structs.Workspace.Gravity]
 property = true
 writable = "overridden"
+
+[selene.structs.Workspace.IkMoveTo]
+method = true
+
+[[selene.structs.Workspace.IkMoveTo.args]]
+required = false
+type = "any"
+
+[[selene.structs.Workspace.IkMoveTo.args]]
+required = false
+type = "any"
+
+[[selene.structs.Workspace.IkMoveTo.args]]
+required = false
+type = "any"
+
+[[selene.structs.Workspace.IkMoveTo.args]]
+required = false
+type = "any"
+
+[[selene.structs.Workspace.IkMoveTo.args]]
+required = false
+type = "any"
 
 [selene.structs.Workspace.IsA]
 method = true
@@ -2838,13 +2446,20 @@ struct = "Instance"
 [selene.structs.Workspace.PrimaryPart]
 struct = "BasePart"
 
-[selene.structs.Workspace.Remove]
+[selene.structs.Workspace.Raycast]
 method = true
-args = []
 
-[selene.structs.Workspace.ResetOrientationToIdentity]
-method = true
-args = []
+[[selene.structs.Workspace.Raycast.args]]
+required = false
+type = "any"
+
+[[selene.structs.Workspace.Raycast.args]]
+required = false
+type = "any"
+
+[[selene.structs.Workspace.Raycast.args]]
+required = false
+type = "any"
 
 [selene.structs.Workspace.SetAttribute]
 method = true
@@ -2856,10 +2471,6 @@ type = "any"
 [[selene.structs.Workspace.SetAttribute.args]]
 required = false
 type = "any"
-
-[selene.structs.Workspace.SetIdentityOrientation]
-method = true
-args = []
 
 [selene.structs.Workspace.SetPhysicsThrottleEnabled]
 method = true
@@ -2926,117 +2537,6 @@ type = "any"
 [selene.structs.Workspace.ZoomToExtents]
 method = true
 args = []
-
-[selene.structs.Workspace.archivable]
-property = true
-writable = "overridden"
-
-[selene.structs.Workspace.breakJoints]
-method = true
-args = []
-
-[selene.structs.Workspace.childAdded]
-struct = "Event"
-
-[selene.structs.Workspace.children]
-method = true
-args = []
-
-[selene.structs.Workspace.className]
-property = true
-
-[selene.structs.Workspace.clone]
-method = true
-args = []
-
-[selene.structs.Workspace.destroy]
-method = true
-args = []
-
-[selene.structs.Workspace.findFirstChild]
-method = true
-
-[[selene.structs.Workspace.findFirstChild.args]]
-required = false
-type = "any"
-
-[[selene.structs.Workspace.findFirstChild.args]]
-required = false
-type = "any"
-
-[selene.structs.Workspace.findPartOnRay]
-method = true
-
-[[selene.structs.Workspace.findPartOnRay.args]]
-required = false
-type = "any"
-
-[[selene.structs.Workspace.findPartOnRay.args]]
-required = false
-type = "any"
-
-[[selene.structs.Workspace.findPartOnRay.args]]
-required = false
-type = "any"
-
-[[selene.structs.Workspace.findPartOnRay.args]]
-required = false
-type = "any"
-
-[selene.structs.Workspace.findPartsInRegion3]
-method = true
-
-[[selene.structs.Workspace.findPartsInRegion3.args]]
-required = false
-type = "any"
-
-[[selene.structs.Workspace.findPartsInRegion3.args]]
-required = false
-type = "any"
-
-[[selene.structs.Workspace.findPartsInRegion3.args]]
-required = false
-type = "any"
-
-[selene.structs.Workspace.getChildren]
-method = true
-args = []
-
-[selene.structs.Workspace.isA]
-method = true
-
-[[selene.structs.Workspace.isA.args]]
-required = false
-type = "any"
-
-[selene.structs.Workspace.isDescendantOf]
-method = true
-
-[[selene.structs.Workspace.isDescendantOf.args]]
-required = false
-type = "any"
-
-[selene.structs.Workspace.makeJoints]
-method = true
-args = []
-
-[selene.structs.Workspace.move]
-method = true
-
-[[selene.structs.Workspace.move.args]]
-required = false
-type = "any"
-
-[selene.structs.Workspace.moveTo]
-method = true
-
-[[selene.structs.Workspace.moveTo.args]]
-required = false
-type = "any"
-
-[selene.structs.Workspace.remove]
-method = true
-args = []
 [BrickColor.Black]
 args = []
 
@@ -3099,6 +2599,14 @@ type = "number"
 type = "number"
 
 [[CFrame.fromEulerAnglesXYZ.args]]
+type = "number"
+[[CFrame.fromEulerAnglesYXZ.args]]
+type = "number"
+
+[[CFrame.fromEulerAnglesYXZ.args]]
+type = "number"
+
+[[CFrame.fromEulerAnglesYXZ.args]]
 type = "number"
 [[CFrame.fromMatrix.args]]
 [CFrame.fromMatrix.args.type]
@@ -3209,6 +2717,12 @@ type = "any"
 required = false
 
 [ColorSequence.new.args.type]
+display = "Color3"
+[[ColorSequenceKeypoint.new.args]]
+type = "number"
+
+[[ColorSequenceKeypoint.new.args]]
+[ColorSequenceKeypoint.new.args.type]
 display = "Color3"
 [[DockWidgetPluginGuiInfo.new.args]]
 required = false
@@ -3905,6 +3419,21 @@ method = true
 
 [Enum.CollisionFidelity.Hull]
 struct = "EnumItem"
+[Enum.CollisionsMode.GetEnumItems]
+args = []
+method = true
+
+[Enum.CollisionsMode.IncludeContactedMechanisms]
+struct = "EnumItem"
+
+[Enum.CollisionsMode.NoCollisions]
+struct = "EnumItem"
+
+[Enum.CollisionsMode.OtherMechanismsAnchored]
+struct = "EnumItem"
+[Enum.ComputerCameraMovementMode.CameraToggle]
+struct = "EnumItem"
+
 [Enum.ComputerCameraMovementMode.Classic]
 struct = "EnumItem"
 
@@ -4223,6 +3752,9 @@ struct = "EnumItem"
 
 [Enum.DevCameraOcclusionMode.Zoom]
 struct = "EnumItem"
+[Enum.DevComputerCameraMovementMode.CameraToggle]
+struct = "EnumItem"
+
 [Enum.DevComputerCameraMovementMode.Classic]
 struct = "EnumItem"
 
@@ -4418,6 +3950,9 @@ struct = "EnumItem"
 
 [Enum.DominantAxis.Width]
 struct = "EnumItem"
+[Enum.DraftStatusCode.DraftCommitted]
+struct = "EnumItem"
+
 [Enum.DraftStatusCode.DraftOutdated]
 struct = "EnumItem"
 
@@ -6674,6 +6209,15 @@ struct = "EnumItem"
 
 [Enum.R15CollisionType.OuterBox]
 struct = "EnumItem"
+[Enum.RaycastFilterType.Blacklist]
+struct = "EnumItem"
+
+[Enum.RaycastFilterType.GetEnumItems]
+args = []
+method = true
+
+[Enum.RaycastFilterType.Whitelist]
+struct = "EnumItem"
 [Enum.RenderFidelity.Automatic]
 struct = "EnumItem"
 
@@ -7303,15 +6847,6 @@ struct = "EnumItem"
 struct = "EnumItem"
 
 [Enum.StudioStyleGuideColor.MainText]
-struct = "EnumItem"
-
-[Enum.StudioStyleGuideColor.Merge3HighlightMine]
-struct = "EnumItem"
-
-[Enum.StudioStyleGuideColor.Merge3HighlightOriginal]
-struct = "EnumItem"
-
-[Enum.StudioStyleGuideColor.Merge3HighlightTheirs]
 struct = "EnumItem"
 
 [Enum.StudioStyleGuideColor.Mid]
@@ -8115,19 +7650,26 @@ struct = "EnumItem"
 [Enum.ZIndexBehavior.Sibling]
 struct = "EnumItem"
 [[Instance.new.args]]
-type = ["Accoutrement", "Accessory", "Hat", "AdvancedDragger", "Animation", "AnimationController", "Animator", "Attachment", "Backpack", "HopperBin", "Tool", "Flag", "Beam", "BindableEvent", "BindableFunction", "BodyAngularVelocity", "BodyForce", "BodyGyro", "BodyPosition", "BodyThrust", "BodyVelocity", "RocketPropulsion", "Camera", "BodyColors", "CharacterMesh", "Pants", "Shirt", "ShirtGraphic", "Skin", "ClickDetector", "Configuration", "AlignOrientation", "AlignPosition", "AngularVelocity", "BallSocketConstraint", "HingeConstraint", "LineForce", "RodConstraint", "RopeConstraint", "CylindricalConstraint", "PrismaticConstraint", "SpringConstraint", "Torque", "VectorForce", "HumanoidController", "SkateboardController", "VehicleController", "CustomEvent", "CustomEventReceiver", "BlockMesh", "CylinderMesh", "FileMesh", "SpecialMesh", "DebugSettings", "DebuggerWatch", "Dialog", "DialogChoice", "Dragger", "Explosion", "Decal", "Texture", "Hole", "MotorFeature", "Fire", "FlyweightService", "CSGDictionaryService", "NonReplicatedCSGDictionaryService", "Folder", "ForceField", "FunctionalTest", "GameSettings", "GoogleAnalyticsConfiguration", "Frame", "ImageButton", "TextButton", "ImageLabel", "TextLabel", "ScrollingFrame", "TextBox", "ViewportFrame", "BillboardGui", "ScreenGui", "GuiMain", "SurfaceGui", "FloorWire", "BoxHandleAdornment", "ConeHandleAdornment", "CylinderHandleAdornment", "ImageHandleAdornment", "LineHandleAdornment", "SphereHandleAdornment", "ParabolaAdornment", "SelectionBox", "SelectionSphere", "ArcHandles", "Handles", "SurfaceSelection", "SelectionPartLasso", "SelectionPointLasso", "Humanoid", "HumanoidDescription", "RotateP", "RotateV", "Glue", "ManualGlue", "ManualWeld", "Motor", "Motor6D", "Rotate", "Snap", "VelocityMotor", "Weld", "Keyframe", "KeyframeMarker", "KeyframeSequence", "PointLight", "SpotLight", "SurfaceLight", "LocalizationTable", "LuaSettings", "Script", "LocalScript", "ModuleScript", "Message", "Hint", "NetworkSettings", "NoCollisionConstraint", "CornerWedgePart", "Part", "FlagStand", "Seat", "SkateboardPlatform", "SpawnLocation", "WedgePart", "MeshPart", "PartOperation", "NegateOperation", "UnionOperation", "TrussPart", "VehicleSeat", "Model", "WorldModel", "PartOperationAsset", "ParticleEmitter", "PhysicsSettings", "Player", "PluginAction", "Pose", "BloomEffect", "BlurEffect", "ColorCorrectionEffect", "SunRaysEffect", "ReflectionMetadata", "ReflectionMetadataCallbacks", "ReflectionMetadataClasses", "ReflectionMetadataEnums", "ReflectionMetadataEvents", "ReflectionMetadataFunctions", "ReflectionMetadataClass", "ReflectionMetadataEnum", "ReflectionMetadataEnumItem", "ReflectionMetadataMember", "ReflectionMetadataProperties", "ReflectionMetadataYieldFunctions", "RemoteEvent", "RemoteFunction", "RenderSettings", "RenderingTest", "Sky", "Smoke", "Sound", "ChorusSoundEffect", "CompressorSoundEffect", "DistortionSoundEffect", "EchoSoundEffect", "EqualizerSoundEffect", "FlangeSoundEffect", "PitchShiftSoundEffect", "ReverbSoundEffect", "TremoloSoundEffect", "SoundGroup", "Sparkles", "StandalonePluginScripts", "StarterGear", "Studio", "TaskScheduler", "Team", "TerrainRegion", "TestService", "Trail", "Tween", "UIAspectRatioConstraint", "UISizeConstraint", "UITextSizeConstraint", "UIGridLayout", "UIInlineLayout", "UIListLayout", "UIPageLayout", "UITableLayout", "UIPadding", "UIScale", "UserGameSettings", "BinaryStringValue", "BoolValue", "BrickColorValue", "CFrameValue", "Color3Value", "DoubleConstrainedValue", "IntConstrainedValue", "IntValue", "NumberValue", "ObjectValue", "RayValue", "StringValue", "Vector3Value", "VirtualInputManager", "WeldConstraint"]
-
+type = ["Accoutrement", "Accessory", "Hat", "AdvancedDragger", "Animation", "AnimationController", "Animator", "Attachment", "Backpack", "HopperBin", "Tool", "Flag", "Beam", "BindableEvent", "BindableFunction", "BodyAngularVelocity", "BodyForce", "BodyGyro", "BodyPosition", "BodyThrust", "BodyVelocity", "RocketPropulsion", "Camera", "BodyColors", "CharacterMesh", "Pants", "Shirt", "ShirtGraphic", "Skin", "ClickDetector", "Configuration", "AlignOrientation", "AlignPosition", "AngularVelocity", "BallSocketConstraint", "HingeConstraint", "LineForce", "RodConstraint", "RopeConstraint", "CylindricalConstraint", "PrismaticConstraint", "SpringConstraint", "Torque", "VectorForce", "HumanoidController", "SkateboardController", "VehicleController", "CustomEvent", "CustomEventReceiver", "BlockMesh", "CylinderMesh", "FileMesh", "SpecialMesh", "DebuggerWatch", "Dialog", "DialogChoice", "Dragger", "Explosion", "Decal", "Texture", "Hole", "MotorFeature", "Fire", "FlyweightService", "CSGDictionaryService", "NonReplicatedCSGDictionaryService", "Folder", "ForceField", "FunctionalTest", "Frame", "ImageButton", "TextButton", "ImageLabel", "TextLabel", "ScrollingFrame", "TextBox", "VideoFrame", "ViewportFrame", "BillboardGui", "ScreenGui", "GuiMain", "SurfaceGui", "FloorWire", "BoxHandleAdornment", "ConeHandleAdornment", "CylinderHandleAdornment", "ImageHandleAdornment", "LineHandleAdornment", "SphereHandleAdornment", "ParabolaAdornment", "SelectionBox", "SelectionSphere", "ArcHandles", "Handles", "SurfaceSelection", "SelectionPartLasso", "SelectionPointLasso", "Humanoid", "HumanoidDescription", "RotateP", "RotateV", "Glue", "ManualGlue", "ManualWeld", "Motor", "Motor6D", "Rotate", "Snap", "VelocityMotor", "Weld", "Keyframe", "KeyframeMarker", "KeyframeSequence", "PointLight", "SpotLight", "SurfaceLight", "LocalizationTable", "Script", "LocalScript", "ModuleScript", "Message", "Hint", "NoCollisionConstraint", "CornerWedgePart", "Part", "FlagStand", "Seat", "SkateboardPlatform", "SpawnLocation", "WedgePart", "MeshPart", "PartOperation", "NegateOperation", "UnionOperation", "TrussPart", "VehicleSeat", "Model", "WorldModel", "PartOperationAsset", "ParticleEmitter", "Player", "DebuggablePlugin", "PluginAction", "Pose", "BloomEffect", "BlurEffect", "ColorCorrectionEffect", "SunRaysEffect", "ReflectionMetadata", "ReflectionMetadataCallbacks", "ReflectionMetadataClasses", "ReflectionMetadataEnums", "ReflectionMetadataEvents", "ReflectionMetadataFunctions", "ReflectionMetadataClass", "ReflectionMetadataEnum", "ReflectionMetadataEnumItem", "ReflectionMetadataMember", "ReflectionMetadataProperties", "ReflectionMetadataYieldFunctions", "RemoteEvent", "RemoteFunction", "RenderingTest", "Sky", "Smoke", "Sound", "ChorusSoundEffect", "CompressorSoundEffect", "DistortionSoundEffect", "EchoSoundEffect", "EqualizerSoundEffect", "FlangeSoundEffect", "PitchShiftSoundEffect", "ReverbSoundEffect", "TremoloSoundEffect", "SoundGroup", "Sparkles", "StandalonePluginScripts", "StarterGear", "Team", "TerrainRegion", "TestService", "Trail", "Tween", "UIAspectRatioConstraint", "UISizeConstraint", "UITextSizeConstraint", "UIGradient", "UIGridLayout", "UIInlineLayout", "UIListLayout", "UIPageLayout", "UITableLayout", "UIPadding", "UIScale", "BinaryStringValue", "BoolValue", "BrickColorValue", "CFrameValue", "Color3Value", "DoubleConstrainedValue", "IntConstrainedValue", "IntValue", "NumberValue", "ObjectValue", "RayValue", "StringValue", "Vector3Value", "VirtualInputManager", "WeldConstraint"]
 [[NumberRange.new.args]]
 type = "number"
 
 [[NumberRange.new.args]]
 required = false
 type = "number"
-
 [[NumberSequence.new.args]]
 type = "any"
 
 [[NumberSequence.new.args]]
+required = false
+type = "number"
+[[NumberSequenceKeypoint.new.args]]
+type = "number"
+
+[[NumberSequenceKeypoint.new.args]]
+type = "number"
+
+[[NumberSequenceKeypoint.new.args]]
 required = false
 type = "number"
 [[PhysicalProperties.new.args]]
@@ -8342,6 +7884,8 @@ type = "number"
 type = "number"
 [[collectgarbage.args]]
 type = ["count"]
+[coroutine.isyieldable]
+args = []
 [debug.debug]
 removed = true
 
@@ -8410,6 +7954,12 @@ type = "number"
 
 [[math.clamp.args]]
 type = "number"
+[[math.log.args]]
+type = "number"
+
+[[math.log.args]]
+required = false
+type = "number"
 [[math.noise.args]]
 type = "number"
 
@@ -8463,8 +8013,18 @@ property = true
 writable = "new-fields"
 [[spawn.args]]
 type = "function"
+[[string.split.args]]
+type = "string"
 
+[[string.split.args]]
+required = false
+type = "string"
+[[table.create.args]]
+type = "number"
 
+[[table.create.args]]
+required = false
+type = "any"
 [[table.find.args]]
 type = "table"
 
@@ -8472,8 +8032,35 @@ type = "table"
 type = "any"
 
 [[table.find.args]]
-type = "number"
 required = false
+type = "number"
+[[table.move.args]]
+type = "table"
+
+[[table.move.args]]
+type = "number"
+
+[[table.move.args]]
+type = "number"
+
+[[table.move.args]]
+type = "number"
+
+[[table.move.args]]
+required = false
+type = "table"
+[[table.pack.args]]
+type = "..."
+[[table.unpack.args]]
+type = "table"
+
+[[table.unpack.args]]
+required = false
+type = "number"
+
+[[table.unpack.args]]
+required = false
+type = "number"
 
 [tick]
 args = []
@@ -8482,6 +8069,62 @@ args = []
 args = []
 [[typeof.args]]
 type = "any"
+[[utf8.char.args]]
+required = "utf8.char should be used with an argument despite it not throwing"
+type = "number"
+
+[[utf8.char.args]]
+required = false
+type = "..."
+
+[utf8.charpattern]
+property = true
+[[utf8.codepoint.args]]
+type = "string"
+
+[[utf8.codepoint.args]]
+required = false
+type = "number"
+
+[[utf8.codepoint.args]]
+required = false
+type = "number"
+[[utf8.codes.args]]
+type = "string"
+[[utf8.graphemes.args]]
+type = "string"
+
+[[utf8.graphemes.args]]
+required = false
+type = "number"
+
+[[utf8.graphemes.args]]
+required = false
+type = "number"
+[[utf8.len.args]]
+type = "string"
+
+[[utf8.len.args]]
+required = false
+type = "number"
+
+[[utf8.len.args]]
+required = false
+type = "number"
+[[utf8.nfcnormalize.args]]
+type = "string"
+[[utf8.nfdnormalize.args]]
+type = "string"
+[[utf8.offset.args]]
+type = "string"
+
+[[utf8.offset.args]]
+required = false
+type = "number"
+
+[[utf8.offset.args]]
+required = false
+type = "number"
 [[wait.args]]
 required = false
 type = "number"

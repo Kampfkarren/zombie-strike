@@ -10,6 +10,9 @@ return function()
 
 	MockPlayer.CodesUsed = {}
 
+	-- Only tracks campaigns that lock difficulty behind TimesPlayed
+	MockPlayer.CampaignsPlayed = {}
+
 	MockPlayer.Dailies = {
 		Time = 0,
 		Streak = 1,

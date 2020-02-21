@@ -8,15 +8,29 @@ local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
+local ExperienceUtil = require(ServerScriptService.Libraries.ExperienceUtil)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Gamemode = require(script.Parent.Gamemode)
 local GenerateTreasureLoot = require(ServerScriptService.Libraries.GenerateTreasureLoot)
+local GetAvailableMissions = require(ReplicatedStorage.Core.GetAvailableMissions)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local BossTimer = ReplicatedStorage.BossTimer
 local Rooms = ServerStorage.Rooms
 
+local SCALED_REWARD_MISSIONS_BEHIND = 1
+local SCALED_REWARDS = {
+	0.7,
+	0.85,
+	1,
+	1.05,
+	1.1,
+}
+
 local SPEED_BONUS = 0.33
 local SPEED_TIME = 3.5
+
+local TREASURE_DELAY_TIME = 4
 
 local Standard = {}
 
@@ -123,7 +137,16 @@ end
 
 local function spawnBoss(position, room)
 	local bossZombie = Gamemode.SpawnBoss(getBossSequence(), position, room)
-	bossZombie.Died:connect(Gamemode.EndMission)
+	bossZombie.Died:connect(function()
+		if DungeonState.CurrentGamemode.Scales() then
+			for _, player in pairs(Players:GetPlayers()) do
+				local rewards = DungeonState.CurrentGamemode.GetEndRewards(player)
+				ExperienceUtil.GivePlayerXP(player, rewards.XP, bossZombie.instance.PrimaryPart)
+			end
+		end
+
+		Gamemode.EndMission()
+	end)
 end
 
 function Standard.Init()
@@ -149,6 +172,8 @@ function Standard.Init()
 		spawnBoss(bossSpawn and bossSpawn.WorldPosition, room)
 	end
 
+	local lastRoom = Workspace.Rooms.StartSection
+
 	local function openNextGate()
 		local room = table.remove(rooms, 1)
 		local gate = assert(room:FindFirstChild("Gate", true), "No Gate")
@@ -159,6 +184,7 @@ function Standard.Init()
 		local spawnPoint = assert(room:FindFirstChild("RespawnPoint", true), "No RespawnPoint")
 
 		DungeonState.CurrentSpawn = spawnPoint
+		ReplicatedStorage.CurrentSpawn.Value = spawnPoint
 
 		if obbyType == "enemy" then
 			local zombieSpawns = {}
@@ -198,7 +224,7 @@ function Standard.Init()
 
 			wait(1)
 		elseif obbyType == "treasure" then
-			delay(4, openNextGate)
+			RealDelay(Dungeon.GetDungeonData("CampaignInfo").TreasureDelayTime or TREASURE_DELAY_TIME, openNextGate)
 		end
 
 		for _, player in pairs(Players:GetPlayers()) do
@@ -209,7 +235,13 @@ function Standard.Init()
 			end)
 		end
 
-		Debris:AddItem(gate, 4)
+		if Dungeon.GetDungeonData("Campaign") == 6 then
+			-- Tower gates are in the current room, not the next one
+			room, lastRoom = lastRoom, room
+		else
+			-- Tower has portals instead of traditional gates
+			Debris:AddItem(gate, 4)
+		end
 
 		ReplicatedStorage.Remotes.OpenGate:FireAllClients(room)
 		Players.PlayerAdded:connect(function(player)
@@ -261,6 +293,36 @@ function Standard.Init()
 			if time == 2 then
 				FastSpawn(openNextGate)
 			end
+		end,
+
+		GetEndRewards = function(player)
+			if Dungeon.GetDungeonData("CampaignInfo").Scales then
+				local missions = GetAvailableMissions(player)
+				local earlierMission
+
+				for index = SCALED_REWARD_MISSIONS_BEHIND, 0, -1 do
+					local nearbyMission = missions[#missions - index]
+					if nearbyMission then
+						earlierMission = nearbyMission
+						break
+					end
+				end
+
+				assert(earlierMission, "No earlier mission?")
+
+				local difficulty = Dungeon.GetDungeonData("Difficulty")
+
+				return {
+					XP = earlierMission.XP * SCALED_REWARDS[difficulty],
+					Gold = earlierMission.Gold * SCALED_REWARDS[difficulty],
+				}
+			else
+				return Dungeon.GetDungeonData("DifficultyInfo")
+			end
+		end,
+
+		Scales = function()
+			return Dungeon.GetDungeonData("CampaignInfo").Scales
 		end,
 	}
 end

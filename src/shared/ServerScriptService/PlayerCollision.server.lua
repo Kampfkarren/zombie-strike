@@ -3,6 +3,8 @@ local PhysicsService = game:GetService("PhysicsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Collection = require(ReplicatedStorage.Core.Collection)
+
 PhysicsService:CreateCollisionGroup("Players")
 PhysicsService:CreateCollisionGroup("Zombies")
 
@@ -25,6 +27,10 @@ PhysicsService:CollisionGroupSetCollidable("DeadZombies", "DeadZombies", false)
 PhysicsService:CollisionGroupSetCollidable("DeadZombies", "Zombies", false)
 PhysicsService:CollisionGroupSetCollidable("DeadZombies", "Players", false)
 
+PhysicsService:CreateCollisionGroup("ZombieBlocker")
+PhysicsService:CollisionGroupSetCollidable("ZombieBlocker", "Players", false)
+PhysicsService:CollisionGroupSetCollidable("ZombieBlocker", "Grenade", false)
+
 local function collideCharacter(character, group)
 	local function playerCollide(part)
 		if part:IsA("BasePart") then
@@ -38,6 +44,10 @@ local function collideCharacter(character, group)
 
 	character.ChildAdded:connect(playerCollide)
 end
+
+Collection("ZombieBlocker", function(blocker)
+	PhysicsService:SetPartCollisionGroup(blocker, "ZombieBlocker")
+end)
 
 CollectionService:GetInstanceAddedSignal("Zombie"):connect(function(zombie)
 	collideCharacter(zombie, "Zombies")

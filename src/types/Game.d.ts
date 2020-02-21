@@ -27,6 +27,15 @@ interface ReplicatedStorage {
 				},
 			},
 
+			Campaign6: Folder & {
+				Boss: Folder & {
+					MissileRingAnimation: Animation,
+					SludgeBall: BasePart,
+					SludgeFire: Animation,
+					SludgePrime: Animation,
+				},
+			},
+
 			[name: string]: Folder,
 		},
 
@@ -42,6 +51,14 @@ interface ReplicatedStorage {
 		NewBoss: RemoteEvent,
 		RotatingBoss: Folder,
 		SendServerLogs: RemoteEvent,
+		UpdateCampaignsPlayed: RemoteEvent,
+
+		Tower: Folder & {
+			Boss: Folder & {
+				MagicMissiles: RemoteEvent,
+				MissileRing: RemoteEvent,
+			},
+		},
 	},
 }
 
@@ -74,6 +91,12 @@ interface SoundService {
 				Attack: Sound,
 				Yooo: Sound,
 				ZombieSummon: Sound,
+			},
+		},
+
+		"6": Folder & {
+			Boss: Folder & {
+				Magic: Folder,
 			},
 		},
 	},

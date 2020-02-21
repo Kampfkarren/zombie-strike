@@ -1,11 +1,11 @@
 -- services
 
-local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
-local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
 
 -- constants
 
@@ -15,7 +15,11 @@ local PLAYER = Players.LocalPlayer
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
+local PlayerModule = require(PLAYER.PlayerScripts:WaitForChild("PlayerModule"))
+local controls = PlayerModule:GetControls()
+
 local GAMEPAD_DEAD = 0.15
+local ZERO_VECTOR = Vector3.new()
 
 -- variables
 
@@ -59,7 +63,9 @@ repeat local success = pcall(function() StarterGui:SetCore("ResetButtonCallback"
 
 HandleCharacter(PLAYER.Character)
 
-RunService:BindToRenderStep("Control", 3, function(deltaTime)
+local lastVector
+
+RunService:BindToRenderStep("Control", Enum.RenderPriority.Input.Value - 1, function(deltaTime)
 	if character and humanoid.Health > 0 then
 		local lerp = math.min(deltaTime * 20, 1)
 		-- rotation
@@ -101,6 +107,12 @@ RunService:BindToRenderStep("Control", 3, function(deltaTime)
 		end
 
 		humanoid:Move(input, true)
+		if input ~= lastVector then
+			lastVector = input
+			pcall(function()
+				controls:GetActiveController().moveVector = input
+			end)
+		end
 
 		stance.Value = "Walk"
 

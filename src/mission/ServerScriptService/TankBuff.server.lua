@@ -1,9 +1,11 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local CircleEffect = require(ReplicatedStorage.Core.CircleEffect)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local DungeonState = require(ServerScriptService.DungeonState)
 local Maid = require(ReplicatedStorage.Core.Maid)
 
 local CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect
@@ -50,7 +52,7 @@ ReplicatedStorage.CurrentPowerup.Changed:connect(function(powerup)
 							then
 								local humanoid = zombie.Humanoid
 								if humanoid.Health > 0 then
-									if Dungeon.GetDungeonData("Gamemode") == "Boss" then
+									if DungeonState.CurrentGamemode.Scales() then
 										damage = humanoid.MaxHealth * SCALED_DAMAGE
 									end
 

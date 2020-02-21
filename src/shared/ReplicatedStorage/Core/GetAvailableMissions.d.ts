@@ -1,6 +1,7 @@
 // TODO: Campaign Difficulty type
 declare function GetAvailableMissions(player: Player): {
-	XP: number
+	Gold: number,
+	XP: number,
 }[]
 
 export = GetAvailableMissions
