@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -69,7 +70,9 @@ Collection("ObbyBrick", function(part)
 
 				assert(respawnPoint ~= nil)
 
-				LocalPlayer.Character:SetPrimaryPartCFrame(respawnPoint.WorldCFrame)
+				if #CollectionService:GetTagged("Boss") == 0 then
+					LocalPlayer.Character:SetPrimaryPartCFrame(respawnPoint.WorldCFrame)
+				end
 
 				fadeOut:Play()
 				teleporting = false

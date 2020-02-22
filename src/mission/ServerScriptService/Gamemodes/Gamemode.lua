@@ -98,6 +98,8 @@ function Gamemode.EndMission()
 				-- TODO: If we add any new level locked campaigns, this'll mess up I bet
 				if Dungeon.GetDungeonData("Gamemode") == "Mission" then
 					if DungeonState.CurrentGamemode.Scales() then
+						zombiePassPoints = SCALED_PASS_POINTS
+					else
 						local hardestCampaign = 1
 
 						for campaignIndex, campaign in ipairs(Campaigns) do
@@ -110,8 +112,6 @@ function Gamemode.EndMission()
 						end
 
 						zombiePassPoints = Dungeon.GetDungeonData("Campaign") / hardestCampaign
-					else
-						zombiePassPoints = SCALED_PASS_POINTS
 					end
 				end
 
