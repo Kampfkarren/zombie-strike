@@ -29,7 +29,7 @@ import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 	}
 
 	MissileRing.OnClientEvent.Connect(() => {
-		const difficulty = Dungeon.GetDungeonData("Difficulty")
+		const difficulty = Dungeon.GetDungeonData("Difficulty") - 1
 		const initial = boss.PrimaryPart!.Position
 
 		const animation = boss.Humanoid.LoadAnimation(ReplicatedStorage.Assets.Campaign.Campaign6.Boss.MissileRingAnimation)

@@ -19,7 +19,7 @@ import Dungeon from "mission/ReplicatedStorage/Libraries/Dungeon"
 	}
 
 	MagicMissiles.OnClientEvent.Connect(() => {
-		const difficulty = Dungeon.GetDungeonData("Difficulty")
+		const difficulty = Dungeon.GetDungeonData("Difficulty") - 1
 
 		BossLocalScriptUtil.SludgeBalls({
 			assets: Assets,
