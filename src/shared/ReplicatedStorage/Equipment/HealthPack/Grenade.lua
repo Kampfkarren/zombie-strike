@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 
+local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local Grenade = require(script.Parent.Parent.Grenade.Basic)
 
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
@@ -40,7 +41,7 @@ HealthGrenade.ServerEffect = Grenade.CreateServerEffect(
 					healthUse:Play()
 
 					Debris:AddItem(healthUse)
-					Effect:FireAllClients("Shatter", character, better)
+					Effect:FireAllClients(Effects.EffectIDs.Shatter, character, better)
 				end
 			end
 		end

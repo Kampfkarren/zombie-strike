@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local Raycast = require(ReplicatedStorage.Core.Raycast)
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
@@ -60,7 +61,7 @@ function Turret:InitializeAI()
 				local handlePos = self.instance.Gun.Handle.Position
 
 				ReplicatedStorage.RuddevRemotes.Effect:FireAllClients(
-					"Shoot",
+					Effects.EffectIDs.Shoot,
 					self.instance.Gun,
 					handlePos,
 					{ 0 },

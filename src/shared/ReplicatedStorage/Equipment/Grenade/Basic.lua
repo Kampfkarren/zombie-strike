@@ -10,6 +10,7 @@ local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Damage = require(ReplicatedStorage.RuddevModules.Damage)
+local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Mouse = require(ReplicatedStorage.RuddevModules.Mouse)
@@ -119,7 +120,7 @@ function Grenade.CreateServerEffect(grenade, primeSound, callback)
 				Debris:AddItem(grenade)
 
 				Effect:FireAllClients(
-					"Explosion",
+					Effects.EffectIDs.Explosion,
 					grenade.Position,
 					MAX_RANGE,
 					better

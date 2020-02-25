@@ -3,6 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
 
 local Basic = require(script.Parent.Basic)
+local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -82,7 +83,7 @@ function Radioactive.ServerEffect(player)
 					end
 				end
 
-				Effect:FireAllClients("Shatter", character, better)
+				Effect:FireAllClients(Effects.EffectIDs.Shatter, character, better)
 			end
 		end)
 

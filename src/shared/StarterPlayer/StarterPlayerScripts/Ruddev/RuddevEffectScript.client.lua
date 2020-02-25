@@ -10,6 +10,6 @@ local MODULES	= ReplicatedStorage:WaitForChild("RuddevModules")
 
 -- events
 
-REMOTES.Effect.OnClientEvent:connect(function(...)
-	EFFECTS:Effect(...)
+REMOTES.Effect.OnClientEvent:connect(function(id, ...)
+	EFFECTS.EffectById(id, ...)
 end)

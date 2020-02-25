@@ -1,12 +1,18 @@
 -- variables
 
-local effects	= {}
+local effects = {}
 
 -- module
+local Effects = {}
 
-local EFFECTS	= {}
+Effects.EffectIDs = {
+	Shoot = 1,
+	Reload = 2,
+	Explosion = 3,
+	Shatter = 4,
+}
 
-function EFFECTS.Effect(_, effect, ...)
+function Effects.Effect(_, effect, ...)
 	if not effects[effect] then
 		if script:FindFirstChild(effect) then
 			effects[effect]	= require(script[effect])
@@ -18,4 +24,13 @@ function EFFECTS.Effect(_, effect, ...)
 	end
 end
 
-return EFFECTS
+function Effects.EffectById(id, ...)
+	for effect, effectId in pairs(Effects.EffectIDs) do
+		if effectId == id then
+			Effects.Effect(nil, effect, ...)
+			break
+		end
+	end
+end
+
+return Effects

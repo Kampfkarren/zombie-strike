@@ -14,6 +14,7 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local DAMAGE = require(MODULES.Damage)
 
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
+local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local GunSpray = require(ReplicatedStorage.Core.GunSpray)
 
@@ -46,7 +47,7 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 
 		for _, p in pairs(Players:GetPlayers()) do
 			if p ~= player then
-				REMOTES.Effect:FireClient(p, "Reload", item)
+				REMOTES.Effect:FireClient(p, Effects.EffectIDs.Reload, item)
 			end
 		end
 
@@ -193,7 +194,7 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, mouseCFrame, hits
 
 				for _, other in pairs(Players:GetPlayers()) do
 					if other ~= player then
-						REMOTES.Effect:FireClient(other, "Shoot", item, position)
+						REMOTES.Effect:FireClient(other, Effects.EffectIDs.Shoot, item, position)
 					end
 				end
 			end
