@@ -166,6 +166,7 @@ Modal("Initialize")
 local function isFirstPerson()
 	return Settings.GetSetting("First Person", PLAYER)
 		and mode == "Default"
+		and modalStack == 0
 end
 
 local function visible(part)
