@@ -226,11 +226,7 @@ function Create:init()
 				selectedLocation = 1
 			end
 
-			self:setState({
-				gamemode = gamemode,
-			})
-
-			self:SelectLocation(selectedLocation)
+			self:SelectLocation(selectedLocation, gamemode)
 		end
 	end)
 
@@ -249,13 +245,14 @@ function Create:init()
 	end
 end
 
-function Create:SelectLocation(campaignIndex)
-	local campaign = self.state.gamemode.Locations[campaignIndex]
+function Create:SelectLocation(campaignIndex, newGamemode)
+	local gamemode = newGamemode or self.state.gamemode
+	local campaign = gamemode.Locations[campaignIndex]
 
 	local latestDifficulty
 
 	for difficultyIndex, difficulty in ipairs(campaign.Difficulties or {}) do
-		if self.state.gamemode.IsPlayable(campaignIndex, difficultyIndex, difficulty) then
+		if gamemode.IsPlayable(campaignIndex, difficultyIndex, difficulty) then
 			latestDifficulty = difficultyIndex
 		else
 			break
@@ -265,6 +262,7 @@ function Create:SelectLocation(campaignIndex)
 	self:setState({
 		campaign = campaign,
 		campaignIndex = campaignIndex,
+		gamemode = newGamemode,
 		difficulty = latestDifficulty or 1,
 	})
 end
