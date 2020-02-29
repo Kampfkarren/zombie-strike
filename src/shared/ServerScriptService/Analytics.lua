@@ -1,5 +1,4 @@
 local AnalyticsService = game:GetService("AnalyticsService")
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
@@ -33,6 +32,12 @@ function Analytics.DungeonStarted()
 	Dungeon.GetDungeonTable():andThen(function(dungeonTable)
 		Analytics.FireEvent("DungeonStarted", dungeonTable)
 	end)
+end
+
+function Analytics.CollectionLogRequested(player)
+	Analytics.FireEvent("CollectionLogRequested", {
+		UserId = player.UserId,
+	})
 end
 
 function Analytics.CosmeticBought(player, itemName)

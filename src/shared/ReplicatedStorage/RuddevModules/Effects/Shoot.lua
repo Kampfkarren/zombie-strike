@@ -95,7 +95,7 @@ return function(item, position, directions, ammo, forceEnd)
 	if directions == nil then
 		directions = {}
 
-		for _, spray in pairs(GunSpray(muzzle.WorldCFrame, config)) do
+		for _, spray in pairs(GunSpray(handle.CFrame, config)) do
 			table.insert(directions, spray.LookVector.Unit)
 		end
 	end

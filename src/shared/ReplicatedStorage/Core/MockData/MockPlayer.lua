@@ -129,6 +129,8 @@ return function()
 		Premium = false,
 	}
 
+	MockPlayer.CollectionLog = {}
+
 	MockPlayer.Settings = {}
 	MockPlayer.XPExpires = 0
 

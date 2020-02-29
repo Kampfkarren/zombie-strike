@@ -1,10 +1,4 @@
-type LootReward = {
-	Common: readonly number[],
-	Uncommon: readonly number[],
-	Rare: readonly number[],
-	Epic: readonly number[],
-	Legendary: readonly number[],
-}
+import { LootReward } from "types/Gamemode"
 
 export type BossStat = {
 	Base: number,
@@ -18,10 +12,7 @@ export type BossInfo = {
 	AIAggroRange: number,
 	LoadingColor: Color3,
 
-	Loot: Partial<{
-		Armor: LootReward,
-		Helmet: LootReward,
-	}>,
+	Loot: LootReward,
 
 	Stats: {
 		[zombieName: string]: {

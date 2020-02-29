@@ -6,6 +6,7 @@ local State = require(ReplicatedStorage.State)
 
 local BattlePass = require(script.BattlePass)
 local Codes = require(script.Codes)
+local CollectionLog = require(script.CollectionLog)
 local Equipment = require(script.Equipment)
 local Feedback = require(script.Feedback)
 local Friends = require(script.Friends)
@@ -27,6 +28,7 @@ local function App()
 	}, {
 		BattlePass = e(BattlePass),
 		Codes = e(Codes),
+		CollectionLog = e(CollectionLog),
 		Equipment = e(Equipment),
 		Feedback = e(Feedback),
 		Friends = e(Friends),

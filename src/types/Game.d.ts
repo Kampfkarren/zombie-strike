@@ -46,12 +46,19 @@ interface ReplicatedStorage {
 		[name: string]: ModuleScript,
 	},
 
+	Items: Folder & {
+		[name: string]: Instance & {
+			ItemType: StringValue,
+		},
+	},
+
 	Remotes: Folder & {
 		CircleEffect: RemoteEvent,
 		NewBoss: RemoteEvent,
 		RotatingBoss: Folder,
 		SendServerLogs: RemoteEvent,
 		UpdateCampaignsPlayed: RemoteEvent,
+		UpdateCollectionLog: RemoteEvent,
 
 		Tower: Folder & {
 			Boss: Folder & {

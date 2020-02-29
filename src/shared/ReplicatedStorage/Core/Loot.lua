@@ -47,6 +47,15 @@ Loot.Attachments = {
 	"Silencer",
 }
 
+Loot.GunTypes = {
+	"Pistol",
+	"Rifle",
+	"SMG",
+	"Shotgun",
+	"Sniper",
+	"Crystal",
+}
+
 local attachmentType = t.union(
 	t.literal("Magazine"),
 	t.literal("Laser"),
@@ -57,14 +66,9 @@ local serializeStruct = t.union(
 	t.strictInterface({
 		Level = t.number,
 		Rarity = t.numberConstrained(1, #Loot.Rarities),
-		Type = t.union(
-			t.literal("Pistol"),
-			t.literal("Rifle"),
-			t.literal("SMG"),
-			t.literal("Shotgun"),
-			t.literal("Sniper"),
-			t.literal("Crystal")
-		),
+		Type = function(gunType)
+			return table.find(Loot.GunTypes, gunType) ~= nil
+		end,
 
 		Attachment = t.optional(
 			t.strictInterface({
@@ -198,7 +202,7 @@ function Loot.GetLootName(loot)
 	local model = ReplicatedStorage.Items[loot.Type .. loot.Model]
 	local qualityName = ""
 
-	if Loot.IsWeapon(loot) then
+	if Loot.IsWeapon(loot) and loot.Bonus ~= nil then
 		for _, quality in ipairs(QualityDictionary) do
 			if loot.Bonus <= quality[1] then
 				qualityName = quality[2] .. " "

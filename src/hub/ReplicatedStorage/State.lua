@@ -104,10 +104,17 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	itemsCollected = Rodux.createReducer({}, {
+		UpdateItemsCollected = function(_, action)
+			return action.itemsCollected
+		end,
+	}),
+
 	page = Rodux.createReducer({
 		current = nil,
 	}, pageReducer({
 		"Codes",
+		"CollectionLog",
 		"Friends",
 		"Equipment",
 		"Feedback",
@@ -270,6 +277,13 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 }))
+
+ReplicatedStorage.Remotes.UpdateCollectionLog.OnClientEvent:connect(function(itemsCollected)
+	Store:dispatch({
+		type = "UpdateItemsCollected",
+		itemsCollected = itemsCollected,
+	})
+end)
 
 ReplicatedStorage.Remotes.UpdateCosmetics.OnClientEvent:connect(function(contents, equipped)
 	Store:dispatch({

@@ -6,13 +6,21 @@ local bases = {}
 local rotators = {}
 local totalDelta = 0
 
+local function getKey(model)
+	if model:FindFirstChild("UUID") then
+		return model.UUID.Value
+	else
+		return model
+	end
+end
+
 RunService.Heartbeat:connect(function(delta)
 	totalDelta = totalDelta + delta
 
 	for model in pairs(rotators) do
 		model:SetPrimaryPartCFrame(
 			CFrame.new(model.PrimaryPart.Position)
-			* CFrame.Angles(0, bases[model.UUID.Value] + totalDelta * ROTATE_RATE, 0)
+			* CFrame.Angles(0, bases[getKey(model)] + totalDelta * ROTATE_RATE, 0)
 		)
 	end
 end)
@@ -38,8 +46,8 @@ return function(viewportFrame, model)
 	camera.Parent = viewportFrame
 	viewportFrame.CurrentCamera = camera
 
-	if not bases[model.UUID.Value] then
-		bases[model.UUID.Value] = math.random() * math.pi
+	if not bases[getKey(model)] then
+		bases[getKey(model)] = math.random() * math.pi
 	end
 
 	rotators[model] = true

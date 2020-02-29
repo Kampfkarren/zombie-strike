@@ -11,7 +11,7 @@ local SendNews = ReplicatedStorage.Remotes.SendNews
 
 local DUNGEONS_UNTIL_UPGRADE = 3
 local INVENTORY_SPACE_TO_ALERT = 25 / 30
-local LAST_GAME_UPDATE = 8
+local LAST_GAME_UPDATE = 9
 
 local MOCK_PLAYER = MockPlayer()
 local NO_NEWS = newproxy(true)

@@ -7,15 +7,6 @@ local ViewportFramePreview = require(ReplicatedStorage.Core.UI.ViewportFramePrev
 local e = Roact.createElement
 local ViewportFramePreviewComponent = Roact.Component:extend("ViewportFramePreviewComponent")
 
-local function getUuid(model)
-	if not Promise.is(model) then
-		local uuid = model and model:FindFirstChild("UUID")
-		if uuid then
-			return uuid.Value
-		end
-	end
-end
-
 function ViewportFramePreviewComponent:init()
 	self.frameRef = Roact.createRef()
 
@@ -36,12 +27,6 @@ function ViewportFramePreviewComponent:init()
 			scale = 1,
 		})
 	end
-end
-
-function ViewportFramePreviewComponent:shouldUpdate(newProps)
-	local uuid1, uuid2 = getUuid(newProps.Model), getUuid(self.props.Model)
-	return uuid1 == nil or uuid1 ~= uuid2
-		or self.props[Roact.Children] ~= newProps[Roact.Children]
 end
 
 function ViewportFramePreviewComponent:render()

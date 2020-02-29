@@ -1,4 +1,5 @@
 import { BossInfo } from "./BossInfo"
+import { LootReward } from "types/Gamemode"
 
 function scale(x: number): { Base: number, Scale: number } {
 	return {
@@ -18,7 +19,7 @@ const Bosses = [
 		AIAggroRange: 100,
 		LoadingColor: Color3.fromRGB(255, 121, 32),
 
-		Loot: {},
+		Loot: new Map() as LootReward,
 
 		Stats: {
 			Common: {
@@ -44,23 +45,23 @@ const Bosses = [
 		AIAggroRange: 200,
 		LoadingColor: Color3.fromRGB(106, 176, 76),
 
-		Loot: {
-			Armor: {
-				Common: [37],
-				Uncommon: [38],
-				Rare: [39],
-				Epic: [40],
-				Legendary: [41],
-			},
+		Loot: new Map([
+			["Armor" as const, new Map([
+				["Common" as const, [37]],
+				["Uncommon" as const, [38]],
+				["Rare" as const, [39]],
+				["Epic" as const, [40]],
+				["Legendary" as const, [41]],
+			])],
 
-			Helmet: {
-				Common: [26],
-				Uncommon: [27],
-				Rare: [28],
-				Epic: [29],
-				Legendary: [30],
-			},
-		},
+			["Helmet" as const, new Map([
+				["Common" as const, [26]],
+				["Uncommon" as const, [27]],
+				["Rare" as const, [28]],
+				["Epic" as const, [29]],
+				["Legendary" as const, [30]],
+			])],
+		]),
 
 		Stats: {
 			Boss: {

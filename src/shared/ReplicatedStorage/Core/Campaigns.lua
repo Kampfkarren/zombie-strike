@@ -1159,7 +1159,7 @@ local Campaigns = {
 
 		Loot = classicGunsPatched({
 			Armor = {
-				Common = { 46, 47, 48, 49, 50 },
+				Common = { 47, 48, 49, 50, 51 },
 				Uncommon = { 46 },
 				Rare = { 45 },
 				Epic = { 44 },

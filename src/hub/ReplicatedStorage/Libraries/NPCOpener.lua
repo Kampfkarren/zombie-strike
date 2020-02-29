@@ -7,7 +7,7 @@ local State = require(ReplicatedStorage.State)
 
 local LocalPlayer = Players.LocalPlayer
 
-return function(name)
+return function(name, onTouch)
 	local range = CollectionService:GetTagged(name .. "Range")[1]
 	local touching = false
 
@@ -25,6 +25,10 @@ return function(name)
 		State:dispatch({
 			type = "Open" .. name,
 		})
+
+		if onTouch then
+			onTouch()
+		end
 	end
 
 	range.Touched:connect(function() end)

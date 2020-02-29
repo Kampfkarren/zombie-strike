@@ -1,4 +1,7 @@
 import * as Roact from "@rbxts/roact"
+import Loot from "shared/ReplicatedStorage/Core/Loot"
+
+export type LootReward = Map<Loot.LootType, Map<Rarity, number[]>>
 
 export type Difficulty = {
 	MinLevel?: number,
@@ -16,6 +19,7 @@ export type Campaign = {
 	LockedArena?: boolean,
 
 	Difficulties: Difficulty[],
+	Loot: LootReward,
 }
 
 export type Location = {

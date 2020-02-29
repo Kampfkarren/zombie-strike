@@ -28,10 +28,10 @@
           "$path": "vendor/roact/src"
         },
         "RoactRodux": {
-          "$path": "vendor/roact-rodux/lib"
+          "$path": "vendor/roact-rodux/src"
         },
         "Rodux": {
-          "$path": "vendor/rodux/lib"
+          "$path": "vendor/rodux/src"
         },
         "t": {
           "$path": "vendor/t/lib"

@@ -73,7 +73,7 @@ end
 function CoreData.GetModel(data)
 	local itemType = data.Type
 
-	local uuid = {} -- luacheck: ignore
+	local uuid = {}
 
 	assert(data.UUID ~= nil, "UUID is nil! " .. inspect(data))
 	uuid = Instance.new("StringValue")
