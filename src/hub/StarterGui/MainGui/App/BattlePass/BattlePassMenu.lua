@@ -41,7 +41,7 @@ local function Tier(props)
 	local contents = {}
 	contents.UIListLayout = e("UIListLayout", {
 		FillDirection = Enum.FillDirection.Horizontal,
-		Padding = UDim.new(0.005, 0),
+		Padding = UDim.new(0, 10),
 		SortOrder = Enum.SortOrder.LayoutOrder,
 		[Roact.Ref] = props.Layout,
 	})

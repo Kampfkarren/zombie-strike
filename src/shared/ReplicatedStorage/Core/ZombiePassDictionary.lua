@@ -6,6 +6,8 @@ local SpraysDictionary = require(ReplicatedStorage.Core.SpraysDictionary)
 local TitlesDictionary = require(ReplicatedStorage.Core.TitlesDictionary)
 
 local function level(freeLoot, paidLoot, gamesNeeded)
+	assert(gamesNeeded ~= nil)
+
 	if freeLoot == nil then
 		freeLoot = {}
 	elseif freeLoot.Type ~= nil then
@@ -118,6 +120,8 @@ local ZombiePassDictionary = {
 	level(brains(50), title("The Maniac"), 11),
 	level(nil, skin("The Quirky"), 11),
 	level(title("The Crook"), emote("Zombie"), 18),
+
+	-- Level 26
 	level(nil, skin("Sea Agent"), 1),
 	level(title("The Killer"), brains(100), 2),
 	level(nil, skin("World View"), 2),
@@ -143,6 +147,33 @@ local ZombiePassDictionary = {
 	level(nil, brains(600), 11),
 	level(brains(400), font("Arcade"), 11),
 	level(title("The Kawaii"), skin("Aesthetic Nerd"), 18),
+
+	-- Level 51
+	level(nil, skin("Oni"), 1),
+	level(xp(5), title("The Oni"), 2),
+	level(nil, brains(200), 2),
+	level(xp(5), skin("Creep"), 3),
+	level(nil, title("The Creep"), 3),
+	level(brains(150), brains(200), 4),
+	level(nil, xp(10), 4),
+	level(title("The Weird"), skin("Child of Hope"), 4),
+	level(nil, title("The Hopeful"), 5),
+	level(title("The Memer"), skin("Canada = France"), 5),
+	level(nil, title("The Canadian"), 5),
+	level(title("The Kid"), skin("Loving Sunflower"), 5),
+	level(nil, title("The Wholesome"), 5),
+	level(brains(300), brains(250), 5),
+	level(nil, skin("Golden Carpet"), 5),
+	level(brains(100), title("The Golden"), 6),
+	level(nil, xp(5), 7),
+	level(title("The Hope"), brains(200), 7),
+	level(nil, skin("Baby"), 8),
+	level(title("The Skeleton"), title("The Baby"), 8),
+	level(nil, brains(100), 11),
+	level(brains(200), skin("Mimic"), 11),
+	level(nil, title("The Mimic"), 11),
+	level(title("The Lucky"), brains(400), 11),
+	level(nil, title("The Insane"), 18),
 }
 
 return ZombiePassDictionary

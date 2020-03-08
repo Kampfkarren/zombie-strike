@@ -152,4 +152,12 @@ return {
 	gunLowTier("Six Shooter", "SixShooter"),
 	gunLowTier("Spencer"),
 	gunLowTier("Winchest"),
+	dontSellMe(lowTier("Oni")),
+	dontSellMe(lowTier("Creep")),
+	dontSellMe(lowTier("Child of Hope", "ChildOfHope")),
+	dontSellMe(lowTier("Canada = France", "CanadaFrance")),
+	dontSellMe(lowTier("Loving Sunflower", "LovingSunflower")),
+	dontSellMe(lowTier("Golden Carpet", "GoldenCarpet")),
+	dontSellMe(lowTier("Baby")),
+	dontSellMe(lowTier("Mimic")),
 }

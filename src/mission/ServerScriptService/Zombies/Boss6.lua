@@ -129,7 +129,10 @@ function TowerBoss:InitializeBossAI(room)
 end
 
 function TowerBoss:AfterDeath()
-	self.instance.Humanoid:LoadAnimation(self:GetAsset("DeathAnimation")):Play()
+	pcall(function()
+		self.instance.Humanoid:LoadAnimation(self:GetAsset("DeathAnimation")):Play()
+	end)
+
 	wait(BOSS_DEATH_DELAY)
 	self:Destroy()
 end
