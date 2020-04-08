@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local Campaigns = require(ReplicatedStorage.Core.Campaigns)
 local Data = require(ReplicatedStorage.Core.Data)
@@ -9,6 +10,7 @@ local Promise = require(ReplicatedStorage.Core.Promise)
 
 local SendNews = ReplicatedStorage.Remotes.SendNews
 
+local DEBUG_NO_NEWS_FOR_ANYONE = false
 local DUNGEONS_UNTIL_UPGRADE = 3
 local INVENTORY_SPACE_TO_ALERT = 25 / 30
 local LAST_GAME_UPDATE = 9
@@ -42,54 +44,37 @@ local function checkNewUpdate(player)
 end
 
 local function checkUnlockedContent(player)
-	return Data.GetPlayerDataAsync(player, "LastKnownDifficulty")
-		:andThen(function(lastKnownDifficulty, difficultyStore)
-			local campaignIndex = math.floor(lastKnownDifficulty / 10)
-			local difficultyIndex = lastKnownDifficulty % 10
-
-			local campaign = Campaigns[campaignIndex]
-			local newCampaign = false
-			local check, dataForm
-
-			if #campaign.Difficulties == difficultyIndex then
-				-- They're on the last difficulty, check if they can do the next one
-				local nextCampaign
-				local nextCampaignIndex = campaignIndex
-
-				repeat
-					nextCampaignIndex = nextCampaignIndex + 1
-					local campaign = Campaigns[nextCampaignIndex]
-					if campaign and campaign.Difficulties[1].MinLevel ~= nil then
-						nextCampaign = campaign
-					end
-				until nextCampaign ~= nil or nextCampaignIndex >= #Campaigns
-
-				if nextCampaign == nil then
-					-- They finished every difficulty!
-					return NO_NEWS
-				end
-
-				newCampaign = true
-				check = nextCampaign.Difficulties[1]
-				dataForm = ((campaignIndex + 1) * 10) + 1
-			else
-				check = campaign.Difficulties[difficultyIndex + 1]
-				dataForm = (campaignIndex * 10) + difficultyIndex + 1
-			end
-
-			assert(check ~= nil)
+	return Data.GetPlayerDataAsync(player, "LastKnownDifficulties")
+		:andThen(function(lastKnownDifficulties, difficultyStore)
+			local news = {}
 
 			return Data.GetPlayerDataAsync(player, "Level")
 				:andThen(function(level)
-					if level >= check.MinLevel then
-						difficultyStore:Set(dataForm)
+					local newLastKnownDifficulties = {}
 
-						if newCampaign then
-							return {{ "CampaignUnlocked", { campaignIndex + 1 }}}
-						else
-							return {{ "DifficultyUnlocked", { campaignIndex, difficultyIndex + 1 }}}
+					for campaignIndex, campaign in ipairs(Campaigns) do
+						for difficultyIndex, difficulty in ipairs(campaign.Difficulties) do
+							if level >= difficulty.MinLevel then
+								newLastKnownDifficulties[tostring(campaignIndex)] = difficultyIndex
+							else
+								break
+							end
 						end
 					end
+
+					for campaignIndex, knownDifficulty in pairs(newLastKnownDifficulties) do
+						if lastKnownDifficulties[campaignIndex] == nil then
+							table.insert(news, { "CampaignUnlocked", { tonumber(campaignIndex) }})
+						elseif lastKnownDifficulties[campaignIndex] ~= knownDifficulty then
+							table.insert(news, { "DifficultyUnlocked", { tonumber(campaignIndex), knownDifficulty }})
+						end
+					end
+
+					if #news > 0 then
+						difficultyStore:Set(newLastKnownDifficulties)
+					end
+
+					return news
 				end)
 		end)
 end
@@ -102,7 +87,7 @@ local function checkUseInventory(player)
 				local equipped = Data.GetPlayerData(player, equippable)
 
 				for key, value in pairs(equipped or {}) do
-					if key ~= "UUID" and default[key] ~= value then
+					if key ~= "UUID" and default ~= nil and default[key] ~= value then
 						-- They equipped something different
 						return NO_NEWS
 					end
@@ -136,6 +121,10 @@ local function checkUpgradeSomething(player)
 end
 
 Players.PlayerAdded:connect(function(player)
+	if RunService:IsStudio() and DEBUG_NO_NEWS_FOR_ANYONE then
+		return
+	end
+
 	Promise.all({
 		checkInventorySpace(player),
 		checkNewUpdate(player),

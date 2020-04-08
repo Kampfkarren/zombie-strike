@@ -27,17 +27,6 @@ local Extreme = {
 	Color = Color3.fromRGB(109, 35, 35),
 }
 
-local Insane = {
-	Name = "Insane",
-	Color = Color3.fromRGB(141, 30, 30),
-}
-
-local Impossible = {
-	Name = "Impossible",
-	Color = Color3.fromRGB(121, 3, 3),
-}
-
-local NO_DAMAGE = table.create(5, 0)
 local TOWER_REACTION_TIME = table.create(5, 1)
 
 local function range(start, finish)
@@ -86,6 +75,10 @@ local function classicGunsPatched(loot, patch)
 	return guns
 end
 
+local function constant(number)
+	return table.create(5, number)
+end
+
 local lootRewardType = t.strictInterface({
 	Common = t.array(t.number),
 	Uncommon = t.array(t.number),
@@ -98,6 +91,7 @@ local campaignsType = t.array(t.strictInterface({
 	Name = t.string,
 	Image = t.string,
 	ZombieTypes = t.map(t.string, t.numberMin(1)),
+	SpecialZombies = t.array(t.string),
 	LoadingColor = t.Color3,
 	LockedArena = t.optional(t.boolean),
 	Scales = t.optional(t.boolean),
@@ -117,9 +111,9 @@ local campaignsType = t.array(t.strictInterface({
 		XP = t.numberMin(1),
 		ZombieSpawnRate = t.numberConstrained(0, 1),
 
-		BossStats = t.strictInterface({
+		BossStats = t.optional(t.strictInterface({
 			Health = t.optional(t.numberMin(1)),
-		}),
+		})),
 	})),
 
 	Loot = t.strictInterface({
@@ -151,7 +145,6 @@ local campaignsType = t.array(t.strictInterface({
 	),
 
 	AIAggroRange = t.number,
-	CompletionBadge = t.optional(t.number),
 }))
 
 local Campaigns = {
@@ -164,6 +157,7 @@ local Campaigns = {
 			Strong = 1,
 			Bomber = 1,
 		},
+		SpecialZombies = { "Shielder", "Splitter" },
 		LoadingColor = Color3.fromRGB(253, 166, 255),
 
 		Difficulties = {
@@ -171,13 +165,13 @@ local Campaigns = {
 				MinLevel = 1,
 				Style = Easy,
 
-				Gold = 50,
+				Gold = 100,
 				Rooms = 4,
 				XP = 600,
 				ZombieSpawnRate = 0.5,
 
 				BossStats = {
-					Health = 1350,
+					Health = 2000,
 				},
 			},
 
@@ -185,55 +179,55 @@ local Campaigns = {
 				MinLevel = 6,
 				Style = Medium,
 
-				Gold = 120,
-				Rooms = 7,
-				XP = 1500,
+				Gold = 180,
+				Rooms = 6,
+				XP = 1000,
 				ZombieSpawnRate = 0.65,
 
 				BossStats = {
-					Health = 2520,
+					Health = 4000,
 				},
 			},
 
 			{
-				MinLevel = 12,
+				MinLevel = 32,
 				Style = Hard,
 
-				Gold = 370,
-				Rooms = 10,
-				XP = 3000,
+				Gold = 3360,
+				Rooms = 7,
+				XP = 10000,
 				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 5040,
+					Health = 34000,
 				},
 			},
 
 			{
-				MinLevel = 18,
+				MinLevel = 56,
 				Style = VeryHard,
 
-				Gold = 800,
-				Rooms = 12,
-				XP = 7000,
-				ZombieSpawnRate = 0.9,
+				Gold = 50930,
+				Rooms = 8,
+				XP = 400000,
+				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 15000,
+					Health = 148000,
 				},
 			},
 
 			{
-				MinLevel = 24,
+				MinLevel = 78,
 				Style = Extreme,
 
-				Gold = 1900,
-				Rooms = 13,
-				XP = 14000,
-				ZombieSpawnRate = 1,
+				Gold = 616290,
+				Rooms = 9,
+				XP = 17500000,
+				ZombieSpawnRate = 0.75,
 
 				BossStats = {
-					Health = 40000,
+					Health = 220000,
 				},
 			},
 		},
@@ -258,81 +252,53 @@ local Campaigns = {
 
 		Stats = {
 			Common = {
-				Health = {
-					Base = 49,
-					Scale = 1.154,
-				},
-
-				Speed = {
-					Base = 13.5,
-					Scale = 1.01,
-				},
-
-				Damage = {
-					Base = 17.5,
-					Scale = 1.15,
-				},
-			},
-
-			Fast = {
-				Health = {
-					Base = 55,
-					Scale = 1.154,
-				},
-
-				Speed = {
-					Base = 19.5,
-					Scale = 1.01,
-				},
-
-				Damage = {
-					Base = 20,
-					Scale = 1.15,
-				},
+				Health = { 50, 130, 550, 980, 2282 },
+				Damage = { 25, 60, 145, 350, 620 },
+				Speed = { 13, 13.5, 14, 14.1, 14.5 },
 			},
 
 			Strong = {
-				Damage = {
-					Base = 33,
-					Scale = 1.15,
-				},
+				Health = { 75, 195, 825, 1470, 3423 },
+				Damage = { 37.5, 90, 217.5, 525, 930 },
+				Speed = { 12, 12.5, 13, 13.1, 13.5 },
+			},
 
-				Health = {
-					Base = 113.75,
-					Scale = 1.154,
-				},
-
-				Speed = {
-					Base = 12.5,
-					Scale = 1.01,
-				},
+			Fast = {
+				Health = { 35, 91, 385, 686, 1600 },
+				Damage = { 25, 60, 145, 350, 620 },
+				Speed = { 14, 14.5, 15, 15.1, 15.5 },
 			},
 
 			Bomber = {
-				Damage = {
-					Base = 33,
-					Scale = 1.15,
-				},
+				Health = { 20, 51, 285, 486, 1100 },
+				Damage = { 50, 110, 240, 700, 1200 },
+				Speed = { 16, 16.5, 17, 17.1, 17.5 },
+				Delay = constant(1),
+			},
 
-				Health = {
-					Base = 25,
-					Scale = 1.154,
-				},
+			Shielder = {
+				Health = { 0, 325, 1320, 2205, 5500 },
+				Damage = { 0, 90, 217.5, 525, 930 },
+				Speed = { 0, 12.5, 13, 13.1, 13.5 },
+				EnragedSpeed = { 0, 19, 20, 20, 21 },
+			},
 
-				Speed = {
-					Base = 22,
-					Scale = 1,
-				},
+			Splitter = {
+				Health = { 0, 0, 2500, 4000, 9000 },
+				Damage = { 0, 0, 500, 800, 1300 },
+				Speed = constant(11),
+				BabiesSpawned = { 0, 0, 2, 2, 3 },
+			},
 
-				Delay = {
-					Base = 1,
-					Scale = 0.99,
-				},
+			SplitterBaby = {
+				Health = { 0, 0, 300, 400, 1000 },
+				Damage = { 0, 0, 100, 250, 400 },
+				Speed = { 0, 0, 17, 18, 20 },
+				RespawnTime = { 0, 0, 8, 7, 6 },
 			},
 		},
 
 		AIAggroRange = 180,
-		CompletionBadge = 2124495354,
 	},
 
 	{
@@ -341,80 +307,60 @@ local Campaigns = {
 		ZombieTypes = {
 			Common = 3,
 			Fast = 1,
-			Turret = 1,
 			AoE = 1,
 		},
+		SpecialZombies = { "Gravity", "Taser" },
 		LoadingColor = Color3.fromRGB(206, 206, 206),
 
 		Difficulties = {
 			{
-				MinLevel = 30,
+				MinLevel = 15,
 				Style = Easy,
 
-				Gold = 2500,
+				Gold = 490,
 				Rooms = 4,
-				XP = 21750,
+				XP = 2000,
 				ZombieSpawnRate = 0.65,
-
-				BossStats = {
-					Health = 131250,
-				}
 			},
 
 			{
-				MinLevel = 36,
+				MinLevel = 40,
 				Style = Medium,
 
-				Gold = 4000,
-				Rooms = 7,
+				Gold = 8310,
+				Rooms = 6,
 				XP = 35000,
-				ZombieSpawnRate = 0.75,
-
-				BossStats = {
-					Health = 467500,
-				}
+				ZombieSpawnRate = 0.7,
 			},
 
 			{
-				MinLevel = 42,
+				MinLevel = 64,
 				Style = Hard,
 
-				Gold = 20000,
-				Rooms = 8,
-				XP = 125000,
-				ZombieSpawnRate = 0.85,
-
-				BossStats = {
-					Health = 750000,
-				}
+				Gold = 126110,
+				Rooms = 7,
+				XP = 75000,
+				ZombieSpawnRate = 0.75,
 			},
 
 			{
-				MinLevel = 48,
+				MinLevel = 86,
 				Style = VeryHard,
 
-				Gold = 50000,
-				Rooms = 10,
-				XP = 300000,
-				ZombieSpawnRate = 0.9,
-
-				BossStats = {
-					Health = 3750000,
-				}
+				Gold = 1525920,
+				Rooms = 7,
+				XP = 75000000,
+				ZombieSpawnRate = 0.8,
 			},
 
 			{
-				MinLevel = 54,
+				MinLevel = 106,
 				Style = Extreme,
 
-				Gold = 120000,
-				Rooms = 12,
-				XP = 845000,
-				ZombieSpawnRate = 1,
-
-				BossStats = {
-					Health = 6250000,
-				}
+				Gold = 14719480,
+				Rooms = 7,
+				XP = 1875000000,
+				ZombieSpawnRate = 0.85,
 			},
 		},
 
@@ -438,86 +384,50 @@ local Campaigns = {
 
 		Stats = {
 			Common = {
-				Health = {
-					Base = 3500,
-					Scale = 1.135,
-				},
-
-				Speed = {
-					Base = 17,
-					Scale = 1,
-				},
-
-				Damage = {
-					Base = 1800,
-					Scale = 1.125,
-				},
-			},
-
-			Fast = {
-				Health = {
-					Base = 2500,
-					Scale = 1.135,
-				},
-
-				Speed = {
-					Base = 20,
-					Scale = 1,
-				},
-
-				Damage = {
-					Base = 1000,
-					Scale = 1.125,
-				},
-			},
-
-			Turret = {
-				Damage = {
-					Base = 275,
-					Scale = 1.167,
-				},
-
-				Health = {
-					Base = 2800,
-					Scale = 1.125,
-				},
-
-				RateOfFire = {
-					Base = 1,
-					Scale = 1.015,
-				},
-
-				Speed = {
-					Base = 5,
-					Scale = 1,
-				},
+				Health = { 250, 720, 1200, 2500, 2750 },
+				Damage = { 29, 70, 160, 370, 680 },
+				Speed = { 13, 13.5, 14, 14.1, 14.5 },
 			},
 
 			AoE = {
-				Health = {
-					Base = 5000,
-					Scale = 1.145,
-				},
+				Health = { 520, 1200, 1500, 2600, 3300 },
+				Damage = { 100, 240, 700, 800, 950 },
+				Speed = { 13, 13.2, 13.4, 13.5, 13.75 },
+				Range = constant(25),
+			},
 
-				Speed = {
-					Base = 16,
-					Scale = 1.003,
-				},
+			Fast = {
+				Health = { 150, 500, 800, 2000, 2100 },
+				Damage = { 20, 50, 130, 300, 550 },
+				Speed = constant(16),
+			},
 
-				Damage = {
-					Base = 1800,
-					Scale = 1.135,
-				},
+			Gravity = {
+				Health = { 1300, 2000, 2500, 3200, 4500 },
+				Damage = { 29, 70, 160, 370, 680 },
+				Speed = constant(4),
+			},
 
-				Range = {
-					Base = 25,
-					Scale = 1,
-				},
+			Taser = {
+				Health = { 1800, 2500, 3400, 4800, 6000 },
+				Damage = { 100, 240, 700, 800, 950 },
+				Speed = constant(10),
+				StunDuration = { 0.5, 0.6, 0.7, 0.7, 0.7 },
+			},
+
+			Boss = {
+				Health = { 13000, 23000, 50000, 190000, 250000 },
+				BaseSpinDamage = { 300, 400, 800, 1500, 2500 },
+				BaseSpinSpeed = { 1, 1.05, 1.1, 1.13, 1.2 },
+				FloorLaserDamage = { 250, 300, 700, 1300, 2000 },
+				QuadLaserChargeTime = { 3, 2.8, 2.6, 2.5, 2.2 },
+				QuadLaserDamage = { 300, 400, 800, 1500, 2500 },
+				QuadLaserRateOfFire = { 6, 5, 5, 4, 3.5 },
+				QuadLaserTime = { 1, 1.1, 1.2, 1.3, 1.4 },
 			},
 		},
 
 		AIAggroRange = 60,
-		CompletionBadge = 2124495355,
 	},
 
 	{
@@ -528,63 +438,58 @@ local Campaigns = {
 			Fast = 1,
 			AoE = 1,
 		},
+		SpecialZombies = { "Flamecaster", "Meteor" },
 		LoadingColor = Color3.fromRGB(255, 121, 32),
 
 		Difficulties = {
 			{
-				MinLevel = 60,
-				Style = Hard,
+				MinLevel = 20,
+				Style = Easy,
 
-				Gold = 320000,
-				Rooms = 6,
-				XP = 1875000,
+				Gold = 860,
+				Rooms = 4,
+				XP = 2500,
 				ZombieSpawnRate = 0.65,
-
-				BossStats = {
-					Health = 15000000,
-				},
 			},
 
 			{
-				MinLevel = 64,
-				Style = VeryHard,
+				MinLevel = 44,
+				Style = Medium,
 
-				Gold = 640000,
-				Rooms = 8,
-				XP = 2325000,
+				Gold = 13070,
+				Rooms = 6,
+				XP = 50000,
 				ZombieSpawnRate = 0.75,
-
-				BossStats = {
-					Health = 27000000,
-				},
 			},
 
 			{
 				MinLevel = 68,
-				Style = Extreme,
+				Style = Hard,
 
-				Gold = 1280000,
-				Rooms = 10,
-				XP = 4525000,
+				Gold = 198430,
+				Rooms = 7,
+				XP = 2500000,
 				ZombieSpawnRate = 0.85,
-
-				BossStats = {
-					Health = 54000000,
-				},
 			},
 
 			{
-				MinLevel = 72,
-				Style = Insane,
+				MinLevel = 90,
+				Style = VeryHard,
 
-				Gold = 2560000,
-				Rooms = 12,
-				XP = 11000000,
-				ZombieSpawnRate = 1,
+				Gold = 2401070,
+				Rooms = 7,
+				XP = 120000000,
+				ZombieSpawnRate = 0.85,
+			},
 
-				BossStats = {
-					Health = 108000000,
-				},
+			{
+				MinLevel = 110,
+				Style = Extreme,
+
+				Gold = 23161380,
+				Rooms = 7,
+				XP = 3000000000,
+				ZombieSpawnRate = 0.85,
 			},
 		},
 
@@ -608,64 +513,50 @@ local Campaigns = {
 
 		Stats = {
 			Common = {
-				Health = {
-					Base = 200000,
-					Scale = 1.19,
-				},
-
-				Speed = {
-					Base = 17,
-					Scale = 1.005,
-				},
-
-				Damage = {
-					Base = 68000,
-					Scale = 1.18,
-				},
-			},
-
-			Fast = {
-				Health = {
-					Base = 140000,
-					Scale = 1.19,
-				},
-
-				Speed = {
-					Base = 23,
-					Scale = 1.005,
-				},
-
-				Damage = {
-					Base = 42000,
-					Scale = 1.18,
-				},
+				Health = { 300, 800, 1350, 2700, 3000 },
+				Damage = { 40, 100, 200, 460, 700 },
+				Speed = { 13, 13.5, 14, 14.1, 14.5 },
 			},
 
 			AoE = {
-				Health = {
-					Base = 352000,
-					Scale = 1.19,
-				},
+				Health = { 620, 1400, 1800, 3000, 3400 },
+				Damage = { 110, 260, 750, 900, 1100 },
+				Speed = { 13, 13.2, 13.4, 13.5, 13.75 },
+				Range = constant(25),
+			},
 
-				Speed = {
-					Base = 16.5,
-					Scale = 1,
-				},
+			Fast = {
+				Health = { 200, 600, 1100, 2300, 2400 },
+				Damage = { 30, 70, 140, 380, 620 },
+				Speed = constant(17),
+			},
 
-				Damage = {
-					Base = 90000,
-					Scale = 1.18,
-				},
+			Flamecaster = {
+				Health = { 900, 2100, 2500, 3500, 4200 },
+				Damage = { 20, 50, 100, 200, 350 },
+				Range = { 40, 50, 60, 70, 80 },
+				Speed = constant(0),
+			},
 
-				Range = {
-					Base = 25,
-					Scale = 1,
-				},
+			Meteor = {
+				Health = { 1400, 2600, 3200, 4000, 5000 },
+				Damage = { 110, 260, 750, 900, 1100 },
+				MeteorCooldown = { 4, 3, 3, 3, 2 },
+				MeteorDamage = { 110, 260, 750, 900, 1100 },
+				Speed = constant(14),
+			},
+
+			Boss = {
+				Health = { 15000, 25000, 50000, 190000, 260000 },
+				MassiveLaserDamage = { 600, 800, 1600, 3000, 5000 },
+				MassiveLaserWindup = { 4, 3.6, 3.2, 2.8, 2.8 },
+				SummonCount = { 3, 4, 5, 6, 6 },
+				TriLaserCount = { 4, 5, 5, 6, 7 },
+				TriLaserDamage = { 300, 400, 800, 1500, 2500 },
 			},
 		},
 
 		AIAggroRange = 60,
-		CompletionBadge = 2124495356,
 	},
 
 	{
@@ -678,77 +569,58 @@ local Campaigns = {
 			AoE = 1,
 			Projectile = 1,
 		},
+		SpecialZombies = { "Blizzard", "MegaSnowball" },
 		LoadingColor = Color3.new(1, 1, 1),
 
 		Difficulties = {
 			{
-				MinLevel = 77,
+				MinLevel = 24,
+				Style = Easy,
+
+				Gold = 1360,
+				Rooms = 4,
+				XP = 3000,
+				ZombieSpawnRate = 0.6,
+			},
+
+			{
+				MinLevel = 48,
+				Style = Medium,
+
+				Gold = 20570,
+				Rooms = 5,
+				XP = 90000,
+				ZombieSpawnRate = 0.7,
+			},
+
+			{
+				MinLevel = 72,
 				Style = Hard,
 
-				Gold = 4270000,
-				Rooms = 7,
-				XP = 32000000,
-				ZombieSpawnRate = 0.6,
-
-				BossStats = {
-					Health = 252000000,
-				},
+				Gold = 312230,
+				Rooms = 6,
+				XP = 2500000,
+				ZombieSpawnRate = 0.8,
 			},
 
 			{
-				MinLevel = 83,
+				MinLevel = 94,
 				Style = VeryHard,
 
-				Gold = (4 * 4270000),
-				Rooms = 8,
-				XP = 67200000,
-				ZombieSpawnRate = 0.7,
-
-				BossStats = {
-					Health = 716800000,
-				},
+				Gold = 3778120,
+				Rooms = 6,
+				XP = 250000000,
+				ZombieSpawnRate = 0.8,
 			},
 
 			{
-				MinLevel = 89,
+				MinLevel = 114,
 				Style = Extreme,
 
-				Gold = (8 * 4270000),
-				Rooms = 9,
-				XP = 231000000,
+				Gold = 36444880,
+				Rooms = 6,
+				XP = 6000000000,
 				ZombieSpawnRate = 0.8,
-
-				BossStats = {
-					Health = 1270500000,
-				},
-			},
-
-			{
-				MinLevel = 95,
-				Style = Insane,
-
-				Gold = (16 * 4270000),
-				Rooms = 10,
-				XP = 624000000,
-				ZombieSpawnRate = 0.9,
-
-				BossStats = {
-					Health = 3500000000,
-				},
-			},
-
-			{
-				MinLevel = 101,
-				Style = Impossible,
-
-				Gold = (32 * 4270000),
-				Rooms = 12,
-				XP = 1500000000,
-				ZombieSpawnRate = 1.0,
-
-				BossStats = {
-					Health = 10500000000,
-				},
 			},
 		},
 
@@ -772,118 +644,64 @@ local Campaigns = {
 
 		Stats = {
 			Common = {
-				Health = {
-					Base = 3600000,
-					Scale = 1.17,
-				},
-
-				Speed = {
-					Base = 17,
-					Scale = 1.0045,
-				},
-
-				Damage = {
-					Base = 2000000,
-					Scale = 1.115,
-				},
-
-				MaxHealthDamage = {
-					Base = 8,
-					Scale = 1.01,
-				},
-			},
-
-			Fast = {
-				Health = {
-					Base = 2800000,
-					Scale = 1.17,
-				},
-
-				Speed = {
-					Base = 20,
-					Scale = 1.0045,
-				},
-
-				Damage = {
-					Base = 1800000,
-					Scale = 1.115,
-				},
-
-				MaxHealthDamage = {
-					Base = 6,
-					Scale = 1.01,
-				},
+				Health = { 350, 900, 1500, 3000, 3300 },
+				Damage = { 60, 120, 240, 500, 750 },
+				Speed = { 13, 13.5, 14, 14.1, 14.5 },
 			},
 
 			Strong = {
-				Health = {
-					Base = 4600000,
-					Scale = 1.17,
-				},
-
-				Speed = {
-					Base = 15,
-					Scale = 1.0045,
-				},
-
-				Damage = {
-					Base = 2500000,
-					Scale = 1.115,
-				},
-
-				MaxHealthDamage = {
-					Base = 11,
-					Scale = 1.01,
-				},
+				Health = { 1600, 1800, 2250, 3300, 3850 },
+				Damage = { 130, 300, 800, 990, 1300 },
+				Speed = { 13, 13.2, 13.4, 13.5, 13.75 },
 			},
 
 			AoE = {
-				Health = {
-					Base = 4256000,
-					Scale = 1.17,
-				},
+				Health = { 1600, 1800, 2250, 3300, 3850 },
+				Damage = { 130, 300, 800, 990, 1300 },
+				Speed = { 13, 13.2, 13.4, 13.5, 13.75 },
+				Range = constant(25),
+			},
 
-				Speed = {
-					Base = 14,
-					Scale = 1.0045,
-				},
-
-				Damage = {
-					Base = 1600000,
-					Scale = 1.115,
-				},
-
-				Range = {
-					Base = 25,
-					Scale = 1,
-				},
+			Fast = {
+				Health = { 220, 700, 1200, 2500, 2900 },
+				Damage = { 60, 120, 240, 500, 750 },
+				Speed = constant(17.5),
 			},
 
 			Projectile = {
-				Health = {
-					Base = 2240000,
-					Scale = 1.17,
-				},
+				Health = { 350, 900, 1500, 3000, 3300 },
+				Damage = { 60, 120, 240, 500, 750 },
+				Speed = { 13, 13.5, 14, 14.1, 14.5 },
+			},
 
-				Speed = {
-					Base = 9,
-					Scale = 1.0045,
-				},
+			Blizzard = {
+				Health = { 4200, 4800, 5800, 7000, 8900 },
+				Damage = { 130, 300, 800, 990, 1300 },
+				Speed = constant(15),
+			},
 
-				Damage = {
-					Base = 1600000,
-					Scale = 1.115,
-				},
+			MegaSnowball = {
+				Health = { 4200, 4800, 5800, 7000, 8900 },
+				Damage = { 130, 300, 800, 990, 1300 },
+				SnowballDamage = { 250, 500, 1200, 1500, 1800 },
+				Cooldown = { 4, 3, 3, 3, 2 },
+				Speed = constant(15),
+			},
 
-				MaxHealthDamage = {
-					Base = 6.5,
-					Scale = 1.01,
-				},
+			Boss = {
+				Health = { 15000, 25000, 50000, 195000, 265000 },
+				IcicleDamage = { 130, 300, 800, 990, 1300 },
+				IcicleTimer = { 6, 7, 8, 9, 10 },
+				SlamAttackDamage = { 250, 500, 1200, 1500, 2200 },
+				SlamRings = { 4, 5, 6, 7, 9 },
+				SpinAttackDamage = { 130, 300, 800, 990, 1300 },
+				SummonCount = { 7, 8, 9, 10, 11 },
+				SummonHeal = { 0.50, 1, 1, 1, 1.50 },
+				SummonMaxHeal = { 4, 7, 8, 8, 10 },
 			},
 		},
 
 		AIAggroRange = 60,
-		CompletionBadge = 2124497453,
 	},
 
 	{
@@ -894,78 +712,59 @@ local Campaigns = {
 			Gunslinger = 1,
 			Shotgun = 1,
 		},
+		SpecialZombies = { "Lasso", "Sniper" },
 		LoadingColor = Color3.fromRGB(255, 194, 96),
 		LockedArena = true,
 
 		Difficulties = {
 			{
-				MinLevel = 106,
-				Style = Hard,
+				MinLevel = 28,
+				Style = Easy,
 
-				Gold = 5120000,
-				Rooms = 7,
-				XP = 5400000000,
+				Gold = 2130,
+				Rooms = 4,
+				XP = 4500,
 				ZombieSpawnRate = 0.6,
-
-				BossStats = {
-					Health = 10000000000,
-				},
 			},
 
 			{
-				MinLevel = 112,
+				MinLevel = 52,
+				Style = Medium,
+
+				Gold = 32370,
+				Rooms = 6,
+				XP = 170000,
+				ZombieSpawnRate = 0.7,
+			},
+
+			{
+				MinLevel = 74,
+				Style = Hard,
+
+				Gold = 391670,
+				Rooms = 7,
+				XP = 7000000,
+				ZombieSpawnRate = 0.8,
+			},
+
+			{
+				MinLevel = 98,
 				Style = VeryHard,
 
-				Gold = 10240000,
-				Rooms = 8,
-				XP = 16200000000,
-				ZombieSpawnRate = 0.7,
-
-				BossStats = {
-					Health = 23100000000,
-				},
+				Gold = 5944950,
+				Rooms = 7,
+				XP = 500000000,
+				ZombieSpawnRate = 0.8,
 			},
 
 			{
 				MinLevel = 118,
 				Style = Extreme,
 
-				Gold = 20480000,
-				Rooms = 9,
-				XP = 39600000000,
+				Gold = 57346730,
+				Rooms = 7,
+				XP = 9000000000,
 				ZombieSpawnRate = 0.8,
-
-				BossStats = {
-					Health = 53500000000,
-				},
-			},
-
-			{
-				MinLevel = 124,
-				Style = Insane,
-
-				Gold = 40960000,
-				Rooms = 10,
-				XP = 99000000000,
-				ZombieSpawnRate = 0.9,
-
-				BossStats = {
-					Health = 123754536100,
-				},
-			},
-
-			{
-				MinLevel = 130,
-				Style = Impossible,
-
-				Gold = 81920000,
-				Rooms = 11,
-				XP = 117000000000,
-				ZombieSpawnRate = 1,
-
-				BossStats = {
-					Health = 286251761900,
-				},
 			},
 		},
 
@@ -997,84 +796,50 @@ local Campaigns = {
 
 		Stats = {
 			Common = {
-				Health = {
-					Base = 170000000,
-					Scale = 1.15,
-				},
-
-				Speed = {
-					Base = 17,
-					Scale = 1.0025,
-				},
-
-				Damage = {
-					Base = 25000000,
-					Scale = 1.105,
-				},
-
-				MaxHealthDamage = {
-					Base = 8,
-					Scale = 1.01,
-				},
+				Health = { 400, 1000, 1700, 3200, 3600 },
+				Damage = { 80, 180, 300, 550, 800 },
+				Speed = { 14, 14, 14, 15, 15 },
 			},
 
 			Gunslinger = {
-				Health = {
-					Base = 150000000,
-					Scale = 1.15,
-				},
-
-				Speed = {
-					Base = 9,
-					Scale = 1.0025,
-				},
-
-				Damage = {
-					Base = 15000000,
-					Scale = 1.105,
-				},
-
-				MaxHealthDamage = {
-					Base = 7,
-					Scale = 1.01,
-				},
-
-				ActivationTime = {
-					Base = 0.7,
-					Scale = 1,
-				},
+				Health = { 400, 1000, 1700, 3200, 3600 },
+				Damage = { 160, 360, 600, 1100, 1600 },
+				Speed = { 14, 14, 14, 15, 15 },
+				ActivationTime = constant(1.1),
+				Range = { 40, 40, 50, 50, 70 },
+				Cooldown = { 4, 4, 3, 3, 2 },
 			},
 
 			Shotgun = {
-				Health = {
-					Base = 140000000,
-					Scale = 1.15,
-				},
+				Health = { 600, 1200, 2300, 3500, 4200 },
+				Damage = { 80, 180, 300, 550, 800 },
+				Speed = { 15, 15, 15, 15, 16 },
+				ActivationTime = constant(1.1),
+				Range = { 30, 30, 30, 40, 50 },
+				Cooldown = { 4, 4, 3, 3, 2 },
+			},
 
-				Speed = {
-					Base = 11,
-					Scale = 1.0025,
-				},
+			Lasso = {
+				Health = { 5000, 6000, 7000, 8000, 10000 },
+				Damage = { 200, 500, 800, 1400, 2200 },
+				Cooldown = { 4, 3, 3, 3, 2 },
+				Speed = { 10, 11, 11, 11, 12 },
+			},
 
-				Damage = {
-					Base = 13000000,
-					Scale = 1.105,
-				},
+			Sniper = {
+				Health = { 300, 900, 1500, 2500, 3000 },
+				Damage = { 150, 300, 500, 900, 1200 },
+				Speed = constant(0),
+			},
 
-				MaxHealthDamage = {
-					Base = 6.5,
-					Scale = 1.01,
-				},
-
-				ActivationTime = {
-					Base = 0.7,
-					Scale = 1,
-				},
+			Boss = {
+				Health = { 15000, 25000, 50000, 195000, 265000 },
+				ShootFrenzyDamage = { 65, 150, 250, 300, 450 },
+				SummonCount = { 3, 4, 4, 4, 4 },
 			},
 		},
 
 		AIAggroRange = 90,
-		CompletionBadge = 2124500479,
 	},
 
 	{
@@ -1086,9 +851,9 @@ local Campaigns = {
 			Projectile = 1,
 			Strong = 1,
 		},
+		SpecialZombies = { "DarkMagic", "Enchanter" },
 		LoadingColor = Color3.fromRGB(155, 89, 182),
 		LockedArena = true,
-		Scales = true,
 		TreasureDelayTime = 2.5,
 
 		DropTable = {
@@ -1097,63 +862,53 @@ local Campaigns = {
 
 		Difficulties = {
 			{
-				TimesPlayed = 0,
+				MinLevel = 10,
 				Style = Easy,
 
-				Gold = 1,
-				XP = 1,
-				Rooms = 6,
-				ZombieSpawnRate = 0.5,
-
-				BossStats = {},
+				Gold = 280,
+				XP = 1500,
+				Rooms = 4,
+				ZombieSpawnRate = 0.3,
 			},
 
 			{
-				TimesPlayed = 4,
+				MinLevel = 36,
 				Style = Medium,
 
-				Gold = 1,
-				XP = 1,
-				Rooms = 7,
-				ZombieSpawnRate = 0.65,
-
-				BossStats = {},
+				Gold = 5280,
+				XP = 17000,
+				Rooms = 6,
+				ZombieSpawnRate = 0.35,
 			},
 
 			{
-				TimesPlayed = 14,
+				MinLevel = 60,
 				Style = Hard,
 
-				Gold = 1,
-				XP = 1,
-				Rooms = 10,
-				ZombieSpawnRate = 0.75,
-
-				BossStats = {},
+				Gold = 80140,
+				XP = 1200000,
+				Rooms = 7,
+				ZombieSpawnRate = 0.40,
 			},
 
 			{
-				TimesPlayed = 30,
+				MinLevel = 82,
 				Style = VeryHard,
 
-				Gold = 1,
-				XP = 1,
-				Rooms = 12,
-				ZombieSpawnRate = 0.9,
-
-				BossStats = {},
+				Gold = 969750,
+				XP = 50000000,
+				Rooms = 7,
+				ZombieSpawnRate = 0.4,
 			},
 
 			{
-				TimesPlayed = 60,
+				MinLevel = 102,
 				Style = Extreme,
 
-				Gold = 1,
-				XP = 1,
-				Rooms = 13,
-				ZombieSpawnRate = 1,
-
-				BossStats = {},
+				Gold = 9354490,
+				XP = 1400000000,
+				Rooms = 7,
+				ZombieSpawnRate = 0.45,
 			},
 		},
 
@@ -1185,157 +940,60 @@ local Campaigns = {
 
 		Stats = {
 			Common = {
-				Damage = NO_DAMAGE,
+				Damage = { 80, 190, 560, 635, 800 },
+				Health = { 210, 660, 1100, 2382, 2600 },
 				ReactionTime = TOWER_REACTION_TIME,
-
-				DamageReceivedScale = {
-					100 / 100,
-					100 / 110,
-					100 / 125,
-					100 / 155,
-					100 / 180,
-				},
-
-				MaxHealthDamage = {
-					15,
-					20,
-					25,
-					30,
-					35,
-				},
-
-				Speed = {
-					15,
-					16,
-					16.4,
-					16.8,
-					17.5,
-				},
+				Speed = { 14, 14.2, 14.4, 14.5, 14.75 },
 			},
 
 			Strong = {
-				Damage = NO_DAMAGE,
+				Damage = { 100, 240, 700, 800, 950 },
+				Health = { 440, 900, 1300, 2500, 3200 },
 				ReactionTime = TOWER_REACTION_TIME,
-
-				DamageReceivedScale = {
-					100 / 120,
-					100 / 135,
-					100 / 150,
-					100 / 180,
-					100 / 210,
-				},
-
-				MaxHealthDamage = {
-					20,
-					25,
-					30,
-					35,
-					40,
-				},
-
-				Speed = {
-					13,
-					14,
-					14.4,
-					14.8,
-					15.5,
-				},
+				Speed = { 13, 13.2, 13.4, 13.5, 13.75 },
 			},
 
 			Fast = {
-				Damage = NO_DAMAGE,
+				Damage = { 40, 95, 280, 315, 400 },
+				Health = { 110, 440, 660, 1542, 1700 },
 				ReactionTime = TOWER_REACTION_TIME,
-
-				DamageReceivedScale = {
-					100 / 90,
-					100 / 100,
-					100 / 115,
-					100 / 145,
-					100 / 170,
-				},
-
-				MaxHealthDamage = {
-					15,
-					25,
-					30,
-					35,
-					40,
-				},
-
-				Speed = {
-					17,
-					19,
-					19.4,
-					19.8,
-					20.5,
-				},
+				Speed = { 16, 16.2, 16.4, 16.5, 16.75 },
 			},
 
 			Projectile = {
-				Damage = NO_DAMAGE,
+				Damage = { 40, 95, 280, 315, 400 },
+				Health = { 100, 440, 660, 1542, 1700 },
 				ReactionTime = TOWER_REACTION_TIME,
-
-				DamageReceivedScale = {
-					100 / 90,
-					100 / 100,
-					100 / 115,
-					100 / 145,
-					100 / 170,
-				},
-
-				MaxHealthDamage = {
-					10,
-					15,
-					20,
-					20,
-					25,
-				},
-
-				Speed = {
-					15,
-					16,
-					16.4,
-					16.8,
-					17.5,
-				},
+				Speed = { 8, 9, 9, 9, 9 },
 			},
 
 			Ultra = {
-				Damage = NO_DAMAGE,
+				Damage = { 100, 240, 700, 800, 950 },
+				Health = { 880, 1800, 2600, 4500, 6000 },
+				ReactionTime = TOWER_REACTION_TIME,
+				Speed = { 13, 13.2, 13.4, 13.5, 13.75 },
+			},
 
-				DamageReceivedScale = {
-					100 / 300,
-					100 / 360,
-					100 / 420,
-					100 / 440,
-					100 / 500,
-				},
+			Enchanter = {
+				Damage = { 100, 240, 700, 800, 950 },
+				Health = { 440, 900, 1300, 2500, 3200 },
+				ReactionTime = TOWER_REACTION_TIME,
+				Speed = { 11, 12, 12, 12, 12 },
+				Buff = { 0.20, 0.22, 0.24, 0.26, 0.30 },
+			},
 
-				MaxHealthDamage = {
-					20,
-					25,
-					30,
-					35,
-					40,
-				},
-
-				Speed = {
-					17,
-					18,
-					18.5,
-					19,
-					19.5,
-				},
+			DarkMagic = {
+				Damage = { 80, 190, 560, 635, 800 },
+				Health = { 600, 1200, 1700, 3000, 3700 },
+				ReactionTime = TOWER_REACTION_TIME,
+				Speed = { 10, 11, 11, 11, 11 },
 			},
 
 			Boss = {
-				DamageReceivedScale = {
-					100 / 6000,
-					100 / 7400,
-					100 / 9001,
-					100 / 11000,
-					100 / 12500,
-				},
+				Health = { 11111, 20000, 42000, 169000, 245000 },
+				FlameBreathDamage = { 120, 220, 500, 600, 850 },
+				MagicMissilesDamage = { 120, 220, 500, 600, 850 },
+				MissileRingDamage = { 120, 220, 500, 600, 850 },
 			}
 		},
 

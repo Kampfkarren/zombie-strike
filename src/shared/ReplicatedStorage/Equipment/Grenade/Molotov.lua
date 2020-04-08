@@ -10,14 +10,21 @@ local Basic = require(script.Parent.Basic)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local LinearThenLogarithmic = require(ReplicatedStorage.Core.LinearThenLogarithmic)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local Raycast = require(ReplicatedStorage.Core.Raycast)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
-local BASE_DAMAGE = 55
-local BASE_DAMAGE_BETTER = BASE_DAMAGE * 1.5
-local DAMAGE_SCALE = 1.13
-local FIRE_LIFETIME = 6
+local BASE_DIRECT_DAMAGE = 10
+local FINAL_DIRECT_DAMAGE = 100
+
+local BASE_DPS = 6
+local FINAL_DPS = 60
+
+local MULTIPLIER = 15
+local BETTER_MULTIPLIER = 1.2
+
+local FIRE_LIFETIME = 8
 local SCALED_DAMAGE = 0.15
 
 local Molotov = {}
@@ -29,9 +36,8 @@ Molotov.Cooldown = 10
 
 Molotov.ClientEffect = Basic.ClientEffect
 
-local function getDamage(better, level)
-	return (better and BASE_DAMAGE_BETTER or BASE_DAMAGE) * DAMAGE_SCALE ^ (level - 1)
-end
+local getBurstDamage = LinearThenLogarithmic(BASE_DIRECT_DAMAGE, FINAL_DIRECT_DAMAGE, MULTIPLIER)
+local getDps = LinearThenLogarithmic(BASE_DPS, FINAL_DPS, MULTIPLIER)
 
 function Molotov.ServerEffect(player)
 	return Promise.new(function(resolve)
@@ -87,19 +93,32 @@ function Molotov.ServerEffect(player)
 
 				FastSpawn(function()
 					local delta = 1
+					local burst = true
 
 					while active do
 						for _, zombie in pairs(CollectionService:GetTagged("Zombie")) do
 							if zombie:IsDescendantOf(Workspace) then
 								local distance = (zombie.PrimaryPart.Position - fire.Position).Magnitude
 								if distance <= fire.Size.X then
-									local damage = getDamage(better, level)
+									local damage
+
+									if burst then
+										damage = getBurstDamage(level)
+									else
+										damage = getDps(level)
+									end
+
+									if better then
+										damage = damage * BETTER_MULTIPLIER
+									end
+
 									Basic.DealDamage(player, zombie, damage * delta, SCALED_DAMAGE * delta)
 								end
 							end
 						end
 
 						delta = wait(1)
+						burst = false
 					end
 				end)
 

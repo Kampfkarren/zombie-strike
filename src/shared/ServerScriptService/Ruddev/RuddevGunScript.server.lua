@@ -13,8 +13,10 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES.Config)
 	local DAMAGE = require(MODULES.Damage)
 
+local DamageCalculations = require(ReplicatedStorage.Core.DamageCalculations)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Effects = require(ReplicatedStorage.RuddevModules.Effects)
+local GetCharacter = require(ReplicatedStorage.Core.GetCharacter)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local GunSpray = require(ReplicatedStorage.Core.GunSpray)
 
@@ -72,7 +74,8 @@ local function hit(player, hit, index)
 	local shot = shots[player]
 
 	if shot then
-		local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
+		local character = GetCharacter(hit)
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 		if humanoid then
 			if DAMAGE:PlayerCanDamage(player, humanoid) then
 				local position = shot.Position
@@ -112,13 +115,14 @@ local function hit(player, hit, index)
 							local damageReceivedScale = humanoid:FindFirstChild("DamageReceivedScale")
 							if damageReceivedScale then
 								lyingDamage = damage
-								damage = (1 / config.FireRate)
-									* config.ScaleBuff
-									* damageReceivedScale.Value
-									* 100
+								-- damage = (1 / config.FireRate)
+								-- 	* config.ScaleBuff
+								-- 	* damageReceivedScale.Value
+								-- 	* 100
+								damage = DamageCalculations.GetDamageNeededForDPS(config, damageReceivedScale.Value * 100)
 							end
 
-							DAMAGE:Damage(humanoid, damage, player, config.CritChance, lyingDamage)
+							DAMAGE:Damage(humanoid, damage, player, config.CritChance, config.CritDamage, lyingDamage)
 
 							if humanoid.Health <= 0 then
 								if hit.Name == "Head" then

@@ -15,6 +15,8 @@ local PLAYER = Players.LocalPlayer
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
+local Stun = require(ReplicatedStorage.Core.Stun)
+
 local PlayerModule = require(PLAYER.PlayerScripts:WaitForChild("PlayerModule"))
 local controls = PlayerModule:GetControls()
 
@@ -75,7 +77,7 @@ RunService:BindToRenderStep("Control", Enum.RenderPriority.Input.Value - 1, func
 		-- input
 		local input = Vector3.new()
 
-		if not UserInputService:GetFocusedTextBox() then
+		if not UserInputService:GetFocusedTextBox() and not Stun.IsStunned() then
 			if UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
 				input = input + Vector3.new(0, 0, -1)
 			end

@@ -1,4 +1,8 @@
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+
+local GetCharacter = require(ReplicatedStorage.Core.GetCharacter)
 
 local function Raycast(position, direction, ignore)
 	local ray = Ray.new(position, direction)
@@ -11,14 +15,17 @@ local function Raycast(position, direction, ignore)
 		h, p, n = Workspace:FindPartOnRayWithIgnoreList(ray, ignore)
 
 		if h then
-			humanoid = h.Parent:FindFirstChildOfClass("Humanoid")
+			local character = GetCharacter(h)
+			humanoid = character and character.Humanoid
 			if humanoid and humanoid.Health <= 0 then
 				humanoid = nil
 			end
 			if humanoid then
 				success = true
 			else
-				if h.CanCollide and h.Transparency < 1 then
+				if (h.CanCollide and h.Transparency < 1)
+					or CollectionService:HasTag(h, "Hitbox")
+				then
 					success = true
 				else
 					table.insert(ignore, h)

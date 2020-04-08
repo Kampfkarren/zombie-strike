@@ -11,5 +11,6 @@ Cmdr.Registry:AddHook("BeforeRun", function(context)
 end)
 
 Cmdr:RegisterDefaultCommands()
+Cmdr:RegisterTypesIn(ServerScriptService.Shared.CmdrTypes)
 Cmdr:RegisterCommandsIn(ServerScriptService.Commands)
 Cmdr:RegisterCommandsIn(ServerScriptService.Shared.Commands)

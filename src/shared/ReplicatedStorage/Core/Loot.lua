@@ -216,8 +216,20 @@ function Loot.GetLootName(loot)
 	return qualityName .. model.ItemName.Value
 end
 
+function Loot.IsArmor(loot)
+	return loot.Type == "Armor"
+end
+
+function Loot.IsHelmet(loot)
+	return loot.Type == "Helmet"
+end
+
 function Loot.IsWearable(loot)
-	return loot.Type == "Armor" or loot.Type == "Helmet"
+	return Loot.IsArmor(loot) or Loot.IsHelmet(loot)
+end
+
+function Loot.IsGunSkin(loot)
+	return loot.Type == "GunLowTier" or loot.Type == "GunHighTier"
 end
 
 function Loot.IsWeapon(loot)

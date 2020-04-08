@@ -6,7 +6,9 @@ local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local GetStats = require(ReplicatedStorage.Libraries.GetStats)
 local PlaySound = require(ReplicatedStorage.Core.PlaySound)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local Assets = ReplicatedStorage.Assets.Campaign.Campaign2.Boss
 local LocalPlayer = Players.LocalPlayer
@@ -15,7 +17,6 @@ local QuadLaser = ReplicatedStorage.Remotes.FactoryBoss.QuadLaser
 local OSCILLATE_SIZE = 0.2
 local OSCILLATE_TIME = 0.1
 
-local QUAD_LASER_TIME = 3
 local ROTATE_RATE = 0.25
 
 local TUBES = 8
@@ -29,8 +30,9 @@ end
 local boss = CollectionService:GetInstanceAddedSignal("Boss"):wait()
 
 local laserTubes = boss:WaitForChild("BaseSegment"):WaitForChild("LaserTubes")
+local stats = GetStats().Boss
 
-QuadLaser.OnClientEvent:connect(function(activeTimer)
+QuadLaser.OnClientEvent:connect(function()
 	for tubeIndex = 1, TUBES do
 		local base = laserTubes["LaserTube" .. tubeIndex]
 		local laser = Assets.QuadLaser:Clone()
@@ -70,11 +72,11 @@ QuadLaser.OnClientEvent:connect(function(activeTimer)
 
 		laser.Parent = Workspace
 
-		delay(QUAD_LASER_TIME, function()
+		RealDelay(stats.QuadLaserChargeTime, function()
 			shooting = true
 			laser.Color = Color3.new(1, 0, 0)
 			PlaySound(SoundService.SFX.Laser.Big)
-			delay(activeTimer, function()
+			RealDelay(stats.QuadLaserTime, function()
 				laserConnection:disconnect()
 				laser:Destroy()
 			end)

@@ -26,37 +26,26 @@ local BOSS_DEATH_DELAY = 4.5
 local CityBoss = {}
 CityBoss.__index = CityBoss
 
-CityBoss.BoulderDamageScale = {
-	[1] = 60,
-	[6] = 90,
-	[12] = 340,
-	[18] = 950,
-	[24] = 2300,
+CityBoss.BoulderDamage = {
+	{ 50, 2 },
+	{ 110, 4 },
+	{ 190, 4 },
+	{ 600, 5 },
+	{ 1100, 8 },
 }
 
-CityBoss.SlamCount = {
-	[1] = 2,
-	[6] = 3,
-	[12] = 3,
-	[18] = 4,
-	[24] = 5,
+CityBoss.SlamCount = { 2, 3, 4, 5, 6 }
+
+CityBoss.SlamDamage = {
+	{ 15, 1.5 },
+	{ 90, 3 },
+	{ 190, 4 },
+	{ 600, 5 },
+	{ 1100, 8 },
 }
 
-CityBoss.SlamDamageScale = {
-	[1] = 15,
-	[6] = 27,
-	[12] = 72,
-	[18] = 270,
-	[24] = 630,
-}
-
-CityBoss.SummonZombieScale = {
-	[1] = 3,
-	[6] = 5,
-	[12] = 7,
-	[18] = 8,
-	[24] = 9,
-}
+CityBoss.SlamInterval = { 1.5, 1.3, 1.1, 1.1, 1.1 }
+CityBoss.SummonCount = { 3, 4, 7, 8, 9 }
 
 CityBoss.Name = "Giga Zombie"
 CityBoss.Model = "Boss"
@@ -101,16 +90,14 @@ function CityBoss:AfterSpawn()
 		self:SummonZombies()
 	end)
 
-	self.slamAnimation = instance.Humanoid:LoadAnimation(Assets.SlamAnimation)
-
 	HitByBoulder.OnServerEvent:connect(function(player)
 		local character = player.Character
 		if character then
-			local damage = CityBoss.BoulderDamageScale[self.level]
-			if not damage then
-				warn("CityBoss.HitByBoulder: no damage scale for " .. self.level)
-				damage = 60
-			end
+			local damage = self:GetDamageAgainstConstant(
+				player,
+				unpack(CityBoss.BoulderDamage[Dungeon.GetDungeonData("Difficulty")])
+			)
+
 			TakeDamage(player, damage)
 		end
 	end)
@@ -118,11 +105,11 @@ function CityBoss:AfterSpawn()
 	HitBySlam.OnServerEvent:connect(function(player)
 		local character = player.Character
 		if character then
-			local damage = CityBoss.SlamDamageScale[self.level]
-			if not damage then
-				warn("CityBoss.HitBySlam: no damage scale for " .. self.level)
-				damage = 60
-			end
+			local damage = self:GetDamageAgainstConstant(
+				player,
+				unpack(CityBoss.SlamDamage[Dungeon.GetDungeonData("Difficulty")])
+			)
+
 			TakeDamage(player, damage)
 		end
 	end)
@@ -202,11 +189,10 @@ function CityBoss:RockTossThrow()
 	Debris:AddItem(self.boulder)
 end
 
-function CityBoss:Slam()
-	for _ = 1, CityBoss.SlamCount[self.level] do
-		self.slamAnimation:Play()
-		wait(1.5)
-	end
+function CityBoss.Slam()
+	local difficulty = Dungeon.GetDungeonData("Difficulty")
+	HitBySlam:FireAllClients()
+	wait(CityBoss.SlamInterval[difficulty] * CityBoss.SlamCount[difficulty])
 end
 
 function CityBoss:SummonZombiesBegin()
@@ -214,7 +200,7 @@ function CityBoss:SummonZombiesBegin()
 end
 
 function CityBoss:SummonZombies()
-	local amountToSummon = CityBoss.SummonZombieScale[self.level]
+	local amountToSummon = CityBoss.SummonCount[Dungeon.GetDungeonData("Difficulty")]
 
 	local zombieSummon = self.bossRoom.ZombieSummon
 	local basePosition = zombieSummon.Position

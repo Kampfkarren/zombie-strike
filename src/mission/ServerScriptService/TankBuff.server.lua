@@ -4,16 +4,21 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local CircleEffect = require(ReplicatedStorage.Core.CircleEffect)
-local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local DealZombieDamage = require(ServerScriptService.Shared.DealZombieDamage)
 local DungeonState = require(ServerScriptService.DungeonState)
 local Maid = require(ReplicatedStorage.Core.Maid)
+local LinearThenLogarithmic = require(ReplicatedStorage.Core.LinearThenLogarithmic)
 
 local CircleEffectRemote = ReplicatedStorage.Remotes.CircleEffect
 
-local DAMAGE_BASE = 50
+local BASE_DAMAGE = 20
+local FINAL_DAMAGE = 350
+local MULTIPLIER = 15
+
 local DAMAGE_INTERVAL = 1
-local DAMAGE_SCALE = 1.13
 local SCALED_DAMAGE = 0.2
+
+local getDamage = LinearThenLogarithmic(BASE_DAMAGE, FINAL_DAMAGE, MULTIPLIER)
 
 local active = false
 local maid = Maid.new()
@@ -36,7 +41,7 @@ ReplicatedStorage.CurrentPowerup.Changed:connect(function(powerup)
 					:WaitForChild("PlayerData")
 					:WaitForChild("Level")
 					.Value
-				local damage = math.floor(DAMAGE_BASE * (DAMAGE_SCALE ^ (level - 1)))
+				local damage = getDamage(level)
 				local character = player.Character
 
 				if character and character.Humanoid.Health > 0 then
@@ -56,7 +61,7 @@ ReplicatedStorage.CurrentPowerup.Changed:connect(function(powerup)
 										damage = humanoid.MaxHealth * SCALED_DAMAGE
 									end
 
-									humanoid:TakeDamage(damage)
+									DealZombieDamage(humanoid, damage)
 									ReplicatedStorage.RuddevEvents.Damaged:Fire(humanoid, damage, player)
 									ReplicatedStorage.Remotes.DamageNumber:FireAllClients(humanoid, damage)
 								end

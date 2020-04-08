@@ -11,13 +11,13 @@ local function possession(dataName, remote)
 
 	remote.OnServerEvent:connect(function(player, index)
 		if type(index) ~= "number" then
-			warn(remote .. ": index is not a number")
+			warn(tostring(index) .. ": index is not a number")
 			return
 		end
 
 		local data, dataStore = Data.GetPlayerData(player, dataName)
 		if table.find(data.Owned, index) == nil then
-			warn(remote .. ": player equipping possession they don't own")
+			warn(tostring(index) .. ": player equipping possession they don't own")
 			return
 		end
 

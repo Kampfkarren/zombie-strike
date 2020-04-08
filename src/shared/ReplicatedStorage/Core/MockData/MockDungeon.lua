@@ -1,14 +1,14 @@
 -- ARENA
 -- return {
--- 	Campaign = 4,
--- 	ArenaLevel = 100,
+-- 	Campaign = 3,
+-- 	ArenaLevel = 10,
 -- 	Gamemode = "Arena",
 -- 	Members = { 56140227 },
 -- }
 
 -- BOSS
 -- return {
--- 	Boss = 2,
+-- 	Boss = 3,
 -- 	Gamemode = "Boss",
 -- 	Hardcore = false,
 -- 	Members = { 56140227 },
@@ -16,9 +16,9 @@
 
 -- DUNGEON
 return {
-	Campaign = 6,
-	Difficulty = 1,
+	Campaign = 1,
+	Difficulty = 3,
 	Gamemode = "Mission",
-	Hardcore = true,
+	Hardcore = false,
 	Members = { 56140227 },
 }

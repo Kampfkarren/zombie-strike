@@ -6,6 +6,7 @@ local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local GetStats = require(ReplicatedStorage.Libraries.GetStats)
 local PlaySound = require(ReplicatedStorage.Core.PlaySound)
 
 local Camera = Workspace.CurrentCamera
@@ -17,7 +18,6 @@ local SlamAnimation = ReplicatedStorage.Assets.Campaign.Campaign4.Boss.SlamAnima
 
 local RANGE = 500
 local RING_DELAY = 0.75
-local RINGS = 3
 local SIZE_TWEEN = TweenInfo.new(
 	6,
 	Enum.EasingStyle.Sine,
@@ -26,6 +26,7 @@ local SIZE_TWEEN = TweenInfo.new(
 
 if Dungeon.GetDungeonData("Campaign") ~= 4 then return end
 
+local stats = GetStats().Boss
 local boss = CollectionService:GetInstanceAddedSignal("Boss"):wait()
 
 local animation = boss:WaitForChild("Humanoid"):LoadAnimation(SlamAnimation)
@@ -56,7 +57,7 @@ animation.KeyframeReached:connect(function()
 	Shake:Fire(direction * 15)
 	PlaySound(SoundService.ZombieSounds["4"].Boss.Impact)
 
-	for _ = 1, RINGS do
+	for _ = 1, stats.SlamRings do
 		fireRing()
 		wait(RING_DELAY)
 	end

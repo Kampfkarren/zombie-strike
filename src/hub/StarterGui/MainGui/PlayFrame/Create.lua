@@ -216,7 +216,9 @@ function Create:init()
 			local selectedLocation
 
 			for locationIndex, location in pairs(gamemode.Locations) do
-				if location.Name == self.state.campaign.Name then
+				if location.Name == self.state.campaign.Name
+					or location.PickMe
+				then
 					selectedLocation = locationIndex
 					break
 				end
@@ -284,16 +286,20 @@ function Create:render()
 
 	for locationIndex, location in ipairs(self.state.gamemode.Locations) do
 		local campaignDisabled = false
+		local layoutOrder = locationIndex
 
 		if location.Difficulties then
 			campaignDisabled = self.state.level < (location.Difficulties[1].MinLevel or 0)
+			layoutOrder = location.Difficulties[1].MinLevel
+		elseif location.LayoutOrder ~= nil then
+			layoutOrder = location.LayoutOrder
 		end
 
 		table.insert(mapsChildren, e(BigButton, {
 			Color = Color3.fromRGB(36, 171, 157),
 			Disabled = campaignDisabled,
 			Name = location.Name,
-			LayoutOrder = locationIndex,
+			LayoutOrder = layoutOrder,
 			Selected = location == self.state.campaign,
 			OnClick = self.selectLocation(locationIndex),
 		}))

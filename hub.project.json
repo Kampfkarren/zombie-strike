@@ -10,6 +10,13 @@
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$path": "out/hub/ReplicatedStorage",
+      "Assets": {
+        "$className": "Folder",
+        "$ignoreUnknownInstances": true,
+        "Tarmac": {
+          "$path": "assets"
+        }
+      },
       "Core": {
         "$path": "out/shared/ReplicatedStorage/Core"
       },

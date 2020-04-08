@@ -3,13 +3,14 @@ local RunService = game:GetService("RunService")
 
 local defaultAnimations = {
 	[Enum.HumanoidStateType.Climbing] = script.Animations.climb.ClimbAnim,
-	[Enum.HumanoidStateType.FallingDown] = script.Animations.fall.FallAnim,
+	-- [Enum.HumanoidStateType.FallingDown] = script.Animations.fall.FallAnim,
 }
 
 local function hookZombie(zombie)
 	if zombie:FindFirstChild("NoAnimations") ~= nil then return end
 
 	local animations = {}
+	local lastAnimation
 	local humanoid = zombie:WaitForChild("Humanoid")
 
 	for key, value in pairs(defaultAnimations) do
@@ -24,11 +25,23 @@ local function hookZombie(zombie)
 			:WaitForChild("Animation1")
 	)
 
-	local run = humanoid:LoadAnimation(
-		zombieAnimations
-			:WaitForChild("run")
-			:WaitForChild("RunAnim")
-	)
+	idle:Play()
+
+	local runAnim = zombieAnimations
+		:WaitForChild("run")
+		:WaitForChild("RunAnim")
+	local run = humanoid:LoadAnimation(runAnim)
+
+	runAnim:GetPropertyChangedSignal("AnimationId"):connect(function()
+		local oldRun = run
+		run = humanoid:LoadAnimation(runAnim)
+
+		if oldRun.IsPlaying then
+			oldRun:Stop()
+			lastAnimation = run
+			run:Play()
+		end
+	end)
 
 	local walk = humanoid:LoadAnimation(
 		zombieAnimations
@@ -37,8 +50,6 @@ local function hookZombie(zombie)
 	)
 
 	walk:AdjustSpeed(0.2)
-
-	local lastAnimation
 
 	zombie.Humanoid.StateChanged:connect(function(_, new)
 		if animations[new] then
@@ -66,6 +77,11 @@ local function hookZombie(zombie)
 			end
 		end
 	end)
+
+	local pose = zombieAnimations:FindFirstChild("Pose")
+	if pose ~= nil then
+		zombie.Humanoid:LoadAnimation(pose):Play()
+	end
 end
 
 CollectionService:GetInstanceAddedSignal("Zombie"):connect(hookZombie)

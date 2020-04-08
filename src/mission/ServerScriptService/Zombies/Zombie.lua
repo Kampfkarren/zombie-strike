@@ -15,7 +15,6 @@ local ExperienceUtil = require(ServerScriptService.Libraries.ExperienceUtil)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GetAssetsFolder = require(ReplicatedStorage.Libraries.GetAssetsFolder)
 local Maid = require(ReplicatedStorage.Core.Maid)
-local MapNumbers = require(ReplicatedStorage.Core.MapNumbers)
 local Nametag = require(ServerScriptService.Shared.Nametag)
 local OnDied = require(ReplicatedStorage.Core.OnDied)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -25,6 +24,8 @@ local AMOUNT_FOR_NOT_BOSS = 0.7
 local DEBUG = false
 local DRS_PER_PLAYER = 0.5
 local LIFETIME = 4
+
+local allZombies = {}
 
 local Zombie = {}
 Zombie.__index = Zombie
@@ -38,6 +39,7 @@ Zombie.AttackRange = 5
 Zombie.WanderSpeed = 5
 
 function Zombie:Destroy()
+	self.aliveMaid:DoCleaning()
 	self.maid:DoCleaning()
 end
 
@@ -82,13 +84,6 @@ function Zombie:Spawn(position)
 		end
 	end
 
-	if DungeonState.CurrentGamemode.Scales() then
-		local damageReceivedScale = Instance.new("NumberValue")
-		damageReceivedScale.Name = "DamageReceivedScale"
-		damageReceivedScale.Value = self:GetDamageReceivedScale()
-		damageReceivedScale.Parent = humanoid
-	end
-
 	self:SetupHumanoid()
 	self:UpdateNametag()
 	self:InitializeAI()
@@ -115,6 +110,13 @@ function Zombie:SetupHumanoid()
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, false)
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming, false)
+
+	if DungeonState.CurrentGamemode.Scales() then
+		local damageReceivedScale = Instance.new("NumberValue")
+		damageReceivedScale.Name = "DamageReceivedScale"
+		damageReceivedScale.Value = self:GetDamageReceivedScale()
+		damageReceivedScale.Parent = humanoid
+	end
 
 	OnDied(humanoid):connect(function()
 		self:UpdateNametag()
@@ -360,6 +362,7 @@ function Zombie:AssignAggroFocus(force)
 	if #players == 0 then
 		self:Debug("AssignAggroFocus: All players have left")
 		self.aggroFocus = nil
+		self:AggroTargetChanged(nil)
 		self:Wander()
 		return
 	end
@@ -386,6 +389,8 @@ function Zombie:AssignAggroFocus(force)
 			end
 		end
 	end
+
+	self:AggroTargetChanged(self.aggroFocus)
 
 	if self.aggroFocus then
 		self:Debug("Aggro focus chosen: " .. self.aggroFocus.Name)
@@ -428,6 +433,37 @@ function Zombie:Die()
 	RealDelay(LIFETIME, function()
 		self:Destroy()
 	end)
+end
+
+function Zombie:TakeDamage(damage)
+	local defenseBuffs = self.buffs.Defense
+
+	if defenseBuffs then
+		for buff in pairs(defenseBuffs) do
+			damage = damage * (1 - buff.Amount)
+		end
+	end
+
+	self.instance.Humanoid:TakeDamage(damage)
+end
+
+function Zombie:GiveBuff(scaleName, amount)
+	if self.buffs[scaleName] == nil then
+		self.buffs[scaleName] = {}
+	end
+
+	local result
+
+	result = {
+		Amount = amount,
+		Destroy = function()
+			self.buffs[scaleName][result] = nil
+		end,
+	}
+
+	self.buffs[scaleName][result] = true
+
+	return result
 end
 
 function Zombie:MaybeDropBuff()
@@ -481,28 +517,19 @@ function Zombie:GetScale(key)
 			"Zombie constants not found for " .. self.zombieType
 		)
 
-		if key == "Damage" then
-			key = "Health" -- Health matches damage for arena
-		end
-
 		local stat = assert(zombieData[key], self.zombieType .. " did not have stat " .. key)
 		if typeof(stat) == "number" then
 			return stat
 		else
-			local floor
-			for index, step in ipairs(stat) do
-				if step.Step <= self.level then
-					floor = { index, step }
-				else
-					break
-				end
+			local function lerp(a, b, t)
+				return a + (b - a) * t
 			end
 
-			local ceilStat = stat[floor[1] + 1]
-			local ceil = ceilStat or { Step = 0, Number = 0 }
-			floor = floor[2]
+			if self.level >= ArenaConstants.StopBeingLinearLevel then
+				return stat.Max * (ArenaConstants.PastCapMultiplier ^ (self.level - ArenaConstants.StopBeingLinearLevel))
+			end
 
-			return MapNumbers(floor.Step, floor.Number, ceil.Step, ceil.Number, self.level)
+			return lerp(stat.Min, stat.Max, (self.level - 1) / (ArenaConstants.StopBeingLinearLevel - 1))
 		end
 	else
 		local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
@@ -514,10 +541,12 @@ function Zombie:GetScale(key)
 		)
 
 		if scale.Base == nil then
-			return assert(
+			local number = assert(
 				scale[Dungeon.GetDungeonData("Difficulty")],
 				"difficulty locked scaling has no key for " .. key
 			)
+
+			return number
 		end
 
 		local scaleAmount = 1
@@ -602,6 +631,12 @@ function Zombie:UpdateNametag()
 		nametag.Health.HealthNumber.Visible = false
 	end
 
+	local campaignInfo = Dungeon.GetDungeonData("CampaignInfo")
+	if campaignInfo and table.find(campaignInfo.SpecialZombies, self.Model) then
+		nametag.EnemyName.TextColor3 = Color3.new(1, 1, 0.5)
+		nametag.EnemyName.Text = "⭐" .. self:GetName()
+	end
+
 	return nametag
 end
 
@@ -609,10 +644,15 @@ function Zombie.Disappeared()
 	return false
 end
 
+function Zombie.ShouldSpawn()
+	return true
+end
+
 -- START BASIC HOOKS
 function Zombie.CustomScale() end
 function Zombie.AfterDeath() end
 function Zombie.AfterSpawn() end
+function Zombie.AggroTargetChanged() end
 -- END BASIC HOOKS
 
 -- START SOUNDS
@@ -649,6 +689,24 @@ function Zombie:GetModel()
 	return folder[self.Model]:Clone()
 end
 
+function Zombie.GetZombies()
+	local zombies = {}
+	for zombie in pairs(allZombies) do
+		table.insert(zombies, zombie)
+	end
+	return zombies
+end
+
+function Zombie.GetAliveZombies()
+	local zombies = {}
+	for zombie in pairs(allZombies) do
+		if zombie.alive then
+			table.insert(zombies, zombie)
+		end
+	end
+	return zombies
+end
+
 function Zombie.new(zombieType, level, ...)
 	assert(zombieType)
 	local originalZombie = require(script.Parent[zombieType])
@@ -667,10 +725,11 @@ function Zombie.new(zombieType, level, ...)
 	local damagedEvent = Instance.new("BindableEvent")
 	local diedEvent = Instance.new("BindableEvent")
 
-	return setmetatable({
+	local zombieInstance = setmetatable({
 		alive = true,
 		aliveMaid = aliveMaid,
 		aggroTick = 0,
+		buffs = {},
 		damagedEvent = damagedEvent,
 		diedEvent = diedEvent,
 		instance = instance,
@@ -686,6 +745,14 @@ function Zombie.new(zombieType, level, ...)
 				or Zombie[key]
 		end,
 	})
+
+	maid:GiveTask(function()
+		allZombies[zombieInstance] = nil
+	end)
+
+	allZombies[zombieInstance] = true
+
+	return zombieInstance
 end
 
 return Zombie

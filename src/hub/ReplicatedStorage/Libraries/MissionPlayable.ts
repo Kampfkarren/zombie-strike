@@ -12,7 +12,7 @@ function MissionPlayable(
 	const difficulty = campaign.Difficulties[difficultyIndex - 1]
 
 	if (difficulty === undefined) {
-		return [false, 0]
+		return [false, 0] as LuaTuple<[boolean, number?]>
 	}
 
 	if (difficulty.MinLevel !== undefined) {
@@ -21,7 +21,7 @@ function MissionPlayable(
 			: Data.GetLocalPlayerData("Level")
 
 		if (level < difficulty.MinLevel) {
-			return [false, 1]
+			return [false, 1] as LuaTuple<[boolean, number?]>
 		}
 	}
 
@@ -36,11 +36,11 @@ function MissionPlayable(
 		}
 
 		if (timesPlayedCampaign < difficulty.TimesPlayed) {
-			return [false, 2]
+			return [false, 2] as LuaTuple<[boolean, number?]>
 		}
 	}
 
-	return [true, undefined]
+	return [true, undefined] as LuaTuple<[boolean, number?]>
 }
 
 export = MissionPlayable

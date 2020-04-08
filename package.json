@@ -11,7 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "@rbxts/roact": "^1.1.6",
-    "@rbxts/services": "^1.0.3",
-    "@rbxts/types": "^1.0.320"
+    "@rbxts/services": "^1.0.4",
+    "@rbxts/types": "^1.0.345"
   }
 }

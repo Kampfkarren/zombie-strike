@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
 local Input = require(ReplicatedStorage.RuddevModules.Input)
+local State = require(ReplicatedStorage.State)
 
 local MobileButtons = script.Parent.MobileButtons
 
@@ -36,5 +37,13 @@ MobileButtons.Shoot.InputEnded:connect(function(inputObject)
 	end
 end)
 
-MobileButtons.Visible = UserInputService.TouchEnabled
-MobileButtons.Shoot.Visible = ReplicatedStorage.HubWorld.Value
+local function updateVisibility()
+	local state = State:getState()
+	local hideUi = state.hideUi and state.hideUi > 0
+
+	MobileButtons.Visible = UserInputService.TouchEnabled and not hideUi
+	MobileButtons.Shoot.Visible = ReplicatedStorage.HubWorld.Value and not hideUi
+end
+
+updateVisibility()
+State.changed:connect(updateVisibility)

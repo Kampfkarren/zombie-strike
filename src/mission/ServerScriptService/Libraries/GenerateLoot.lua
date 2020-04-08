@@ -71,24 +71,23 @@ local function getModel(type, rarity)
 end
 
 local function nextDungeonLevel()
-	local difficulty = Dungeon.GetDungeonData("Difficulty")
-	local difficulties = Dungeon.GetDungeonData("CampaignInfo").Difficulties
+	local unavailable = {}
 
-	if #difficulties == difficulty then
-		-- Last difficulty
-		local campaign = Dungeon.GetDungeonData("Campaign")
-
-		if #Campaigns == campaign then
-			-- Last campaign!
-			return nil
-		else
-			-- There's a next campaign
-			return Campaigns[campaign + 1].Difficulties[1].MinLevel
+	for _, campaign in ipairs(Campaigns) do
+		if campaign.Difficulties[1].MinLevel ~= nil then
+			for _, difficulty in ipairs(campaign.Difficulties) do
+				if difficulty.MinLevel > Dungeon.GetDungeonData("DifficultyInfo").MinLevel then
+					table.insert(unavailable, difficulty)
+				end
+			end
 		end
-	else
-		-- Not last difficulty
-		return difficulties[difficulty + 1].MinLevel
 	end
+
+	table.sort(unavailable, function(a, b)
+		return a.MinLevel < b.MinLevel
+	end)
+
+	return unavailable[1] and unavailable[1].MinLevel
 end
 
 local function getLootLevel(player)
@@ -216,7 +215,14 @@ local function getLootRarity(player)
 	return 1
 end
 
-local function randomGunType()
+local function randomGunType(player)
+	if player ~= nil
+		and Dungeon.GetDungeonData("Gamemode") == "Mission"
+		and Data.GetPlayerData(player, "DungeonsPlayed") == FREE_EPIC_AFTER
+	then
+		return "Rifle"
+	end
+
 	local rng = Random.new()
 	local types = {}
 
@@ -270,7 +276,7 @@ local function generateLootItem(player)
 			and bossLoot.Helmet == nil
 		)
 	then
-		local type = randomGunType()
+		local type = randomGunType(player)
 
 		local funny = rng:NextInteger(0, 35)
 

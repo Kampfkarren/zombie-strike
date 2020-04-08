@@ -164,7 +164,7 @@ end
 -- 	animations.Emotes[animation.Name]	= HUMANOID:LoadAnimation(animation)
 -- end)
 
-for _, animation in pairs(ANIMATIONS.Movement:GetChildren()) do
+for _, animation in pairs(ANIMATIONS:WaitForChild("Movement"):GetChildren()) do
 	local animation = HUMANOID:LoadAnimation(animation)
 
 	animation.KeyframeReached:connect(function(keyframe)

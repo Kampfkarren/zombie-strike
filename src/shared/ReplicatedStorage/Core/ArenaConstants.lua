@@ -1,152 +1,123 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Campaigns = require(ReplicatedStorage.Core.Campaigns)
+
+local function stat(min, max)
+	return {
+		Min = min,
+		Max = max,
+	}
+end
+
+local function medium(campaignIndex, zombieName, statName)
+	return assert(Campaigns[campaignIndex].Stats[zombieName][statName][2])
+end
+
 return {
 	LevelStep = 20,
 	MaxLevel = 200,
+	PastCapMultiplier = 1.02,
+	StopBeingLinearLevel = 70,
 
 	BannedZombies = {
 		Bomber = true,
 		Turret = true,
+		Sniper = true,
 	},
 
 	Zombies = {
 		Common = {
-			Health = {
-				{ Step = 1,		Number = 40 },
-				{ Step = 10,	Number = 90 },
-				{ Step = 20,	Number = 700 },
-				{ Step = 30,	Number = 1_919 },
-				{ Step = 40,	Number = 6_000 },
-				{ Step = 50,	Number = 30_000 },
-				{ Step = 60,	Number = 127_000 },
-				{ Step = 70,	Number = 500_000 },
-				{ Step = 80,	Number = 2_000_000 },
-				{ Step = 90,	Number = 8_400_000 },
-				{ Step = 100,	Number = 33_333_333 },
-				{ Step = 110,	Number = 133_333_333 },
-				{ Step = 120,	Number = 566_666_666 },
-				{ Step = 130,	Number = 2_253_720_997 },
-				{ Step = 140,	Number = 9_117_558_414 },
-				{ Step = 150,	Number = 36_885_608_974 },
-				{ Step = 160,	Number = 49_740_953_573 },
-				{ Step = 170,	Number = 603_689_698_534 },
-				{ Step = 180,	Number = 2_442_261_529_874 },
-				{ Step = 190,	Number = 9_880_310_024_806 },
-				{ Step = 200,	Number = 39_971_364_652_046 },
-			},
-
-			Speed = 15,
+			Health = stat(50, 2000),
+			Damage = stat(25, 500),
+			Speed = stat(13, 14),
 		},
 
 		Strong = {
-			Health = {
-				{ Step = 1,		Number = 50 },
-				{ Step = 10,	Number = 112 },
-				{ Step = 20,	Number = 875 },
-				{ Step = 30,	Number = 1_919 },
-				{ Step = 40,	Number = 7_500 },
-				{ Step = 50,	Number = 37_500 },
-				{ Step = 60,	Number = 158_750 },
-				{ Step = 70,	Number = 625_000 },
-				{ Step = 80,	Number = 2_500_000 },
-				{ Step = 90,	Number = 10_500_000 },
-				{ Step = 100,	Number = 41_666_666 },
-				{ Step = 110,	Number = 166_666_666 },
-				{ Step = 120,	Number = 708_333_333 },
-				{ Step = 130,	Number = 2_817_151_246 },
-				{ Step = 140,	Number = 11_396_948_017 },
-				{ Step = 150,	Number = 46_107_011_217 },
-				{ Step = 160,	Number = 62_176_191_967 },
-				{ Step = 170,	Number = 754_612_123_167 },
-				{ Step = 180,	Number = 3_052_826_912_342 },
-				{ Step = 190,	Number = 12_350_387_531_007 },
-				{ Step = 200,	Number = 49_964_205_815_057 },
-			},
-
-			Speed = 13.5,
+			Health = stat(100, 3000),
+			Damage = stat(35, 600),
+			Speed = stat(12, 12.5),
 		},
 
 		Fast = {
-			Health = {
-				{ Step = 1,		Number = 26 },
-				{ Step = 10,	Number = 58 },
-				{ Step = 20,	Number = 455 },
-				{ Step = 30,	Number = 1_247 },
-				{ Step = 40,	Number = 3_900 },
-				{ Step = 50,	Number = 19_500 },
-				{ Step = 60,	Number = 82_550 },
-				{ Step = 70,	Number = 325_000 },
-				{ Step = 80,	Number = 1_300_000 },
-				{ Step = 90,	Number = 5_460_000 },
-				{ Step = 100,	Number = 21_666_666 },
-				{ Step = 110,	Number = 86_666_666 },
-				{ Step = 120,	Number = 368_333_333 },
-				{ Step = 130,	Number = 1_464_918_648 },
-				{ Step = 140,	Number = 5_926_412_969 },
-				{ Step = 150,	Number = 23_975_645_833 },
-				{ Step = 160,	Number = 32_331_619_822 },
-				{ Step = 170,	Number = 392_398_304_047 },
-				{ Step = 180,	Number = 1_587_469_994_418 },
-				{ Step = 190,	Number = 6_422_201_516_123 },
-				{ Step = 200,	Number = 25_981_387_023_829 },
-			},
-
-			Speed = 19,
+			Health = stat(35, 1750),
+			Damage = stat(25, 500),
+			Speed = stat(14, 16),
 		},
 
 		AoE = {
-			Health = {
-				{ Step = 1,		Number = 50 },
-				{ Step = 10,	Number = 112 },
-				{ Step = 20,	Number = 875 },
-				{ Step = 30,	Number = 1_919 },
-				{ Step = 40,	Number = 7_500 },
-				{ Step = 50,	Number = 37_500 },
-				{ Step = 60,	Number = 158_750 },
-				{ Step = 70,	Number = 625_000 },
-				{ Step = 80,	Number = 2_500_000 },
-				{ Step = 90,	Number = 10_500_000 },
-				{ Step = 100,	Number = 41_666_666 },
-				{ Step = 110,	Number = 166_666_666 },
-				{ Step = 120,	Number = 708_333_333 },
-				{ Step = 130,	Number = 2_817_151_246 },
-				{ Step = 140,	Number = 11_396_948_017 },
-				{ Step = 150,	Number = 46_107_011_217 },
-				{ Step = 160,	Number = 62_176_191_967 },
-				{ Step = 170,	Number = 754_612_123_167 },
-				{ Step = 180,	Number = 3_052_826_912_342 },
-				{ Step = 190,	Number = 12_350_387_531_007 },
-				{ Step = 200,	Number = 49_964_205_815_057 },
-			},
-
+			Health = stat(100, 3000),
+			Damage = stat(35, 600),
+			Speed = stat(12, 12.5),
 			Range = 25,
-			Speed = 13.5,
 		},
 
 		Projectile = {
-			Health = {
-				{ Step = 1,		Number = 26 },
-				{ Step = 10,	Number = 58 },
-				{ Step = 20,	Number = 455 },
-				{ Step = 30,	Number = 1_247 },
-				{ Step = 40,	Number = 3_900 },
-				{ Step = 50,	Number = 19_500 },
-				{ Step = 60,	Number = 82_550 },
-				{ Step = 70,	Number = 325_000 },
-				{ Step = 80,	Number = 1_300_000 },
-				{ Step = 90,	Number = 5_460_000 },
-				{ Step = 100,	Number = 21_666_666 },
-				{ Step = 110,	Number = 86_666_666 },
-				{ Step = 120,	Number = 368_333_333 },
-				{ Step = 130,	Number = 1_464_918_648 },
-				{ Step = 140,	Number = 5_926_412_969 },
-				{ Step = 150,	Number = 23_975_645_833 },
-				{ Step = 160,	Number = 32_331_619_822 },
-				{ Step = 170,	Number = 392_398_304_047 },
-				{ Step = 180,	Number = 1_587_469_994_418 },
-				{ Step = 190,	Number = 6_422_201_516_123 },
-				{ Step = 200,	Number = 25_981_387_023_829 },
-			},
+			Health = stat(35, 1750),
+			Damage = stat(25, 500),
+			Speed = stat(12, 13),
+		},
 
-			Speed = 8,
+		Shielder = {
+			Health = stat(100, 3000),
+			Damage = stat(25, 500),
+			Speed = stat(13, 14),
+			EnrangedSpeed = stat(19, 20),
+		},
+
+		Splitter = {
+			Health = stat(150, 4000),
+			Damage = stat(35, 600),
+			Speed = stat(11, 11.5),
+			BabiesSpawned = 2,
+		},
+
+		SplitterBaby = {
+			Health = stat(20, 1100),
+			Damage = stat(15, 350),
+			Speed = stat(18, 19),
+			RespawnTime = 5,
+		},
+
+		Taser = {
+			Health = stat(175, 4250),
+			Damage = stat(35, 600),
+			Speed = stat(14, 15),
+			StunDuration = medium(2, "Taser", "StunDuration"),
+		},
+
+		Gravity = {
+			Health = stat(175, 4250),
+			Damage = stat(35, 600),
+			Speed = stat(12, 13),
+		},
+
+		Meteor = {
+			Health = stat(175, 4250),
+			Damage = stat(50, 800),
+			MeteorDamage = stat(60, 1000),
+			Speed = stat(13, 14),
+			MeteorCooldown = medium(3, "Meteor", "MeteorCooldown"),
+		},
+
+		Flamecaster = {
+			Health = stat(100, 3000),
+			Damage = stat(25, 500),
+			Speed = stat(4, 6),
+			Range = medium(3, "Flamecaster", "Range"),
+		},
+
+		Blizzard = {
+			Health = stat(150, 4000),
+			Damage = stat(35, 600),
+			Speed = stat(14, 16),
+		},
+
+		MegaSnowball = {
+			Health = stat(175, 4250),
+			Damage = stat(35, 600),
+			SnowballDamage = stat(50, 800),
+			Speed = stat(14, 16),
+			Cooldown = medium(4, "MegaSnowball", "Cooldown"),
 		},
 	},
 }

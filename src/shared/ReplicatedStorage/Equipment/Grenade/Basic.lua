@@ -13,6 +13,7 @@ local Damage = require(ReplicatedStorage.RuddevModules.Damage)
 local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local LinearThenLogarithmic = require(ReplicatedStorage.Core.LinearThenLogarithmic)
 local Mouse = require(ReplicatedStorage.RuddevModules.Mouse)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
@@ -20,10 +21,10 @@ local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 local Effect = ReplicatedStorage.RuddevRemotes.Effect
 local LocalPlayer = Players.LocalPlayer
 
-local BASE_DAMAGE = 65
-local BASE_DAMAGE_BETTER = 65 * 1.5
-local DAMAGE_SCALE = 1.13
-local SCALED_DAMAGE = 0.5
+local BASE_DAMAGE = 20
+local FINAL_DAMAGE = 350
+local MULTIPLIER = 15
+local BETTER_MULTIPLIER = 1.25
 
 local DROPOFF = 0.5
 local GRENADE_SPEED = 50
@@ -32,9 +33,7 @@ local MAX_RANGE = 50
 local PRIME = 1
 local SOUNDS = SoundService.SFX.Explosion:GetChildren()
 
-local function getDamage(better, level)
-	return (better and BASE_DAMAGE_BETTER or BASE_DAMAGE) * DAMAGE_SCALE ^ (level - 1)
-end
+local getDamage = LinearThenLogarithmic(BASE_DAMAGE, FINAL_DAMAGE, MULTIPLIER)
 
 local function lerp(a, b, t)
 	return a + (b - a) * t
@@ -75,7 +74,8 @@ function Grenade.DealDamage(player, zombie, damage, scaledDamage)
 	end
 
 	if not ReplicatedStorage.HubWorld.Value then
-		humanoid:TakeDamage(damage)
+		local DealZombieDamage = require(ServerScriptService.Shared.DealZombieDamage)
+		DealZombieDamage(humanoid, damage)
 		if humanoid.Health <= 0 then
 			for _, player in pairs(Players:GetPlayers()) do
 				GiveQuest:Fire(player, "KillZombiesGrenade", 1)
@@ -173,7 +173,11 @@ Grenade.ServerEffect = Grenade.CreateServerEffect(
 						or MAX_RANGE
 
 					if range <= maxRange then
-						local baseDamage = getDamage(better, level)
+						local baseDamage = getDamage(level)
+						if better then
+							baseDamage = baseDamage * BETTER_MULTIPLIER
+						end
+
 						local damage = lerp(baseDamage * DROPOFF, baseDamage, range / maxRange)
 						Grenade.DealDamage(player, zombie, damage, SCALED_DAMAGE)
 					end

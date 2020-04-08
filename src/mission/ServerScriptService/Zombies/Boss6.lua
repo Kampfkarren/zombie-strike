@@ -33,36 +33,12 @@ TowerBoss.FlameBreathDuration = {
 	4.6 + 0.83,
 }
 
-TowerBoss.FlameBreathDamage = {
-	20,
-	20,
-	30,
-	35,
-	40,
-}
-
 TowerBoss.MagicMissilesDuration = {
 	6,
 	7,
 	8,
 	9,
 	10,
-}
-
-TowerBoss.MagicMissilesDamage = {
-	20,
-	25,
-	30,
-	35,
-	40,
-}
-
-TowerBoss.MissileRingDamage = {
-	20,
-	25,
-	30,
-	35,
-	40,
 }
 
 TowerBoss.MissileRingDuration = {
@@ -93,33 +69,21 @@ function TowerBoss:InitializeBossAI(room)
 	FlameBreath.OnServerEvent:connect(function(player)
 		TakeDamage(
 			player,
-			self:GetDamageAgainstConstant(
-				player,
-				0,
-				TowerBoss.FlameBreathDamage[Dungeon.GetDungeonData("Difficulty")]
-			)
+			self:GetScale("FlameBreathDamage")
 		)
 	end)
 
 	MagicMissiles.OnServerEvent:connect(function(player)
 		TakeDamage(
 			player,
-			self:GetDamageAgainstConstant(
-				player,
-				0,
-				TowerBoss.MagicMissilesDamage[Dungeon.GetDungeonData("Difficulty")]
-			)
+			self:GetScale("MagicMissilesDamage")
 		)
 	end)
 
 	MissileRing.OnServerEvent:connect(function(player)
 		TakeDamage(
 			player,
-			self:GetDamageAgainstConstant(
-				player,
-				0,
-				TowerBoss.MissileRingDamage[Dungeon.GetDungeonData("Difficulty")]
-			)
+			self:GetScale("MissileRingDamage")
 		)
 	end)
 

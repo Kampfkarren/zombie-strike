@@ -77,6 +77,25 @@ const Bosses = [
 			},
 		},
 	},
+
+	{
+		Name: "Egg Mech Zombie",
+		Image: "rbxassetid://4865133876",
+		RoomName: "Egg",
+		AIAggroRange: 200,
+		LoadingColor: Color3.fromRGB(126, 214, 223),
+
+		Loot: new Map() as LootReward,
+
+		Stats: {
+			Common: {
+				Damage: scale(0),
+				DamageReceivedScale: scale(0.5),
+				MaxHealthDamage: scale(30),
+				Speed: scale(15),
+			},
+		},
+	},
 ] as const
 
 export = Bosses

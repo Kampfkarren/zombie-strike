@@ -1,32 +1,31 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LinearThenLogarithmic = require(ReplicatedStorage.Core.LinearThenLogarithmic)
+
 local ArmorScaling = {}
 
-local ARMOR_BASE = 32
-local ARMOR_SCALE = 1.15
+local BASE = 30
+local FINAL = 425
+local MULTIPLIER = 15
 
-local HELMET_BASE = 24
-local HELMET_SCALE = 1.15
-
-local REGEN_BASE = 1.4
-local REGEN_SCALE = 1.15
+local REGEN_PERCENT = 0.1
 
 local MULTIPLIERS = {
 	1,
-	1.22,
-	1.44,
-	1.66,
-	2.2,
+	1.05,
+	1.1,
+	1.15,
+	1.23,
 }
 
 function ArmorScaling.ArmorHealth(level, rarity)
-	return math.floor((ARMOR_BASE * ARMOR_SCALE ^ (level - 1)) * MULTIPLIERS[rarity])
+	return math.floor(LinearThenLogarithmic(BASE, FINAL, MULTIPLIER)(level) * MULTIPLIERS[rarity])
 end
 
 function ArmorScaling.ArmorRegen(level)
-	return math.floor(REGEN_BASE * REGEN_SCALE ^ (level - 1))
+	return math.floor(ArmorScaling.ArmorHealth(level, 1) * REGEN_PERCENT)
 end
 
-function ArmorScaling.HelmetHealth(level, rarity)
-	return math.floor((HELMET_BASE * HELMET_SCALE ^ (level - 1)) * MULTIPLIERS[rarity])
-end
+ArmorScaling.HelmetHealth = ArmorScaling.ArmorHealth
 
 return ArmorScaling

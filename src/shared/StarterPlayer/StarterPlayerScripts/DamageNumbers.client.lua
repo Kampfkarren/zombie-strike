@@ -59,7 +59,7 @@ ReplicatedStorage.Remotes.DamageNumber.OnClientEvent:connect(function(humanoid, 
 	local damageNumber = DamageNumber:Clone()
 	local damageText = damageNumber.TextLabel
 	damageText.Text = EnglishNumbers(damage)
-	damageNumber.Parent = humanoid.Parent.HumanoidRootPart
+	damageNumber.Parent = humanoid.Parent.PrimaryPart
 	updateColor(damageText, humanoid.Health, humanoid.MaxHealth)
 
 	if CollectionService:HasTag(humanoid.Parent, "Boss") then

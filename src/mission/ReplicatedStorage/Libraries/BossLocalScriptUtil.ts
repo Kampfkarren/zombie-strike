@@ -4,6 +4,13 @@ import PlayQuickSound from "shared/ReplicatedStorage/Core/PlayQuickSound"
 import RealDelay from "shared/ReplicatedStorage/Core/RealDelay"
 import WarningRange from "mission/ReplicatedStorage/Libraries/WarningRange"
 
+type BossModel = Model & {
+	CurrentPhase: NumberValue,
+	Head: BasePart,
+	Humanoid: Humanoid,
+	PrimaryPart: BasePart,
+}
+
 type ProjectileInfo = {
 	initial: Vector3,
 	lifetime: number,
@@ -19,6 +26,30 @@ type RingInfo = {
 	tweenInfo: TweenInfo,
 
 	onTouched: RemoteEvent | (() => void),
+}
+
+export function GetBoss(): BossModel | undefined {
+	return CollectionService.GetTagged("Boss")[0] as BossModel | undefined
+}
+
+export function WaitForBoss(): Promise<BossModel> {
+	let boss = GetBoss()
+
+	if (boss === undefined) {
+		return new Promise(resolve => {
+			const [boss] = CollectionService.GetInstanceAddedSignal("Boss").Wait()
+			boss.WaitForChild("HumanoidRootPart")
+			resolve(GetBoss()!)
+		})
+	} else {
+		return Promise.resolve(boss)
+	}
+}
+
+let ongoingBossAttacks = 0
+
+export function IsAttacking(): boolean {
+	return ongoingBossAttacks > 0
 }
 
 export function FireRing(info: RingInfo) {
@@ -95,6 +126,18 @@ export function Projectile(template: BasePart, info: ProjectileInfo): BasePart {
 	return projectile
 }
 
+export function HookAttack<A>(
+	remote: RemoteEvent,
+	callback: (boss: BossModel, ...args: A[]) => void
+) {
+	remote.OnClientEvent.Connect((...args) => {
+		const boss = GetBoss()!
+		ongoingBossAttacks += 1
+		callback(boss, ...args as A[])
+		ongoingBossAttacks -= 1
+	})
+}
+
 export function SludgeBalls(config: {
 	assets: Folder & { SludgeBall: BasePart, SludgeFire: Animation, SludgePrime: Animation },
 	duration: number,
@@ -105,6 +148,7 @@ export function SludgeBalls(config: {
 	windUpTime: number,
 
 	remote: RemoteEvent,
+	source?: () => Vector3,
 
 	soundHit: Sound | Folder,
 	soundThrowBall: Sound | Folder,
@@ -112,10 +156,7 @@ export function SludgeBalls(config: {
 	const { assets, duration, range, rateOfFire, toTargetTime, windUpTime } = config
 	const positionOffset = config.positionOffset || 0
 
-	const boss = CollectionService.GetTagged("Boss")[0] as Model & {
-		Head: BasePart,
-		Humanoid: Humanoid,
-	}
+	const boss = GetBoss()!
 
 	boss.Humanoid.LoadAnimation(assets.SludgePrime).Play()
 	const fireAnimation = boss.Humanoid.LoadAnimation(assets.SludgeFire)
@@ -156,7 +197,7 @@ export function SludgeBalls(config: {
 				const ball = assets.SludgeBall.Clone()
 
 				// Animation
-				const start = boss.Head.Position
+				const start = config.source ? config.source() : boss.Head.Position
 				const goal = warningRange.Position
 
 				ball.Position = start

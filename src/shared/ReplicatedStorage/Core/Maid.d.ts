@@ -31,11 +31,15 @@ interface Maid {
 	 * @alias DoCleaning
 	 */
 	Destroy(): void;
+
+	DieWith(humanoid: Humanoid): void
+	GiveTaskAnimation(animation: AnimationTrack): void
+	GiveTaskParticleEffect(particle: ParticleEmitter): void
 }
 
 interface MaidConstructor {
 	readonly ClassName: "Maid";
-	new(): Maid;
+	new(cleanNewOnes?: boolean): Maid;
 }
 declare const Maid: MaidConstructor;
 

@@ -12,6 +12,8 @@ local OnDied = require(ReplicatedStorage.Core.OnDied)
 
 local JoinTimer = ReplicatedStorage.JoinTimer
 
+local SKIP_COUNTDOWNS = false
+
 DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP", "DungeonsPlayed")
 
 local gamemode = Dungeon.GetDungeonData("Gamemode")
@@ -49,6 +51,10 @@ local function hookPlayerLives(player)
 	player.CharacterAdded:connect(hookCharacter)
 end
 
+local function skipCountdowns()
+	return SKIP_COUNTDOWNS and RunService:IsStudio()
+end
+
 local function start()
 	if started == 2 then return end
 	started = 2
@@ -57,7 +63,9 @@ local function start()
 		JoinTimer.Value = countdown
 		currentGamemode.Countdown(-countdown)
 
-		wait(1)
+		if not skipCountdowns() then
+			wait(1)
+		end
 	end
 
 	JoinTimer.Value = -4
@@ -66,6 +74,8 @@ local function start()
 	local playMusicFlag = Instance.new("Model")
 	playMusicFlag.Name = "PlayMissionMusic"
 	playMusicFlag.Parent = ReplicatedStorage
+
+	Analytics.DungeonStarted()
 
 	delay(3, function()
 		JoinTimer.Value = 0
@@ -86,7 +96,11 @@ local function checkCharacterCount()
 		print("all players connected")
 		started = 1
 		JoinTimer.Value = 0
-		wait(5)
+
+		if not skipCountdowns() then
+			wait(5)
+		end
+
 		start()
 		return
 	end
@@ -120,5 +134,3 @@ for _, player in pairs(Players:GetPlayers()) do
 end
 
 Players.PlayerAdded:connect(playerAdded)
-
-Analytics.DungeonStarted()

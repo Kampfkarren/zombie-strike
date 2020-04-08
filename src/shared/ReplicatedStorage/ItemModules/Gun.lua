@@ -19,6 +19,7 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
 local GunSpray = require(ReplicatedStorage.Core.GunSpray)
+local Raycast = require(ReplicatedStorage.Core.Raycast)
 
 local EQUIP_COOLDOWN = 0.2
 
@@ -31,39 +32,6 @@ local function wait(t)
 	repeat
 		RunService.Stepped:Wait()
 	until tick() - start >= t
-end
-
-local function Raycast(position, direction, ignore)
-	local ray = Ray.new(position, direction)
-	local success
-	local h, p, n, humanoid
-
-	table.insert(ignore, Workspace.Effects)
-
-	repeat
-		h, p, n = Workspace:FindPartOnRayWithIgnoreList(ray, ignore)
-
-		if h then
-			humanoid = h.Parent:FindFirstChildOfClass("Humanoid")
-			if humanoid and humanoid.Health <= 0 then
-				humanoid = nil
-			end
-			if humanoid then
-				success = true
-			else
-				if h.CanCollide and h.Transparency < 1 then
-					success = true
-				else
-					table.insert(ignore, h)
-					success = false
-				end
-			end
-		else
-			success = true
-		end
-	until success
-
-	return h, p, n, humanoid
 end
 
 local function aimAssist(cframe, range)
@@ -161,7 +129,11 @@ function module.Create(_, item)
 
 	local function CanShoot()
 		if mode == "Sequence" then return end
-		return itemModule.Equipped and canShoot and ammo > 0 and PLAYER.Character.Humanoid.Health > 0
+		return itemModule.Equipped
+			and canShoot
+			and ammo > 0
+			and PLAYER.Character.Humanoid.Health > 0
+			and item.Ammo.Value > 0
 	end
 
 	local function Shoot()
@@ -191,7 +163,7 @@ function module.Create(_, item)
 			local hit, pos, _, humanoid = Raycast(position, direction * config.Range, {character})
 
 			-- aim assist
-			if not humanoid and config.Size ~= "Shotgun" then
+			if not humanoid then
 				hit, humanoid = aimAssist(cframe, config.Range)
 			end
 
@@ -249,6 +221,10 @@ function module.Create(_, item)
 				if UserInputService.MouseEnabled
 					and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
 				then
+					while item.Ammo.Value == 0 do
+						item.Ammo.Changed:wait()
+					end
+
 					itemModule:Activate()
 				end
 			end)
@@ -384,6 +360,7 @@ function module.Create(_, item)
 					canShoot = true
 				end
 			end
+
 			if ammo == 0 then
 				Reload()
 			end

@@ -74,7 +74,9 @@ function ItemButton:SetModel()
 end
 
 function ItemButton:didUpdate(oldProps)
-	if oldProps.Silhouette ~= self.props.Silhouette then
+	if oldProps.Silhouette ~= self.props.Silhouette
+		or oldProps.Loot ~= self.props.Loot
+	then
 		self:SetModel()
 	end
 end

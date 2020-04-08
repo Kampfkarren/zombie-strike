@@ -11,7 +11,9 @@ local HitByLaser = ReplicatedStorage.Remotes.FactoryBoss.HitByLaser
 local QuadLaser = ReplicatedStorage.Remotes.FactoryBoss.QuadLaser
 
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
+local Interval = require(ReplicatedStorage.Core.Interval)
 local Maid = require(ReplicatedStorage.Core.Maid)
+local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 local TakeDamage = require(ServerScriptService.Shared.TakeDamage)
 
 local DAMAGE_BUFF = 1.125
@@ -20,7 +22,6 @@ local FINALE_TIME = 3
 local FLOOR_LASER = 5
 local HEALTH_COLOR_BLINK_HEALTH = 0.1
 local HEALTH_COLOR_BLINK_RATE = 0.2
-local QUAD_LASER_TIME = 3
 local TUBES = 4
 
 local BLACK = Color3.new()
@@ -31,48 +32,6 @@ PhysicsService:CollisionGroupSetCollidable("FactoryBoss", "FactoryBoss", false)
 
 local FactoryBoss = {}
 FactoryBoss.__index = FactoryBoss
-
-FactoryBoss.FloorLaserDamageScale = {
-	[30] = 3000,
-	[36] = 9000,
-	[42] = 24750,
-	[48] = 75000,
-	[54] = 210000,
-}
-
-FactoryBoss.LaserDamageScale = {
-	[30] = 2200,
-	[36] = 7200,
-	[42] = 19800,
-	[48] = 60000,
-	[54] = 168000,
-}
-
-FactoryBoss.QuadLaserChargeTime = 2.5
-
-FactoryBoss.QuadLaserDamageScale = {
-	[30] = 2000,
-	[36] = 6000,
-	[42] = 16500,
-	[48] = 50000,
-	[54] = 140000,
-}
-
-FactoryBoss.QuadLaserRateOfFireScale = {
-	[30] = 8.0,
-	[36] = 7.5,
-	[42] = 7.0,
-	[48] = 6.5,
-	[54] = 6.0,
-}
-
-FactoryBoss.QuadLaserTime = {
-	[30] = 1.5,
-	[36] = 1.6,
-	[42] = 1.7,
-	[48] = 1.8,
-	[54] = 1.9,
-}
 
 FactoryBoss.Name = "The Evil Dr. Zombie"
 
@@ -142,10 +101,7 @@ function FactoryBoss:InitializeBossAI()
 	HitByLaser.OnServerEvent:connect(function(player)
 		local character = player.Character
 		if character then
-			local damage = FactoryBoss.LaserDamageScale[self.level]
-			if not damage then
-				error("FactoryBoss.HitByLaser: no damage scale for " .. self.level)
-			end
+			local damage = self:GetScale("BaseSpinDamage")
 			TakeDamage(player, damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
 		end
 	end)
@@ -153,10 +109,7 @@ function FactoryBoss:InitializeBossAI()
 	QuadLaser.OnServerEvent:connect(function(player)
 		local character = player.Character
 		if character then
-			local damage = FactoryBoss.QuadLaserDamageScale[self.level]
-			if not damage then
-				error("FactoryBoss.QuadLaser: no damage scale for " .. self.level)
-			end
+			local damage = self:GetScale("QuadLaserDamage")
 			TakeDamage(player, damage * DAMAGE_BUFF ^ getLevels(self.instance.Humanoid))
 		end
 	end)
@@ -167,23 +120,21 @@ function FactoryBoss:InitializeBossAI()
 
 			TakeDamage(
 				player,
-				FactoryBoss.FloorLaserDamageScale[self.level]
+				self:GetScale("FloorLaserDamage")
 					* DAMAGE_BUFF
 					^ getLevels(self.instance.Humanoid)
 			)
 		end
 	end)
 
-	FastSpawn(function()
-		wait(math.random(3, 6))
-		while self.alive do
+	RealDelay(math.random(3, 6), function()
+		Interval(self:GetScale("QuadLaserRateOfFire"), function()
 			if self.alive then
 				self:QuadLaser()
-			else
-				break
 			end
-			wait(FactoryBoss.QuadLaserRateOfFireScale[self.level])
-		end
+
+			return self.alive
+		end)
 	end)
 
 	FastSpawn(function()
@@ -228,8 +179,8 @@ function FactoryBoss:QuadLaser()
 		maid:GiveTask(chargeEffect)
 	end
 
-	QuadLaser:FireAllClients(FactoryBoss.QuadLaserTime[self.level])
-	wait(FactoryBoss.QuadLaserTime[self.level] + QUAD_LASER_TIME)
+	QuadLaser:FireAllClients()
+	wait(self:GetScale("QuadLaserTime") + self:GetScale("QuadLaserChargeTime"))
 	maid:DoCleaning()
 end
 

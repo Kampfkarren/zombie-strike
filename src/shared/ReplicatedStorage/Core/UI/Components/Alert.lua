@@ -16,7 +16,8 @@ Alert.defaultProps = {
 	Color = Color3.fromRGB(255, 78, 78),
 	OnClose = noop,
 	Open = false,
-	Window = Players.LocalPlayer.PlayerGui.MainGui.Main,
+	Window = RunService:IsRunning()
+		and Players.LocalPlayer.PlayerGui.MainGui.Main,
 }
 
 function Alert:init()

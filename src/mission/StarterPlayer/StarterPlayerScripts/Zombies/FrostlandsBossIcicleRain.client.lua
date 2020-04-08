@@ -6,6 +6,7 @@ local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local GetStats = require(ReplicatedStorage.Libraries.GetStats)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
@@ -24,6 +25,8 @@ local OFFSET = Vector3.new(0, 2.4, 0)
 local RADIUS = 10
 
 if Dungeon.GetDungeonData("Campaign") ~= 4 then return end
+
+local stats = GetStats().Boss
 
 local function dropIcicles()
 	for _, player in pairs(Players:GetPlayers()) do
@@ -89,7 +92,7 @@ local function dropIcicles()
 	end
 end
 
-IcicleRain.OnClientEvent:connect(function(timer)
+IcicleRain.OnClientEvent:connect(function()
 	local maid = Maid.new()
 
 	local total = 0
@@ -102,7 +105,7 @@ IcicleRain.OnClientEvent:connect(function(timer)
 		end
 	end))
 
-	RealDelay(timer, function()
+	RealDelay(stats.IcicleTimer, function()
 		maid:DoCleaning()
 	end)
 end)

@@ -5,13 +5,14 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 
-local Campaigns = require(ReplicatedStorage.Core.Campaigns)
+local Analytics = require(ServerScriptService.Shared.Analytics)
 local Data = require(ReplicatedStorage.Core.Data)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local DungeonState = require(ServerScriptService.DungeonState)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
+local GetAvailableMissions = require(ReplicatedStorage.Core.GetAvailableMissions)
 local GiveQuest = ServerStorage.Events.GiveQuest
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Promise = require(ReplicatedStorage.Core.Promise)
@@ -40,7 +41,8 @@ ServerStorage.Events.DamagedByBoss.Event:connect(function(player)
 end)
 
 function Gamemode.EndMission()
-	print("Gamemode.EndMission()")
+	Analytics.DungeonFinished()
+
 	for _, player in pairs(Players:GetPlayers()) do
 		Promise.all({
 			GenerateLoot.GenerateSet(player):andThen(function(loot, gamemodeLoot)
@@ -92,7 +94,6 @@ function Gamemode.EndMission()
 			Promise.async(function(resolve)
 				local zombiePass, zombiePassStore = Data.GetPlayerData(player, "ZombiePass")
 
-				local level = DataStore2("Level", player):Get(1)
 				local zombiePassPoints = 1
 
 				-- TODO: If we add any new level locked campaigns, this'll mess up I bet
@@ -100,18 +101,9 @@ function Gamemode.EndMission()
 					if DungeonState.CurrentGamemode.Scales() then
 						zombiePassPoints = SCALED_PASS_POINTS
 					else
-						local hardestCampaign = 1
-
-						for campaignIndex, campaign in ipairs(Campaigns) do
-							local minLevel = campaign.Difficulties[1].MinLevel
-							if minLevel ~= nil and minLevel <= level then
-								hardestCampaign = campaignIndex
-							else
-								break
-							end
-						end
-
-						zombiePassPoints = Dungeon.GetDungeonData("Campaign") / hardestCampaign
+						local missions = GetAvailableMissions(player)
+						local points = Dungeon.GetDungeonData("DifficultyInfo").MinLevel / missions[#missions].MinLevel
+						zombiePassPoints = math.floor((points * 10) + 0.5) / 10
 					end
 				end
 
@@ -206,6 +198,10 @@ end
 
 function Gamemode.SpawnZombie(zombieType, level, position)
 	local zombie = Zombie.new(zombieType, level)
+	if not zombie:ShouldSpawn() then
+		return nil
+	end
+
 	zombie:Spawn(position)
 	return zombie
 end

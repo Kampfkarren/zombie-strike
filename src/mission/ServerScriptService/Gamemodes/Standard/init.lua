@@ -14,6 +14,7 @@ local Gamemode = require(script.Parent.Gamemode)
 local GenerateTreasureLoot = require(ServerScriptService.Libraries.GenerateTreasureLoot)
 local GetAvailableMissions = require(ReplicatedStorage.Core.GetAvailableMissions)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
+local WaveDefense = require(script.WaveDefense)
 
 local BossTimer = ReplicatedStorage.BossTimer
 local Rooms = ServerStorage.Rooms
@@ -30,7 +31,11 @@ local SCALED_REWARDS = {
 local SPEED_BONUS = 0.33
 local SPEED_TIME = 3.5
 
+local SPECIAL_ZOMBIE_RATE_STANDARD = 0.065
+local SPECIAL_ZOMBIE_RATE_INSANE = 0.11
+
 local TREASURE_DELAY_TIME = 4
+local WAVE_CHANCE = 0.4
 
 local Standard = {}
 
@@ -65,6 +70,11 @@ local function createRoom(room, parent, connectTo)
 	return room
 end
 
+local function isTutorial()
+	return Dungeon.GetDungeonData("Campaign") == 1
+		and Dungeon.GetDungeonData("Difficulty") == 1
+end
+
 local function generateDungeon(roomModels, numRooms)
 	local roomTypes = {
 		boss = {},
@@ -72,6 +82,7 @@ local function generateDungeon(roomModels, numRooms)
 		enemy = {},
 		obby = {},
 		treasure = {},
+		wave = {},
 	}
 
 	for _, room in pairs(roomModels:GetChildren()) do
@@ -93,6 +104,15 @@ local function generateDungeon(roomModels, numRooms)
 
 	local halfway = math.floor(numRooms / 2)
 
+	local waveRoom
+
+	if math.random() <= WAVE_CHANCE and not isTutorial() then
+		waveRoom = math.random(2, numRooms)
+		if waveRoom == halfway then
+			waveRoom = waveRoom + 1
+		end
+	end
+
 	for room = 1, numRooms do
 		local treasure = GenerateTreasureLoot:expect()
 		if room == halfway and treasure ~= nil then
@@ -106,12 +126,16 @@ local function generateDungeon(roomModels, numRooms)
 			table.insert(rooms, nextRoom)
 		end
 
-		local zombies = roomTypes.enemy
-
 		local roomChoice
-		repeat
-			roomChoice = zombies[math.random(#zombies)]
-		until roomChoice.Name ~= lastRoom.Name
+		if room == waveRoom then
+			roomChoice = roomTypes.wave[#roomTypes.wave]
+		else
+			local zombies = roomTypes.enemy
+
+			repeat
+				roomChoice = zombies[math.random(#zombies)]
+			until roomChoice.Name ~= lastRoom.Name
+		end
 
 		lastRoom = roomChoice
 		nextRoom = createRoom(roomChoice, obbyParent, nextRoom)
@@ -149,6 +173,14 @@ local function spawnBoss(position, room)
 	end)
 end
 
+local function getSpecialZombieRate()
+	if Dungeon.GetDungeonData("Difficulty") == 5 then
+		return SPECIAL_ZOMBIE_RATE_INSANE
+	else
+		return SPECIAL_ZOMBIE_RATE_STANDARD
+	end
+end
+
 function Standard.Init()
 	local rooms = generateDungeon(
 		Rooms[Dungeon.GetDungeonData("Campaign")],
@@ -156,6 +188,18 @@ function Standard.Init()
 	)
 
 	local zombieTypes = Gamemode.GetZombieTypes()
+
+	local difficulty = Dungeon.GetDungeonData("Difficulty")
+	local specialZombies = {}
+
+	for index, special in ipairs(Dungeon.GetDungeonData("CampaignInfo").SpecialZombies) do
+		-- Only allow special zombies at the right difficulty
+		-- If SpecialZombies == { "a", "b", "c" }
+		-- And difficulty is Hard (3), then only "a" and "b" will be added
+		if (difficulty - 1) >= index then
+			table.insert(specialZombies, special)
+		end
+	end
 
 	local function startBoss(room)
 		DungeonState.CurrentSpawn = assert(room:FindFirstChild("RespawnPoint", true))
@@ -173,12 +217,30 @@ function Standard.Init()
 	end
 
 	local lastRoom = Workspace.Rooms.StartSection
+	local usedNewSpecialZombie = false
+
+	local function randomZombieType()
+		if math.random() <= getSpecialZombieRate() and #specialZombies > 0 then
+			if not usedNewSpecialZombie then
+				usedNewSpecialZombie = true
+
+				if Dungeon.GetDungeonData("Difficulty") - 1 == #specialZombies then
+					return specialZombies[#specialZombies]
+				end
+			end
+
+			return specialZombies[math.random(#specialZombies)]
+		else
+			return zombieTypes[math.random(#zombieTypes)]
+		end
+	end
 
 	local function openNextGate()
 		local room = table.remove(rooms, 1)
 		local gate = assert(room:FindFirstChild("Gate", true), "No Gate")
 
-		local enemiesLeft = room.EnemiesLeft.Value
+		DungeonState.CurrentRoom = room
+
 		local obbyType = room.ObbyType.Value
 
 		local spawnPoint = assert(room:FindFirstChild("RespawnPoint", true), "No RespawnPoint")
@@ -187,6 +249,7 @@ function Standard.Init()
 		ReplicatedStorage.CurrentSpawn.Value = spawnPoint
 
 		if obbyType == "enemy" then
+			local enemiesLeft = room.EnemiesLeft.Value
 			local zombieSpawns = {}
 			for _, thing in pairs(room:GetDescendants()) do
 				if CollectionService:HasTag(thing, "ZombieSpawn") then
@@ -198,11 +261,16 @@ function Standard.Init()
 
 			for _ = 1, enemiesLeft do
 				local spawnPoint = table.remove(zombieSpawns, math.random(#zombieSpawns))
-				local zombie = Gamemode.SpawnZombie(
-					zombieTypes[math.random(#zombieTypes)],
-					Dungeon.RNGZombieLevel(),
-					spawnPoint.WorldPosition
-				)
+				local zombie
+
+				repeat
+					zombie = Gamemode.SpawnZombie(
+						randomZombieType(),
+						Dungeon.RNGZombieLevel(),
+						spawnPoint.WorldPosition
+					)
+				until zombie
+
 				table.insert(zombies, zombie)
 
 				local maxEnemies = enemiesLeft
@@ -225,6 +293,8 @@ function Standard.Init()
 			wait(1)
 		elseif obbyType == "treasure" then
 			RealDelay(Dungeon.GetDungeonData("CampaignInfo").TreasureDelayTime or TREASURE_DELAY_TIME, openNextGate)
+		elseif obbyType == "wave" then
+			WaveDefense.StartWaveDefenseRoom(room):andThen(openNextGate)
 		end
 
 		for _, player in pairs(Players:GetPlayers()) do
@@ -271,21 +341,25 @@ function Standard.Init()
 	local difficultyInfo = Dungeon.GetDungeonData("DifficultyInfo")
 
 	for _, room in pairs(rooms) do
-		local zombieSpawns = {}
-		for _, thing in pairs(room:GetDescendants()) do
-			if CollectionService:HasTag(thing, "ZombieSpawn") then
-				table.insert(zombieSpawns, thing)
+		if room.ObbyType.Value == "enemy" then
+			local zombieSpawns = {}
+			for _, thing in pairs(room:GetDescendants()) do
+				if CollectionService:HasTag(thing, "ZombieSpawn") then
+					table.insert(zombieSpawns, thing)
+				end
 			end
+
+			local amount = math.ceil(#zombieSpawns * difficultyInfo.ZombieSpawnRate)
+
+			local enemiesLeft = Instance.new("NumberValue")
+			enemiesLeft.Name = "EnemiesLeft"
+			enemiesLeft.Value = amount
+			enemiesLeft.Parent = room
+
+			DungeonState.NormalZombies = DungeonState.NormalZombies + amount
+		elseif room.ObbyType.Value == "wave" then
+			DungeonState.NormalZombies = DungeonState.NormalZombies + WaveDefense.ZombiesToKill()
 		end
-
-		local amount = math.ceil(#zombieSpawns * difficultyInfo.ZombieSpawnRate)
-
-		local enemiesLeft = Instance.new("NumberValue")
-		enemiesLeft.Name = "EnemiesLeft"
-		enemiesLeft.Value = amount
-		enemiesLeft.Parent = room
-
-		DungeonState.NormalZombies = DungeonState.NormalZombies + amount
 	end
 
 	return {
@@ -324,6 +398,8 @@ function Standard.Init()
 		Scales = function()
 			return Dungeon.GetDungeonData("CampaignInfo").Scales
 		end,
+
+		SpecialZombies = specialZombies,
 	}
 end
 

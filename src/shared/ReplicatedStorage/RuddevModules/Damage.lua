@@ -3,15 +3,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 -- constants
 
 local EVENTS = ReplicatedStorage:WaitForChild("RuddevEvents")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local CONFIG = require(MODULES:WaitForChild("Config"))
-local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 
-local CRIT_MULTIPLIER = 2
 local DAMAGE = {}
 local BUFF_BULLETSTORM = 1.25
 local BUFF_RAGE = 2
@@ -71,9 +70,6 @@ function DAMAGE.Calculate(_, item, hit, origin)
 	local config = CONFIG:GetConfig(item)
 	local damage = config.Damage
 
-	damage = damage + Upgrades.GetDamageBuff(damage, config.Upgrades)
-	damage = damage * (1 + config.Bonus / 100)
-
 	if hit.Name == "Head" then
 		damage = damage * 1.2
 	end
@@ -99,7 +95,7 @@ function DAMAGE.PlayerCanDamage(_, _, humanoid)
 	return Players:GetPlayerFromCharacter(humanoid.Parent) == nil and humanoid.Health > 0
 end
 
-function DAMAGE.Damage(_, humanoid, damage, player, critChance, lyingDamage)
+function DAMAGE.Damage(_, humanoid, damage, player, critChance, critMultiplier, lyingDamage)
 	if player then
 		local killTag = humanoid:FindFirstChild("KillTag")
 
@@ -114,9 +110,8 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance, lyingDamage)
 
 	if humanoid.Health > 0 then
 		local crit = false
-
 		if math.random() <= critChance then
-			damage = damage * CRIT_MULTIPLIER
+			damage = damage * critMultiplier
 			crit = true
 		end
 
@@ -127,7 +122,8 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance, lyingDamage)
 		end
 
 		if not ReplicatedStorage.HubWorld.Value then
-			humanoid:TakeDamage(damage)
+			local DealZombieDamage = require(ServerScriptService.Shared.DealZombieDamage)
+			DealZombieDamage(humanoid, damage)
 		end
 
 		EVENTS.Damaged:Fire(humanoid, damage, player)

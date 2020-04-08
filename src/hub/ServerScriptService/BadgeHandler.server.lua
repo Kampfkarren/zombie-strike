@@ -9,6 +9,14 @@ local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local BADGE_GIGA_ZOMBIE = 2124495353
 local BADGE_YOU_PLAYED = 2124495352
 
+local LEVEL_BADGES = {
+	[30] = 2124495354,
+	[60] = 2124495355,
+	[72] = 2124495356,
+	[101] = 2124497453,
+	[130] = 2124500479,
+}
+
 local function awardBadge(player, badge)
 	FastSpawn(function()
 		if not BadgeService:UserHasBadgeAsync(player.UserId, badge) then
@@ -22,11 +30,9 @@ Players.PlayerAdded:connect(function(player)
 
 	local level = Data.GetPlayerData(player, "Level")
 
-	for _, campaign in pairs(Campaigns) do
-		if campaign.CompletionBadge ~= nil
-			and campaign.Difficulties[#campaign.Difficulties].MinLevel <= level
-		then
-			awardBadge(player, campaign.CompletionBadge)
+	for badgeLevel, badge in pairs(LEVEL_BADGES) do
+		if level >= badgeLevel then
+			awardBadge(player, badge)
 		end
 	end
 

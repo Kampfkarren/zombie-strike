@@ -13,11 +13,15 @@ local function GetAvailableMissions(player)
 				if difficulty.MinLevel <= level then
 					table.insert(available, difficulty)
 				else
-					return available
+					break
 				end
 			end
 		end
 	end
+
+	table.sort(available, function(a, b)
+		return a.MinLevel < b.MinLevel
+	end)
 
 	return available
 end

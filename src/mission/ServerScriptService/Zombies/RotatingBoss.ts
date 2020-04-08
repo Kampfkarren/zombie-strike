@@ -18,6 +18,7 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 	phases: BossAttack<this>[][] = []
 
 	normalAi: boolean = false
+	randomAttacks: boolean = true
 
 	constructor() {
 		this.nextPhaseEvent = this.NewRemoteEvent("NextPhase")
@@ -86,7 +87,11 @@ export class RotatingBoss<Room extends Model> implements Partial<BossClass<Room>
 				return false
 			}
 
-			const result = phase[currentSequence](this)
+			const attack = this.randomAttacks
+				? phase[new Random().NextInteger(0, phase.size() - 1)]
+				: phase[currentSequence]
+
+			const result = attack(this)
 			if (Promise.is(result)) {
 				result.await()
 			}

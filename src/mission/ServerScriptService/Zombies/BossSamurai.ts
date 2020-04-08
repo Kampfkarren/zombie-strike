@@ -42,6 +42,7 @@ class BossSamurai extends RotatingBoss<SamuraiRoom> {
 		[this.SwordBeamAttack, this.SwordSpin, this.SummonZombies],
 		[this.Yooo, this.ShurikenFrenzy, this.SummonZombies, this.SwordSpin],
 	]
+	randomAttacks: boolean = false
 
 	AfterDeath(this: this & ZombieClass) {
 		this.instance.Humanoid.LoadAnimation(

@@ -1,0 +1,5 @@
+name = "zombie-strike"
+
+[[inputs]]
+glob = "assets/**/*.png"
+codegen = "asset-url"

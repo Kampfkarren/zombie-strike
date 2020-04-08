@@ -13,41 +13,6 @@ WestBoss.__index = WestBoss
 WestBoss.Name = "The Judge Zombie"
 WestBoss.Model = "Boss"
 
-WestBoss.ShootFrenzyDamage = {
-	[106] = {
-		Base = 22000000,
-		Max = 7,
-	},
-
-	[112] = {
-		Base = 40000000,
-		Max = 7.5,
-	},
-
-	[118] = {
-		Base = 72000000,
-		Max = 8,
-	},
-
-	[124] = {
-		Base = 132000000,
-		Max = 8.5,
-	},
-
-	[130] = {
-		Base = 251000000,
-		Max = 9,
-	},
-}
-
-WestBoss.SummonCount = {
-	[106] = 3,
-	[112] = 4,
-	[118] = 5,
-	[124] = 6,
-	[130] = 7,
-}
-
 function WestBoss.new()
 	return setmetatable({}, WestBoss)
 end
@@ -58,13 +23,7 @@ function WestBoss:InitializeBossAI(room)
 	self.bossRoom = room
 
 	local function takeFrenzyDamage(player)
-		local damage = WestBoss.ShootFrenzyDamage[self.level]
-
-		TakeDamage(player, self:GetDamageAgainstConstant(
-			player,
-			damage.Base,
-			damage.Max
-		))
+		TakeDamage(player, self:GetScale("ShootFrenzyDamage"))
 	end
 
 	ShootFrenzyCircles.OnServerEvent:connect(takeFrenzyDamage)
@@ -95,7 +54,7 @@ function WestBoss.ShootFrenzySpin()
 end
 
 function WestBoss:SummonZombies()
-	for _ = 1, WestBoss.SummonCount[self.level] do
+	for _ = 1, self:GetScale("SummonCount") do
 		self:SummonGoon()
 	end
 end

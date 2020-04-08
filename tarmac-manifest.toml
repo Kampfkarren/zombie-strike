@@ -1,0 +1,71 @@
+[inputs."assets/UI/arrow.png"]
+hash = "8f6a3af473e301214c5c47c26aff4b31090fa68a10142394a7f9d8ceeee3b1bd"
+id = 4856545479
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/equipped_gun2.png"]
+hash = "ce625a7248d8571a675479faddb06b5e59d0f001e78c62875b13ba6b872f70fb"
+id = 4856545618
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/float.png"]
+hash = "94692ed1be7792af3880e5f3d614c1cae546a6c4844bca123ebe1e2f4c1afdca"
+id = 4856545661
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/item_button.png"]
+hash = "8c843b6d01649ef010212793bde648083779af8a6718511d8b0709669f0578fc"
+id = 4856545781
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/panel.png"]
+hash = "24a6fe2c260ff4c0b14103144ad73805d50170aca7718e66f9e385e1db71794d"
+id = 4856545854
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/panel2.png"]
+hash = "e7b015bd2c1814dddd4fb711e83089131c0d8ffde70e6dca5051d6fc1cff91a8"
+id = 4856545915
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/puzzle_piece2.png"]
+hash = "7b02c99dccfc688ba0b153a4b0e73695339fa72788720487b6406fbe3cb9029d"
+id = 4856545961
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/puzzle_piece_middle.png"]
+hash = "30eb7c9ec2fe85df621f208126240943159fa688d52ed349f18284b209b30ce4"
+id = 4856644348
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/search.png"]
+hash = "9db4f024844d18f5ac0914914d00bd2cd38518d199914a2595bc0497753ee698"
+id = 4856546017
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/selected2.png"]
+hash = "4856a5c55305f01d5513c2bc8473819aedf891dd19fcecb43a729176709fd7bc"
+id = 4856546136
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/star.png"]
+hash = "b9cfb73a976e648dd7fa6fae0029a11f6a4e45595637fcf4a7af7872beaa82da"
+id = 4857384443
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/stats.png"]
+hash = "beefc8529c843c348b15875bb1ad8fe3d4e8224306275307d51529b64b8fb2cd"
+id = 4856612290
+packable = false
+codegen = "asset-url"

@@ -68,6 +68,7 @@ function BossImageOverlay:render()
 				Text = "DEFEAT FOR 100🧠!",
 				TextColor3 = Color3.new(1, 1, 1),
 				TextScaled = true,
+				TextStrokeTransparency = 0.6,
 			}),
 		}
 	else

@@ -7,6 +7,7 @@ local CircleEffect = require(ReplicatedStorage.Core.CircleEffect)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local Grenade = require(script.Parent.Basic)
+local LinearThenLogarithmic = require(ReplicatedStorage.Core.LinearThenLogarithmic)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
@@ -15,9 +16,11 @@ local KatanaAnimation = ReplicatedStorage.Assets.Animations.KatanaAnimation
 
 local Katana = {}
 
-local BASE_DAMAGE = 105
-local BASE_DAMAGE_BETTER = 105 * 1.2
-local DAMAGE_SCALE = 1.13
+local BASE_DAMAGE = 35
+local FINAL_DAMAGE = 420
+local MULTIPLIER = 15
+local BETTER_MULTIPLIER = 1.2
+
 local KATANA_DELAY = 1
 local SCALED_DAMAGE = 0.7
 
@@ -26,9 +29,7 @@ Katana.Name = "Katana"
 Katana.Icon = "rbxassetid://4515426071"
 Katana.Cooldown = 8
 
-local function getDamage(better, level)
-	return (better and BASE_DAMAGE_BETTER or BASE_DAMAGE) * DAMAGE_SCALE ^ (level - 1)
-end
+local getDamage = LinearThenLogarithmic(BASE_DAMAGE, FINAL_DAMAGE, MULTIPLIER)
 
 function Katana.ServerEffect(player)
 	local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
@@ -39,13 +40,15 @@ function Katana.ServerEffect(player)
 			player, GamePassDictionary.BetterEquipment
 		)
 
-		local damage = getDamage(
-			better,
-			player
-				:WaitForChild("PlayerData")
-				:WaitForChild("Level")
-				.Value
+		local damage = getDamage(player
+			:WaitForChild("PlayerData")
+			:WaitForChild("Level")
+			.Value
 		)
+
+		if better then
+			damage = damage * BETTER_MULTIPLIER
+		end
 
 		local sword = Instance.new("Model")
 

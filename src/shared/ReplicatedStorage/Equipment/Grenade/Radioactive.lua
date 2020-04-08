@@ -7,17 +7,22 @@ local Workspace = game:GetService("Workspace")
 
 local Basic = require(script.Parent.Basic)
 local Damage = require(ReplicatedStorage.RuddevModules.Damage)
+local LinearThenLogarithmic = require(ReplicatedStorage.Core.LinearThenLogarithmic)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
-local BASE_DAMAGE = 10
-local BASE_DAMAGE_BETTER = 30 * 1.5
-local BASE_DPS = 20
-local BASE_DPS_BETTER = 20 * 1.5
-local DAMAGE_SCALE = 1.13
+local BASE_BURST_DAMAGE = 8
+local FINAL_BURST_DAMAGE = 80
+
+local BASE_DPS = 5.5
+local FINAL_DPS = 55
+
+local BETTER_MULTIPLIER = 1.2
+local MULTIPLIER = 15
+
 local MAX_BOSS_RANGE = 100
 local MAX_RANGE = 50
-local POISON_TIME = 8
+local POISON_TIME = 7
 local SCALED_BASE_DAMAGE = 0.15
 local SCALED_POISON_DAMAGE = 0.09
 
@@ -26,13 +31,22 @@ local Radioactive = {}
 Radioactive.Index = 4
 Radioactive.Name = "Radioactive Grenade"
 Radioactive.Icon = "rbxassetid://4657714533"
-Radioactive.Cooldown = 15
+Radioactive.Cooldown = 12
 
 Radioactive.ClientEffect = Basic.ClientEffect
 
+local getBurstDamage = LinearThenLogarithmic(BASE_BURST_DAMAGE, FINAL_BURST_DAMAGE, MULTIPLIER)
+local getDps = LinearThenLogarithmic(BASE_DPS, FINAL_DPS, MULTIPLIER)
+
 local function getDamage(better, level)
-	return (better and BASE_DAMAGE_BETTER or BASE_DAMAGE) * DAMAGE_SCALE ^ (level - 1),
-		(better and BASE_DPS_BETTER or BASE_DPS) * DAMAGE_SCALE ^ (level - 1)
+	local burst, dps = getBurstDamage(level), getDps(level)
+
+	if better then
+		burst = burst * BETTER_MULTIPLIER
+		dps = dps * MULTIPLIER
+	end
+
+	return burst, dps
 end
 
 Radioactive.ServerEffect = Basic.CreateServerEffect(

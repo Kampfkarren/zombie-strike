@@ -124,7 +124,7 @@ function Settings.GetSettingIndex(settingName, player)
 		error("unknown setting " .. settingName)
 	else
 		return LocalPlayer
-			:WaitForChild("PlayerData")
+			:WaitForChild("PlayerData", math.huge)
 			:WaitForChild("Settings")
 			:WaitForChild(settingName)
 			.Value

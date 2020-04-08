@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		// required
 		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
 		"isolatedModules": true,
 		"downlevelIteration": true,
 		"module": "commonjs",

@@ -2,6 +2,9 @@
 -- Useful for encapsulating state and make deconstructors easy
 -- @classmod Maid
 -- @see Signal
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local OnDied = require(ReplicatedStorage.Core.OnDied)
 
 local Maid = {}
 Maid.ClassName = "Maid"
@@ -144,6 +147,12 @@ function Maid:GiveTaskAnimation(animation)
 			animation:Destroy()
 		end
 	})
+end
+
+function Maid:DieWith(humanoid)
+	self:GiveTask(OnDied(humanoid):connect(function()
+		self:DoCleaning()
+	end))
 end
 
 return Maid

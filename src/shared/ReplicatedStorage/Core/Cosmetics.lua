@@ -7,7 +7,7 @@ local t = require(ReplicatedStorage.Vendor.t)
 
 local dateStamp
 
-if RunService:IsClient() then
+if RunService:IsClient() and RunService:IsRunning() then
 	dateStamp = ReplicatedStorage.Remotes.GetServerDateStamp:InvokeServer()
 end
 

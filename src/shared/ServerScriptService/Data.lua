@@ -66,7 +66,7 @@ function Data.GetPlayerData(player, key)
 		if key ~= "Version" and not migrated[player] then
 			-- TODO: Cancel if the player leaves
 			migrated[player] = Promise.promisify(migrateData)(player)
-			migrated[player]:await()
+			migrated[player]:awaitValue()
 		end
 
 		local dataStore = DataStore2(key, player)

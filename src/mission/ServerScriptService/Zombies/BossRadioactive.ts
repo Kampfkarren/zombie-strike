@@ -75,7 +75,7 @@ function SlamAttack(this: BossRadioactive & ZombieClass, timesLeft: unknown): vo
 					this.Aggro()
 				}
 
-				resolve()
+				resolve([])
 			})
 		}).then(() => {
 			if (timesLeft as number > 0) {
@@ -90,12 +90,12 @@ function SlamAttack(this: BossRadioactive & ZombieClass, timesLeft: unknown): vo
 						if (Promise.is(result)) {
 							result.then(resolve)
 						} else {
-							resolve()
+							resolve([])
 						}
 					})
 				})
 			}
-		})
+		}) as Promise<void>
 	}
 }
 

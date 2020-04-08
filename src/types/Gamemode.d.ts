@@ -20,12 +20,15 @@ export type Campaign = {
 
 	Difficulties: Difficulty[],
 	Loot: LootReward,
+	ZombieTypes: Map<string, number>,
 }
 
 export type Location = {
 	Name: string,
 	Image: string,
 	Difficulties?: Difficulty[],
+	LayoutOrder?: number,
+	PickMe?: boolean,
 }
 
 type CreateState = {

@@ -10,12 +10,15 @@ local Explosion = require(ReplicatedStorage.RuddevModules.Effects.Explosion)
 local BOSS_DEATH_TIME = 2.7
 local EXPLOSION_RADIUS = 20
 
-if Dungeon.GetDungeonData("Campaign") ~= 3 then return end
 
-local boss = CollectionService:GetInstanceAddedSignal("BossOscillate"):wait()
+local boss = CollectionService:GetInstanceAddedSignal("Boss"):wait()
+
+if Dungeon.GetDungeonData("Campaign") ~= 3 and boss.Name ~= "Egg Mech Zombie" then
+	return
+end
 
 boss.Humanoid.Died:connect(function()
-	CollectionService:RemoveTag(boss, "BossOscillate")
+	CollectionService:RemoveTag(boss, "Boss")
 
 	local fogEnd = Lighting.FogEnd
 

@@ -32,10 +32,10 @@ const Arena: Gamemode = {
 
 	IsPlayable: (_, __, difficulty): LuaTuple<[boolean, number?]> => {
 		if (difficulty.MinLevel! > Data.GetLocalPlayerData("Level")) {
-			return [false, 1]
+			return [false, 1] as LuaTuple<[boolean, number?]>
 		}
 
-		return [true]
+		return [true] as LuaTuple<[boolean, number?]>
 	},
 }
 

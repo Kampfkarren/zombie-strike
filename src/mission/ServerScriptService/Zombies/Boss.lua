@@ -8,7 +8,8 @@ local DungeonState = require(ServerScriptService.DungeonState)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local Zombie = require(script.Parent.Zombie)
 
-local AMOUNT_FOR_BOSS = 0.3
+local HEALTH_PER_PLAYER = 0.23
+local XP_AMOUNT_FOR_BOSS = 0.3
 
 local Boss = {}
 Boss.__index = Boss
@@ -67,12 +68,24 @@ function Boss:GetDamageReceivedScale()
 	end
 end
 
-function Boss.GetHealth()
+function Boss:GetHealth()
+	local bossStats = Dungeon.GetDungeonData("DifficultyInfo").BossStats
+
 	if DungeonState.CurrentGamemode.Scales() then
 		return 100
-	else
-		return Dungeon.GetDungeonData("DifficultyInfo").BossStats.Health
 	end
+
+	local health
+
+	if bossStats ~= nil then
+		health = bossStats.Health
+	else
+		health = Zombie.GetHealth(self)
+	end
+
+	health = health * (1 + HEALTH_PER_PLAYER * (#Players:GetPlayers() - 1))
+
+	return health
 end
 
 function Boss:GetSpeed()
@@ -85,7 +98,7 @@ function Boss:GetSpeed()
 end
 
 function Boss.GetXP()
-	return Dungeon.GetDungeonData("DifficultyInfo").XP * AMOUNT_FOR_BOSS
+	return Dungeon.GetDungeonData("DifficultyInfo").XP * XP_AMOUNT_FOR_BOSS
 end
 
 function Boss:UpdateNametag()

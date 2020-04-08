@@ -44,10 +44,8 @@ const BossConstructor: GamemodeConstructor = {
 			Countdown(this: void, time) {
 				if (time === 0) {
 					const bossSequence = require(ReplicatedStorage.BossSequences[bossInfo.RoomName]) as BossSequence
-					const position = (assert(
-						bossRoom.FindFirstChild("BossSpawn", true),
-						"No BossSpawn found",
-					) as Attachment).WorldPosition
+					const bossSpawn = bossRoom.FindFirstChild("BossSpawn", true) as Attachment | undefined
+					const position = bossSpawn && bossSpawn.WorldPosition
 
 					const boss = Gamemode.SpawnBoss(bossSequence, position, bossRoom)
 					boss.Died.Connect(Gamemode.EndMission)

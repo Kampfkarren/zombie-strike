@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local SoundService = game:GetService("SoundService")
 local Workspace = game:GetService("Workspace")
@@ -19,103 +20,6 @@ FrostlandsBoss.__index = FrostlandsBoss
 
 FrostlandsBoss.Name = "Yeti Zombie"
 FrostlandsBoss.Model = "Boss"
-
-FrostlandsBoss.IcicleDamage = {
-	[77] = {
-		Base = 2760000,
-		Max = 7,
-	},
-
-	[83] = {
-		Base = 4032000,
-		Max = 7.5,
-	},
-
-	[89] = {
-		Base = 7776000,
-		Max = 8,
-	},
-
-	[95] = {
-		Base = 15360000,
-		Max = 8.5,
-	},
-
-	[101] = {
-		Base = 30308683,
-		Max = 9,
-	},
-}
-
-FrostlandsBoss.IcicleTimer = {
-	[77] = 6,
-	[83] = 7,
-	[89] = 8,
-	[95] = 9,
-	[101] = 10,
-}
-
-FrostlandsBoss.SlamAttackDamage = {
-	[77] = {
-		Base = 2990000,
-		Max = 8,
-	},
-
-	[83] = {
-		Base = 4368000,
-		Max = 8.5,
-	},
-
-	[89] = {
-		Base = 8424000,
-		Max = 9,
-	},
-
-	[95] = {
-		Base = 16640000,
-		Max = 9.5,
-	},
-
-	[101] = {
-		Base = 32834407,
-		Max = 10,
-	},
-}
-
-FrostlandsBoss.SpinAttackDamage = {
-	[77] = {
-		Base = 2300000,
-		Max = 7,
-	},
-
-	[83] = {
-		Base = 3360000,
-		Max = 7.5,
-	},
-
-	[89] = {
-		Base = 6480000,
-		Max = 8,
-	},
-
-	[95] = {
-		Base = 12800000,
-		Max = 8.5,
-	},
-
-	[101] = {
-		Base = 25257236,
-		Max = 9,
-	},
-}
-
-FrostlandsBoss.SummonCount = {
-	[77] = 7,
-	[83] = 8,
-	[89] = 9,
-	[95] = 10,
-	[101] = 11,
-}
 
 function FrostlandsBoss.new()
 	return setmetatable({}, FrostlandsBoss)
@@ -155,33 +59,15 @@ function FrostlandsBoss:InitializeBossAI(room)
 	self.bossRoom = room
 
 	IcicleRain.OnServerEvent:connect(function(player)
-		local damage = FrostlandsBoss.IcicleDamage[self.level]
-
-		TakeDamage(player, self:GetDamageAgainstConstant(
-			player,
-			damage.Base,
-			damage.Max
-		))
+		TakeDamage(player, self:GetScale("IcicleDamage"))
 	end)
 
 	Spin.OnServerEvent:connect(function(player)
-		local damage = FrostlandsBoss.SpinAttackDamage[self.level]
-
-		TakeDamage(player, self:GetDamageAgainstConstant(
-			player,
-			damage.Base,
-			damage.Max
-		))
+		TakeDamage(player, self:GetScale("SpinAttackDamage"))
 	end)
 
 	Slam.OnServerEvent:connect(function(player)
-		local damage = FrostlandsBoss.SlamAttackDamage[self.level]
-
-		TakeDamage(player, self:GetDamageAgainstConstant(
-			player,
-			damage.Base,
-			damage.Max
-		))
+		TakeDamage(player, self:GetScale("SlamAttackDamage"))
 	end)
 
 	wait(1.5)
@@ -214,6 +100,21 @@ function FrostlandsBoss:SummonZombies()
 		frozen.Position = self.instance.PrimaryPart.Position
 		frozen.Parent = Workspace
 
+		local healed = 0
+		local healConnection
+		healConnection = RunService.Heartbeat:connect(function(delta)
+			local healAmount = delta * self:GetScale("SummonHeal")
+			healed = healed + healAmount
+
+			if healed >= self:GetScale("SummonMaxHeal") then
+				healConnection:disconnect()
+			elseif self.alive then
+				local humanoid = self.instance.Humanoid
+				humanoid.Health = humanoid.Health + (humanoid.MaxHealth * (healAmount / 100))
+			end
+		end)
+		maid:GiveTask(healConnection)
+
 		maid:GiveTask(frozen)
 
 		local noKill = Instance.new("Model")
@@ -221,7 +122,7 @@ function FrostlandsBoss:SummonZombies()
 		noKill.Parent = self.instance.Humanoid
 		maid:GiveTask(noKill)
 
-		local summonCount = FrostlandsBoss.SummonCount[self.level]
+		local summonCount = self:GetScale("SummonCount")
 		local zombiesLeft = summonCount
 
 		for _ = 1, summonCount do
@@ -250,9 +151,8 @@ function FrostlandsBoss.Spin()
 end
 
 function FrostlandsBoss:IcicleRain()
-	local timer = FrostlandsBoss.IcicleTimer[self.level]
-	IcicleRain:FireAllClients(timer)
-	wait(timer)
+	IcicleRain:FireAllClients()
+	wait(self:GetScale("IcicleTimer"))
 end
 
 FrostlandsBoss.AttackSequence = {

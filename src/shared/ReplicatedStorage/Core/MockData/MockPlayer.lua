@@ -5,7 +5,7 @@ return function()
 
 	MockPlayer.None = newproxy(true)
 
-	MockPlayer.Version = 6
+	MockPlayer.Version = 7
 	MockPlayer.GameVersion = 1
 
 	MockPlayer.CodesUsed = {}
@@ -25,8 +25,7 @@ return function()
 
 	MockPlayer.UpgradedSomething = false
 
-	-- ASSUMPTION: We will never have more than 9 difficulties in a campaign
-	MockPlayer.LastKnownDifficulty = 11
+	MockPlayer.LastKnownDifficulties = { ["1"] = 1 }
 
 	-- Stats
 	MockPlayer.DamageDealt = 0

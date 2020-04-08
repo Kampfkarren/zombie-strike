@@ -75,10 +75,14 @@ function CoreData.GetModel(data)
 
 	local uuid = {}
 
-	assert(data.UUID ~= nil, "UUID is nil! " .. inspect(data))
+	-- assert(data.UUID ~= nil, "UUID is nil! " .. inspect(data))
 	uuid = Instance.new("StringValue")
 	uuid.Name = "UUID"
-	uuid.Value = data.UUID
+	uuid.Value = data.UUID or "NO_UUID"
+
+	if data.Name ~= nil and data.UUID == nil then
+		uuid.Value = data.Name
+	end
 
 	if itemType == "Armor" then
 		local armorItem = getDataItem(data)
@@ -103,7 +107,9 @@ function CoreData.GetModel(data)
 				if limb:IsA("Accessory") then
 					addAccessory(armorDummy, limb)
 				else
-					armorDummy.Humanoid:ReplaceBodyPartR15(limb.Name, limb:Clone())
+					limb = limb:Clone()
+					limb.Position = armorDummy[limb.Name].Position
+					armorDummy.Humanoid:ReplaceBodyPartR15(limb.Name, limb)
 				end
 			end
 
@@ -148,6 +154,20 @@ function CoreData.GetModel(data)
 		pet.Parent = model
 		uuid.Parent = model
 		model.PrimaryPart = pet
+		return model
+	elseif itemType == "GunLowTier" or itemType == "GunHighTier" then
+		local model = Instance.new("Model")
+
+		local gun = data.Instance.Gun:Clone()
+		gun.Parent = model
+
+		local uuid = Instance.new("StringValue")
+		uuid.Name = "UUID"
+		uuid.Value = "Gun_" .. data.Index
+		uuid.Parent = model
+
+		model.PrimaryPart = gun
+
 		return model
 	else
 		local model = ReplicatedStorage.Items[data.Type .. data.Model]:Clone()

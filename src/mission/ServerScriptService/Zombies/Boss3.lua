@@ -18,41 +18,12 @@ local Zombie = require(script.Parent.Zombie)
 local DEATH_TIME = 3
 local SUMMON_DELAY = 2
 local SUMMON_INTERVAL = 0.3
-local TRI_LASER_COUNT = 4
 local TRI_LASER_MOVE_DELAY = 0.5
 local TRI_LASER_TIME = 3
 local TRI_LASER_WINDUP = 0.9
 
 local FirelandsBoss = {}
 FirelandsBoss.__index = FirelandsBoss
-
-FirelandsBoss.MassiveLaserDamage = {
-	[60] = 300000,
-	[64] = 550000,
-	[68] = 875000,
-	[72] = 1500000,
-}
-
-FirelandsBoss.MassiveLaserWindup = {
-	[60] = 4,
-	[64] = 3.6,
-	[68] = 3.2,
-	[72] = 2.8,
-}
-
-FirelandsBoss.SummonCount = {
-	[60] = 3,
-	[64] = 4,
-	[68] = 5,
-	[72] = 6,
-}
-
-FirelandsBoss.TriLaserDamage = {
-	[60] = 210000,
-	[64] = 350000,
-	[68] = 630000,
-	[72] = 1120000,
-}
 
 function FirelandsBoss.new()
 	return setmetatable({
@@ -72,11 +43,11 @@ function FirelandsBoss:InitializeBossAI(room)
 	local currentSequence = math.random(#FirelandsBoss.AttackSequence)
 
 	ChargeBigLaser.OnServerEvent:connect(function(player)
-		TakeDamage(player, FirelandsBoss.MassiveLaserDamage[self.level])
+		TakeDamage(player, self:GetScale("MassiveLaserDamage"))
 	end)
 
 	TriLaser.OnServerEvent:connect(function(player)
-		TakeDamage(player, FirelandsBoss.TriLaserDamage[self.level])
+		TakeDamage(player, self:GetScale("TriLaserDamage"))
 	end)
 
 	wait(1.5)
@@ -102,12 +73,12 @@ end
 function FirelandsBoss:BigLaser()
 	self:NewSpot()
 	ChargeBigLaser:FireAllClients(true)
-	wait(FirelandsBoss.MassiveLaserWindup[self.level])
+	wait(self:GetScale("MassiveLaserWindup"))
 	ChargeBigLaser:FireAllClients(false)
 end
 
 function FirelandsBoss:TriLaser()
-	for _ = 1, TRI_LASER_COUNT do
+	for _ = 1, self:GetScale("TriLaserCount") do
 		self:NewSpot()
 		wait(TRI_LASER_MOVE_DELAY)
 		if not self.alive then return end
@@ -123,7 +94,7 @@ end
 function FirelandsBoss:SummonZombies()
 	local parts = {}
 
-	for _ = 1, FirelandsBoss.SummonCount[self.level] do
+	for _ = 1, self:GetScale("SummonCount") do
 		local spot = SummonSpot:Clone()
 		local zombieSummonPart = self.bossRoom.ZombieSummon
 		local sizeX, sizeZ = zombieSummonPart.Size.X, zombieSummonPart.Size.Z

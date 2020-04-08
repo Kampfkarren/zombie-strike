@@ -146,7 +146,7 @@ function AutoAim.SetTarget(newTarget)
 			AutoAim.SetTarget(nil)
 		else
 			Mouse.WorldPosition = newTarget.PrimaryPart.Position
-			coroutine.wrap(itemModule.Activate)()
+			itemModule:Activate()
 		end
 	end))
 

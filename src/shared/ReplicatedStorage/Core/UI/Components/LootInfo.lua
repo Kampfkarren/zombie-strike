@@ -215,18 +215,18 @@ function LootInfo:render()
 		local lootDamage, currentGunDamage = loot.Damage, currentGun.Damage
 
 		if loot.Type == "Shotgun" then
-			lootDamage = lootDamage * RuddevConfig.GetShotgunShotSize(loot.Level)
+			lootDamage = lootDamage * loot.ShotSize
 		end
 
 		if currentGunItem.Type == "Shotgun" then
-			currentGunDamage = currentGunDamage * RuddevConfig.GetShotgunShotSize(currentGunItem.Level)
+			currentGunDamage = currentGunDamage * currentGunItem.ShotSize
 		end
 
 		currentGunDamage = currentGunDamage + Upgrades.GetDamageBuff(currentGunDamage, currentGunItem.Upgrades)
 		lootDamage = lootDamage + Upgrades.GetDamageBuff(lootDamage, loot.Upgrades)
 
-		currentGunDamage = currentGunDamage * (1 + currentGunItem.Bonus / 100)
-		lootDamage = lootDamage * (1 + loot.Bonus / 100)
+		currentGunDamage = currentGunDamage -- * (1 + currentGunItem.Bonus / 100)
+		lootDamage = lootDamage -- * (1 + loot.Bonus / 100)
 
 		stats.UIGridLayout = e("UIGridLayout", {
 			CellPadding = UDim2.new(0.02, 0, 0.02, 0),

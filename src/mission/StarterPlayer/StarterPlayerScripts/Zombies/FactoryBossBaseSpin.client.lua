@@ -3,18 +3,21 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+local GetStats = require(ReplicatedStorage.Libraries.GetStats)
+
 local BossSequenceFinished = ReplicatedStorage.LocalEvents.BossSequenceFinished
 local LocalPlayer = Players.LocalPlayer
 local HitByLaser = ReplicatedStorage.Remotes.FactoryBoss.HitByLaser
 
-local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
+if Dungeon.GetDungeonData("Campaign") ~= 2 then return end
+
+local stats = GetStats().Boss
 
 local DAMAGE_COOLDOWN = 1
 local SHIFT_MAX = 33
 local SPIN_BUFF = 0.125
-local SPIN_RATE = 0.34
-
-if Dungeon.GetDungeonData("Campaign") ~= 2 then return end
+local SPIN_RATE = 0.34 * stats.BaseSpinSpeed
 
 BossSequenceFinished.Event:wait()
 
@@ -34,8 +37,6 @@ local lasers = {
 		Scale = 1,
 	},
 }
-
-local total = 0
 
 local rodBaseCFrame = rod.PrimaryPart.CFrame
 local rng = Random.new()

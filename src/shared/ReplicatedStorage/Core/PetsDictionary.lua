@@ -105,7 +105,7 @@ return {
 	Rarities = {
 		{
 			Style = LootStyles[1],
-			Damage = 0.05,
+			Damage = 0.01,
 			FireRate = 1,
 			DropRate = 50,
 			Luck = 10,
@@ -113,7 +113,7 @@ return {
 
 		{
 			Style = LootStyles[2],
-			Damage = 0.08,
+			Damage = 0.02,
 			FireRate = 1.2,
 			DropRate = 25,
 			Luck = 20,
@@ -121,7 +121,7 @@ return {
 
 		{
 			Style = LootStyles[3],
-			Damage = 0.11,
+			Damage = 0.03,
 			FireRate = 1.3,
 			DropRate = 15,
 			Luck = 30,
@@ -129,7 +129,7 @@ return {
 
 		{
 			Style = LootStyles[4],
-			Damage = 0.14,
+			Damage = 0.04,
 			FireRate = 1.4,
 			DropRate = 8,
 			Luck = 40,
@@ -137,7 +137,7 @@ return {
 
 		{
 			Style = LootStyles[5],
-			Damage = 0.25,
+			Damage = 0.05,
 			FireRate = 2,
 			DropRate = 2,
 			Luck = 50,

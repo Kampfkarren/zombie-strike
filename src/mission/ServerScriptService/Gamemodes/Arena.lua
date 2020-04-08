@@ -2,7 +2,6 @@ local BadgeService = game:GetService("BadgeService")
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
@@ -18,7 +17,6 @@ local Gamemode = require(script.Parent.Gamemode)
 local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
-local Memoize = require(ReplicatedStorage.Core.Memoize)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 
 local ArenaRemotes = ReplicatedStorage.Remotes.Arena
@@ -29,6 +27,8 @@ local Arena = {}
 local BADGE = 2124497452
 local LOOT_EQUIPMENT_RATE = 0.05
 local LOOT_ROUNDS = 5
+local SPECIAL_ZOMBIE_RATE = 0.05
+local SPECIAL_ZOMBIES_IN_FIELD = 5
 local XP_BASE = 57
 local XP_SCALE = 1.145
 local ZOMBIES_FIRST_WAVE = 7
@@ -52,7 +52,19 @@ local function spawnArena()
 	return model
 end
 
-local getZombieTypes = Memoize(function()
+local function getSpecialZombieTypes()
+	local zombieTypes = {}
+
+	for _, zombieType in pairs(Dungeon.GetDungeonData("CampaignInfo").SpecialZombies) do
+		if not ArenaConstants.BannedZombies[zombieType] then
+			table.insert(zombieTypes, zombieType)
+		end
+	end
+
+	return zombieTypes
+end
+
+local function getZombieTypes()
 	local zombieTypes = {}
 
 	for _, zombieType in pairs(Gamemode.GetZombieTypes()) do
@@ -62,11 +74,9 @@ local getZombieTypes = Memoize(function()
 	end
 
 	return zombieTypes
-end)
+end
 
-local function spawnZombie(zombieSpawns, level)
-	local zombieTypes = getZombieTypes()
-
+local function spawnZombie(zombieTypes, zombieSpawns, level)
 	local zombie = Gamemode.SpawnZombie(
 		zombieTypes[math.random(#zombieTypes)],
 		level,
@@ -145,6 +155,7 @@ function Arena.Init()
 		end
 
 		local summonCount = ZOMBIES_FIRST_WAVE + (ZOMBIES_PER_WAVE * currentWave)
+		local specialZombiesAlive = 0
 
 		local running = coroutine.running()
 
@@ -153,12 +164,28 @@ function Arena.Init()
 				coroutine.yield()
 			end
 
-			local zombie = spawnZombie(zombieSpawns, currentWave)
+			local isSpecial, zombieTypes
+
+			if specialZombiesAlive < SPECIAL_ZOMBIES_IN_FIELD
+				and rng:NextNumber() <= SPECIAL_ZOMBIE_RATE
+			then
+				specialZombiesAlive = specialZombiesAlive + 1
+				zombieTypes = getSpecialZombieTypes()
+				isSpecial = true
+			else
+				zombieTypes = getZombieTypes()
+			end
+
+			local zombie = spawnZombie(zombieTypes, zombieSpawns, currentWave)
 			zombie.Died:connect(function()
 				summonCount = summonCount - 1
 
 				if coroutine.status(running) == "suspended" then
 					coroutine.resume(running)
+				end
+
+				if isSpecial then
+					specialZombiesAlive = specialZombiesAlive - 1
 				end
 
 				if summonCount == 0 then

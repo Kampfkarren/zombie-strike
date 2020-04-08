@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
+local UseBetaFeature = require(ReplicatedStorage.Core.UseBetaFeature)
 
 local BattlePass = require(script.BattlePass)
 local Codes = require(script.Codes)
@@ -10,7 +11,6 @@ local CollectionLog = require(script.CollectionLog)
 local Equipment = require(script.Equipment)
 local Feedback = require(script.Feedback)
 local Friends = require(script.Friends)
-local Inventory = require(script.Inventory)
 local Pets = require(script.Pets)
 local Quests = require(script.Quests)
 local Settings = require(script.Settings)
@@ -18,6 +18,14 @@ local Shopkeeper = require(script.Shopkeeper)
 local SoftShutdownAlert = require(script.SoftShutdownAlert)
 local Store = require(script.Store)
 local Trading = require(script.Trading)
+
+local Inventory
+
+if UseBetaFeature("Inventory2") then
+	Inventory = require(script.Inventory2)
+else
+	Inventory = require(script.Inventory)
+end
 
 local e = Roact.createElement
 

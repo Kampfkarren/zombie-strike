@@ -1,10 +1,19 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Rodux = require(ReplicatedStorage.Vendor.Rodux)
 
 local Store
+
+local ENABLE_DEBUGGING = false
+
+local loggerMiddleware
+
+if RunService:IsStudio() and ENABLE_DEBUGGING then
+	loggerMiddleware = Rodux.loggerMiddleware
+end
 
 local function copy(list)
 	local copy = {}
@@ -48,6 +57,18 @@ local function pageReducer(pages)
 	end
 
 	return output
+end
+
+local function updatePossessions(original, action)
+	local possessions = copy(original)
+
+	-- network optimization: owned is nil when just an equipped update
+	if action.owned then
+		possessions.owned = action.owned
+	end
+
+	possessions.equipped = action.equipped
+	return possessions
 end
 
 Store = Rodux.Store.new(Rodux.combineReducers({
@@ -110,6 +131,16 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	hideUi = Rodux.createReducer(0, {
+		HideUI = function(state)
+			return state + 1
+		end,
+
+		ShowUI = function(state)
+			return state - 1
+		end,
+	}),
+
 	page = Rodux.createReducer({
 		current = nil,
 	}, pageReducer({
@@ -140,17 +171,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 	sprays = Rodux.createReducer({
 		owned = {},
 	}, {
-		UpdateSprays = function(state, action)
-			local state = copy(state)
-
-			-- network optimization: owned is nil when just an equipped update
-			if action.owned then
-				state.owned = action.owned
-			end
-
-			state.equipped = action.equipped
-			return state
-		end,
+		UpdateSprays = updatePossessions,
 	}),
 
 	store = Rodux.createReducer({
@@ -186,6 +207,30 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		UpdateXPExpiration = function(state, action)
 			local state = copy(state)
 			state.xpExpiration = action.expiration
+			return state
+		end,
+	}),
+
+	nametags = Rodux.createReducer({
+		fonts = {
+			equipped = nil,
+			owned = {},
+		},
+
+		titles = {
+			equipped = nil,
+			owned = {},
+		},
+	}, {
+		UpdateFonts = function(state, action)
+			local state = copy(state)
+			state.fonts = updatePossessions(state.fonts, action)
+			return state
+		end,
+
+		UpdateTitles = function(state, action)
+			local state = copy(state)
+			state.titles = updatePossessions(state.titles, action)
 			return state
 		end,
 	}),
@@ -276,7 +321,7 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 			return state
 		end,
 	}),
-}))
+}), nil, { loggerMiddleware })
 
 ReplicatedStorage.Remotes.UpdateCollectionLog.OnClientEvent:connect(function(itemsCollected)
 	Store:dispatch({
@@ -314,6 +359,22 @@ ReplicatedStorage.Remotes.UpdateEquipmentInventory.OnClientEvent:connect(functio
 	Store:dispatch({
 		type = "UpdateEquipmentInventory",
 		newInventory = equipment,
+	})
+end)
+
+ReplicatedStorage.Remotes.UpdateFonts.OnClientEvent:connect(function(equipped, owned)
+	Store:dispatch({
+		type = "UpdateFonts",
+		equipped = equipped,
+		owned = owned,
+	})
+end)
+
+ReplicatedStorage.Remotes.UpdateTitles.OnClientEvent:connect(function(equipped, owned)
+	Store:dispatch({
+		type = "UpdateTitles",
+		equipped = equipped,
+		owned = owned,
 	})
 end)
 
