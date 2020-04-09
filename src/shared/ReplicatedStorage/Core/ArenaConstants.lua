@@ -16,7 +16,7 @@ end
 return {
 	LevelStep = 20,
 	MaxLevel = 200,
-	PastCapMultiplier = 1.02,
+	PastCapMultiplier = 1.01,
 	StopBeingLinearLevel = 70,
 
 	BannedZombies = {

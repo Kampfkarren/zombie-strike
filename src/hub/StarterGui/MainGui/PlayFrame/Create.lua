@@ -161,21 +161,18 @@ function Create:init()
 			level = level,
 		})
 
-		local latestCampaign
+		local hardestLevel, hardestCampaign = 0, nil
 
 		for campaignIndex, campaign in ipairs(Gamemodes.Mission.Locations) do
-			local minLevel = campaign.Difficulties[1].MinLevel
-
-			if minLevel ~= nil then
-				if level >= minLevel then
-					latestCampaign = campaignIndex
-				else
-					break
+			for _, difficulty in ipairs(campaign.Difficulties) do
+				if level >= difficulty.MinLevel and difficulty.MinLevel >= hardestLevel then
+					hardestCampaign = campaignIndex
+					hardestLevel = difficulty.MinLevel
 				end
 			end
 		end
 
-		self:SelectLocation(assert(latestCampaign))
+		self:SelectLocation(assert(hardestCampaign))
 	end)
 
 	self.toggleHardcore = function()

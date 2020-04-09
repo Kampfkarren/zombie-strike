@@ -33,7 +33,7 @@ local XP_BASE = 57
 local XP_SCALE = 1.145
 local ZOMBIES_FIRST_WAVE = 7
 local ZOMBIES_PER_WAVE = 1
-local ZOMBIES_IN_FIELD = 17
+local ZOMBIES_IN_FIELD = 11
 
 local rng = Random.new()
 
