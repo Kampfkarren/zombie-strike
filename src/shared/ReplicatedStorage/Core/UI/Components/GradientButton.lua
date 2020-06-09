@@ -47,6 +47,13 @@ function GradientButton:init()
 			self.props[Roact.Event.MouseLeave]()
 		end
 	end
+
+	self.colorMap = function(total)
+		return ColorSequence.new(
+			self.props.MinGradient,
+			Color3Lerp(self.props.MaxGradient, self.props.HoveredMaxGradient, math.sin(total * (math.pi / 2)))
+		)
+	end
 end
 
 function GradientButton:Animate()
@@ -81,12 +88,7 @@ function GradientButton:render()
 	props[Roact.Event.MouseLeave] = self.unhover
 
 	table.insert(props[Roact.Children], e("UIGradient", {
-		Color = self.total:map(function(total)
-			return ColorSequence.new(
-				self.props.MinGradient,
-				Color3Lerp(self.props.MaxGradient, self.props.HoveredMaxGradient, math.sin(total * (math.pi / 2)))
-			)
-		end),
+		Color = self.total:map(self.colorMap),
 		Rotation = self.props.GradientRotation,
 	}))
 

@@ -14,6 +14,7 @@ local GamePasses = require(ReplicatedStorage.Core.GamePasses)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local InventorySpace = require(ReplicatedStorage.Core.InventorySpace)
 local Loot = require(ReplicatedStorage.Core.Loot)
+local Perks = require(ReplicatedStorage.Core.Perks)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
@@ -36,8 +37,8 @@ local RARITY_PERCENTAGES = {
 }
 
 local RARITY_PERCENTAGES_LEGENDARY = {
-	{ 5, 5 },
-	{ 6.38, 4 },
+	{ 3, 5 },
+	{ 8, 4 },
 	{ 16, 3 },
 	{ 34, 2 },
 	{ 39, 1 },
@@ -130,13 +131,11 @@ local function getChancesFor(player, moreLegendaries, dungeonsSinceLast)
 		sum = sum + chance
 	end
 
-	if not moreLegendaries then
-		local newLegendaryChance = getLegendaryChance(dungeonsSinceLast)
-		local half = (newLegendaryChance - PITY_TIMER_BASE) / 2
-		chances[1] = { newLegendaryChance, 5 }
-		chances[#chances] = { math.max(0, chances[#chances][1] - half), 1 }
-		chances[#chances - 1] = { math.max(0, chances[#chances - 1][1] - half), 2 }
-	end
+	local newLegendaryChance = getLegendaryChance(dungeonsSinceLast)
+	local half = (newLegendaryChance - PITY_TIMER_BASE) / 2
+	chances[1] = { newLegendaryChance, 5 }
+	chances[#chances] = { math.max(0, chances[#chances][1] - half), 1 }
+	chances[#chances - 1] = { math.max(0, chances[#chances - 1][1] - half), 2 }
 
 	if sum - 100 > 0.00001 then
 		warn("getChancesFor result didn't add up! added to " .. sum)
@@ -165,6 +164,14 @@ local function getLootRarity(player)
 			return 1
 		else
 			return 2
+		end
+	end
+
+	local rollRarity = DungeonState.CurrentGamemode.RollRarity
+	if rollRarity then
+		local rarity = rollRarity(player)
+		if rarity ~= nil then
+			return rarity
 		end
 	end
 
@@ -286,12 +293,14 @@ local function generateLootItem(player)
 			Level = level,
 
 			Bonus = funny,
-			Upgrades = 0,
 			Favorited = false,
+			Seed = rng:NextInteger(0, 1000),
 
 			Model = getModel(type, rarity),
 			UUID = uuid,
 		}
+
+		loot.Perks = Perks.GenerateWeaponPerksForRarity(loot, rarity)
 
 		return loot
 	else

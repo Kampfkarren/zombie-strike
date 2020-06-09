@@ -6,11 +6,13 @@ const Boss: Gamemode = {
 	Name: "Boss",
 	HardcoreEnabled: true,
 	Locations: Bosses.mapFiltered((boss) => {
+		if (boss.Name === "Egg Mech Zombie") {
+			return
+		}
+
 		return {
-			Name: boss.Name === "Egg Mech Zombie" ? "[EVENT] Egg Mech Zombie" : boss.Name,
+			Name: boss.Name,
 			Image: boss.Image,
-			LayoutOrder: boss.Name === "Egg Mech Zombie" ? 0 : undefined,
-			PickMe: boss.Name === "Egg Mech Zombie",
 		}
 	}),
 

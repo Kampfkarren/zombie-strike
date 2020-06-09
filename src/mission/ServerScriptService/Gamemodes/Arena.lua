@@ -25,6 +25,7 @@ local GiveQuest = ServerStorage.Events.GiveQuest
 local Arena = {}
 
 local BADGE = 2124497452
+local FORCE_COMMONS_UNLESS_WITHIN_LEVELS = 20
 local LOOT_EQUIPMENT_RATE = 0.05
 local LOOT_ROUNDS = 5
 local SPECIAL_ZOMBIE_RATE = 0.05
@@ -229,6 +230,13 @@ function Arena.Init()
 		Countdown = function(timer)
 			if timer == 1 then
 				FastSpawn(startWave)
+			end
+		end,
+
+		RollRarity = function(player)
+			local level = Data.GetPlayerData(player, "Level")
+			if level - currentWave > FORCE_COMMONS_UNLESS_WITHIN_LEVELS then
+				return 1
 			end
 		end,
 

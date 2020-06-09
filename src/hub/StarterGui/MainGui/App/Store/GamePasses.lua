@@ -146,6 +146,7 @@ function GamePassesMenu:render()
 
 	return e("Frame", {
 		BackgroundTransparency = 1,
+		LayoutOrder = 4,
 		Size = UDim2.fromScale(0.9, 0.9),
 		[Roact.Ref] = self.props[Roact.Ref],
 	}, {

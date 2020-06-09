@@ -19,6 +19,9 @@ local Effects = require(ReplicatedStorage.RuddevModules.Effects)
 local GetCharacter = require(ReplicatedStorage.Core.GetCharacter)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local GunSpray = require(ReplicatedStorage.Core.GunSpray)
+local Perk = require(ReplicatedStorage.Core.Perks.Perk)
+local Perks = require(ReplicatedStorage.Core.Perks)
+local Reloading = require(ReplicatedStorage.Core.Reloading)
 
 local GiveQuest = ServerStorage.Events.GiveQuest
 
@@ -37,10 +40,17 @@ local cancels = {}
 REMOTES.Reload.OnServerEvent:connect(function(player)
 	local character = player.Character
 
-	if character and character.Humanoid.Health > 0 then
+	if character and character.Humanoid.Health > 0 and not Reloading.IsReloading(player) then
+		Reloading.SetReloading(player, true)
+
 		local item = character:WaitForChild("Gun")
 		local config = CONFIG:GetConfig(item)
 		local itemAmmo = item.Ammo
+
+		local reloadTime = config.ReloadTime
+		for _, perk in ipairs(Perks.GetPerksFor(player)) do
+			reloadTime = perk:ModifyReloadTime(reloadTime)
+		end
 
 		local ourTick = (cancels[item] or 0) + 1
 		cancels[item] = ourTick
@@ -59,14 +69,19 @@ REMOTES.Reload.OnServerEvent:connect(function(player)
 		repeat
 			elapsed = tick() - start
 			RunService.Stepped:wait()
-		until elapsed >= config.ReloadTime or cancels[item] ~= ourTick
+		until elapsed >= reloadTime or cancels[item] ~= ourTick
 
 		local needed = magazine - itemAmmo.Value
-		if elapsed >= config.ReloadTime then
+		if elapsed >= reloadTime then
 			itemAmmo.Value = itemAmmo.Value + needed
+
+			for _, perk in ipairs(Perks.GetPerksFor(player)) do
+				perk:Reloaded(magazine)
+			end
 		end
 
 		cancels[item] = cancels[item] + 1
+		Reloading.SetReloading(player, false)
 	end
 end)
 
@@ -119,14 +134,70 @@ local function hit(player, hit, index)
 								-- 	* config.ScaleBuff
 								-- 	* damageReceivedScale.Value
 								-- 	* 100
-								damage = DamageCalculations.GetDamageNeededForDPS(config, damageReceivedScale.Value * 100)
+
+								-- TODO: This is to preserve old behavior
+								-- but we might not actually need it for bosses to balanced
+								local critlessConfig = {}
+								for key, value in pairs(config) do
+									critlessConfig[key] = value
+								end
+
+								critlessConfig.CritChance = 0
+
+								damage = DamageCalculations.GetDamageNeededForDPS(critlessConfig, damageReceivedScale.Value * 100)
 							end
 
-							DAMAGE:Damage(humanoid, damage, player, config.CritChance, config.CritDamage, lyingDamage)
+							local shouldCrit = math.random() <= config.CritChance
+							local forcedCrit = false
+
+							local tellPlayer = false
+
+							for _, perk in ipairs(Perks.GetPerksFor(player)) do
+								perk:DamageDealt(damage, humanoid)
+								damage = perk:ModifyDamage(damage, humanoid)
+
+								if shouldCrit then
+									perk:Critted(
+										forcedCrit and Perk.CritMethod.Forced or Perk.CritMethod.Natural
+									)
+
+									-- Only tell the player if any of their perks would actually care
+									if perk.Critted ~= Perk.WeaponPerk.Critted
+										and perk.Scope ~= Perk.Scope.Server
+									then
+										tellPlayer = true
+									end
+								end
+
+								if not forcedCrit then
+									local perkCritDecision = perk:ShouldCrit()
+									if perkCritDecision ~= Perk.CritDecision.Default then
+										shouldCrit = perkCritDecision == Perk.CritDecision.ForceCrit
+										forcedCrit = true
+									end
+								end
+							end
+
+							if tellPlayer then
+								ReplicatedStorage.Remotes.Critted:FireClient(player)
+							end
+
+							DAMAGE:Damage(
+								humanoid,
+								damage,
+								player,
+								shouldCrit,
+								config.CritDamage,
+								lyingDamage
+							)
 
 							if humanoid.Health <= 0 then
 								if hit.Name == "Head" then
 									humanoid.Parent.Head.Transparency = 1
+								end
+
+								for _, perk in ipairs(Perks.GetPerksFor(player)) do
+									perk:ZombieKilled(humanoid)
 								end
 
 								for _, part in ipairs(humanoid.Parent:GetChildren()) do
@@ -149,6 +220,13 @@ local function hit(player, hit, index)
 								end)
 							end
 						end
+					end
+				end
+			else
+				local otherPlayer = Players:GetPlayerFromCharacter(character)
+				if otherPlayer ~= nil and otherPlayer ~= player then
+					for _, perk in ipairs(Perks.GetPerksFor(player)) do
+						perk:TeammateShot(humanoid)
 					end
 				end
 			end
@@ -177,7 +255,13 @@ REMOTES.Shoot.OnServerEvent:connect(function(player, position, mouseCFrame, hits
 				if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/")
 					and item.WeaponData.Type.Value ~= "Crystal"
 				then
-					ammo.Value = ammo.Value - 1
+					local ammoCost = 1
+
+					for _, perk in ipairs(Perks.GetPerksFor(player)) do
+						ammoCost = perk:ModifyAmmoCost(ammoCost)
+					end
+
+					ammo.Value = ammo.Value - math.min(ammo.Value, ammoCost)
 				end
 
 				local directions = {}

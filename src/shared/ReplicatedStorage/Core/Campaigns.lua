@@ -5,26 +5,31 @@ local t = require(ReplicatedStorage.Vendor.t)
 local Easy = {
 	Name = "Easy",
 	Color = Color3.fromRGB(76, 209, 55),
+	Gold = 250,
 }
 
 local Medium = {
 	Name = "Medium",
 	Color = Color3.fromRGB(251, 197, 49),
+	Gold = 320,
 }
 
 local Hard = {
 	Name = "Hard",
 	Color = Color3.fromRGB(232, 65, 24),
+	Gold = 340,
 }
 
 local VeryHard = {
 	Name = "Very Hard",
 	Color = Color3.fromRGB(30, 55, 153),
+	Gold = 370,
 }
 
 local Extreme = {
 	Name = "Extreme",
 	Color = Color3.fromRGB(109, 35, 35),
+	Gold = 420,
 }
 
 local TOWER_REACTION_TIME = table.create(5, 1)
@@ -101,7 +106,7 @@ local campaignsType = t.array(t.strictInterface({
 		MinLevel = t.optional(t.numberMin(1)),
 		TimesPlayed = t.optional(t.numberMin(0)),
 
-		Style = t.strictInterface({
+		Style = t.interface({
 			Name = t.string,
 			Color = t.Color3,
 		}),
@@ -165,7 +170,6 @@ local Campaigns = {
 				MinLevel = 1,
 				Style = Easy,
 
-				Gold = 100,
 				Rooms = 4,
 				XP = 600,
 				ZombieSpawnRate = 0.5,
@@ -179,7 +183,6 @@ local Campaigns = {
 				MinLevel = 6,
 				Style = Medium,
 
-				Gold = 180,
 				Rooms = 6,
 				XP = 1000,
 				ZombieSpawnRate = 0.65,
@@ -193,7 +196,6 @@ local Campaigns = {
 				MinLevel = 32,
 				Style = Hard,
 
-				Gold = 3360,
 				Rooms = 7,
 				XP = 15000,
 				ZombieSpawnRate = 0.75,
@@ -207,7 +209,6 @@ local Campaigns = {
 				MinLevel = 56,
 				Style = VeryHard,
 
-				Gold = 50930,
 				Rooms = 8,
 				XP = 500000,
 				ZombieSpawnRate = 0.75,
@@ -221,7 +222,6 @@ local Campaigns = {
 				MinLevel = 78,
 				Style = Extreme,
 
-				Gold = 616290,
 				Rooms = 9,
 				XP = 25500000,
 				ZombieSpawnRate = 0.75,
@@ -317,7 +317,6 @@ local Campaigns = {
 				MinLevel = 15,
 				Style = Easy,
 
-				Gold = 490,
 				Rooms = 4,
 				XP = 3000,
 				ZombieSpawnRate = 0.65,
@@ -327,7 +326,6 @@ local Campaigns = {
 				MinLevel = 40,
 				Style = Medium,
 
-				Gold = 8310,
 				Rooms = 6,
 				XP = 65000,
 				ZombieSpawnRate = 0.7,
@@ -337,7 +335,6 @@ local Campaigns = {
 				MinLevel = 64,
 				Style = Hard,
 
-				Gold = 126110,
 				Rooms = 7,
 				XP = 1500000,
 				ZombieSpawnRate = 0.75,
@@ -347,7 +344,6 @@ local Campaigns = {
 				MinLevel = 86,
 				Style = VeryHard,
 
-				Gold = 1525920,
 				Rooms = 7,
 				XP = 82000000,
 				ZombieSpawnRate = 0.8,
@@ -357,7 +353,6 @@ local Campaigns = {
 				MinLevel = 106,
 				Style = Extreme,
 
-				Gold = 14719480,
 				Rooms = 7,
 				XP = 1875000000,
 				ZombieSpawnRate = 0.85,
@@ -446,7 +441,6 @@ local Campaigns = {
 				MinLevel = 20,
 				Style = Easy,
 
-				Gold = 860,
 				Rooms = 4,
 				XP = 3500,
 				ZombieSpawnRate = 0.65,
@@ -456,7 +450,6 @@ local Campaigns = {
 				MinLevel = 44,
 				Style = Medium,
 
-				Gold = 13070,
 				Rooms = 6,
 				XP = 120000,
 				ZombieSpawnRate = 0.75,
@@ -466,7 +459,6 @@ local Campaigns = {
 				MinLevel = 68,
 				Style = Hard,
 
-				Gold = 198430,
 				Rooms = 7,
 				XP = 2500000,
 				ZombieSpawnRate = 0.85,
@@ -476,7 +468,6 @@ local Campaigns = {
 				MinLevel = 90,
 				Style = VeryHard,
 
-				Gold = 2401070,
 				Rooms = 7,
 				XP = 150000000,
 				ZombieSpawnRate = 0.85,
@@ -486,7 +477,6 @@ local Campaigns = {
 				MinLevel = 110,
 				Style = Extreme,
 
-				Gold = 23161380,
 				Rooms = 7,
 				XP = 3000000000,
 				ZombieSpawnRate = 0.85,
@@ -577,7 +567,6 @@ local Campaigns = {
 				MinLevel = 24,
 				Style = Easy,
 
-				Gold = 1360,
 				Rooms = 4,
 				XP = 6500,
 				ZombieSpawnRate = 0.6,
@@ -587,7 +576,6 @@ local Campaigns = {
 				MinLevel = 48,
 				Style = Medium,
 
-				Gold = 20570,
 				Rooms = 5,
 				XP = 170000,
 				ZombieSpawnRate = 0.7,
@@ -597,7 +585,6 @@ local Campaigns = {
 				MinLevel = 72,
 				Style = Hard,
 
-				Gold = 312230,
 				Rooms = 6,
 				XP = 2500000,
 				ZombieSpawnRate = 0.8,
@@ -607,7 +594,6 @@ local Campaigns = {
 				MinLevel = 94,
 				Style = VeryHard,
 
-				Gold = 3778120,
 				Rooms = 6,
 				XP = 290000000,
 				ZombieSpawnRate = 0.8,
@@ -617,7 +603,6 @@ local Campaigns = {
 				MinLevel = 114,
 				Style = Extreme,
 
-				Gold = 36444880,
 				Rooms = 6,
 				XP = 7000000000,
 				ZombieSpawnRate = 0.8,
@@ -721,7 +706,6 @@ local Campaigns = {
 				MinLevel = 28,
 				Style = Easy,
 
-				Gold = 2130,
 				Rooms = 4,
 				XP = 8000,
 				ZombieSpawnRate = 0.6,
@@ -731,7 +715,6 @@ local Campaigns = {
 				MinLevel = 52,
 				Style = Medium,
 
-				Gold = 32370,
 				Rooms = 6,
 				XP = 350000,
 				ZombieSpawnRate = 0.7,
@@ -741,7 +724,6 @@ local Campaigns = {
 				MinLevel = 74,
 				Style = Hard,
 
-				Gold = 391670,
 				Rooms = 7,
 				XP = 11000000,
 				ZombieSpawnRate = 0.8,
@@ -751,7 +733,6 @@ local Campaigns = {
 				MinLevel = 98,
 				Style = VeryHard,
 
-				Gold = 5944950,
 				Rooms = 7,
 				XP = 500000000,
 				ZombieSpawnRate = 0.8,
@@ -761,7 +742,6 @@ local Campaigns = {
 				MinLevel = 118,
 				Style = Extreme,
 
-				Gold = 57346730,
 				Rooms = 7,
 				XP = 9000000000,
 				ZombieSpawnRate = 0.8,
@@ -828,7 +808,7 @@ local Campaigns = {
 
 			Sniper = {
 				Health = { 300, 900, 1500, 2500, 3000 },
-				Damage = { 150, 300, 500, 900, 1200 },
+				Damage = { 75, 150, 250, 450, 600 },
 				Speed = constant(0),
 			},
 
@@ -865,7 +845,6 @@ local Campaigns = {
 				MinLevel = 10,
 				Style = Easy,
 
-				Gold = 280,
 				XP = 1500,
 				Rooms = 4,
 				ZombieSpawnRate = 0.3,
@@ -875,7 +854,6 @@ local Campaigns = {
 				MinLevel = 36,
 				Style = Medium,
 
-				Gold = 5280,
 				XP = 25000,
 				Rooms = 6,
 				ZombieSpawnRate = 0.35,
@@ -885,7 +863,6 @@ local Campaigns = {
 				MinLevel = 60,
 				Style = Hard,
 
-				Gold = 80140,
 				XP = 1300000,
 				Rooms = 7,
 				ZombieSpawnRate = 0.40,
@@ -895,7 +872,6 @@ local Campaigns = {
 				MinLevel = 82,
 				Style = VeryHard,
 
-				Gold = 969750,
 				XP = 55000000,
 				Rooms = 7,
 				ZombieSpawnRate = 0.4,
@@ -905,7 +881,6 @@ local Campaigns = {
 				MinLevel = 102,
 				Style = Extreme,
 
-				Gold = 9354490,
 				XP = 1400000000,
 				Rooms = 7,
 				ZombieSpawnRate = 0.45,
@@ -1000,6 +975,12 @@ local Campaigns = {
 		AIAggroRange = 60,
 	},
 }
+
+for _, campaign in ipairs(Campaigns) do
+	for _, difficulty in ipairs(campaign.Difficulties) do
+		difficulty.Gold = difficulty.Style.Gold
+	end
+end
 
 assert(campaignsType(Campaigns))
 

@@ -8,6 +8,12 @@ local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local LivesText = require(ReplicatedStorage.Libraries.LivesText)
 local OnDied = require(ReplicatedStorage.Core.OnDied)
+local Roact = require(ReplicatedStorage.Vendor.Roact)
+local PerfectTextLabel = require(ReplicatedStorage.Core.UI.Components.PerfectTextLabel)
+
+local ImageCap = require(ReplicatedStorage.Assets.Tarmac.UI.cap)
+
+local e = Roact.createElement
 
 local DeathFade = Lighting.DeathFade
 local GoldLoss = script.Parent.Main.GoldLoss
@@ -73,6 +79,38 @@ local tweenGoldLossBounce = TweenService:Create(
 	{ TextSize = 100 }
 )
 
+local function CapsLoss(props)
+	return e("Frame", {
+		BackgroundTransparency = 1,
+		Size = UDim2.fromScale(1, 1),
+	}, {
+		UIListLayout = e("UIListLayout", {
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			FillDirection = Enum.FillDirection.Horizontal,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+
+		Label = e(PerfectTextLabel, {
+			BackgroundTransparency = 1,
+			Font = Enum.Font.GothamSemibold,
+			LayoutOrder = 1,
+			Text = props.amount .. "% ",
+			TextColor3 = Color3.fromRGB(214, 48, 48),
+			TextSize = props.textSize,
+
+			ForceY = UDim.new(1, 0),
+		}),
+
+		Caps = e("ImageLabel", {
+			BackgroundTransparency = 1,
+			Image = ImageCap,
+			LayoutOrder = 2,
+			Size = UDim2.fromOffset(props.textSize, props.textSize),
+		}),
+	})
+end
+
 local function respawningDeath(shiftAmount)
 	tweenFadeOut:Play()
 	LocalPlayer.PlayerGui.RuddevGui.Enabled = false
@@ -107,12 +145,29 @@ if gamemodeInfo.Lives == nil then
 	else
 		local amount = 100
 
+		GoldLoss.Text = ""
+
+		local tree = Roact.mount(e(CapsLoss, {
+			amount = 100,
+			textSize = 60,
+		}), GoldLoss)
+
+		GoldLoss:GetPropertyChangedSignal("TextSize"):connect(function()
+			Roact.update(tree, e(CapsLoss, {
+				amount = amount,
+				textSize = GoldLoss.TextSize,
+			}))
+		end)
+
 		characterAdded = function(character)
 			OnDied(character:WaitForChild("Humanoid")):connect(function()
 				respawningDeath(function()
 					if amount > MIN_COINS then
 						amount = amount - 10
-						GoldLoss.Text = amount .. "% G"
+						Roact.update(tree, e(CapsLoss, {
+							amount = amount,
+							textSize = GoldLoss.TextSize,
+						}))
 						return true
 					end
 				end)

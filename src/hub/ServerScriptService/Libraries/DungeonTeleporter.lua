@@ -2,6 +2,7 @@ local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
 
+local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
 local PlaceIds = require(ReplicatedStorage.Core.PlaceIds)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
@@ -48,14 +49,18 @@ function DungeonTeleporter.TeleportPlayers(lobby, accessCode, privateServerId, l
 		dungeonDataStore:SetAsync(privateServerId, data)
 		print("🕴Setting dungeon data store took", tick() - startTime, "seconds")
 
-		TeleportService:TeleportToPrivateServer(
-			PlaceIds.GetMissionPlace(),
-			accessCode,
-			lobby.Players,
-			nil,
-			nil,
-			loadingScreen
-		)
+		for _, player in ipairs(lobby.Players) do
+			FastSpawn(function()
+				TeleportService:TeleportToPrivateServer(
+					PlaceIds.GetMissionPlace(),
+					accessCode,
+					{ player },
+					nil,
+					nil,
+					loadingScreen
+				)
+			end)
+		end
 	end)()
 end
 

@@ -1,4 +1,4 @@
-import Loot from "shared/ReplicatedStorage/Core/Loot"
+import { Rarity } from "types/Rarity"
 
 declare const LootStyles: {
 	Name: Rarity,

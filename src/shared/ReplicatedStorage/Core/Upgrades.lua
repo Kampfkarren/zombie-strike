@@ -1,12 +1,15 @@
 local Upgrades = {}
 
-Upgrades.GoldBase = 3.5
-Upgrades.GoldScale = 1.242
 Upgrades.MaxUpgrades = 5
-Upgrades.UpgradeTax = 1.1
 
 Upgrades.ArmorBuff = 0.06
 Upgrades.DamageBuff = 0.06
+
+local UPGRADE_COSTS_ARMOR = { 500, 1000, 2000, 2500, 3500 }
+local UPGRADE_COSTS_PERKS = {
+	Common = { 1500, 2000, 3500 },
+	Legendary = { 2500, 3000, 5000 },
+}
 
 function Upgrades.GetArmorBuff(base, upgrades)
 	return base * (Upgrades.ArmorBuff * upgrades)
@@ -21,8 +24,15 @@ function Upgrades.GetDamageBuff(base, upgrades)
 end
 
 function Upgrades.CostToUpgrade(item)
-	return math.floor((Upgrades.GoldBase * Upgrades.GoldScale ^ (item.Level - 1))
-		* (Upgrades.UpgradeTax ^ item.Upgrades))
+	return UPGRADE_COSTS_ARMOR[item.Upgrades + 1]
+end
+
+function Upgrades.CostToUpgradePerk(perk)
+	if perk.Perk.LegendaryPerk then
+		return UPGRADE_COSTS_PERKS.Legendary[perk.Upgrades + 1]
+	else
+		return UPGRADE_COSTS_PERKS.Common[perk.Upgrades + 1]
+	end
 end
 
 return Upgrades

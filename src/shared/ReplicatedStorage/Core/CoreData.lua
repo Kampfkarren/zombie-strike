@@ -1,9 +1,17 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local inspect = require(ReplicatedStorage.Core.inspect)
+local LimitedMap = require(ReplicatedStorage.Core.LimitedMap)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 
 local CoreData = {}
+
+CoreData.Equippable = {
+	Armor = true,
+	Helmet = true,
+	Weapon = true,
+	Pet = true,
+}
 
 local function getDataItem(data)
 	if data.Model then
@@ -70,7 +78,10 @@ function CoreData.AddAttachmentsToGun(data, model, uuid)
 	end
 end
 
-function CoreData.GetModel(data)
+-- 270 == game pass inventory space * 2
+local modelCache = LimitedMap.new(270)
+
+local function getModel(data)
 	local itemType = data.Type
 
 	local uuid = {}
@@ -175,6 +186,19 @@ function CoreData.GetModel(data)
 		uuid.Parent = model
 		return model
 	end
+end
+
+CoreData.GetModel = function(data)
+	if data.UUID ~= nil and modelCache[data.UUID] ~= nil then
+		return modelCache[data.UUID]
+	end
+
+	local model = getModel(data)
+	if model ~= nil and data.UUID ~= nil and #tostring(data.UUID) == 32 then
+		modelCache[data.UUID] = model
+	end
+
+	return model
 end
 
 return CoreData

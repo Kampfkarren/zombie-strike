@@ -8,10 +8,10 @@ local Data = require(ReplicatedStorage.Core.Data)
 local EnglishNumbers = require(ReplicatedStorage.Core.EnglishNumbers)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
+local Perks = require(ReplicatedStorage.Core.Perks)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
-local RuddevConfig = require(ReplicatedStorage.RuddevModules.Config)
 local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 local ViewportFramePreviewComponent = require(ReplicatedStorage.Core.UI.Components.ViewportFramePreviewComponent)
 
@@ -206,11 +206,7 @@ function LootInfo:render()
 		})
 	elseif Loot.IsWeapon(loot) then
 		local currentGunItem = self.props.equipment.equippedWeapon
-		local currentGun = GunScaling.BaseStats(
-			currentGunItem.Type,
-			currentGunItem.Level,
-			currentGunItem.Rarity
-		)
+		local currentGun = GunScaling.StatsFor(currentGunItem)
 
 		local lootDamage, currentGunDamage = loot.Damage, currentGun.Damage
 
@@ -221,12 +217,6 @@ function LootInfo:render()
 		if currentGunItem.Type == "Shotgun" then
 			currentGunDamage = currentGunDamage * currentGunItem.ShotSize
 		end
-
-		currentGunDamage = currentGunDamage + Upgrades.GetDamageBuff(currentGunDamage, currentGunItem.Upgrades)
-		lootDamage = lootDamage + Upgrades.GetDamageBuff(lootDamage, loot.Upgrades)
-
-		currentGunDamage = currentGunDamage -- * (1 + currentGunItem.Bonus / 100)
-		lootDamage = lootDamage -- * (1 + loot.Bonus / 100)
 
 		stats.UIGridLayout = e("UIGridLayout", {
 			CellPadding = UDim2.new(0.02, 0, 0.02, 0),
@@ -347,6 +337,28 @@ function LootInfo:render()
 		error("unreachable code! invalid loot type: " .. loot.Type)
 	end
 
+	local debugPerks = {
+		e("UIListLayout", {
+			FillDirection = Enum.FillDirection.Vertical,
+			VerticalAlignment = Enum.VerticalAlignment.Bottom,
+		}),
+	}
+
+	if loot.Perks then
+		for _, perkData in ipairs(loot.Perks) do
+			table.insert(debugPerks, e("TextLabel", {
+				BackgroundTransparency = 1,
+				Font = Enum.Font.GothamSemibold,
+				Size = UDim2.fromScale(1, 1 / #loot.Perks),
+				Text = Perks.Perks[perkData[1]].Name .. " - " .. perkData[2],
+				TextColor3 = Color3.new(1, 1, 1),
+				TextScaled = true,
+				TextStrokeTransparency = 0.2,
+				TextXAlignment = Enum.TextXAlignment.Left,
+			}))
+		end
+	end
+
 	return e("Frame", frameProps, {
 		e("UIListLayout", {
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
@@ -409,6 +421,13 @@ function LootInfo:render()
 				TextScaled = true,
 				TextXAlignment = Enum.TextXAlignment.Left,
 			}),
+
+			DebugPerks = e("Frame", {
+				AnchorPoint = Vector2.new(0, 1),
+				BackgroundTransparency = 1,
+				Position = UDim2.fromScale(0, 1),
+				Size = UDim2.fromScale(1, 0.3),
+			}, debugPerks),
 		}),
 
 		Stats = e("Frame", {

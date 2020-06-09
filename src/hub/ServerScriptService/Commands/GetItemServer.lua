@@ -3,16 +3,24 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Data = require(ReplicatedStorage.Core.Data)
 local LootStyles = require(ReplicatedStorage.Core.LootStyles)
+local Perks = require(ReplicatedStorage.Core.Perks)
 
-return function(context, item, level, rarityName)
+return function(context, item, level, rarityName, perks)
 	local player = context.Executor
 
+	local itemPerks = {}
 	local rarity
 
 	for index, currentRarity in ipairs(LootStyles) do
 		if currentRarity.Name == rarityName then
 			rarity = index
 			break
+		end
+	end
+
+	for index, perk in ipairs(Perks.Perks) do
+		if table.find(perks, perk.Name) then
+			table.insert(itemPerks, { index, 0 })
 		end
 	end
 
@@ -23,7 +31,6 @@ return function(context, item, level, rarityName)
 		Rarity = rarity,
 		Type = item.Name:match("([A-Za-z]+)"),
 
-		Upgrades = 0,
 		Favorited = false,
 
 		Model = tonumber(item.Name:match("([0-9]+)")),
@@ -31,7 +38,9 @@ return function(context, item, level, rarityName)
 	}
 
 	if item.ItemType.Value == "Gun" then
+		inventoryItem.Perks = itemPerks
 		inventoryItem.Bonus = 0
+		inventoryItem.Seed = 0
 	end
 
 	table.insert(inventory, inventoryItem)

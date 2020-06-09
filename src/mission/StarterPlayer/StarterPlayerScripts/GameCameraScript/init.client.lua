@@ -24,6 +24,7 @@ local ControlModule = require(
 	:WaitForChild("ControlModule")
 )
 
+local MAX_RECOIL = 1.4
 local MIN_Y, MAX_Y = -1.4, 1.4
 local MOUSE_SENSITIVITY = Vector2.new(1/250, 1/250)
 local TOUCH_SENSITIVITY = Vector2.new(1/100, 1/100)
@@ -175,6 +176,14 @@ local function visible(part)
 	end
 end
 
+local function capVector(vector, maxMagnitude)
+	if vector.Magnitude < maxMagnitude then
+		return vector
+	else
+		return vector.Unit * maxMagnitude
+	end
+end
+
 RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 	if isFirstPerson() then
 		CAMERA.CameraType = Enum.CameraType.Custom
@@ -206,6 +215,13 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 					if gun then
 						visible(gun.PrimaryPart)
 						local attachment = gun:FindFirstChild("GunAttachment")
+						visible(attachment and attachment.PrimaryPart)
+					end
+
+					local secondGun = character:FindFirstChild("SecondGun")
+					if secondGun then
+						visible(secondGun.PrimaryPart)
+						local attachment = secondGun:FindFirstChild("GunAttachment")
 						visible(attachment and attachment.PrimaryPart)
 					end
 
@@ -261,6 +277,8 @@ RunService:BindToRenderStep("Camera", 4, function(deltaTime)
 			local offset = Vector3.new(recoil.Position.X / 2, recoil.Position.Y, recoil.Position.Z) * (CAMERA.FieldOfView / 70)
 			local offset2 = shaker.Position
 
+			offset = capVector(offset, MAX_RECOIL)
+
 			CAMERA.CFrame = CFrame.new(position) * rotation * CFrame.new(offset + offset2) * CFrame.Angles(offset.Z / 20, -offset.X / 20, 0)
 
 			CAMERA.Focus = CAMERA.CFrame * CFrame.new(0, 0, -20)
@@ -282,7 +300,6 @@ end)
 
 EVENTS.Recoil.Event:connect(function(r)
 	recoil:Shove(r)
-	EVENTS.Sway:Fire(-Vector3.new(r.X, r.Z, 0))
 end)
 
 EVENTS.Shake.Event:connect(function(s)

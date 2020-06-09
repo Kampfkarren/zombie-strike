@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local SelectScreen = require(script.Parent.SelectScreen)
+local Perks = require(ReplicatedStorage.Core.Perks)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 
 local e = Roact.createElement
@@ -24,8 +25,6 @@ local function makeWeapon(giveAttachment, forceType)
 
 			Model = rarity,
 			UUID = HttpService:GenerateGUID(false):gsub("-", ""),
-
-			Upgrades = math.random(0, 5),
 		}
 	end
 
@@ -35,11 +34,17 @@ local function makeWeapon(giveAttachment, forceType)
 		Rarity = math.random(1, 5),
 
 		Bonus = math.random(0, 35),
-		Upgrades = math.random(0, 5),
 		Favorited = false,
+		Seed = 0,
 
 		Model = math.random(1, 5),
 		UUID = HttpService:GenerateGUID(false):gsub("-", ""),
+		Perks = {
+			{
+				Perk = Perks.Perks[1],
+				Upgrades = 1,
+			},
+		},
 
 		Attachment = attachment,
 	}

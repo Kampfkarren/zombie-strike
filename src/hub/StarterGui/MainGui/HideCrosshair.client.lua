@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
@@ -22,7 +23,7 @@ local function recheckMouse()
 		local guis = PlayerGui:GetGuiObjectsAtPosition(lastX, lastY)
 
 		for _, gui in pairs(guis) do
-			if gui.Active then
+			if gui.Active or CollectionService:HasTag(gui, "HideCrosshair") then
 				UserInputService.MouseIconEnabled = true
 				MouseGui.Visible = false
 				return

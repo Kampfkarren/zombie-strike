@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local DungeonTiming = require(ReplicatedStorage.Libraries.DungeonTiming)
+
 local Countdown = script.Parent.Main.Countdown
 
 local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
@@ -16,6 +18,7 @@ ReplicatedStorage.JoinTimer.Changed:connect(function(timer)
 			if index == timer then
 				local tween = TweenService:Create(image.UIScale, tweenInfo, { Scale = 1 })
 				if index == 4 then
+					DungeonTiming.DungeonStarted()
 					tween.Completed:connect(function()
 						TweenService:Create(
 							image,

@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Data = require(ReplicatedStorage.Core.Data)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
+local PerkUtil = require(ReplicatedStorage.Core.Perks.PerkUtil)
 local State = require(ReplicatedStorage.State)
 
 local UpdateEquipped = ReplicatedStorage.Remotes.UpdateEquipped
@@ -21,6 +22,8 @@ UpdateEquipped.OnClientEvent:connect(function(armor, helmet, weapon)
 					item[key] = value
 				end
 			end
+
+			item.Perks = PerkUtil.DeserializePerks(item.Perks)
 		end
 
 		Data.SetLocalPlayerData(key, item)

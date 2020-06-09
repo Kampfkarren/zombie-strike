@@ -20,5 +20,11 @@ return {
 			Name = "rarity",
 			Description = "Rarity of item",
 		},
+
+		{
+			Type = "perks",
+			Name = "perks",
+			Description = "Perks of item",
+		},
 	},
 }

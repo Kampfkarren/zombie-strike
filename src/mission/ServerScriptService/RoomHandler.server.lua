@@ -12,7 +12,7 @@ local OnDied = require(ReplicatedStorage.Core.OnDied)
 
 local JoinTimer = ReplicatedStorage.JoinTimer
 
-local SKIP_COUNTDOWNS = false
+local SKIP_COUNTDOWNS = true
 
 DataStore2.Combine("DATA", "Gold", "Inventory", "Level", "XP", "DungeonsPlayed")
 

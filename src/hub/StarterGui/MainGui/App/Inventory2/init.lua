@@ -1,10 +1,8 @@
-local GuiService = game:GetService("GuiService")
-local Lighting = game:GetService("Lighting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Equipped = require(script.Pages.Equipped)
+local FocusContent = require(ReplicatedStorage.Core.UI.Components.FocusContent)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Memoize = require(ReplicatedStorage.Core.Memoize)
 local Nametag = require(script.Pages.Nametag)
@@ -21,8 +19,6 @@ local UpdateEquipment = ReplicatedStorage.Remotes.UpdateEquipment
 local UpdateSprays = ReplicatedStorage.Remotes.UpdateSprays
 
 local Inventory2 = Roact.Component:extend("Inventory2")
-
-local inset = GuiService:GetGuiInset()
 
 local FACE_DEFAULT = {
 	Name = "Default",
@@ -80,16 +76,6 @@ function Inventory2:init()
 	end)
 end
 
-function Inventory2:didUpdate(oldProps)
-	if self.props.visible ~= oldProps.visible then
-		if self.props.visible then
-			self.props.hideUi()
-		else
-			self.props.showUi()
-		end
-	end
-end
-
 function Inventory2:CosmeticsPage(key, condition, text, plural)
 	return e(SelectScreen, {
 		Equipped = Cosmetics.Cosmetics[self.props.cosmetics.equipped[key]],
@@ -101,8 +87,9 @@ function Inventory2:CosmeticsPage(key, condition, text, plural)
 		GoBack = self.setPage("Equipped"),
 		Equip = self.equipCosmetic(key),
 
-		ShowGearScore = false,
 		AllowUnequip = true,
+		ShowGearScore = false,
+		HideFavorites = true,
 	})
 end
 
@@ -260,6 +247,7 @@ function Inventory2:render()
 			end,
 
 			AllowUnequip = false,
+			HideFavorites = true,
 			ShowGearScore = false,
 		})
 	elseif page == "Emote" then
@@ -279,6 +267,7 @@ function Inventory2:render()
 		pageElement = e(SelectScreen, {
 			Angle = Vector3.new(-1, 0.8, -1),
 			Equipped = equipped,
+			HideFavorites = true,
 			Inventory = inventory,
 			Plural = "emotes",
 			Text = "an emote",
@@ -326,34 +315,10 @@ function Inventory2:render()
 		})
 	end
 
-	return e("Frame", {
-		BackgroundColor3 = Color3.new(1, 1, 1),
-		BackgroundTransparency = 0,
-		BorderSizePixel = 0,
-		Position = UDim2.fromOffset(-inset.X, -inset.Y),
-		Size = UDim2.new(1, inset.X, 1, inset.Y),
+	return e(FocusContent, {
+		BackgroundColor = Color3.new(0.6, 0.6, 1),
 	}, {
-		UIGradient = e("UIGradient", {
-			Color = ColorSequence.new(
-				Color3.new(0.6, 0.6, 1),
-				Color3.new(1, 1, 1)
-			),
-			Transparency = NumberSequence.new(0, 1),
-			Rotation = 90,
-		}),
-
-		Blur = RunService:IsRunning() and e(Roact.Portal, {
-			target = Lighting,
-		}, {
-			BlurEffect = e("BlurEffect"),
-		}) or nil,
-
-		Page = e("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundTransparency = 1,
-			Position = UDim2.new(0.5, 0, 0.5, inset.Y / 2),
-			Size = UDim2.new(1, -inset.X, 0.95, -inset.Y),
-		}, pageElement),
+		Page = pageElement,
 	})
 end
 
@@ -370,19 +335,5 @@ return RoactRodux.connect(function(state)
 		equippedAttachment = state.equipment.equippedAttachment,
 
 		visible = state.page.current == "Inventory",
-	}
-end, function(dispatch)
-	return {
-		hideUi = function()
-			dispatch({
-				type = "HideUI",
-			})
-		end,
-
-		showUi = function()
-			dispatch({
-				type = "ShowUI",
-			})
-		end,
 	}
 end)(Inventory2)

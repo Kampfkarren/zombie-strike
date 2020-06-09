@@ -8,6 +8,7 @@ local MockPlayer = require(ReplicatedStorage.Core.MockData.MockPlayer)
 local Data = {}
 
 Data.AddAttachmentsToGun = CoreData.AddAttachmentsToGun
+Data.Equippable = CoreData.Equippable
 Data.GetModel = CoreData.GetModel
 Data.LocalPlayerData = {}
 

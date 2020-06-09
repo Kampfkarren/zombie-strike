@@ -2,19 +2,20 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local InventoryComponents = script.Parent.Parent.Components
 
-local BackButton = require(InventoryComponents.BackButton)
+local BackButton = require(ReplicatedStorage.Core.UI.Components.BackButton)
 local CalculateGearScore = require(ReplicatedStorage.Core.CalculateGearScore)
 local CharacterPreview = require(InventoryComponents.CharacterPreview)
 local Cosmetics = require(ReplicatedStorage.Core.Cosmetics)
 local Data = require(ReplicatedStorage.Core.Data)
 local FontsDictionary = require(ReplicatedStorage.Core.FontsDictionary)
 local GradientButton = require(ReplicatedStorage.Core.UI.Components.GradientButton)
-local ItemModel = require(InventoryComponents.ItemModel)
-local ItemType = require(InventoryComponents.ItemType)
+local ItemModel = require(ReplicatedStorage.Core.UI.Components.ItemModel)
+local ItemType = require(ReplicatedStorage.Core.UI.Components.ItemType)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local PerfectTextLabel = require(ReplicatedStorage.Core.UI.Components.PerfectTextLabel)
-local Rarity = require(InventoryComponents.Rarity)
-local RarityTintedGradientButton = require(InventoryComponents.RarityTintedGradientButton)
+local Perks = require(ReplicatedStorage.Core.UI.Components.Perks)
+local Rarity = require(ReplicatedStorage.Core.UI.Components.Rarity)
+local RarityTintedGradientButton = require(ReplicatedStorage.Core.UI.Components.RarityTintedGradientButton)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local Scale = require(ReplicatedStorage.Core.UI.Components.Scale)
@@ -453,7 +454,7 @@ local function Equipped(props)
 				GearScore = e("Frame", {
 					BackgroundTransparency = 1,
 					Position = UDim2.fromOffset(20, 24),
-					Size = UDim2.fromOffset(152, 80),
+					Size = UDim2.fromOffset(152, 60),
 				}, {
 					UIListLayout = e("UIListLayout", {
 						FillDirection = Enum.FillDirection.Horizontal,
@@ -467,7 +468,7 @@ local function Equipped(props)
 						Position = UDim2.fromOffset(7, 9),
 						Text = CalculateGearScore(props.equippedWeapon),
 						TextColor3 = Color3.new(1, 1, 1),
-						TextSize = 93,
+						TextSize = 80,
 						TextXAlignment = Enum.TextXAlignment.Left,
 					}),
 
@@ -484,6 +485,14 @@ local function Equipped(props)
 						TextYAlignment = Enum.TextYAlignment.Bottom,
 						TextTransparency = 0.01,
 					}),
+				}),
+
+				Perks = e(Perks, {
+					Position = UDim2.fromOffset(20, 100),
+					Size = 34,
+
+					Perks = props.equippedWeapon.Perks,
+					Seed = props.equippedWeapon.Seed,
 				}),
 
 				GunTypeLabel = e(ItemType, {

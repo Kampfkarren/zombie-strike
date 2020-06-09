@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local App = require(ReplicatedStorage.Core.UI.Components.App)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local State = require(ReplicatedStorage.State)
@@ -11,7 +12,7 @@ local TreasureNotification = require(script.TreasureNotification)
 
 local e = Roact.createElement
 
-local function App()
+local function Contents()
 	return e("Frame", {
 		BackgroundTransparency = 1,
 		Size = UDim2.new(1, 0, 1, 0),
@@ -26,5 +27,7 @@ end
 return e(RoactRodux.StoreProvider, {
 	store = State,
 }, {
-	App = e(App),
+	App = e(App.AppBase, {}, {
+		Contents = e(Contents),
+	}),
 })

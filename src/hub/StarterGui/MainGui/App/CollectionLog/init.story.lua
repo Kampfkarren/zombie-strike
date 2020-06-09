@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local App = require(ReplicatedStorage.Core.UI.Components.App)
 local CollectionLog = require(script.Parent)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
@@ -14,6 +15,7 @@ return function(target)
 			Magazine = { 2 },
 			Helmet = { 3 },
 			Armor = { 4 },
+			Perks = { 1, 20, 23 },
 		},
 
 		page = {
@@ -25,7 +27,11 @@ return function(target)
 		e(RoactRodux.StoreProvider, {
 			store = testStore,
 		}, {
-			CollectionLog = e(CollectionLog),
+			e(App.AppBase, {}, {
+				CollectionLog = e(CollectionLog, {
+					initialPage = "Perks",
+				}),
+			}),
 		}), target, "CollectionLog"
 	)
 

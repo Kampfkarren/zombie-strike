@@ -19,8 +19,6 @@ local function abilityButton(keyboardCode, keyboardName, gamepadCode, gamepadNam
 	local cooldown = frame.Cooldown
 	local label = frame.Tooltip
 
-	local cooldownPromise
-
 	local using = false
 
 	local function updateLabel()

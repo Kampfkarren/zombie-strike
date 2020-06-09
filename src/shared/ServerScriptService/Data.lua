@@ -1,23 +1,20 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+local CoreData = require(ReplicatedStorage.Core.CoreData)
 local DataStore2 = require(ServerScriptService.Vendor.DataStore2)
 local MockPlayer = require(ReplicatedStorage.Core.MockData.MockPlayer)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local Migrations = ServerScriptService.Shared.Migrations
 
+local FORCE_MOCK_DATA = false
+
 DataStore2.Combine("DATA", "Inventory", "Version")
 
 local Data = {}
-
-Data.Equippable = {
-	Armor = true,
-	Helmet = true,
-	Weapon = true,
-	Pet = true,
-}
 
 local baseMockPlayer = MockPlayer()
 
@@ -50,7 +47,7 @@ local function migrateData(player)
 end
 
 function Data.GetPlayerData(player, key)
-	if Data.Equippable[key] then
+	if CoreData.Equippable[key] then
 		local inventory = Data.GetPlayerData(player, "Inventory")
 		local equipped = Data.GetPlayerData(player, "Equipped" .. key)
 
@@ -81,6 +78,10 @@ function Data.GetPlayerData(player, key)
 		local default = mockPlayer[key]
 		if default == mockPlayer.None then
 			default = nil
+		end
+
+		if RunService:IsStudio() and FORCE_MOCK_DATA then
+			return default, dataStore
 		end
 
 		return dataStore:Get(default), dataStore

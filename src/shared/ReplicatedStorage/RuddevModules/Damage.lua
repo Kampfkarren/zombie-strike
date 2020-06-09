@@ -9,7 +9,6 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local EVENTS = ReplicatedStorage:WaitForChild("RuddevEvents")
 local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
-	local CONFIG = require(MODULES:WaitForChild("Config"))
 
 local DAMAGE = {}
 local BUFF_BULLETSTORM = 1.25
@@ -67,6 +66,7 @@ local function batchDamageNumber(player, humanoid, damage, crit)
 end
 
 function DAMAGE.Calculate(_, item, hit, origin)
+	local CONFIG = require(MODULES:WaitForChild("Config"))
 	local config = CONFIG:GetConfig(item)
 	local damage = config.Damage
 
@@ -95,7 +95,7 @@ function DAMAGE.PlayerCanDamage(_, _, humanoid)
 	return Players:GetPlayerFromCharacter(humanoid.Parent) == nil and humanoid.Health > 0
 end
 
-function DAMAGE.Damage(_, humanoid, damage, player, critChance, critMultiplier, lyingDamage)
+function DAMAGE.Damage(_, humanoid, damage, player, shouldCrit, critMultiplier, lyingDamage)
 	if player then
 		local killTag = humanoid:FindFirstChild("KillTag")
 
@@ -109,10 +109,8 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance, critMultiplier, 
 	end
 
 	if humanoid.Health > 0 then
-		local crit = false
-		if math.random() <= critChance then
+		if shouldCrit then
 			damage = damage * critMultiplier
-			crit = true
 		end
 
 		if ReplicatedStorage.CurrentPowerup.Value:match("Rage/") then
@@ -129,7 +127,7 @@ function DAMAGE.Damage(_, humanoid, damage, player, critChance, critMultiplier, 
 		EVENTS.Damaged:Fire(humanoid, damage, player)
 
 		if lyingDamage ~= false then
-			batchDamageNumber(player, humanoid, lyingDamage or damage, crit)
+			batchDamageNumber(player, humanoid, lyingDamage or damage, shouldCrit)
 		end
 	end
 end

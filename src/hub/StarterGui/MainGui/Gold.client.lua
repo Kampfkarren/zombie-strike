@@ -16,7 +16,7 @@ local GoldValue = LocalPlayer
 	:WaitForChild("Gold")
 
 local function updateGold()
-	Gold.GoldLabel.Text = GoldValue.Value .. " G"
+	Gold.GoldLabel.Text = GoldValue.Value
 
 	State:dispatch({
 		type = "UpdateGold",
@@ -44,6 +44,17 @@ Brains.BuyButton.MouseButton1Click:connect(function()
 	State:dispatch({
 		type = "SetStorePage",
 		page = "BuyBrains",
+	})
+end)
+
+Gold.BuyButton.MouseButton1Click:connect(function()
+	State:dispatch({
+		type = "OpenStore",
+	})
+
+	State:dispatch({
+		type = "SetStorePage",
+		page = "BuyCaps",
 	})
 end)
 

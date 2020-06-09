@@ -124,6 +124,7 @@ local function Quests(props)
 		BackgroundTransparency = 1,
 		Position = UDim2.fromScale(0.01, 0.4),
 		Size = UDim2.fromScale(0.1, 0.6),
+		ZIndex = 0,
 		Visible = props.visible,
 	}, children)
 end

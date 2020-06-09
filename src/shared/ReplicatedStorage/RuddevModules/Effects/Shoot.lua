@@ -81,12 +81,17 @@ local function Raycast(position, direction, ignore)
 	return h, p, n, humanoid
 end
 
-return function(item, position, directions, ammo, forceEnd)
+return function(item, position, directions, ammo, forceEnd, forceMuzzle)
 	local handle		= item.Handle
-	local muzzle		= handle.Muzzle
 	local ammo			= ammo and ammo or item.Ammo.Value
 	local config		= CONFIG:GetConfig(item)
 	local attachments	= item:FindFirstChild("Attachments")
+
+	-- ughhh this is so fucking stupid
+	local muzzle = forceMuzzle or handle.Muzzle
+	if forceMuzzle then
+		position = muzzle.WorldPosition
+	end
 
 	if handle:FindFirstChild("ReloadSound_Clone") then
 		handle.ReloadSound_Clone:Destroy()

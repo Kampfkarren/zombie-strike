@@ -16,3 +16,6 @@
 [submodule "vendor/roact-rodux"]
 	path = vendor/roact-rodux
 	url = git://github.com/Roblox/roact-rodux.git
+[submodule "vendor/testez"]
+	path = vendor/testez
+	url = git://github.com/Roblox/testez.git

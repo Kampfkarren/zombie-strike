@@ -2,7 +2,7 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ProductCard = require(script.Parent.ProductCard)
+local ProductCard = require(ReplicatedStorage.Components.ProductCard)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 

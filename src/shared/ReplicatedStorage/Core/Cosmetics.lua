@@ -150,8 +150,10 @@ function Cosmetics.GetStoreItems()
 	if RunService:IsServer() then
 		local date = os.date("!*t")
 		stamp = date.year + date.yday
-	else
+	elseif RunService:IsRunning() then
 		stamp = dateStamp
+	else
+		stamp = 0
 	end
 
 	local rng = Random.new(stamp)

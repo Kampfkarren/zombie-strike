@@ -4,7 +4,7 @@ const Boss: GamemodeInfo = {
 	Lives: 10,
 
 	DifficultyInfo: {
-		Gold: 1,
+		Gold: 320,
 		XP: 1,
 	},
 }

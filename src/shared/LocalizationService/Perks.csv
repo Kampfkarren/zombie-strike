@@ -1,0 +1,44 @@
+Key,Context,Example,Source
+PERK_DESC_Loaded,,,Increases magazine size by {Value0}%
+PERK_DESC_Quickload,,,Increases reload speed by {Value0_Negative}%
+PERK_DESC_Lucky,,,Increases critical hit chance by {Value0}%
+PERK_DESC_Bullseye,,,Increases critical hit damage by {Value0}%
+PERK_DESC_Vampire,,,Dealing damage with this weapon heals you for {Value0}% of the damage dealt
+PERK_DESC_Boss Slayer,,,Increases damage to bosses by {Value0}%
+PERK_DESC_Super Slayer,,,Increases damage to special zombies by {Value0}%
+PERK_DESC_Eater,,,Defeating an enemy with this weapon heals you for {Value0}% of your health
+PERK_DESC_Hustle,,,Defeating an enemy with this weapon makes you move {Value0}% faster
+PERK_DESC_FMJ Rounds,,,"Increases damage by {Value0}%, decreases ammo size by {Value1_Negative}%"
+PERK_DESC_Finisher,,,Shooting low health enemies deals {Value0}% extra damage
+PERK_DESC_Readied,,,Reloading increases your firerate by {Value0}%
+PERK_DESC_CQC,,,Increases damage by {Value0}% to enemies very close to you.
+PERK_DESC_The Tank,,,Defeating an enemy causes you to take {Value0}% less damage for {Value1_Raw} seconds.
+PERK_DESC_Berserk!!!,,,Deal {Value0}% more damage when at low health.
+PERK_DESC_Mini Mags,,,"Increases reload speed by {Value0_Negative}%, but decreases magazine size by {Value1_Negative}%"
+PERK_DESC_Stress,,,Reload speed increased by {Value0}% when at low health.
+PERK_DESC_Jack,,,"Increases damage, firerate, magazine size, and decrease reload speed by {Value0}%"
+PERK_DESC_R-R-Rampage!,,,Defeating an enemy increases damage by {Value0}% for a while.
+PERK_DESC_No Luck Needed,,,"{Value0}% critical hit chance and critical damage, but +{Value2}% damage."
+PERK_DESC_Rapid,,,Increases fire rate by {Value0}%
+PERK_DESC_Dual Wield,,,"Wield two guns, giving you {Value0}% more ammo and faster fire rate. Deal less damage with each gun."
+PERK_DESC_Zap!,,,Shooting zombies has a chance of dealing {Value0}% of that shots damage to nearby zombies
+PERK_DESC_Explosive Rounds,,,Deals {Value0}% extra damage as an explosion!
+PERK_DESC_Overkilled,,,Excess damage that kills zombies is added to your shots for {Value0_Raw} seconds
+PERK_DESC_Medic,,,Shooting teammates heals both you and them for {Value0}% of your weapons damage
+PERK_DESC_Gunpowder,,,Increase damage by {Value0}%
+PERK_DESC_Cold Rounds,,,Shooting zombies has a chance of slowing them by {Value0}% for a while
+PERK_DESC_Croupled,,,"Getting a critical hit guarantees that your next hit will also be a critical hit, and deal {Value0}% more damage"
+PERK_DESC_Double Shot,,,Each shot has a {Value0}% chance of dealing double damage
+PERK_DESC_Burst,,,"Shoot in a 4 round burst, increasing damage by {Value0}%"
+PERK_DESC_Veteran,,,Gain {Value0}% damage resist. This gradually decreases to 0% depending on the percentage of ammo you have
+PERK_DESC_Double Barrel,,,"Consume 2x the amount of ammo per shot, but shoot 2x the amount of pellets and reload {Value0_Negative}% faster."
+PERK_DESC_Cowboy,,,"This weapon gains {Value0}% extra damage, but shoots and reloads slower and has less ammo"
+PERK_DESC_Incindeary Rounds,,,"Shooting zombies lights them on fire, dealing {Value0}% of this weapons damage per second"
+PERK_DESC_Show of Skill,,,Each critical hit you get increases your reload speed and damage by {Value0}% until you reload
+PERK_DESC_Resplosion,,,Reloading causes an explosion around you equal to {Value0}% of the total missing ammo's damage
+PERK_DESC_Ratatatatatat!!,,,"Deal less damage, but gain {Value0_Raw}% more damage per shot until you reload"
+PERK_DESC_Zombie-go-Boom,,,"Defeated zombies explode for {Value0}% of their maximum health, dealing that damage to nearby zombies"
+PERK_DESC_Buck'd,,,Hitting zombies has a {Value0}% chance of stunning them for 1 second
+PERK_DESC_Pop Pop!,,,Shooting increases your fire rate by {Value0}% per shot until you reload
+PERK_DESC_Stoic,,,You take {Value0}% less damage while reloading
+PERK_DESC_LMG,,,"Gain extra ammo and {Value0}% extra damage, but much longer reload speeds"

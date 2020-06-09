@@ -448,6 +448,15 @@ function Zombie:TakeDamage(damage)
 end
 
 function Zombie:GiveBuff(scaleName, amount)
+	local function maybeUpdateSpeed()
+		if scaleName == "Speed"
+			and not self.wandering
+			and self.instance:IsDescendantOf(game)
+		then
+			self.instance.Humanoid.WalkSpeed = self:GetSpeed()
+		end
+	end
+
 	if self.buffs[scaleName] == nil then
 		self.buffs[scaleName] = {}
 	end
@@ -458,10 +467,12 @@ function Zombie:GiveBuff(scaleName, amount)
 		Amount = amount,
 		Destroy = function()
 			self.buffs[scaleName][result] = nil
+			maybeUpdateSpeed()
 		end,
 	}
 
 	self.buffs[scaleName][result] = true
+	maybeUpdateSpeed()
 
 	return result
 end
@@ -610,7 +621,18 @@ function Zombie:GetAttackCooldown()
 end
 
 function Zombie:GetSpeed()
-	return self:GetScale("Speed")
+	local speed = self:GetScale("Speed")
+
+	local buffMod = 1
+
+	local speedBuffs = self.buffs.Speed
+	if speedBuffs then
+		for buff in pairs(speedBuffs) do
+			buffMod = buffMod + buff.Amount
+		end
+	end
+
+	return math.max(0, speed * buffMod)
 end
 -- END STATS
 

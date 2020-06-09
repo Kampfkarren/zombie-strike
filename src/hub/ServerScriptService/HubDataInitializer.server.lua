@@ -188,7 +188,6 @@ Players.PlayerAdded:connect(function(player)
 
 	local current, inventoryStore = Data.GetPlayerData(player, "Inventory")
 	local function updateInventory(inventory)
-		-- print(require(game.ReplicatedStorage.Core.inspect)(inventory))
 		UpdateInventory:FireClient(player, Loot.SerializeTable(inventory))
 		updateEquipment()
 	end

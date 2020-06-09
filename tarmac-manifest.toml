@@ -4,9 +4,63 @@ id = 4856545479
 packable = false
 codegen = "asset-url"
 
+[inputs."assets/UI/cap.png"]
+hash = "c5d845ba0296cc0007605b7fe9d421dc3cff08e5171d0a7b533b1300d7a83d98"
+id = 4972508541
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/cap_bundles/1.png"]
+hash = "3490f5fdd9b9859fa684f6f9f1bf8087db77911dd9d995fb3f12acdcb1d1af98"
+id = 5136167704
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/cap_bundles/2.png"]
+hash = "1436e2ff67f504bca461a527470d21b7805058ad6d709c9ce6661a8d39115505"
+id = 5136167975
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/cap_bundles/3.png"]
+hash = "beee4e3f538096e55ec363bc6a9df37e4992cf7f0a0c46bdf5c7206116b24598"
+id = 5136168173
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/cap_bundles/4.png"]
+hash = "8f9ba5b4426d047cf5f4cedf69cb3e68547a6303bd99c9b011025b7ae7d60a75"
+id = 5136168370
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/cap_bundles/5.png"]
+hash = "c1808cede9e47338b1a76ed6f9e8b60777568e9840f65692bfaf83098432cc23"
+id = 5136168765
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/cap_bundles/6.png"]
+hash = "3a172a33f61502df3536d0fdeae115acf3ae88ebe84927c603fc3be6222290e1"
+id = 5136169274
+packable = false
+codegen = "asset-url"
+
 [inputs."assets/UI/equipped_gun2.png"]
 hash = "ce625a7248d8571a675479faddb06b5e59d0f001e78c62875b13ba6b872f70fb"
 id = 4856545618
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/favorite_border.png"]
+hash = "9b216fa1c2267f162e2b5356f5f8bd692526994ca0a7ae2e4df915adbf6be4b9"
+id = 4954217740
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/favorite_filled.png"]
+hash = "6a25dc98edc0b518bf42d01f2c682232c9e72ab27339bafec7910834a63de53a"
+id = 4954217812
 packable = false
 codegen = "asset-url"
 
@@ -31,6 +85,132 @@ codegen = "asset-url"
 [inputs."assets/UI/panel2.png"]
 hash = "e7b015bd2c1814dddd4fb711e83089131c0d8ffde70e6dca5051d6fc1cff91a8"
 id = 4856545915
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/panel2_selected.png"]
+hash = "2e5f18554a7c095163ee3f057c24b8ae65ba4de6663d7fb4d496dec7680b7da0"
+id = 4913274686
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/panel_gold.png"]
+hash = "bc30c7512a3721f8cd2d6d4cfbdfd11860d314d660d8898ed29cda7baeac7ed4"
+id = 4897051850
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perk_placeholder.png"]
+hash = "2ace3f4579df1f4ea9f015c0794c1603428bd2c90a14a628cc1919cc97cc22ec"
+id = 4920794854
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/arrow.png"]
+hash = "ae4292fecb5b97d329f97e2e566cbce3e581a3b9008acdb963a56b2a8e2ab8fd"
+id = 4954217857
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/badge.png"]
+hash = "84da217e8689bc604fedce58bfa5d80eb2a4746270323356d28f170dfb776d77"
+id = 4954217901
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/bolt.png"]
+hash = "04b4ad6b0ea11926e2615321fc041006544f1337c375baf17bc02095f2ed4569"
+id = 4954217934
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/bullet.png"]
+hash = "2ace3f4579df1f4ea9f015c0794c1603428bd2c90a14a628cc1919cc97cc22ec"
+id = 4954217987
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/bullseye.png"]
+hash = "e3556d583ab8c7093094b2b5cd2313c56c9a1422d8e0049f3c12e63c2fc7f8e8"
+id = 5014841536
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/defense.png"]
+hash = "a26cf6996b7d1183c37c42b7e7cc2936d149dbff33fb424ff2142ccc5101f219"
+id = 4954218077
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/dice.png"]
+hash = "bda0873510c02c7275f6e6495242c6d2979a51502941293bcb08b31db8d2a471"
+id = 4954218128
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/fire.png"]
+hash = "0603d3d4a94694f46e49512b57a45ef33a6345255856cf9bb3f54b7d041dd573"
+id = 5140046092
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/fist.png"]
+hash = "a906f6d333e27aeb6cf074ef471e924a2987ea129e4b0dcbf22f9ea86ef4aff3"
+id = 4954218175
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/heart.png"]
+hash = "b8c0ea6584717aea2bde5b0da4261aa55f4576f3ae346744a82b378ec0b3f821"
+id = 4954218207
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/pistol.png"]
+hash = "00dcbe96a18774fec9fd2de858f81a8998c3171470c59ff64e76a13ba6852b32"
+id = 4954218257
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/plus.png"]
+hash = "bbf70ae5ec67b79245c79e38a9267b1f2b54a42afa7b34da4f2ebe3872287b49"
+id = 4954218319
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/reload.png"]
+hash = "304e91868365677baa78134c226eca64363b403d8d9c504fd37bc7f6571e7c26"
+id = 4954218371
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/skull.png"]
+hash = "3922210773a0708e6235a3042d87526fd41f29cce65c05bd15f4f0e72885e1a2"
+id = 4954218415
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/snowflake.png"]
+hash = "b01bab6889999c1a1c338a23082943abad944dfadb98f57491439f3365cee851"
+id = 4954218460
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/starry.png"]
+hash = "fb8f87be7c14d02e347f1156b193a9a8581dcc26860e4f7d74649229434b4c70"
+id = 4954218507
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/twinkle.png"]
+hash = "df114194875516159556ca77c12c593c359bfef498a71853f5ba1c793f607824"
+id = 4954218578
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/perks/x.png"]
+hash = "f3dda54981e266dc2928df5e6d4b91d970b19fa862d2a0adb7eb06974b977c85"
+id = 4954218678
 packable = false
 codegen = "asset-url"
 
@@ -67,5 +247,23 @@ codegen = "asset-url"
 [inputs."assets/UI/stats.png"]
 hash = "beefc8529c843c348b15875bb1ad8fe3d4e8224306275307d51529b64b8fb2cd"
 id = 4856612290
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/tooltip.png"]
+hash = "49a61d6314a2f2935872a10d8e46237b40a188f96aac7dc49dc0c84ade3f3ae1"
+id = 4920898656
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/voucher.png"]
+hash = "3336a5ab07a5ca25a3559724a9559d643b242682794c7c6f9fb44c8e9190fdb2"
+id = 5042422339
+packable = false
+codegen = "asset-url"
+
+[inputs."assets/UI/voucher_box.png"]
+hash = "ecadcbcbf5f054a18ae9b7ce3e415abad10182cfcd0b6dbdbfeb58178a2e8085"
+id = 5042422742
 packable = false
 codegen = "asset-url"

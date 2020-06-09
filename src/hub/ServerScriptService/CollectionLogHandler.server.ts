@@ -7,11 +7,18 @@ const UpdateCollectionLog = ReplicatedStorage.Remotes.UpdateCollectionLog
 
 function getLogOfInventory(player: Player): Map<string, Set<number>> {
 	const log: Map<string, Set<number>> = new Map()
+	log.set("Perks", new Set())
 
 	const [inventory] = Data.GetPlayerData(player, "Inventory")
 	for (const item of inventory) {
 		if (log.get(item.Type) === undefined) {
 			log.set(item.Type, new Set())
+		}
+
+		if (item.Perks !== undefined) {
+			for (const perk of item.Perks) {
+				log.get("Perks")!.add(perk[0])
+			}
 		}
 
 		log.get(item.Type)!.add(item.Model)

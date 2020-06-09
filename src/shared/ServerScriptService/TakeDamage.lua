@@ -2,6 +2,8 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
+local Perks = require(ReplicatedStorage.Core.Perks)
+
 local BULLETSTORM_BUFF = 0.75
 local DEATH_BUFF_INTERVAL = 0.075
 local DEATH_BUFF_MAX = 5
@@ -27,6 +29,10 @@ return function(player, damage)
 		damage = damage * MOBILE_DAMAGE_BUFF
 	else
 		damage = damage * (1 - DEATH_BUFF_INTERVAL * (deathCounts[player] or 0))
+	end
+
+	for _, perk in ipairs(Perks.GetPerksFor(player)) do
+		damage = perk:ModifyDamageTaken(damage)
 	end
 
 	if ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/") then

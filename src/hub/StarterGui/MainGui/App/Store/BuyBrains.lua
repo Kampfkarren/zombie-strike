@@ -15,6 +15,7 @@ local function BuyBrains(props)
 
 	return e("Frame", {
 		BackgroundTransparency = 1,
+		LayoutOrder = 5,
 		Size = UDim2.fromScale(0.9, 0.9),
 		[Roact.Ref] = props[Roact.Ref],
 	}, {

@@ -10,6 +10,7 @@ local e = Roact.createElement
 local function Weapons(props)
 	return e("Frame", {
 		BackgroundTransparency = 1,
+		LayoutOrder = 2,
 		Size = UDim2.fromScale(1, 1),
 
 		[Roact.Ref] = props[Roact.Ref],

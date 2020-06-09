@@ -3,6 +3,10 @@
   "servePlaceIds": [3803533582, 4479261449],
   "tree": {
     "$className": "DataModel",
+    "LocalizationService": {
+      "$className": "LocalizationService",
+      "$path": "src/shared/LocalizationService"
+    },
     "ReplicatedFirst": {
       "$className": "ReplicatedFirst",
       "$path": "out/mission/ReplicatedFirst"
@@ -10,6 +14,13 @@
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$path": "out/mission/ReplicatedStorage",
+      "Assets": {
+        "$className": "Folder",
+        "$ignoreUnknownInstances": true,
+        "Tarmac": {
+          "$path": "assets"
+        }
+      },
       "Core": {
         "$path": "out/shared/ReplicatedStorage/Core"
       },

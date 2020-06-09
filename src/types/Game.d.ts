@@ -109,6 +109,18 @@ interface ReplicatedStorage {
 			[name: string]: Folder,
 		},
 
+		Particles: Folder & {
+			ExplosiveRoundsEmitter: ParticleEmitter,
+		},
+
+		Tarmac: Folder & {
+			UI: Folder & {
+				perks: Folder & {
+					[icon: string]: ModuleScript,
+				},
+			},
+		},
+
 		Range: Part,
 		Warning: BasePart,
 	},
@@ -126,12 +138,20 @@ interface ReplicatedStorage {
 	HubWorld: BoolValue,
 
 	Remotes: Folder & {
+		BuyCaps: RemoteEvent,
 		CircleEffect: RemoteEvent,
+		GoldShop: RemoteEvent,
 		NewBoss: RemoteEvent,
+		RedeemVoucher: RemoteEvent,
 		RotatingBoss: Folder,
 		SendServerLogs: RemoteEvent,
 		UpdateCampaignsPlayed: RemoteEvent,
 		UpdateCollectionLog: RemoteEvent,
+		UpdateVouchers: RemoteEvent,
+
+		Perks: Folder & {
+			Zap: RemoteEvent,
+		},
 
 		Tower: Folder & {
 			Boss: Folder & {
@@ -150,10 +170,15 @@ interface ReplicatedStorage {
 			TaserZombieEffect: RemoteEvent,
 		},
 	},
+
+	RuddevRemotes: Folder & {
+		Effect: RemoteEvent,
+	},
 }
 
 interface ServerScriptService {
 	BossLocalScripts: Folder,
+	DungeonState: ModuleScript,
 
 	Zombies: Folder & {
 		Zombie: ModuleScript,
@@ -161,6 +186,12 @@ interface ServerScriptService {
 }
 
 interface ServerStorage {
+	Assets: Folder & {
+		BuckdEmitter: ParticleEmitter,
+		ColdRoundsEmitter: ParticleEmitter,
+		Fire: BasePart,
+	},
+
 	BossRooms: Folder & {
 		[name: string]: Model,
 	},

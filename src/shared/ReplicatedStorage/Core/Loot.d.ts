@@ -1,4 +1,5 @@
-type ExtractTypes<T> = T extends (infer U)[] ? U : never
+import { RarityIndex } from "types/Rarity"
+import { WeaponPerk } from "./Perks/Perk"
 
 declare namespace Loot {
 	const Attachments: [
@@ -20,13 +21,44 @@ declare namespace Loot {
 
 	type Gun = {
 		Type: typeof GunTypes[number],
+		Bonus: number,
 		CritChance: number,
 		CritDamage: number,
 		Damage: number,
 		FireRate: number,
 		Magazine: number,
 		ReloadTime: number,
+		Seed: number,
 		ShotSize: number,
+		UUID: string,
+	}
+
+	type GunConfig = Omit<Gun, "Type"> & {
+		GunType: Gun["Type"],
+	} & ({
+		FireMode: "Auto",
+	} | {
+		FireMode: "Burst",
+		BurstAmount: number,
+		BurstRate: number,
+	})
+
+	type GunItem = {
+		Type: Gun["Type"],
+		Level: number,
+		Rarity: number,
+
+		Bonus: number,
+		Favorited: boolean,
+		Seed: number,
+
+		Perks: {
+			Perk: typeof WeaponPerk,
+			Upgrades: number,
+		}[],
+
+		Model: number,
+		UUID: string,
 	}
 
 	type Wearable = {

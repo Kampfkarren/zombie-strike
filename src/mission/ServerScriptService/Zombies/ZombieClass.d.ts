@@ -10,6 +10,7 @@ export interface ZombieClass {
 	}
 
 	Died: RBXScriptSignal
+	Model: string
 
 	Aggro: (this: this) => void
 	AfterDeath: () => void
@@ -18,6 +19,10 @@ export interface ZombieClass {
 	Destroy: (this: this) => void
 	GetAsset: (this: this, assetName: string) => Instance
 	GetModel: () => Instance
+	GiveBuff: (this: this, scaleName: "Defense" | "Speed", amount: number) => {
+		Amount: number,
+		Destroy: () => void,
+	},
 	GiveXP: () => void
 	InitializeAI: () => void
 	SetupHumanoid: (this: this) => void
@@ -50,7 +55,7 @@ declare class Zombie<C = Character> {
 	CheckAttack(): boolean
 	InitializeAI(): void
 	GetAsset(assetName: string): Instance
-	GiveBuff(scaleName: "Defense", amount: number): {
+	GiveBuff(scaleName: "Defense" | "Speed", amount: number): {
 		Amount: number,
 		Destroy: () => void,
 	}

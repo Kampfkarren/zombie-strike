@@ -1,9 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local InventoryComponents = script.Parent.Parent.Components
-
 local Alert = require(ReplicatedStorage.Core.UI.Components.Alert)
-local BackButton = require(InventoryComponents.BackButton)
+local BackButton = require(ReplicatedStorage.Core.UI.Components.BackButton)
 local FontsDictionary = require(ReplicatedStorage.Core.FontsDictionary)
 local GradientButton = require(ReplicatedStorage.Core.UI.Components.GradientButton)
 local Roact = require(ReplicatedStorage.Vendor.Roact)

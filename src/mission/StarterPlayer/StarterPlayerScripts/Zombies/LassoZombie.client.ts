@@ -51,7 +51,7 @@ if (Dungeon.GetDungeonData("Campaign") === 5) {
 							&& character.PrimaryPart !== undefined
 							&& rope.PrimaryPart.Center.WorldPosition
 								.sub(character.PrimaryPart.Position).Magnitude
-								<= LASSO_RANGE
+							<= LASSO_RANGE
 						) {
 							PlayQuickSound(SoundService.ZombieSounds["5"].Lasso.Catch, character.PrimaryPart)
 							wasHooked(character as Character)
@@ -110,8 +110,6 @@ if (Dungeon.GetDungeonData("Campaign") === 5) {
 					alignMaid.GiveTask(() => {
 						const stunMaid = new Maid()
 
-						stunMaid.GiveTask(Stun())
-
 						const stunStillAnimation = character.Humanoid.LoadAnimation(Assets.StunStill)
 						stunStillAnimation.Play()
 						stunMaid.GiveTaskAnimation(stunStillAnimation)
@@ -119,6 +117,8 @@ if (Dungeon.GetDungeonData("Campaign") === 5) {
 						const stunActionParticle = Assets.StunAction.Clone()
 						stunActionParticle.Parent = character.Head.HatAttachment
 						stunMaid.GiveTaskParticleEffect(stunActionParticle)
+
+						stunMaid.GiveTask(Stun())
 
 						RealDelay(stunTime, () => {
 							stunMaid.DoCleaning()

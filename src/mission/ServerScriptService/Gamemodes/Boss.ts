@@ -80,7 +80,10 @@ const BossConstructor: GamemodeConstructor = {
 					}
 				}
 
-				return assert(earlierMission, "No earlier mission?")
+				return {
+					...assert(earlierMission, "No earlier mission?"),
+					Gold: Dungeon.GetGamemodeInfo().DifficultyInfo!.Gold,
+				}
 			},
 
 			Scales(this: void) {

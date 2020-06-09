@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local BrainsPurchase = require(ReplicatedStorage.Core.UI.Components.BrainsPurchase)
-local ProductCard = require(script.Parent.ProductCard)
+local ProductCard = require(ReplicatedStorage.Components.ProductCard)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
 local XPMultiplierDictionary = require(ReplicatedStorage.XPMultiplierDictionary)
@@ -112,7 +112,7 @@ function XPMultipliers:render()
 
 	return e("Frame", {
 		BackgroundTransparency = 1,
-		LayoutOrder = 2,
+		LayoutOrder = 3,
 		Size = UDim2.fromScale(0.9, 0.9),
 		[Roact.Ref] = props[Roact.Ref],
 	}, {

@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local EquipmentUtil = require(ReplicatedStorage.Core.EquipmentUtil)
 local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local LootStyles = require(ReplicatedStorage.Core.LootStyles)
+local PerkUtil = require(ReplicatedStorage.Core.Perks.PerkUtil)
 local PetsDictionary = require(ReplicatedStorage.Core.PetsDictionary)
 local QualityDictionary = require(ReplicatedStorage.Core.QualityDictionary)
 local t = require(ReplicatedStorage.Vendor.t)
@@ -15,9 +16,10 @@ local gunMap = {
 	"Rarity",
 	"Bonus",
 	"Model",
-	"Upgrades",
 	"Favorited",
 	"UUID",
+	"Seed",
+	"Perks",
 	"Attachment", -- Should be last since it can be nil
 }
 
@@ -80,8 +82,10 @@ local serializeStruct = t.union(
 		),
 
 		Bonus = t.number,
-		Upgrades = t.number,
 		Favorited = t.boolean,
+		Seed = t.number,
+
+		Perks = t.array(t.strictArray(t.number, t.number)),
 
 		Model = t.number,
 		UUID = t.string,
@@ -129,7 +133,7 @@ function Loot.Deserialize(data)
 
 	if data[1] == "Armor" or data[1] == "Helmet" then
 		map = armorMap
-	elseif data[1] == "Pet" then
+	elseif data[1] == "Pet" or table.find(Loot.Attachments, data[1]) then
 		map = petMap
 	end
 
@@ -159,6 +163,8 @@ function Loot.DeserializeTableWithBase(loot)
 					item[key] = value
 				end
 			end
+
+			item.Perks = PerkUtil.DeserializePerks(item.Perks)
 		end
 	end
 
@@ -173,7 +179,7 @@ function Loot.Serialize(data)
 
 	if Loot.IsWearable(data) then
 		map = armorMap
-	elseif Loot.IsPet(data) then
+	elseif Loot.IsPet(data) or Loot.IsAttachment(data) then
 		map = petMap
 	end
 
@@ -190,6 +196,16 @@ function Loot.SerializeTable(loot)
 		serialized[index] = Loot.Serialize(loot)
 	end
 	return serialized
+end
+
+function Loot.SerializePerks(perks)
+	local serialized = {}
+
+	for _, perk in ipairs(perks) do
+		table.insert(serialized, perk[1] .. "." .. perk[2])
+	end
+
+	return table.concat(serialized, "/")
 end
 
 function Loot.GetLootName(loot)
@@ -270,6 +286,12 @@ function Loot.IsCosmetic(loot)
 		or loot.Type == "Spray"
 		or loot.Type == "GunSkin"
 		or loot.ParentType ~= nil
+end
+
+-- Returns whether or not an item is capable of having perks
+-- Will be expanded to include armor/helmets later
+function Loot.HasPerks(loot)
+	return Loot.IsWeapon(loot)
 end
 
 function Loot.RandomAttachment()

@@ -10,7 +10,12 @@ local Data = require(ReplicatedStorage.Core.Data)
 local Equip = require(ServerScriptService.Shared.Ruddev.Equip)
 local GamePassDictionary = require(ReplicatedStorage.Core.GamePassDictionary)
 local GamePasses = require(ReplicatedStorage.Core.GamePasses)
+local GunScaling = require(ReplicatedStorage.Core.GunScaling)
+local Loot = require(ReplicatedStorage.Core.Loot)
 local Maid = require(ReplicatedStorage.Core.Maid)
+local MockPerks = require(ReplicatedStorage.Core.MockData.MockPerks)
+local Perks = require(ReplicatedStorage.Core.Perks)
+local PerkUtil = require(ReplicatedStorage.Core.Perks.PerkUtil)
 local Promise = require(ReplicatedStorage.Core.Promise)
 local Settings = require(ReplicatedStorage.Core.Settings)
 local Upgrades = require(ReplicatedStorage.Core.Upgrades)
@@ -194,7 +199,6 @@ local function equipGun(player, character)
 			UUID = weapon.UUID,
 			GunSkin = tostring(cosmetics.Equipped.GunSkin),
 			Particle = tostring(cosmetics.Equipped.Particle),
-			Upgrades = tostring(weapon.Upgrades),
 			Attachment = tostring(weapon.Attachment and weapon.Attachment.UUID),
 			Armor = armorStable,
 			GoldGuns = tostring(Settings.GetSetting("Gold Guns", player)),
@@ -233,8 +237,20 @@ local function equipGun(player, character)
 				local weaponData = Instance.new("Folder")
 				weaponData.Name = "WeaponData"
 
+				local weaponPerks = weapon.Perks
+				if RunService:IsStudio() and MockPerks ~= nil then
+					weaponPerks = MockPerks
+				end
+
+				weapon.Perks = PerkUtil.DeserializePerks(weaponPerks)
+
+				local perks = Instance.new("StringValue")
+				perks.Name = "Perks"
+				perks.Value = Loot.SerializePerks(weaponPerks)
+				perks.Parent = weaponData
+
 				for statName, stat in pairs(weapon) do
-					if statName ~= "Attachment" then
+					if typeof(stat) ~= "table" then
 						local statValue = Instance.new(valueClass(type(stat)) .. "Value")
 						statValue.Name = statName
 						statValue.Value = stat
@@ -255,7 +271,13 @@ local function equipGun(player, character)
 				end
 
 				maid:GiveTask(gun)
-				Equip(gun)
+
+				local function getAmmoInfo()
+					return {
+						AmmoLeft = gun.Ammo.Value,
+						Magazine = Config:GetConfig(gun).Magazine,
+					}
+				end
 
 				local particleIndex = cosmetics.Equipped.Particle
 				if particleIndex then
@@ -265,6 +287,34 @@ local function equipGun(player, character)
 						maid:GiveTask(particle)
 					end
 				end
+
+				local perks = {}
+
+				for _, perk in ipairs(weaponPerks) do
+					local perkInstance = Perks.Perks[perk[1]].new(
+						player,
+						weapon.Seed,
+						perk[2],
+						GunScaling.StatsFor(weapon)
+					)
+					table.insert(perks, perkInstance)
+
+					perkInstance.AmmoInfo = getAmmoInfo
+
+					-- ...
+					if Perks.Perks[perk[1]].Name == "Dual Wield" then
+						local secondGun = gun:Clone()
+						secondGun.Name = "SecondGun"
+						secondGun.Parent = character
+						maid:GiveTask(secondGun)
+						Equip(secondGun, character.LeftHand)
+					end
+				end
+
+				Equip(gun)
+
+				Perks.SetPerksFor(player, perks)
+				maid:GiveTask(perks)
 
 				resolve()
 			end)

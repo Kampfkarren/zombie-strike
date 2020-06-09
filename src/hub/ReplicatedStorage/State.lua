@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Data = require(ReplicatedStorage.Core.Data)
+local GoldShopItemsUtil = require(ReplicatedStorage.Libraries.GoldShopItemsUtil)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local Rodux = require(ReplicatedStorage.Vendor.Rodux)
 
@@ -131,6 +132,22 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	goldShop = Rodux.createReducer({
+		alreadyBought = {},
+	}, {
+		UpdateGoldShopAlreadyBought = function(state, action)
+			local state = copy(state)
+			state.alreadyBought = action.alreadyBought
+			return state
+		end,
+
+		UpdateGoldShopTimestamp = function(state, action)
+			local state = copy(state)
+			state.timestamp = action.timestamp
+			return state
+		end,
+	}),
+
 	hideUi = Rodux.createReducer(0, {
 		HideUI = function(state)
 			return state + 1
@@ -149,12 +166,14 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		"Friends",
 		"Equipment",
 		"Feedback",
+		"GoldShop",
 		"Inventory",
 		"PetShop",
 		"Settings",
 		"Shopkeeper",
 		"Store",
 		"Trading",
+		"Vouchers",
 		"ZombiePass",
 	})),
 
@@ -295,6 +314,12 @@ Store = Rodux.Store.new(Rodux.combineReducers({
 		end,
 	}),
 
+	vouchers = Rodux.createReducer(0, {
+		UpdateVouchers = function(_, action)
+			return action.vouchers
+		end,
+	}),
+
 	zombiePass = Rodux.createReducer({
 		level = nil,
 		premium = nil,
@@ -338,7 +363,23 @@ ReplicatedStorage.Remotes.UpdateCosmetics.OnClientEvent:connect(function(content
 	})
 end)
 
+ReplicatedStorage.Remotes.UpdateInventory.OnClientEvent:connect(function(inventory)
+	local loot = Loot.DeserializeTableWithBase(inventory)
+
+	Store:dispatch({
+		type = "UpdateInventory",
+		newInventory = loot,
+	})
+end)
+
 ReplicatedStorage.Remotes.UpdateEquipment.OnClientEvent:connect(function(armor, helmet, weapon, pet)
+	-- this has a very rare chance of happening, despite presumably being impossible
+	while Store:getState().inventory == nil do
+		warn("UpdateEquipment: inventory wasn't set yet!")
+		Store:flush()
+		RunService.Heartbeat:wait()
+	end
+
 	Store:dispatch({
 		type = "UpdateEquipment",
 		newArmor = armor,
@@ -370,20 +411,39 @@ ReplicatedStorage.Remotes.UpdateFonts.OnClientEvent:connect(function(equipped, o
 	})
 end)
 
+ReplicatedStorage.Remotes.GoldShop.OnClientEvent:connect(function(packet, ...)
+	if packet == GoldShopItemsUtil.GoldShopPacket.InitialData then
+		local timestamp, alreadyBought = ...
+
+		Store:dispatch({
+			type = "UpdateGoldShopTimestamp",
+			timestamp = timestamp,
+		})
+
+		if alreadyBought ~= nil then
+			Store:dispatch({
+				type = "UpdateGoldShopAlreadyBought",
+				alreadyBought = alreadyBought,
+			})
+		end
+	elseif packet == GoldShopItemsUtil.GoldShopPacket.BuyWeapon then
+		local index = ...
+
+		local alreadyBought = copy(Store:getState().goldShop.alreadyBought)
+		table.insert(alreadyBought, index)
+
+		Store:dispatch({
+			type = "UpdateGoldShopAlreadyBought",
+			alreadyBought = alreadyBought,
+		})
+	end
+end)
+
 ReplicatedStorage.Remotes.UpdateTitles.OnClientEvent:connect(function(equipped, owned)
 	Store:dispatch({
 		type = "UpdateTitles",
 		equipped = equipped,
 		owned = owned,
-	})
-end)
-
-ReplicatedStorage.Remotes.UpdateInventory.OnClientEvent:connect(function(inventory)
-	local loot = Loot.DeserializeTableWithBase(inventory)
-
-	Store:dispatch({
-		type = "UpdateInventory",
-		newInventory = loot,
 	})
 end)
 
@@ -399,6 +459,13 @@ ReplicatedStorage.Remotes.UpdateSprays.OnClientEvent:connect(function(equipped, 
 		type = "UpdateSprays",
 		equipped = equipped,
 		owned = owned,
+	})
+end)
+
+ReplicatedStorage.Remotes.UpdateVouchers.OnClientEvent:connect(function(vouchers)
+	Store:dispatch({
+		type = "UpdateVouchers",
+		vouchers = vouchers,
 	})
 end)
 

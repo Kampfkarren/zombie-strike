@@ -11,8 +11,13 @@ if (RunService.IsServer()) {
 		const speedMultiplier = player.WaitForChild("SpeedMultiplier") as NumberValue
 		speedMultiplier.Value += speed
 
+		let destroyed = false
+
 		return () => {
-			speedMultiplier.Value -= speed
+			if (!destroyed) {
+				destroyed = true
+				speedMultiplier.Value -= speed
+			}
 		}
 	}
 } else {

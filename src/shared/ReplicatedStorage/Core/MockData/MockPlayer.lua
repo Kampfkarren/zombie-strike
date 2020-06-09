@@ -5,7 +5,7 @@ return function()
 
 	MockPlayer.None = newproxy(true)
 
-	MockPlayer.Version = 7
+	MockPlayer.Version = 10
 	MockPlayer.GameVersion = 1
 
 	MockPlayer.CodesUsed = {}
@@ -26,6 +26,7 @@ return function()
 	MockPlayer.UpgradedSomething = false
 
 	MockPlayer.LastKnownDifficulties = { ["1"] = 1 }
+	MockPlayer.BoughtThisRotation = {}
 
 	-- Stats
 	MockPlayer.DamageDealt = 0
@@ -42,6 +43,8 @@ return function()
 	MockPlayer.Gold = 0
 	MockPlayer.Brains = 0
 	MockPlayer.PetCoins = 1000
+	MockPlayer.Vouchers = 0
+	MockPlayer.VoucherUsedEver = false
 
 	MockPlayer.TimeBossDefeated = 0
 
@@ -51,8 +54,10 @@ return function()
 		Rarity = 1,
 
 		Bonus = 0,
-		Upgrades = 0,
 		Favorited = false,
+		Seed = 0,
+
+		Perks = {},
 
 		Model = 1,
 		UUID = HttpService:GenerateGUID(false):gsub("-", ""),

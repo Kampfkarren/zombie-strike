@@ -1,6 +1,7 @@
 import { GetDPS } from "shared/ReplicatedStorage/Core/DamageCalculations"
 import { IsArmor, IsHelmet, IsWeapon } from "shared/ReplicatedStorage/Core/Loot"
 import { ArmorHealth, HelmetHealth } from "./ArmorScaling"
+import { Perk } from "./Perks/Perk"
 
 const EXPECTED_NOOB_PISTOL_GEAR_SCORE = 50
 const MULTIPLIERS = {
@@ -11,6 +12,7 @@ const MULTIPLIERS = {
 	Sniper: 0.9,
 	Crystal: 1,
 }
+const PERK_UPGRADE_BUFF = 0.05
 const WEARABLE_MULTIPLIER = 2
 
 function CalculateUnfudgedGearScore(item: {
@@ -33,10 +35,15 @@ const NOOB_PISTOL_UNFUDGED_GEAR_SCORE = CalculateUnfudgedGearScore({
 	Type: "Pistol",
 	Level: 1,
 	Rarity: 1,
+	Perks: [],
 })
 
 function CalculateGearScore(item: {
 	Type: string,
+	Perks?: {
+		Perk: typeof Perk,
+		Upgrades: number,
+	}[],
 }): number {
 	let gearScore = CalculateUnfudgedGearScore(item)
 
@@ -44,7 +51,15 @@ function CalculateGearScore(item: {
 		gearScore += (EXPECTED_NOOB_PISTOL_GEAR_SCORE - NOOB_PISTOL_UNFUDGED_GEAR_SCORE)
 	}
 
-	return gearScore
+	if (item.Perks !== undefined) {
+		const scale = item.Perks.reduce((acc, perk) => {
+			return acc + (perk.Perk.PowerBuff - 1) + (PERK_UPGRADE_BUFF * perk.Upgrades)
+		}, 1)
+
+		gearScore *= scale
+	}
+
+	return math.ceil(gearScore)
 }
 
 export = CalculateGearScore

@@ -2,10 +2,9 @@ local ContentProvider = game:GetService("ContentProvider")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
 
 local FastSpawn = require(ReplicatedStorage.Core.FastSpawn)
-local ItemModel = require(script.Parent.ItemModel)
+local ItemModel = require(ReplicatedStorage.Core.UI.Components.ItemModel)
 local Maid = require(ReplicatedStorage.Core.Maid)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 

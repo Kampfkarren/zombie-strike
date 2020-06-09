@@ -1,12 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local ArenaRewards = require(script.ArenaRewards)
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
-local EquipmentInfo = require(ReplicatedStorage.Core.UI.Components.EquipmentInfo)
-local EquipmentUtil = require(ReplicatedStorage.Core.EquipmentUtil)
 local EventConnection = require(ReplicatedStorage.Core.UI.Components.EventConnection)
-local GunScaling = require(ReplicatedStorage.Core.GunScaling)
 local Loot = require(ReplicatedStorage.Core.Loot)
-local LootInfo = require(ReplicatedStorage.Core.UI.Components.LootInfo)
+local PerkUtil = require(ReplicatedStorage.Core.Perks.PerkUtil)
 local RealDelay = require(ReplicatedStorage.Core.RealDelay)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 
@@ -72,65 +70,19 @@ function Arena:render()
 
 		if self.state.loot then
 			local loot = self.state.loot
-
-			if Loot.IsWeapon(loot) then
-				for key, value in pairs(GunScaling.BaseStats(loot.Type, loot.Level, loot.Rarity)) do
-					if loot[key] == nil then
-						loot[key] = value
-					end
-				end
-			end
-
-			local aspectRatio, lootInfo
-
-			local frameProps = {
-				AnchorPoint = Vector2.new(0, 0.5),
-				BackgroundTransparency = 0.35,
-				BorderSizePixel = 0,
-				Position = UDim2.fromScale(0.07, 0.5),
-			}
+			local rewardProps = {}
 
 			if Loot.IsEquipment(loot) then
-				frameProps.BackgroundColor3 = EquipmentUtil.GetColor(loot.Type)
-				frameProps.Size = UDim2.fromScale(1, 0.5)
-
-				aspectRatio = 0.8
-				lootInfo = e(EquipmentInfo, {
-					Loot = loot,
-				})
+				rewardProps.EquipmentLoot = loot
 			else
-				frameProps.BackgroundColor3 = Loot.Rarities[loot.Rarity].Color
-				frameProps.Size = UDim2.fromScale(1, 0.8)
+				if Loot.HasPerks(loot) then
+					loot.Perks = PerkUtil.DeserializePerks(loot.Perks)
+				end
 
-				aspectRatio = 0.6
-				lootInfo = e(LootInfo, {
-					Native = {
-						Size = UDim2.fromScale(1, 1),
-					},
-
-					Loot = loot,
-				})
+				rewardProps.ItemLoot = loot
 			end
 
-			children.Loot = e("Frame", frameProps, {
-				UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
-					AspectRatio = aspectRatio,
-					AspectType = Enum.AspectType.ScaleWithParentSize,
-					DominantAxis = Enum.DominantAxis.Height,
-				}),
-
-				Label = e("TextLabel", {
-					AnchorPoint = Vector2.new(0, 1),
-					BackgroundTransparency = 1,
-					Font = Enum.Font.Gotham,
-					Size = UDim2.fromScale(1, 0.15),
-					Text = "YOU UNLOCKED...",
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-				}),
-
-				LootInfo = lootInfo,
-			})
+			children.Rewards = e(ArenaRewards, rewardProps)
 		end
 	end
 

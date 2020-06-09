@@ -7,13 +7,24 @@ local Debris			= game:GetService("Debris")
 
 -- constants
 
+local assign = require(ReplicatedStorage.Core.assign)
+
 local EFFECTS	= Workspace:WaitForChild("Effects")
 local CAMERA	= Workspace.CurrentCamera
 local EVENTS	= ReplicatedStorage:WaitForChild("RuddevEvents")
 
 -- functions
 
-return function(position, radius, better)
+local DEFAULT_VISUAL_INFO = {
+	FireEmission = 30,
+	Meteors = 10,
+	SmokeEmission = 15,
+	Shake = true,
+}
+
+return function(position, radius, better, visualInfo)
+	visualInfo = assign(visualInfo or {}, DEFAULT_VISUAL_INFO)
+
 	local explosion		= script.Explosion:Clone()
 		explosion.CFrame	= CFrame.new(position)
 		explosion.Parent	= EFFECTS
@@ -32,7 +43,7 @@ return function(position, radius, better)
 	local lightTween	= TweenService:Create(explosion.PointLight, lightInfo, {Range = 0})
 	lightTween:Play()
 
-	for _ = 1, 10 do
+	for _ = 1, visualInfo.Meteors do
 		local meteor	= script.Meteor:Clone()
 			meteor.CFrame	= CFrame.new(position)
 			meteor.Parent	= EFFECTS
@@ -42,13 +53,13 @@ return function(position, radius, better)
 	end
 
 	explosion["ExplosionSound" .. tostring(math.random(10))]:Play()
-	explosion.SmokeEmitter:Emit(15)
-	explosion.FireEmitter:Emit(30)
+	explosion.SmokeEmitter:Emit(visualInfo.SmokeEmission)
+	explosion.FireEmitter:Emit(visualInfo.FireEmission)
 
 	local range		= radius * 5
 	local distance	= (CAMERA.CFrame.p - position).Magnitude
 
-	if distance < range then
+	if distance < range and visualInfo.Shake then
 		local amount	= 1 - (distance / range)
 		local direction	= CAMERA.CFrame:vectorToObjectSpace((CAMERA.CFrame.p - position).Unit)
 		EVENTS.Shake:Fire(direction * 100 * amount)

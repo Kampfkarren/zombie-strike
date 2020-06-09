@@ -1,5 +1,6 @@
 import * as Roact from "@rbxts/roact"
 import Loot from "shared/ReplicatedStorage/Core/Loot"
+import { Rarity } from "./Rarity"
 
 export type LootReward = Map<Loot.LootType, Map<Rarity, number[]>>
 

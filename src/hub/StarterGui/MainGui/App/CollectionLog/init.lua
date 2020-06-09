@@ -5,6 +5,7 @@ local CollectionLogFilters = require(script.CollectionLogFilters)
 local Context = require(script.Context)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
 local RoactRodux = require(ReplicatedStorage.Vendor.RoactRodux)
+local Scale = require(ReplicatedStorage.Core.UI.Components.Scale)
 
 local e = Roact.createElement
 
@@ -13,7 +14,7 @@ local CollectionLog = Roact.Component:extend("CollectionLog")
 function CollectionLog:init()
 	self:setState({
 		selectedFilter = {
-			Name = "All",
+			Name = self.props.initialPage or "All",
 			Filter = function()
 				return true
 			end,
@@ -37,7 +38,7 @@ function CollectionLog:render()
 			BackgroundColor3 = Color3.new(0.1, 0.1, 0.1),
 			BorderSizePixel = 0,
 			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(0.7, 0.85),
+			Size = UDim2.fromOffset(1380, 600),
 			Text = "",
 			Visible = self.props.open,
 		}, {
@@ -48,8 +49,9 @@ function CollectionLog:render()
 				PaddingBottom = UDim.new(0.01, 0),
 			}),
 
-			UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
-				AspectRatio = 2.3,
+			Scale = e(Scale, {
+				Scale = 0.75,
+				Size = Vector2.new(1380, 600),
 			}),
 
 			Filters = e("Frame", {
@@ -65,7 +67,7 @@ function CollectionLog:render()
 				Position = UDim2.fromScale(1, 0),
 				Size = UDim2.fromScale(0.8, 1),
 			}, {
-				e(CollectionLogContents),
+				Contents = e(CollectionLogContents),
 			}),
 		}),
 	})

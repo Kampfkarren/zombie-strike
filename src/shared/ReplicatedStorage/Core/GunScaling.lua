@@ -2,11 +2,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local AttachmentsConstants = require(ReplicatedStorage.Core.AttachmentsConstants)
 local LinearThenLogarithmic = require(ReplicatedStorage.Core.LinearThenLogarithmic)
-local Upgrades = require(ReplicatedStorage.Core.Upgrades)
 
 local GunScaling = {}
 
 local LEVEL_CAP = 70
+local MAX_BONUS_DAMAGE = 0.14
 
 local function constant(value)
 	return function()
@@ -166,49 +166,19 @@ local Types = {
 
 local RarityMultipliers = {
 	-- Common
-	{
-		CritChance = 1,
-		CritDamage = 1,
-		Damage = 1,
-		FireRate = 1,
-		Magazine = 1,
-	},
+	{},
 
 	-- Uncommon
-	{
-		CritChance = 1.1,
-		CritDamage = 1.05,
-		Damage = 1.15,
-		FireRate = 1.1,
-		Magazine = 1.1,
-	},
+	{ Damage = 1.05 },
 
 	-- Rare
-	{
-		CritChance = 1.2,
-		CritDamage = 1.1,
-		Damage = 1.3,
-		FireRate = 1.2,
-		Magazine = 1.2,
-	},
+	{ Damage = 1.1 },
 
 	-- Epic
-	{
-		CritChance = 1.3,
-		CritDamage = 1.15,
-		Damage = 1.45,
-		FireRate = 1.3,
-		Magazine = 1.3,
-	},
+	{ Damage = 1.15 },
 
 	-- Legendary
-	{
-		CritChance = 1.4,
-		CritDamage = 1.2,
-		Damage = 1.6,
-		FireRate = 1.4,
-		Magazine = 1.4,
-	},
+	{ Damage = 1.24 },
 }
 
 local function round(n)
@@ -237,8 +207,19 @@ end
 function GunScaling.StatsFor(item)
 	local stats = GunScaling.BaseStats(item.Type, item.Level, item.Rarity)
 
+	if item.Bonus ~= nil then
+		stats.Damage = stats.Damage + stats.Damage * ((item.Bonus / 35) * MAX_BONUS_DAMAGE)
+	end
+
+	stats.Seed = item.Seed
+	stats.UUID = item.UUID
+
 	for baseKey, baseValue in pairs(Bases[item.Type]) do
 		stats[baseKey] = baseValue
+	end
+
+	for _, perk in ipairs(item.Perks) do
+		stats = perk.Perk.ModifyStats(stats, perk.Upgrades)
 	end
 
 	local attachment = item.Attachment
@@ -252,8 +233,6 @@ function GunScaling.StatsFor(item)
 			stats.Damage = math.ceil(stats.Damage * (1 + AttachmentsConstants.SilencerDamage[attachment.Rarity] / 100))
 		end
 	end
-
-	stats.Damage = stats.Damage + Upgrades.GetDamageBuff(stats.Damage, item.Upgrades or 0)
 
 	return stats
 end

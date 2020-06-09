@@ -4,7 +4,7 @@ local Data = require(ReplicatedStorage.Core.Data)
 
 local REWARD_GOLD = {
 	Type = "Gold",
-	Amount = 10000,
+	Amount = 1500,
 }
 
 local REWARD_PET_COINS = {
@@ -12,20 +12,21 @@ local REWARD_PET_COINS = {
 	Amount = 1000,
 }
 
+local REWARD_VOUCHER = {
+	Type = "Voucher",
+	Amount = 1,
+}
+
 local CODES = {
+	zombie = REWARD_VOUCHER,
+	transrights = REWARD_VOUCHER,
+	strike = REWARD_GOLD,
 	evil = REWARD_GOLD,
 	goblin = REWARD_GOLD,
-	zombie = REWARD_GOLD,
-	million = REWARD_GOLD,
 	prize = REWARD_GOLD,
-	strike = REWARD_GOLD,
 	loot = REWARD_GOLD,
 	cool = REWARD_GOLD,
-	rainway = REWARD_GOLD,
-	tanqr = REWARD_GOLD,
-	transrights = REWARD_GOLD,
 	arena = REWARD_GOLD,
-	xmas = REWARD_GOLD,
 	cowboy = REWARD_GOLD,
 	pet = REWARD_PET_COINS,
 }
@@ -62,6 +63,9 @@ SendCode.OnServerEvent:connect(function(player, code)
 	elseif codeInfo.Type == "PetCoins" then
 		local _, petCoinsStore = Data.GetPlayerData(player, "PetCoins")
 		petCoinsStore:Increment(codeInfo.Amount)
+	elseif codeInfo.Type == "Voucher" then
+		local _, vouchersStore = Data.GetPlayerData(player, "Vouchers")
+		vouchersStore:Increment(codeInfo.Amount)
 	end
 
 	SendCode:FireClient(player, codeInfo)

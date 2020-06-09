@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local assign = require(ReplicatedStorage.Core.assign)
 local BuyBrains = require(script.BuyBrains)
+local BuyCaps = require(ReplicatedStorage.Components.BuyCaps)
 local Close = require(script.Parent.Close)
 local GamePasses = require(script.GamePasses)
 local Roact = require(ReplicatedStorage.Vendor.Roact)
@@ -28,7 +29,7 @@ local function CategoryButton(props)
 			BackgroundTransparency = 1,
 			Font = Enum.Font.GothamBold,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
-			Size = UDim2.new(0.95, 0, 0.95, 0),
+			Size = UDim2.new(0.95, 0, 0.8, 0),
 			Text = props.Text,
 			TextColor3 = Color3.new(1, 1, 1),
 			TextScaled = true,
@@ -55,6 +56,7 @@ local Store = Roact.PureComponent:extend("Store")
 
 function Store:init()
 	self.buyBrainsRef = Roact.createRef()
+	self.buyCapsRef = Roact.createRef()
 	self.gamePassesRef = Roact.createRef()
 	self.shopRef = Roact.createRef()
 	self.weaponsRef = Roact.createRef()
@@ -74,6 +76,8 @@ function Store:UpdateCurrentPage()
 		page:JumpTo(self.gamePassesRef:getValue())
 	elseif self.props.page == "BuyBrains" then
 		page:JumpTo(self.buyBrainsRef:getValue())
+	elseif self.props.page == "BuyCaps" then
+		page:JumpTo(self.buyCapsRef:getValue())
 	elseif self.props.page == "Weapons" then
 		page:JumpTo(self.weaponsRef:getValue())
 	end
@@ -128,14 +132,14 @@ function Store:render()
 			ShopButton = e(CategoryButton, {
 				Page = "Shop",
 				Text = "SHOP",
-				Size = UDim2.fromScale(0.18, 1),
+				Size = UDim2.fromScale(0.14, 1),
 				LayoutOrder = 1,
 			}),
 
 			WeaponsButton = e(CategoryButton, {
 				Page = "Weapons",
-				Text = "WEAPONS",
-				Size = UDim2.fromScale(0.18, 1),
+				Text = "SKINS",
+				Size = UDim2.fromScale(0.12, 1),
 				LayoutOrder = 2,
 			}),
 
@@ -149,15 +153,22 @@ function Store:render()
 			GamePasses = e(CategoryButton, {
 				Page = "GamePasses",
 				Text = "GAME PASSES",
-				Size = UDim2.fromScale(0.2, 1),
+				Size = UDim2.fromScale(0.18, 1),
 				LayoutOrder = 4,
 			}),
 
 			BuyBrains = e(CategoryButton, {
 				Page = "BuyBrains",
 				Text = "BRAINS",
-				Size = UDim2.fromScale(0.18, 1),
+				Size = UDim2.fromScale(0.14, 1),
 				LayoutOrder = 5,
+			}),
+
+			BuyCaps = e(CategoryButton, {
+				Page = "BuyCaps",
+				Text = "CAPS",
+				Size = UDim2.fromScale(0.14, 1),
+				LayoutOrder = 6,
 			}),
 		}),
 
@@ -198,6 +209,11 @@ function Store:render()
 
 			BuyBrains = e(BuyBrains, {
 				[Roact.Ref] = self.buyBrainsRef,
+			}),
+
+			BuyCaps = e(BuyCaps, {
+				[Roact.Ref] = self.buyCapsRef,
+				remote = ReplicatedStorage.Remotes.BuyCaps,
 			}),
 
 			Weapons = e(Weapons, {

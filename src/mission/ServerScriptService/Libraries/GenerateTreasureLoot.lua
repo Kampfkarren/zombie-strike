@@ -3,6 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local Dungeon = require(ReplicatedStorage.Libraries.Dungeon)
 local GenerateLoot = require(ServerScriptService.Libraries.GenerateLoot)
+local Perks = require(ReplicatedStorage.Core.Perks)
 local Promise = require(ReplicatedStorage.Core.Promise)
 
 local LEGENDARY_CHANCE = 0.1
@@ -43,14 +44,18 @@ end):andThen(function(campaignInfo)
 		bonus = 35
 	end
 
-	return {
+	local gun = {
 		Type = gunType,
 		Level = 0,
 		Rarity = rarity,
 		Bonus = bonus,
 		Model = models[rng:NextInteger(1, #models)],
-		Upgrades = 0,
 		Favorited = false,
 		UUID = "TREASURE_LOOT", -- Changed at runtime
+		Seed = rng:NextInteger(1, 1000),
 	}
+
+	gun.Perks = Perks.GenerateWeaponPerksForRarity(gun, rarity)
+
+	return gun
 end)

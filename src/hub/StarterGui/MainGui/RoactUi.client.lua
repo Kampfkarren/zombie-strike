@@ -8,6 +8,7 @@ local existingTree
 
 Roact.setGlobalConfig({
 	elementTracing = true,
+	propValidation = RunService:IsStudio(),
 })
 
 local function render()

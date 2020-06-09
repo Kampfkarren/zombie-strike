@@ -2,8 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local AutomatedScrollingFrameComponent = require(ReplicatedStorage.Core.UI.Components.AutomatedScrollingFrameComponent)
 local CollectionLogUtil = require(ReplicatedStorage.Libraries.CollectionLogUtil)
+local CollectionLogPerks = require(script.Parent.CollectionLogPerks)
 local Context = require(script.Parent.Context)
 local Data = require(ReplicatedStorage.Core.Data)
+local HoverStack = require(ReplicatedStorage.Core.UI.Components.HoverStack)
 local ItemButton = require(ReplicatedStorage.Core.UI.Components.ItemButton)
 local Loot = require(ReplicatedStorage.Core.Loot)
 local LootStyles = require(ReplicatedStorage.Core.LootStyles)
@@ -59,24 +61,7 @@ end
 function CollectionLog:init()
 	self:setState({
 		items = CollectionLogUtil.GetAllItems(),
-		lootStack = {},
 	})
-
-	self.addLootToStack = function(loot)
-		local lootStack = copy(self.state.lootStack)
-		lootStack[loot.UUID] = loot
-		self:setState({
-			lootStack = lootStack,
-		})
-	end
-
-	self.removeLootFromStack = function(loot)
-		local lootStack = copy(self.state.lootStack)
-		lootStack[loot.UUID] = nil
-		self:setState({
-			lootStack = lootStack,
-		})
-	end
 end
 
 function CollectionLog:LootOwned(item)
@@ -89,129 +74,136 @@ function CollectionLog:LootOwned(item)
 end
 
 function CollectionLog:render()
-	return e(Context.Consumer, {
-		render = function(context)
-			local contents = {}
-			contents.UIGridLayout = e("UIGridLayout", {
-				HorizontalAlignment = Enum.HorizontalAlignment.Center,
-				SortOrder = Enum.SortOrder.LayoutOrder,
-			})
-
-			local items = self.state.items
-			local owned, total = 0, 0
-
-			for _, itemType in ipairs(CollectionLogUtil.ItemTypes) do
-				for _, item in ipairs(items[itemType]) do
-					if context.selectedFilter.Filter(item) then
-						local lootOwned = self:LootOwned(item)
-						if lootOwned then
-							owned = owned + 1
-						end
-
-						total = total + 1
-
-						contents[item.Instance.Name] = e(ItemButton, {
-							HideFavorites = true,
-							LayoutOrder = total,
-							Loot = item,
-							Silhouette = not lootOwned,
-
-							onHover = self.addLootToStack,
-							onUnhover = self.removeLootFromStack,
-						})
+	return e(HoverStack, {
+		Render = function(selectedLoot, hover, unhover)
+			return e(Context.Consumer, {
+				render = function(context)
+					if context.selectedFilter.Name == "Perks" then
+						return e(CollectionLogPerks)
 					end
-				end
-			end
 
-			local _, selectedLoot = next(self.state.lootStack)
-			local selectedOwned = selectedLoot and self:LootOwned(selectedLoot)
-			local model
-
-			if selectedLoot ~= nil then
-				model = Data.GetModel(selectedLoot)
-				if not selectedOwned then
-					SilhouetteModel(model)
-				end
-			end
-
-			return e("Frame", {
-				BackgroundTransparency = 1,
-				Size = UDim2.fromScale(1, 1),
-			}, {
-				Contents = e(AutomatedScrollingFrameComponent, {
-					AnchorPoint = Vector2.new(0, 1),
-					BackgroundTransparency = 1,
-					Position = UDim2.fromScale(0, 1),
-					Size = UDim2.fromScale(0.75, 0.95),
-				}, contents),
-
-				Completion = e("TextLabel", {
-					BackgroundTransparency = 1,
-					Font = Enum.Font.Gotham,
-					Size = UDim2.fromScale(0.75, 0.05),
-					Text = string.format("%d/%d (%d%%)", owned, total, math.floor(owned / total * 100)),
-					TextColor3 = Color3.new(1, 1, 1),
-					TextScaled = true,
-					TextXAlignment = Enum.TextXAlignment.Right,
-				}),
-
-				LootInfo = selectedLoot and e("Frame", {
-					AnchorPoint = Vector2.new(1, 0),
-					BackgroundTransparency = 1,
-					Position = UDim2.fromScale(1, 0),
-					Size = UDim2.fromScale(0.25, 1),
-				}, {
-					e("UIListLayout", {
+					local contents = {}
+					contents.UIGridLayout = e("UIGridLayout", {
 						HorizontalAlignment = Enum.HorizontalAlignment.Center,
-						Padding = UDim.new(0.01, 0),
 						SortOrder = Enum.SortOrder.LayoutOrder,
-						VerticalAlignment = Enum.VerticalAlignment.Center,
-					}),
+					})
 
-					LootName = e("TextLabel", {
+					local items = self.state.items
+					local owned, total = 0, 0
+
+					for _, itemType in ipairs(CollectionLogUtil.ItemTypes) do
+						for _, item in ipairs(items[itemType]) do
+							if context.selectedFilter.Filter(item) then
+								local lootOwned = self:LootOwned(item)
+								if lootOwned then
+									owned = owned + 1
+								end
+
+								total = total + 1
+
+								contents[item.Instance.Name] = e(ItemButton, {
+									HideFavorites = true,
+									LayoutOrder = total,
+									Loot = item,
+									Silhouette = not lootOwned,
+
+									onHover = hover(item),
+									onUnhover = unhover(item),
+								})
+							end
+						end
+					end
+
+					local selectedOwned = selectedLoot and self:LootOwned(selectedLoot)
+					local model
+
+					if selectedLoot ~= nil then
+						model = Data.GetModel(selectedLoot)
+						if not selectedOwned then
+							SilhouetteModel(model)
+						end
+					end
+
+					return e("Frame", {
 						BackgroundTransparency = 1,
-						Font = Enum.Font.GothamBold,
-						LayoutOrder = 1,
-						Size = UDim2.new(0.9, 0, 0.1, 0),
-						Text = selectedOwned and getLootName(selectedLoot) or "???",
-						TextColor3 = Color3.fromRGB(227, 227, 227),
-						TextScaled = true,
-					}),
-
-					ItemType = e("TextLabel", {
-						BackgroundTransparency = 1,
-						Font = Enum.Font.Gotham,
-						LayoutOrder = 2,
-						Size = UDim2.new(0.9, 0, 0.06, 0),
-						Text = getLootType(selectedLoot),
-						TextColor3 = Color3.fromRGB(227, 227, 227),
-						TextScaled = true,
-					}),
-
-					Preview = e(ViewportFramePreviewComponent, {
-						Model = model,
-
-						Native = {
-							BackgroundColor3 = Color3.new(0.3, 0.3, 0.3),
-							BackgroundTransparency = 0.6,
-							BorderSizePixel = 0,
-							LayoutOrder = 3,
-							Size = UDim2.fromScale(0.5, 0.5),
-						},
+						Size = UDim2.fromScale(1, 1),
 					}, {
-						e("UIAspectRatioConstraint"),
-					}),
+						Contents = e(AutomatedScrollingFrameComponent, {
+							AnchorPoint = Vector2.new(0, 1),
+							BackgroundTransparency = 1,
+							Position = UDim2.fromScale(0, 1),
+							Size = UDim2.fromScale(0.75, 0.95),
+						}, contents),
 
-					ObtainMethod = e("TextLabel", {
-						BackgroundTransparency = 1,
-						Font = Enum.Font.Gotham,
-						LayoutOrder = 4,
-						Size = UDim2.fromScale(0.9, 0.15),
-						Text = getObtainMethod(selectedLoot.Source),
-						TextColor3 = Color3.fromRGB(227, 227, 227),
-						TextScaled = true,
-					}),
-				}),
+						Completion = e("TextLabel", {
+							BackgroundTransparency = 1,
+							Font = Enum.Font.Gotham,
+							Size = UDim2.fromScale(0.75, 0.05),
+							Text = string.format("%d/%d (%d%%)", owned, total, math.floor(owned / total * 100)),
+							TextColor3 = Color3.new(1, 1, 1),
+							TextScaled = true,
+							TextXAlignment = Enum.TextXAlignment.Right,
+						}),
+
+						LootInfo = selectedLoot and e("Frame", {
+							AnchorPoint = Vector2.new(1, 0),
+							BackgroundTransparency = 1,
+							Position = UDim2.fromScale(1, 0),
+							Size = UDim2.fromScale(0.25, 1),
+						}, {
+							e("UIListLayout", {
+								HorizontalAlignment = Enum.HorizontalAlignment.Center,
+								Padding = UDim.new(0.01, 0),
+								SortOrder = Enum.SortOrder.LayoutOrder,
+								VerticalAlignment = Enum.VerticalAlignment.Center,
+							}),
+
+							LootName = e("TextLabel", {
+								BackgroundTransparency = 1,
+								Font = Enum.Font.GothamBold,
+								LayoutOrder = 1,
+								Size = UDim2.new(0.9, 0, 0.1, 0),
+								Text = selectedOwned and getLootName(selectedLoot) or "???",
+								TextColor3 = Color3.fromRGB(227, 227, 227),
+								TextScaled = true,
+							}),
+
+							ItemType = e("TextLabel", {
+								BackgroundTransparency = 1,
+								Font = Enum.Font.Gotham,
+								LayoutOrder = 2,
+								Size = UDim2.new(0.9, 0, 0.06, 0),
+								Text = getLootType(selectedLoot),
+								TextColor3 = Color3.fromRGB(227, 227, 227),
+								TextScaled = true,
+							}),
+
+							Preview = e(ViewportFramePreviewComponent, {
+								Model = model,
+
+								Native = {
+									BackgroundColor3 = Color3.new(0.3, 0.3, 0.3),
+									BackgroundTransparency = 0.6,
+									BorderSizePixel = 0,
+									LayoutOrder = 3,
+									Size = UDim2.fromScale(0.5, 0.5),
+								},
+							}, {
+								e("UIAspectRatioConstraint"),
+							}),
+
+							ObtainMethod = e("TextLabel", {
+								BackgroundTransparency = 1,
+								Font = Enum.Font.Gotham,
+								LayoutOrder = 4,
+								Size = UDim2.fromScale(0.9, 0.15),
+								Text = getObtainMethod(selectedLoot.Source),
+								TextColor3 = Color3.fromRGB(227, 227, 227),
+								TextScaled = true,
+							}),
+						}),
+					})
+				end,
 			})
 		end,
 	})

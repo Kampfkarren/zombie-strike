@@ -25,6 +25,9 @@ local filters = {
 
 	filter("Guns", Loot.IsWeapon),
 	filter("Armor", Loot.IsWearable),
+	filter("Perks", function(loot)
+		return loot.Type == "Perk"
+	end),
 	filter("Pets", Loot.IsPet),
 	filter("Attachments", Loot.IsAttachment),
 }

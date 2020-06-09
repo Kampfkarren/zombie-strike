@@ -19,6 +19,9 @@ local MODULES = ReplicatedStorage:WaitForChild("RuddevModules")
 	local INPUT = require(MODULES:WaitForChild("Input"))
 
 local GunSpray = require(ReplicatedStorage.Core.GunSpray)
+local LocalAmmoInfo = require(ReplicatedStorage.Core.LocalAmmoInfo)
+local Perk = require(ReplicatedStorage.Core.Perks.Perk)
+local Perks = require(ReplicatedStorage.Core.Perks)
 local Raycast = require(ReplicatedStorage.Core.Raycast)
 
 local EQUIP_COOLDOWN = 0.2
@@ -27,7 +30,7 @@ local HubWorld = ReplicatedStorage.HubWorld.Value
 
 -- functions
 
-local function wait(t)
+local function realWait(t)
 	local start = tick()
 	repeat
 		RunService.Stepped:Wait()
@@ -88,6 +91,16 @@ local function aimAssist(cframe, range)
 	end
 end
 
+local function hasPerkWithTeammateShot()
+	for _, perk in ipairs(Perks.GetPerksFor(PLAYER)) do
+		if perk.TeammateShot ~= Perk.WeaponPerk.TeammateShot then
+			return true
+		end
+	end
+
+	return false
+end
+
 -- modules
 
 local module = {}
@@ -118,7 +131,12 @@ function module.Create(_, item)
 
 	local aiming = false
 
-	-- functions
+	LocalAmmoInfo:SetCallback(function()
+		return {
+			AmmoLeft = ammo,
+			Magazine = config.Magazine,
+		}
+	end)
 
 	local mode = "Default"
 	if not HubWorld then
@@ -140,7 +158,13 @@ function module.Create(_, item)
 		if not ReplicatedStorage.CurrentPowerup.Value:match("Bulletstorm/")
 			and item:WaitForChild("WeaponData"):WaitForChild("Type").Value ~= "Crystal"
 		then
-			ammo = ammo - 1
+			local ammoCost = 1
+
+			for _, perk in ipairs(Perks.GetPerksFor(PLAYER)) do
+				ammoCost = perk:ModifyAmmoCost(ammoCost)
+			end
+
+			ammo = ammo - math.min(ammo, ammoCost)
 		end
 
 		local position = muzzle.WorldPosition
@@ -168,27 +192,43 @@ function module.Create(_, item)
 			end
 
 			if hit and humanoid then
-				if DAMAGE:PlayerCanDamage(PLAYER, humanoid) then
+				local enemy = DAMAGE:PlayerCanDamage(PLAYER, humanoid)
+
+				if enemy or (Players:GetPlayerFromCharacter(humanoid.Parent) and hasPerkWithTeammateShot()) then
 					EVENTS.Hitmarker:Fire(hit.Name == "Head", pos, humanoid.Health / humanoid.MaxHealth)
 					table.insert(hits, hit)
+
+					if enemy then
+						for _, perk in ipairs(Perks.GetPerksFor(PLAYER)) do
+							perk:DamageDealtClient(humanoid)
+						end
+					end
 				end
 			end
 		end
 
+		local forceMuzzle
+
 		if aiming then
 			animations.AimShoot:Play(0, math.random(5, 10) / 10, 1)
 		else
-			animations.Shoot:Play(0, math.random(5, 10) / 10, 1)
+			-- THIS IS SO STUPID
+			forceMuzzle = animations.Shoot:Play(0, math.random(5, 10) / 10, 1)
 		end
 
 		EVENTS.Gun:Fire("Update", ammo)
-		EFFECTS:Effect("Shoot", item, position, directions, ammo)
+		EFFECTS:Effect("Shoot", item, position, directions, ammo, nil, forceMuzzle)
 		REMOTES.Shoot:FireServer(position, cframe, hits)
 
 		EVENTS.Recoil:Fire(Vector3.new(math.random(-config.Recoil, config.Recoil) / 4, 0, math.random(config.Recoil / 2, config.Recoil)))
 	end
 
 	local function Reload()
+		local reloadTime = config.ReloadTime
+		for _, perk in ipairs(Perks.GetPerksFor(PLAYER)) do
+			reloadTime = perk:ModifyReloadTime(reloadTime)
+		end
+
 		if (not reloading) and itemModule.Equipped and ammo < config.Magazine then
 			reloading = true
 			rCancelled = false
@@ -196,20 +236,26 @@ function module.Create(_, item)
 			MOUSE.Reticle = "Reloading"
 			REMOTES.Reload:FireServer()
 			EFFECTS:Effect("Reload", item)
-			animations.Reload:Play(0.1, 1, 1/config.ReloadTime)
+			animations.Reload:Play(0.1, 1, 1/reloadTime)
+
+			local reloadedAt = ammo
 
 			local start = tick()
 			local elapsed
 			repeat
 				elapsed = tick() - start
 				RunService.Stepped:wait()
-			until elapsed >= config.ReloadTime or rCancelled or (not itemModule.Equipped)
+			until elapsed >= reloadTime or rCancelled or (not itemModule.Equipped)
 
 			animations.Reload:Stop()
 
 			if itemModule.Equipped then
-				if elapsed >= config.ReloadTime then
+				if elapsed >= reloadTime then
 					ammo = config.Magazine
+
+					for _, perk in ipairs(Perks.GetPerksFor(PLAYER)) do
+						perk:Reloaded(reloadedAt)
+					end
 				end
 
 				MOUSE.Reticle = config.Reticle or "Gun"
@@ -239,6 +285,13 @@ function module.Create(_, item)
 
 		for _, animation in pairs(self.Item:WaitForChild("Animations"):GetChildren()) do
 			animations[animation.Name] = humanoid:LoadAnimation(animation)
+		end
+
+		for _, perkData in ipairs(config.Perks) do
+			local perk = perkData.Perk
+			if perk.ModifyWeaponAnimations then
+				animations = perk.ModifyWeaponAnimations(animations, humanoid)
+			end
 		end
 
 		table.insert(self.Connections, INPUT.ActionBegan:connect(function(action, processed)
@@ -324,6 +377,14 @@ function module.Create(_, item)
 		self.Equipped = false
 	end
 
+	local function getFireRate(fireRate)
+		for _, perk in ipairs(Perks.GetPerksFor(PLAYER)) do
+			fireRate = perk:ModifyFireRate(fireRate)
+		end
+
+		return fireRate
+	end
+
 	function itemModule.Activate()
 		clicking = true
 
@@ -333,7 +394,7 @@ function module.Create(_, item)
 					rCancelled = true
 					canShoot = false
 					Shoot()
-					wait(1 / config.FireRate)
+					realWait(1 / getFireRate(config.FireRate))
 					canShoot = true
 				end
 			elseif config.FireMode == "Auto" then
@@ -341,22 +402,22 @@ function module.Create(_, item)
 					rCancelled = true
 					canShoot = false
 					Shoot()
-					wait(1 / config.FireRate)
+					realWait(1 / getFireRate(config.FireRate))
 					canShoot = true
 				end
 			elseif config.FireMode == "Burst" then
 				while clicking and CanShoot() do
 					canShoot = false
 					for _ = 1, config.BurstAmount do
-						if clicking and ammo > 0 then
+						if ammo > 0 then
 							rCancelled = true
 							Shoot()
-							wait(1 / config.BurstRate)
+							realWait(1 / config.BurstRate)
 						else
 							break
 						end
 					end
-					wait(1 / config.FireRate)
+					realWait(1 / getFireRate(config.FireRate))
 					canShoot = true
 				end
 			end

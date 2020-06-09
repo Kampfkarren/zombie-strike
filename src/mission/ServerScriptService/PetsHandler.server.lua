@@ -89,7 +89,7 @@ Players.PlayerAdded:connect(function(player)
 					zombie.Humanoid,
 					zombie.Humanoid.MaxHealth * rarity.Damage * damageScale,
 					player,
-					0,
+					false,
 					0,
 					lyingDamage
 				)

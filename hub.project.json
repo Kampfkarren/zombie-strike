@@ -3,6 +3,10 @@
   "servePlaceIds": [3759927663, 4479247072],
   "tree": {
     "$className": "DataModel",
+    "LocalizationService": {
+      "$className": "LocalizationService",
+      "$path": "src/shared/LocalizationService"
+    },
     "ReplicatedFirst": {
       "$className": "ReplicatedFirst",
       "$path": "out/hub/ReplicatedFirst"
@@ -42,6 +46,9 @@
         },
         "t": {
           "$path": "vendor/t/lib"
+        },
+        "TestEZ": {
+          "$path": "vendor/testez/src"
         }
       },
       "rbxts_include": {

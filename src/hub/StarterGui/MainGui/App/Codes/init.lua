@@ -9,6 +9,8 @@ local e = Roact.createElement
 
 local Codes = Roact.PureComponent:extend("Codes")
 
+local CURRENCY_RECIEVED = "%d%s received!"
+
 function Codes:init()
 	self.textBoxRef = Roact.createRef()
 
@@ -79,8 +81,16 @@ function Codes:render()
 	local alertText, alertColor
 
 	if response.type == "received" then
-		local currencyType = response.reward.Type == "Gold" and "G" or "🐾"
-		alertText = "SUCCESS! " .. response.reward.Amount .. currencyType .. " received!"
+		local message
+		if response.reward.Type == "Gold" then
+			message = CURRENCY_RECIEVED:format(response.reward.Amount, " caps")
+		elseif response.reward.Type == "PetCoins" then
+			message = CURRENCY_RECIEVED:format(response.reward.Amount, "🐾")
+		elseif response.reward.Type == "Voucher" then
+			message = "You earned a voucher for a powerful weapon!"
+		end
+
+		alertText = "SUCCESS! " .. message
 		alertColor = Color3.fromRGB(32, 187, 108)
 	elseif response.type == "claimed" then
 		alertText = "Code already claimed..."

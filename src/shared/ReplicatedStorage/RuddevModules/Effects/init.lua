@@ -10,6 +10,7 @@ Effects.EffectIDs = {
 	Reload = 2,
 	Explosion = 3,
 	Shatter = 4,
+	MinorExplosion = 5,
 }
 
 function Effects.Effect(_, effect, ...)

@@ -28,7 +28,7 @@ local tradeStates = {}
 
 local pings = {}
 
-local MAX_ITEMS = 10
+local MAX_ITEMS = 4
 local NEAR_LEVEL = 8
 local PING_COOLDOWN = 2
 local SAME_PLAYER_TESTING = false
