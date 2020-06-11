@@ -16,7 +16,7 @@
 
 -- DUNGEON
 return {
-	Campaign = 1,
+	Campaign = 2,
 	Difficulty = 1,
 	Gamemode = "Mission",
 	Hardcore = false,

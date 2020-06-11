@@ -10,7 +10,7 @@ function findPerk(name: string): number {
 	throw `Could not find perk "${name}"`
 }
 
-// export =[
-// 	[findPerk("Explosive Rounds"), 0],
-// ]
-export = undefined
+export =[
+	[findPerk("Cold Rounds"), 0],
+]
+// export = undefined

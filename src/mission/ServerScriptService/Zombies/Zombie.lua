@@ -452,6 +452,7 @@ function Zombie:GiveBuff(scaleName, amount)
 		if scaleName == "Speed"
 			and not self.wandering
 			and self.instance:IsDescendantOf(game)
+			and self:GetScaleSafe("Speed")
 		then
 			self.instance.Humanoid.WalkSpeed = self:GetSpeed()
 		end

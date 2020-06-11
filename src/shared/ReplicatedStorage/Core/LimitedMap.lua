@@ -12,8 +12,12 @@ function LimitedMap:__newindex(key, value)
 		if self._count == self._size then
 			local removeIndex = self._removedSoFar + 1
 			self._removedSoFar = removeIndex
-			self._map[self._insertOrder[removeIndex]] = nil
-			self._insertOrder[removeIndex] = nil
+
+			local key = self._insertOrder[removeIndex]
+			if key ~= nil then
+				self._map[key] = nil
+				self._insertOrder[removeIndex] = nil
+			end
 		else
 			self._count = self._count + 1
 			self._insertOrder[self._count] = key
