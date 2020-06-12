@@ -681,7 +681,7 @@ local Campaigns = {
 				SlamRings = { 4, 5, 6, 7, 9 },
 				SpinAttackDamage = { 130, 300, 800, 990, 1300 },
 				SummonCount = { 7, 8, 9, 10, 11 },
-				SummonHeal = { 0.50, 1, 1, 1, 1.50 },
+				SummonHeal = { 0.50, 1, 1, 1, 1 },
 				SummonMaxHeal = { 4, 7, 8, 8, 10 },
 			},
 		},
