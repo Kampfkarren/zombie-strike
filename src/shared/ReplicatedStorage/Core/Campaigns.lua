@@ -32,6 +32,12 @@ local Extreme = {
 	Gold = 420,
 }
 
+local Nightmare = {
+	Name = "Nightmare",
+	Color = Color3.fromRGB(252, 3, 219),
+	Gold = 470,
+}
+
 local TOWER_REACTION_TIME = table.create(5, 1)
 
 local function range(start, finish)
@@ -230,6 +236,20 @@ local Campaigns = {
 					Health = 220000,
 				},
 			},
+			
+			{
+				MinLevel = 122,
+				Style = Nightmare,
+
+				Rooms = 9,
+				XP = 12000000000,
+				ZombieSpawnRate = 0.85,
+
+				BossStats = {
+					Health = 285000,
+				},
+			},
+			
 		},
 
 		Loot = classicGuns({
@@ -252,49 +272,49 @@ local Campaigns = {
 
 		Stats = {
 			Common = {
-				Health = { 50, 130, 550, 980, 2282 },
-				Damage = { 25, 60, 145, 350, 620 },
-				Speed = { 13, 13.5, 14, 14.1, 14.5 },
+				Health = { 50, 130, 550, 980, 2282, 3900 },
+				Damage = { 25, 60, 145, 350, 620, 900 },
+				Speed = { 13, 13.5, 14, 14.1, 14.5, 14.6 },
 			},
 
 			Strong = {
-				Health = { 75, 195, 825, 1470, 3423 },
-				Damage = { 37.5, 90, 217.5, 525, 930 },
-				Speed = { 12, 12.5, 13, 13.1, 13.5 },
+				Health = { 75, 195, 825, 1470, 3423,4200 },
+				Damage = { 37.5, 90, 217.5, 525, 930,1100 },
+				Speed = { 12, 12.5, 13, 13.1, 13.5, 13.5 },
 			},
 
 			Fast = {
-				Health = { 35, 91, 385, 686, 1600 },
-				Damage = { 25, 60, 145, 350, 620 },
-				Speed = { 14, 14.5, 15, 15.1, 15.5 },
+				Health = { 35, 91, 385, 686, 1600, 3200 },
+				Damage = { 25, 60, 145, 350, 620, 850 },
+				Speed = { 14, 14.5, 15, 15.1, 15.5, 16 },
 			},
 
 			Bomber = {
-				Health = { 20, 51, 285, 486, 1100 },
-				Damage = { 50, 110, 240, 700, 1200 },
-				Speed = { 16, 16.5, 17, 17.1, 17.5 },
+				Health = { 20, 51, 285, 486, 1100, 1500 },
+				Damage = { 50, 110, 240, 700, 1200,1800 },
+				Speed = { 16, 16.5, 17, 17.1, 17.5, 18 },
 				Delay = constant(1),
 			},
 
 			Shielder = {
-				Health = { 0, 325, 1320, 2205, 5500 },
-				Damage = { 0, 90, 217.5, 525, 930 },
-				Speed = { 0, 12.5, 13, 13.1, 13.5 },
-				EnragedSpeed = { 0, 19, 20, 20, 21 },
+				Health = { 0, 325, 1320, 2205, 5500, 8000 },
+				Damage = { 0, 90, 217.5, 525, 930,1200 },
+				Speed = { 0, 12.5, 13, 13.1, 13.5,13.8 },
+				EnragedSpeed = { 0, 19, 20, 20, 21, 22 },
 			},
 
 			Splitter = {
-				Health = { 0, 0, 2500, 4000, 9000 },
-				Damage = { 0, 0, 500, 800, 1300 },
+				Health = { 0, 0, 2500, 4000, 9000, 12000 },
+				Damage = { 0, 0, 500, 800, 1300, 1400 },
 				Speed = constant(11),
-				BabiesSpawned = { 0, 0, 2, 2, 3 },
+				BabiesSpawned = { 0, 0, 2, 2, 3, 4 },
 			},
 
 			SplitterBaby = {
-				Health = { 0, 0, 300, 400, 1000 },
-				Damage = { 0, 0, 100, 250, 400 },
-				Speed = { 0, 0, 17, 18, 20 },
-				RespawnTime = { 0, 0, 8, 7, 6 },
+				Health = { 0, 0, 300, 400, 1000, 1300 },
+				Damage = { 0, 0, 100, 250, 400, 600 },
+				Speed = { 0, 0, 17, 18, 20, 22 },
+				RespawnTime = { 0, 0, 8, 7, 6, 6 },
 			},
 		},
 
